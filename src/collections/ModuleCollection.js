@@ -12,7 +12,7 @@ class ModuleCollection extends Collection {
     constructor(bot) {
         super();
 
-        if (bot) this.bot = bot;
+        this.bot = bot;
     }
 
     register(config) {
@@ -22,7 +22,7 @@ class ModuleCollection extends Collection {
             if (module.internal || module.private) continue;
 
             const moduleName = module.dbName;
-            
+
             if (!update) update = {};
 
             update['modules.' + moduleName] = config.modules[moduleName] = module.getConfig();
@@ -50,7 +50,7 @@ class ModuleCollection extends Collection {
 
             module.inject(this.bot);
 
-            this.add(module); 
+            this.add(module);
 
             return true;
 
@@ -76,9 +76,12 @@ class ModuleCollection extends Collection {
     }
 
     reloadSingle(moduleName) {
-        if (!this.unloadSingle(moduleName)) return false;
-        this.loadSingle(moduleName);
-        
+        const module = this.get(moduleName);
+
+        if (!module) return false;
+        this.unloadSingle(module.name);
+        this.loadSingle(module.name);
+
         return true;
     }
 
@@ -97,7 +100,7 @@ class ModuleCollection extends Collection {
 
         if (initial) {
             logger.info(`[Modules] ${this.unique().size} registered.`);
-            
+
             if (this.bot) {
                 this.bot.commands.log();
             }
@@ -132,26 +135,6 @@ class ModuleCollection extends Collection {
         }
 
         return ret;
-    }
-
-    add(module) {
-        this.set(module.name, module);
-
-        if (module.aliases) {
-            for (const alias of module.aliases) {
-                this.set(alias, module);
-            }
-        }
-    }
-
-    remove(module) {
-        this.delete(module.name);
-
-        if (module.aliases) {
-            for (const alias of module.aliases) {
-                this.delete(alias);
-            }
-        }
     }
 }
 

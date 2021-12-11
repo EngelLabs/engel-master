@@ -1,7 +1,6 @@
 const Module = require('../../structures/Module');
 const ModLog = require('../../models/ModLog');
 const prettyMS = require('pretty-ms');
-const { PermissionOverwrite } = require('eris');
 const { Permissions } = require('eris').Constants;
 
 
@@ -12,9 +11,13 @@ class Moderator extends Module {
     constructor() {
         super();
 
-        this.aliases = ['Mod', 'Moderation'];
+        this.dbName = 'mod';
+        this.aliases = ['mod', 'moderation'];
         this.info = 'Enable command-based moderation for your server';
+    }
 
+    injectHook() {
+        this.tasks = [];
         this.tasks.push(
             [this.checkTimers.bind(this), 15000],
         );
@@ -77,11 +80,15 @@ class Moderator extends Module {
 
         const perms = member.permissions;
 
-        if (perms.has('manageGuild') || perms.has('administrator')) {
-            return 'That user is protected.';
-        }
+        if (perms) {
+            if (perms.has('manageGuild') || perms.has('administrator')) {
+                return 'That user is a server admin.';
+            }
 
-        // TODO: check if user is a server mod (permissions wise)
+            if (perms.has('banMembers') || perms.has('kickMembers')) {
+                return 'That user is a server moderator.';
+            }
+        }
 
         if (member.roles && member.roles.length) {
             const roles = member.guild.roles;

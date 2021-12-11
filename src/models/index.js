@@ -12,7 +12,7 @@ mongoose.connect(baseConfig.mongoUri, {
 });
 
 mongoose.connection.once('connected', () => {
-    logger.info('[MongoDB] Connected.')
+    logger.info('[MongoDB] Connected.');
 });
 
 mongoose.connection.on('error', err => {

@@ -5,8 +5,10 @@
   "description": "A Discord bot to provide some nice utilities.",
   "scripts": {
     "start": "node src/index.js",
-    "debug": "node src/scripts/debug.js",
-    "create-config": "node src/scripts/create-config.js"
+    "dev": "npx nodemon -i src/modules/",
+    "config": "node src/scripts/config.js",
+    "config:create": "node src/scripts/config.js create",
+    "config:delete": "node src/scripts/config.js delete"
   },
   "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
   "dependencies": {
@@ -24,11 +26,13 @@
     "moment": "^2.29.1",
     "mongoose": "^6.0.12",
     "mongoose-long": "^0.5.0",
-    "pako": "^1.0.11",
     "pretty-ms": "^7.0.1",
     "require-reload": "^0.2.2",
     "superagent": "^6.1.0",
     "winston": "^3.3.3",
     "zlib-sync": "^0.1.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }

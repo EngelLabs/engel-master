@@ -24,6 +24,7 @@ const configSchema = new Schema({
     cooldownWarn:     { type: Boolean, default: globalDefaults.cooldownWarn },
     cooldownWarnDeleteAfter: { type: Number, default: globalDefaults.cooldownWarnDeleteAfter },
     shutup:           { type: Boolean, default: globalDefaults.shutup },
+    adminOnly:        { type: Boolean, default: globalDefaults.adminOnly },
 },
     { collection: 'configurations', strict: false, minimize: false },
 );

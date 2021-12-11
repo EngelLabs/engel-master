@@ -5,7 +5,7 @@ class Manager extends Module {
     constructor() {
         super();
 
-        this.aliases = ['Management'];
+        this.aliases = ['management'];
         this.info = 'Commands to manage and configure your server';
     }
 

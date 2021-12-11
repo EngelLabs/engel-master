@@ -54,14 +54,15 @@ class Core extends Module {
     }
 
     injectHook() {
-        this.botListeners = new Array();
         this.cooldowns = new Map();
         this.globalCooldowns = new Map();
 
-        this.checks    = this.bot.checks    = new Checks(this);
+        this.checks = this.bot.checks = new Checks(this);
         this.converter = this.bot.converter = new Converter(this);
-        this.helper    = this.bot.helper    = new Helper(this);
+        this.helper = this.bot.helper = new Helper(this);
 
+        this.listeners = [];
+        this.botListeners = [];
         this.listeners.push(this.messageCreate.bind(this));
         this.listeners.push(this.guildCreate.bind(this));
         this.listeners.push(this.guildDelete.bind(this));
@@ -104,7 +105,7 @@ class Core extends Module {
         const isAdmin = this.checks.isAdmin(message);
         const config = this.bot.config;
 
-        if ((config.dev || config.shutup) && !isAdmin) return;
+        if ((config.dev || config.adminOnly || config.shutup) && !isAdmin) return;
 
         if (!isAdmin) {
             const last = this.globalCooldowns.get(message.author.id);
@@ -151,18 +152,18 @@ class Core extends Module {
 
         if (typeof prefix !== 'string') return;
 
-        const args = message.content.slice(prefix.length).split(' ');
+        const args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
 
         if (!args.length) return;
 
-        let command = this.bot.commands.get(args.shift().toLowerCase());
+        let command = this.bot.commands.get(args.shift());
 
         if (!command) return;
 
         const module = command.module;
 
         while (command.commands && args.length) {
-            const subcommand = command.commands.get(args[0].toLowerCase());
+            const subcommand = command.commands.get(args[0]);
 
             if (!subcommand) break;
 
@@ -185,83 +186,83 @@ class Core extends Module {
             guildConfig,
         });
 
-        // if (!isAdmin) {
-        if (module.commandCheck && !command.disableModuleCheck) {
-            if (!await Promise.resolve(module.commandCheck(ctx))) return;
-        }
-
-        if (command.check) {
-            if (!await Promise.resolve(command.check(ctx))) return;
-        }
-
-        const key = message.author.id + command.qualName;
-
-        const activeCooldown = this.cooldowns.get(key);
-        if (activeCooldown && (Date.now() - activeCooldown.time) <= activeCooldown.cooldown) {
-            if (!activeCooldown.warned && config.cooldownWarn) {
-                activeCooldown.warned = true;
-
-                ctx.send(`${message.author.mention}, Not so fast!`)
-                    .then(msg => {
-                        if (!msg) return;
-
-                        setTimeout(() => msg.delete().catch(() => false), config.cooldownWarnDeleteAfter);
-                    })
-                    .catch(() => false);
+        if (!isAdmin && !config.dev) {
+            if (module.commandCheck && !command.disableModuleCheck) {
+                if (!await Promise.resolve(module.commandCheck(ctx))) return;
             }
 
-            return;
-        }
-
-        const cooldown = typeof command.cooldown !== 'undefined' ? command.cooldown : config.commandCooldown;
-        const now = Date.now();
-        this.cooldowns.set(key, {
-            time: now,
-            cooldown: cooldown
-        });
-        this.globalCooldowns.set(message.author.id, now);
-
-        const moduleName = module.dbName;
-        const commandName = command.dbName;
-
-        if (!command.alwaysEnabled) {
-            if (ctx.moduleConfig && ctx.moduleConfig.enabled === false) {
-                return ctx.error(`The \`${module.name}\` module is disabled in this server.`);
+            if (command.check) {
+                if (!await Promise.resolve(command.check(ctx))) return;
             }
 
-            if (guildConfig.commands) {
-                let isEnabled = true,
-                    disabledCmdName;
+            const key = message.author.id + command.qualName;
 
-                if (command.parent) {
-                    if (guildConfig.commands[command.rootName] && guildConfig.commands[command.rootName].enabled === false) {
-                        isEnabled = false;
-                        disabledCmdName = command.rootName;
-                    } else if (guildConfig.commands[commandName] === false) {
-                        isEnabled = false;
-                        disabledCmdName = command.qualName;
-                    }
-                } else {
-                    if (guildConfig.commands[commandName] && guildConfig.commands[commandName].enabled === false) {
-                        isEnabled = false;
-                        disabledCmdName = command.qualName;
-                    }
+            const activeCooldown = this.cooldowns.get(key);
+            if (activeCooldown && (Date.now() - activeCooldown.time) <= activeCooldown.cooldown) {
+                if (!activeCooldown.warned && config.cooldownWarn) {
+                    activeCooldown.warned = true;
+
+                    ctx.send(`${message.author.mention}, Not so fast!`)
+                        .then(msg => {
+                            if (!msg) return;
+
+                            setTimeout(() => msg.delete().catch(() => false), config.cooldownWarnDeleteAfter);
+                        })
+                        .catch(() => false);
                 }
 
-                if (!isEnabled) {
-                    return ctx.error(`The \`${disabledCmdName}\` command is disabled in this server.`);
+                return;
+            }
+
+            const cooldown = typeof command.cooldown !== 'undefined' ? command.cooldown : config.commandCooldown;
+            const now = Date.now();
+            this.cooldowns.set(key, {
+                time: now,
+                cooldown: cooldown
+            });
+            this.globalCooldowns.set(message.author.id, now);
+
+            const moduleName = module.dbName;
+            const commandName = command.dbName;
+
+            if (!command.alwaysEnabled) {
+                if (ctx.moduleConfig && ctx.moduleConfig.enabled === false) {
+                    return ctx.error(`The \`${module.name}\` module is disabled in this server.`);
+                }
+
+                if (guildConfig.commands) {
+                    let isEnabled = true,
+                        disabledCmdName;
+
+                    if (command.parent) {
+                        if (guildConfig.commands[command.rootName] && guildConfig.commands[command.rootName].enabled === false) {
+                            isEnabled = false;
+                            disabledCmdName = command.rootName;
+                        } else if (guildConfig.commands[commandName] === false) {
+                            isEnabled = false;
+                            disabledCmdName = command.qualName;
+                        }
+                    } else {
+                        if (guildConfig.commands[commandName] && guildConfig.commands[commandName].enabled === false) {
+                            isEnabled = false;
+                            disabledCmdName = command.qualName;
+                        }
+                    }
+
+                    if (!isEnabled) {
+                        return ctx.error(`The \`${disabledCmdName}\` command is disabled in this server.`);
+                    }
                 }
             }
-        }
 
-        if (config.modules[moduleName] && !config.modules[moduleName].enabled) {
-            return ctx.error('Sorry, this module has been disabled globally. Try again later.');
-        }
+            if (config.modules[moduleName] && !config.modules[moduleName].enabled) {
+                return ctx.error('Sorry, this module has been disabled globally. Try again later.');
+            }
 
-        if (config.commands[commandName] && !config.commands[commandName].enabled) {
-            return ctx.error('Sorry, this command has been disabled globally. Try again later.');
+            if (config.commands[commandName] && !config.commands[commandName].enabled) {
+                return ctx.error('Sorry, this command has been disabled globally. Try again later.');
+            }
         }
-        // }
 
         if (command.requiredArgs && args.length < command.requiredArgs) {
             const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
@@ -404,7 +405,7 @@ class Core extends Module {
         }
 
         this.log(text);
-        
+
         if (!isAdmin && !this.bot.config.dev) {
             const doc = {
                 name: command.dbName,
@@ -427,10 +428,10 @@ class Core extends Module {
         if (guild) {
             text += `, Guild "${guild.name}" (${guild.id})`;
         }
-        
+
         this.log(text, 'error');
         console.error(err);
-        
+
         if (!isAdmin && !this.bot.config.dev) {
             const doc = {
                 name: command.dbName,

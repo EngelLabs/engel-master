@@ -30,7 +30,7 @@ const ban = new Command({
         ctx.args.shift();
 
         let deleteMessageDays = parseInt(ctx.args[0]);
-        if (!isNaN(deleteMessageDays)) {
+        if (isNaN(deleteMessageDays)) {
             deleteMessageDays = 2;
         } else {
             ctx.args.shift();
@@ -41,8 +41,6 @@ const ban = new Command({
         }
 
         const duration = ctx.bot.converter.duration(ctx.args[0]);
-
-        // if (duration && duration < 300) return ctx.error('Duration must be at least 5 minutes.');
 
         if (duration) ctx.args.shift();
 

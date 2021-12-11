@@ -14,14 +14,14 @@ module.exports = new Command({
         const module = ctx.bot.modules.get(str.charAt(0).toUpperCase() + str.slice(1));
 
         if (!module || ((module.private || module.internal) && !ctx.isAdmin)) {
-            let command = ctx.bot.commands.get(args[0].toLowerCase());
+            let command = ctx.bot.commands.get(args[0]);
 
             if (!command) return ctx.error('No command or module exists by that name');
 
             args.shift();
 
             while (command.commands && args.length) {
-                const subcommand = command.commands.get(args[0].toLowerCase());
+                const subcommand = command.commands.get(args[0]);
 
                 // if (!subcommand) return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
                 if (!subcommand) break;

@@ -11,9 +11,7 @@ class Module {
         }
 
         this.name = new.target.name;
-        this.tasks = [];
-        this.commands = [];
-        this.listeners = [];
+        this.dbName = this.name.toLowerCase();
 
         this.loadCommands();
         this.loadListeners();
@@ -25,10 +23,6 @@ class Module {
     
     get logger() {
         return logger;
-    }
-
-    get dbName() {
-        return this.name.toLowerCase();
     }
 
     get _dir() {
@@ -55,6 +49,8 @@ class Module {
             return;
         }
 
+        const commands = [];
+
         for (let file of files) {
             let command = reload(path + file);
 
@@ -65,8 +61,10 @@ class Module {
             
             command.module = this;
         
-            this.commands.push(command);
+            commands.push(command);
         }
+
+        if (commands.length) this.commands = commands;
     }
 
     loadListeners() {
@@ -78,6 +76,8 @@ class Module {
             // most likely that listeners directory doesn't exist.
             return;
         }
+
+        const listeners = [];
 
         for (let file of files) {
             let listener = reload(path + file);
@@ -96,8 +96,10 @@ class Module {
                 logger.error(`[Modules.${this.name}] Unknown listener ${listener} for path "${path}"`);
             }
 
-            this.listeners.push(listener);
+            listeners.push(listener);
         }
+
+        if (listeners.length) this.listeners = listeners;
     }
 
     inject(bot) {

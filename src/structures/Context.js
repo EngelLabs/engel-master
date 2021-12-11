@@ -65,11 +65,11 @@ class Context {
     }
 
     get moduleConfig() {
-        return this.guildConfig[this.module.name.toLowerCase()];
+        return this.guildConfig[this.module.dbName];
     }
 
     set moduleConfig(config) {
-        this.guildConfig[this.module.name.toLowerCase()] = config;
+        this.guildConfig[this.module.dbName] = config;
     }
 
     get commandConfig() {
@@ -193,7 +193,7 @@ class Context {
             this.channel.id, this.message.id, this.bot.config.emojis.loading
         );
     }
-    
+
     removeErrorReaction = () => {
         return this.eris.removeMessageReaction(
             this.channel.id, this.message.id, this.bot.config.emojis.error

@@ -26,7 +26,7 @@ module.exports = new Command({
         const module = command.module;
 
         while (command.commands && args.length) {
-            const subcommand = command.commands.get(args[0].toLowerCase());
+            const subcommand = command.commands.get(args[0]);
 
             if (!subcommand) {
                 return error(`Command \`${command.qualName}\` has no subcommand \`${args[0]}\``);

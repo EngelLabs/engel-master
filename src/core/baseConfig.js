@@ -110,5 +110,6 @@ module.exports = {
         cooldownWarn: true,
         cooldownWarnDeleteAfter: 8000,
         shutup: false,
+        adminOnly: false,
     },
 };

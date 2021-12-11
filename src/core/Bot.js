@@ -64,8 +64,8 @@ class Bot extends EventEmitter {
     getConfig() {
         return new Promise((resolve, reject) => {
             Config.findOne({
-                    state: baseConfig.state
-                })
+                state: baseConfig.state
+            })
                 .lean()
                 .exec()
                 .then(resolve)
@@ -77,20 +77,7 @@ class Bot extends EventEmitter {
         logger.info(`[Bot] Starting ${baseConfig.name} (${baseConfig.state}, v${baseConfig.version}).`);
 
         try {
-            try {
-                this.config = await this.getConfig();
-            } catch (err) {
-                logger.error('[Bot] Something went wrong.');
-                console.error(err);
-
-                if (process.send) {
-                    process.send({
-                        op: 'close'
-                    });
-                }
-
-                process.exit(1);
-            }
+            this.config = await this.getConfig();
 
             if (!this.config.dev) {
                 process.on('unhandledRejection', (reason, promise) => {
@@ -105,15 +92,7 @@ class Bot extends EventEmitter {
             const me = await eris.getSelf();
 
             if (baseConfig.clientId !== me.id) {
-                logger.error(`Invalid clientId ${baseConfig.clientId} provided. Actual user ID: ${me.id}`);
-
-                if (process.send) {
-                    process.send({
-                        op: 'close'
-                    });
-                }
-
-                process.exit(1);
+                throw new Error(`Invalid clientId ${baseConfig.clientId} provided. Actual user ID: ${me.id}`);
             }
 
             this.commands = new CommandCollection(this);
@@ -127,40 +106,33 @@ class Bot extends EventEmitter {
             await this.modules.register(this.config);
             await this.commands.register(this.config);
 
-            eris.on('connect', () => {
-                logger.info('[Eris] Connected.')
-            });
+            eris
+                .on('connect', () => {
+                    logger.info('[Eris] Connected.');
+                })
+                .on('disconnect', () => {
+                    logger.info('[Eris] Disconnected.');
+                    this.ready = false;
+                })
+                .on('ready', () => {
+                    logger.info('[Eris] Ready.');
+                    this.ready = true;
+                })
+                .on('error', err => {
+                    logger.error('[Eris] Something went wrong.');
+                    console.error(err);
+                })
+                .on('warn', msg => {
+                    logger.warn(`[Eris] ${msg}`)
+                });
 
-            eris.on('disconnect', () => {
-                logger.info('[Eris] Disconnected.');
-                this.ready = false;
-            });
+            await eris.connect();
 
-            eris.on('ready', () => {
-                logger.info('[Eris] Ready.');
-                this.ready = true;
-            });
-
-            eris.on('error', err => {
-                logger.error('[Eris] Something went wrong.');
-                console.error(err);
-            });
-
-            eris.on('warn', msg => {
-                logger.warn(`[Eris] ${msg}`)
-            });
-
-            return eris.connect();
-            
         } catch (err) {
             logger.error(`[Bot] Something went wrong.`);
             console.error(err);
 
-            if (process.send) {
-                process.send({
-                    op: 'close'
-                });
-            }
+            process.send && process.send({ op: 'close' });
 
             process.exit(1);
         }

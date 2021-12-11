@@ -14,7 +14,7 @@ const modLogSchema = new Schema({
     mod:     { type: Object, required: true },
     reason:  { type: String, required: false },
 },
-    { collection: 'modlogs' },
+    { collection: 'modlogs', strict: false },
 );
 
 modLogSchema.index(

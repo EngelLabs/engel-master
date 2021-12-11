@@ -58,26 +58,6 @@ class CommandCollection extends Collection {
         logger.info(`[Commands] ${this.unique().size} registered.`);
         logger.info(`[Commands] ${this.all().length} total registered.`);
     }
-
-    add(command) {
-        this.set(command.name, command);
-
-        if (command.aliases) {
-            for (const alias of command.aliases) {
-                this.set(alias, command);
-            }
-        }
-    }
-
-    remove(command) {
-        this.delete(command.name);
-
-        if (command.aliases) {
-            for (const alias of command.aliases) {
-                this.delete(alias);
-            }
-        }
-    }
 }
 
 
