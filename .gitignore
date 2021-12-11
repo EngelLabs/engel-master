@@ -126,5 +126,6 @@ dist
 .pnp.*
 
 
+.env
 public/js/react/
 public/css/

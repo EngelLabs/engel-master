@@ -1,25 +1,46 @@
-const baseConfig = require('../core/baseConfig');
-const logger = require('../core/logger');
-const mongoose = require('mongoose');
+const { MongoClient, Db, Logger } = require('mongodb');
+const baseConfig = require('./baseConfig');
+const logger = require('./logger');
+
+const collectionCache = {};
+const options = {
+    socketTimeoutMS: 25000,
+    keepAlive: true
+};
+
+const client = new MongoClient(baseConfig.mongoUri, options);
 
 
-if (!mongoose.SchemaTypes.Long || !mongoose.Schema.Types.Long) {
-    require('mongoose-long')(mongoose);
+client
+    .on('open', () => {
+        logger.info('[MongoDB] Connected.');
+    })
+    .on('close', () => {
+        logger.debug('[MongoDB] Connection closed.');
+    })
+    .on('error', err => {
+        logger.error('[MongoDB] Something went wrong.');
+        console.error(err);
+    })
+    .on('timeout', () => {
+        logger.error('[MongoDB] Connection timed out.');
+    });
+
+const db = client.db();
+
+client.db = () => db;
+
+db.collection = (name, opts) => {
+    if (opts) return Db.prototype.collection.call(db, name, opts);
+
+    let ret = collectionCache[name];
+
+    if (ret) return ret;
+
+    ret = Db.prototype.collection.call(db, name, opts);
+
+    return (collectionCache[name] = ret);
 }
 
-mongoose.connect(baseConfig.mongoUri, {
-    connectTimeoutMS: 30000,
-    keepAlive: true,
-});
 
-mongoose.connection.on('connected', () => {
-    logger.info('[MongoDB] Connected.');
-});
-
-mongoose.connection.on('error', () => {
-    logger.error('[MongoDB] Something went wrong.');
-    console.error(err);
-});
-
-
-module.exports = mongoose.connection;
+module.exports = client;
