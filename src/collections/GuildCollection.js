@@ -8,9 +8,9 @@ class GuildCollection extends Map {
 
         this.bot = bot;
         this.cache = options.cache;
+        this.creating = {};
 
         if (options.cache) {
-            this.creating = {};
             setInterval(this.uncache.bind(this), 60000);
 
             if (bot) {
@@ -86,7 +86,7 @@ class GuildCollection extends Map {
     }
 
     create(id) {
-        if (this.creating && this.creating[id]) {
+        if (this.creating[id]) {
             return this.creating[id];
         }
 
@@ -102,16 +102,24 @@ class GuildCollection extends Map {
                         this.set(id, guild);
                     }
 
+                    if (this.creating[id]) {
+                        delete this.creating[id];
+                    }
+
                     resolve(guild);
                 })
                 .catch(err => {
                     logger.error(err);
 
+                    if (this.creating[id]) {
+                        delete this.creating[id];
+                    }
+
                     reject(err);
                 });
         });
 
-        if (this.creating) this.creating[id] = p;
+        this.creating[id] = p;
 
         return p;
     }

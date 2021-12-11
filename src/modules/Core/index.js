@@ -90,7 +90,7 @@ class Core extends Module {
                 .set('Content-Type', 'application/json')
                 .send({ embeds: [embed] });
         } catch (err) {
-            this.logger.error(err, { at: 'Core.Logger.postEmbed' });
+            this.logger.error(err, { at: 'Core.postEmbed' });
         }
     }
 
@@ -99,21 +99,22 @@ class Core extends Module {
     }
 
     async messageCreate(message) {
-        if (!this.bot.ready || !this.bot.config) return;
-        if (message.author.bot || !message.channel) return;
+        if (message.author.bot || !this.bot.ready || !this.bot.config) return;
 
         const isAdmin = this.checks.isAdmin(message);
         const config = this.bot.config;
 
         if ((config.dev || config.adminOnly || config.shutup) && !isAdmin) return;
+        if (config.users.blacklisted.includes(message.author.id)) return;
 
         if (!isAdmin) {
             const last = this.globalCooldowns.get(message.author.id);
 
-            if (last && Date.now() - last <= config.globalCooldown) return;
+            if (last) {
+                if (Date.now() - last <= config.globalCooldown) return;
 
-            this.globalCooldowns.delete(message.author.id);
-            if (config.users.blacklisted.includes(message.author.id)) return;
+                this.globalCooldowns.delete(message.author.id);
+            }
         }
 
         const isDM = !message.channel.guild;
@@ -289,7 +290,17 @@ class Core extends Module {
         }
 
         try {
-            await command.execute(ctx);
+            if (command.before) {
+                await command.before(ctx);
+            }
+
+            if (!ctx.done) {
+                await command.execute(ctx);
+
+                if (command.after) {
+                    await command.after(ctx);
+                }
+            }
         } catch (err) {
             this.logger.error(err);
             ctx.err = err;

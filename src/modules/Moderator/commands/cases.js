@@ -34,9 +34,7 @@ module.exports = new Command({
 
         const msgArray = modlogs
             .map(m => {
-                let ret = 
-                `**Case:** ${m.case}
-                **Type:** ${m.type}\n`;
+                let ret = `**Case:** ${m.case}\n**Type:** ${m.type}\n`;
 
                 if (m.duration) {
                     const isActive = m.expiry && m.expiry > Date.now() ? 'true' : 'false';
@@ -48,7 +46,7 @@ module.exports = new Command({
                 }
 
                 ret += `**Moderator:** ${m.mod.name} (${m.mod.id})\n`;
-                
+
                 if (m.reason && m.reason.length) {
                     ret += `**Reason:** ${m.reason}\n`;
                 }

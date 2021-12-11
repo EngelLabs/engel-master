@@ -6,7 +6,7 @@ module.exports = new Command({
     usage: '[*command or module]',
     alwaysEnabled: true,
     dmEnabled: true,
-    info: 'Get help regarding a command or module',
+    info: 'Get help for a command or module',
     examples: [
         'help prefix',
         'help tag edit',
@@ -19,29 +19,42 @@ module.exports = new Command({
         }
         // add a help message later
 
-        const args = ctx.args.filter(({ length }) => length); // remove empty strings
-        const str = args.join(' ');
+        const str = ctx.args.join(' ');
 
         if (str.toLowerCase() === 'bot') {
-            return ctx.error(`To be implemented, sorry.`);
+            const msgArray = [
+                'Not implemented yet, sorry!',
+            ];
+            const me = ctx.me;
+            const embed = {
+                title: 'Bot Help',
+                description: msgArray.join('\n'),
+                author: {
+                    name: `${me.username}#${me.discriminator}`,
+                    url: me.avatarURL,
+                    icon_url: me.avatarURL,
+                },
+            }
+
+            return ctx.send({ embed });
         }
 
         const module = ctx.bot.modules.get(str);
 
         if (!module || ((module.private || module.internal) && !ctx.isAdmin)) {
-            let command = ctx.bot.commands.get(args[0]);
+            let command = ctx.bot.commands.get(ctx.args[0]);
 
             if (!command) return ctx.error('No command or module exists by that name');
 
-            args.shift();
+            ctx.args.shift();
 
-            while (command.commands && args.length) {
-                const subcommand = command.commands.get(args[0]);
+            while (command.commands && ctx.args.length) {
+                const subcommand = command.commands.get(ctx.args[0]);
 
                 // if (!subcommand) return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
                 if (!subcommand) break;
 
-                args.shift();
+                ctx.args.shift();
                 command = subcommand;
             }
 

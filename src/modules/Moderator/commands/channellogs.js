@@ -21,7 +21,7 @@ module.exports = new Command({
         } catch (err) {
             return ctx.error(err);
         }
-        
+
         if (isNaN(channelId)) return ctx.error(channelId);
 
         const modlogs = await ModLog
@@ -35,9 +35,7 @@ module.exports = new Command({
 
         const msgArray = modlogs
             .map(m => {
-                let ret = 
-                `**Case:** ${m.case}
-                **Type:** ${m.type}\n`;
+                let ret = `**Case:** ${m.case}\n**Type:** ${m.type}\n`;
 
                 if (typeof m.count !== 'undefined') {
                     ret += `**Count:** ${m.count}\n`;
@@ -53,7 +51,7 @@ module.exports = new Command({
                 }
 
                 ret += `**Moderator:** ${m.mod.name} (${m.mod.id})\n`;
-                
+
                 if (m.reason && m.reason.length) {
                     ret += `**Reason:** ${m.reason}\n`;
                 }

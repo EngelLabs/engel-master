@@ -5,7 +5,7 @@ class Info extends Module {
     constructor() {
         super();
 
-        this.aliases = ['Information'];
+        this.aliases = ['information'];
         this.info = 'Commands to provide information about the bot';
         this.defaultEnabled = true;
     }
@@ -81,7 +81,7 @@ class Info extends Module {
 
             embed.footer.text += `\nConfused? Check out "${prefix}help bot"`;
         }
-        
+
         return embed;
     }
 
@@ -91,7 +91,7 @@ class Info extends Module {
      * @param {Boolean} includeHidden Whether to include hidden values
      * @returns {Object} embed
      */
-    getModuleHelp(module, prefix='?', includeHidden = false, verbose = true) {
+    getModuleHelp(module, prefix = '?', includeHidden = false, verbose = true) {
         const embed = {
             title: `Module "${module.name}" help`,
             description: '',
@@ -106,7 +106,7 @@ class Info extends Module {
             const commands = module.commands
                 .filter(cmd => cmd.hidden && !includeHidden ? false : true);
             const msg = commands
-                .map(cmd => `**${cmd.name}**: ${cmd.info || 'No info provided'}`)
+                .map(cmd => `\t**${cmd.name}**: ${cmd.info || 'No info provided'}`)
                 .join('\n');
 
             if (msg && msg.length) {

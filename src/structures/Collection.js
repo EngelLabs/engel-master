@@ -24,15 +24,15 @@ class Collection extends Map {
     }
 
     set(key, value) {
-        return super.set(key.toLowerCase ? key.toLowerCase() : key, value);
+        return super.set(key && key.toLowerCase ? key.toLowerCase() : key, value);
     }
 
     get(key, value) {
-        return super.get(key.toLowerCase ? key.toLowerCase() : key, value);
+        return super.get(key && key.toLowerCase ? key.toLowerCase() : key, value);
     }
 
-    delete(key, value) {
-        return super.delete(key.toLowerCase ? key.toLowerCase() : key, value);
+    delete(key) {
+        return super.delete(key && key.toLowerCase ? key.toLowerCase() : key);
     }
 }
 
