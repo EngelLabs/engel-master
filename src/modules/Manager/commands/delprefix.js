@@ -20,19 +20,20 @@ module.exports = new Command({
             return ctx.error('That prefix doesn\'t exist.');
         }
 
-        ctx.guildConfig.prefixes = ctx.guildConfig.prefixes.filter(p => p !== prefix);
+        let update;
 
         if (ctx.guildConfig.prefixes.length > 0) {
-            await Guild.updateOne(
-                { id: ctx.guildConfig.id },
-                { $pull: { 'prefixes': prefix } });
+            update = { $pull: { 'prefixes': prefix } };
+
+            ctx.guildConfig.prefixes = ctx.guildConfig.prefixes.filter(p => p !== prefix);
 
         } else {
-            await Guild.updateOne({ id: ctx.guildConfig.id },
-                { $set: { 'prefixes': ctx.config.prefixes.default } });
+            update = { $set: { 'prefixes': ctx.config.prefixes.default } };
 
             ctx.guildConfig.prefixes = ctx.config.prefixes.default;
         }
+
+        await ctx.bot.guilds.update(ctx.guildConfig, update);
 
         return ctx.success(`Removed prefix \`${prefix}\`.`);
     }

@@ -16,6 +16,7 @@ module.exports = {
     redisPort: process.env.REDIS_PORT,
     redisHost: process.env.REDIS_HOST,
     defaultOptions: {
+        disableCache: false,
         eris: {
             intents: [
                 'directMessages',
@@ -26,7 +27,7 @@ module.exports = {
             restMode: true,
             messageLimit: 15,
             getAllUsers: true,
-        }
+        },
     },
     globalDefaults: {
         dev: process.env.NODE_ENV === 'development',
@@ -64,7 +65,7 @@ module.exports = {
                 id: '828010463476056137',
                 invite: 'https://discord.gg/ZZpqkn6HdG'
             },
-            protected: [ '828010463476056137' ],
+            protected: ['828010463476056137'],
             testing: [],
         },
         users: {
@@ -108,6 +109,7 @@ module.exports = {
         globalCooldown: 700,
         commandCooldown: 2500,
         cooldownWarn: true,
+        cooldownWarnDelete: true,
         cooldownWarnDeleteAfter: 8000,
         shutup: false,
         adminOnly: false,

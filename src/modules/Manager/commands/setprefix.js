@@ -16,14 +16,13 @@ module.exports = new Command({
         }
 
         if (!prefix.length ||
-            prefix.length >= 12) {
-            return ctx.error('Invalid prefix.');
+            prefix.length >= 13) {
+            return ctx.error('Invalid prefix length. Must be between 1-12.');
         }
 
-        await Guild.updateOne({ id: ctx.guildConfig.id },
-            { $set: { 'prefixes': [prefix] } });
-
         ctx.guildConfig.prefixes = [prefix];
+        ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { 'prefixes': [prefix] } });
+
         return ctx.success(`Replaced prefixes with \`${prefix}\``);
     }
 });

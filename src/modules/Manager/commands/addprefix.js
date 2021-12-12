@@ -20,18 +20,17 @@ module.exports = new Command({
         }
 
         if (!prefix.length ||
-            prefix.length >= 12) {
-            return ctx.error(`Invalid prefix.`);
+            prefix.length >= 13) {
+            return ctx.error('Invalid prefix length. Must be between 1-12.');
         }
 
         if (ctx.guildConfig.prefixes.includes(prefix)) {
             return ctx.error('That prefix already exists.');
         }
 
-        await Guild.updateOne({ id: ctx.guildConfig.id },
-            { $addToSet: { 'prefixes': prefix } });
-
         ctx.guildConfig.prefixes.push(prefix);
+        ctx.bot.guilds.update(ctx.guildConfig, { $addToSet: { 'prefixes': prefix } });
+
         return ctx.success(`Added prefix \`${prefix}\`.`);
     }
 });

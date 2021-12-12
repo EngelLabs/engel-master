@@ -13,14 +13,12 @@ class GuildCollection extends Map {
         if (options.cache) {
             setInterval(this.uncache.bind(this), 60000);
 
-            if (bot) {
-                bot.redis.subscribe('guildUpdate');
-                bot.redis.on('message', (channel, message) => {
-                    if (channel === 'guildUpdate') this.guildUpdate(message)
-                });
-                bot.eris.on('guildCreate', this.guildCreate.bind(this));
-                bot.eris.on('guildDelete', this.guildDelete.bind(this));
-            }
+            bot.redis.subscribe('guildUpdate');
+            bot.redis.on('message', (channel, message) => {
+                if (channel === 'guildUpdate') this.guildUpdate(message)
+            });
+            bot.eris.on('guildCreate', this.guildCreate.bind(this));
+            bot.eris.on('guildDelete', this.guildDelete.bind(this));
         }
     }
 
@@ -46,7 +44,7 @@ class GuildCollection extends Map {
     }
 
     guildUpdate(id) {
-        if (this.bot && this.bot.eris.guilds.has(id)) {
+        if (this.bot.eris.guilds.has(id)) {
             this.fetch(id);
         }
     }

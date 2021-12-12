@@ -9,20 +9,12 @@ class Manager extends Module {
         this.info = 'Commands to manage and configure your server';
     }
 
-    commandCheck(ctx) {
-        return (
-            ctx.bot.checks.isOwner(ctx) ||
-            ctx.bot.checks.isServerAdmin(ctx) ||
-            ctx.bot.checks.canInvoke(ctx)
-        );
-    }
-
     _debug(channel, guildConfig) {
         const msgArray = [];
         const infoArray = [];
 
         // const perms = channel.permissionsOf(this.eris.user.id);
-        
+
         infoArray.push(`The prefix${guildConfig.prefixes.length > 1 ? 'es' : ''} for this server: ${guildConfig.prefixes.map(p => `\`${p}\``).join(', ')}`);
 
         return [msgArray, infoArray];
@@ -80,7 +72,7 @@ class Manager extends Module {
         } else {
             checkPerms(guildConfig);
         }
-        
+
         if (!config.commands[command.dbName].enabled) {
             msgArray.push('This command has been disabled globally');
         }
@@ -113,7 +105,7 @@ class Manager extends Module {
             title: `Module "${module.name}" debug`,
             color: config.colours.loading,
         };
-        
+
         if (!config.modules[module.dbName].enabled) {
             msgArray.push('This module has been disabled globally');
         }

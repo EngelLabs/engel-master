@@ -9,7 +9,7 @@ class Admin extends Module {
         this.info = 'Admin-only commands';
     }
 
-    async commandCheck(ctx) {
+    commandCheck(ctx) {
         return ctx.author.id === ctx.config.author.id;
     }
 }

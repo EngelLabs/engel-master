@@ -74,9 +74,11 @@ class Bot extends EventEmitter {
     }
 
     async run(options) {
-        logger.info(`[Bot] Starting ${baseConfig.name} (${baseConfig.state}, v${baseConfig.version}).`);
-
         try {
+            logger.info(`[Bot] Starting ${baseConfig.name} (${baseConfig.state}, v${baseConfig.version}).`);
+
+            options = Object.assign(options || {}, baseConfig.defaultOptions);
+
             this.config = await this.getConfig();
 
             if (!this.config.dev) {
@@ -85,9 +87,7 @@ class Bot extends EventEmitter {
                 });
             }
 
-            const eris = this.eris = new Eris(
-                baseConfig.token, options ? options.eris : baseConfig.defaultOptions.eris
-            );
+            const eris = this.eris = new Eris(baseConfig.token, options.eris);
 
             const me = await eris.getSelf();
 
@@ -97,7 +97,7 @@ class Bot extends EventEmitter {
 
             this.commands = new CommandCollection(this);
             this.modules = new ModuleCollection(this);
-            this.guilds = new GuildCollection(this);
+            this.guilds = new GuildCollection(this, { cache: !options.disableCache });
 
             setInterval(this.updateConfig.bind(this), 25000);
 

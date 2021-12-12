@@ -178,7 +178,7 @@ class Core extends Module {
             bot: this.bot,
             eris: this.eris,
             args,
-            prefix,
+            prefix: prefix || '?',
             message,
             command,
             module,
@@ -187,14 +187,20 @@ class Core extends Module {
             guildConfig,
         });
 
-        if (!isAdmin && !config.dev) {
-            if (module.commandCheck && !command.disableModuleCheck) {
-                if (!await Promise.resolve(module.commandCheck(ctx))) return;
+        if (!isAdmin || (isAdmin && config.dev)) {
+            if (!command.disableModuleCheck) {
+                if (module.commandCheck) {
+                    if (!await module.commandCheck(ctx)) return;
+                } else {
+                    if (!(
+                        this.checks.isOwner(ctx) ||
+                        this.checks.isServerAdmin(ctx) ||
+                        this.checks.canInvoke(ctx)
+                    )) return;
+                }
             }
 
-            if (command.check) {
-                if (!await Promise.resolve(command.check(ctx))) return;
-            }
+            if (command.check && !await command.check(ctx)) return;
 
             const key = message.author.id + command.qualName;
 
@@ -205,7 +211,7 @@ class Core extends Module {
 
                     ctx.send(`${message.author.mention}, Not so fast!`)
                         .then(msg => {
-                            if (!msg) return;
+                            if (!msg || !config.cooldownWarnDelete) return;
 
                             setTimeout(() => msg.delete().catch(() => false), config.cooldownWarnDeleteAfter);
                         })
@@ -268,9 +274,7 @@ class Core extends Module {
         if (command.requiredArgs && args.length < command.requiredArgs) {
             const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
 
-            return ctx.send({
-                embed
-            });
+            return ctx.send({ embed });
         }
 
         if (command.requiredPermissions) {
@@ -324,10 +328,9 @@ class Core extends Module {
 
         const guildOwner = guild.members.get(guild.ownerID);
 
-        const msgs = {
+        const msg = {
             description: [
                 `Added to guild ${guild.name} (${guild.id})`,
-                `Owner: ${guildOwner.username}#${guildOwner.discriminator} (${guild.ownerID})`,
                 `Members: ${guild.memberCount}`,
             ],
             footer: [
@@ -338,10 +341,10 @@ class Core extends Module {
         };
 
         const embed = {
-            description: msgs.description.join('\n'),
+            description: msg.description.join('\n'),
             timestamp: new Date().toISOString(),
             color: this.bot.config.colours.success,
-            footer: { text: msgs.footer.join('\n') },
+            footer: { text: msg.footer.join('\n') },
         };
 
         if (guildOwner) {
@@ -358,7 +361,7 @@ class Core extends Module {
     }
 
     guildDelete(guild) {
-        if (!this.bot.ready || guild.unvailable) return;
+        if (!this.bot.ready || guild.unavailable) return;
 
         const eris = this.bot.eris;
 

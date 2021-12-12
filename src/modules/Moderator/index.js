@@ -23,14 +23,6 @@ class Moderator extends Module {
         );
     }
 
-    commandCheck(ctx) {
-        return (
-            ctx.bot.checks.isOwner(ctx) ||
-            ctx.bot.checks.isServerAdmin(ctx) ||
-            ctx.bot.checks.canInvoke(ctx)
-        );
-    }
-
     /**
      * Find and handle expired timers
      * @returns {Promise<void>}
@@ -94,31 +86,30 @@ class Moderator extends Module {
             const roles = member.guild.roles;
             const topRole = ctx.topRole;
 
-            if (typeof topRole !== 'undefined') {
-                for (const roleId of member.roles) {
-                    const role = roles.get(roleId);
-                    if (role && role.position >= topRole.position) {
-                        return hierarchyError.replace('{action}', action);
+            if (topRole) {
+                if (member.roles.find(id => {
+                    const r = roles.get(id);
+
+                    if (r && r.position >= topRole.position) {
+                        return true;
                     }
-                }
+                })) return hierarchyError.replace('{action}', action);
             }
 
             if (ctx.commandConfig &&
                 ctx.commandConfig.protectedRoles &&
                 ctx.commandConfig.protectedRoles.length) {
-                for (const roleId of ctx.commandConfig.protectedRoles) {
-                    if (member.roles.includes(roleId)) {
-                        return 'That user is protected.';
-                    }
+                const protectedRoles = ctx.commandConfig.protectedRoles;
+                if (member.roles.find(id => protectedRoles.includes(id))) {
+                    return 'That user is protected.';
                 }
-            } else if (!ctx.commandConfig || !ctx.commandConfig.protectedRoles) {
+            } else {
                 if (ctx.moduleConfig &&
                     ctx.moduleConfig.protectedRoles &&
                     ctx.moduleConfig.protectedRoles.length) {
-                    for (const roleId of ctx.moduleConfig.protectedRoles) {
-                        if (member.roles.includes(roleId)) {
-                            return 'That user is protected.';
-                        }
+                    const protectedRoles = ctx.moduleConfig.protectedRoles;
+                    if (member.roles.find(id => protectedRoles.includes(id))) {
+                        return 'That user is protected.';
                     }
                 }
             }

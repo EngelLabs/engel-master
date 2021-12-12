@@ -2,12 +2,13 @@ const Command = require('../../../structures/Command');
 const Tag = require('../../../models/Tag');
 
 
-// do this
 const tags = new Command({
     name: 'tags',
     info: 'Commands to manage tags',
     execute: function (ctx) {
-        return ctx.loadingReaction();
+        const embed = ctx.bot.commands.getHelp(tags, ctx.prefix, ctx.isAdmin);
+
+        return ctx.send({ embed });
     }
 });
 
@@ -30,7 +31,7 @@ tags.command({
         const name = ctx.args.join(' ');
 
         const tag = await Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
-        
+
         if (!tag) return ctx.error(`Tag \`${name}\` not found.`);
 
         const author = ctx.eris.users.get(tag.author);

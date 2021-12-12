@@ -9,16 +9,16 @@ const muterole = new Command({
     execute: async function (ctx) {
         if (!ctx.args.length) {
             if (ctx.guildConfig.muteRole) {
-                    const muteRole = ctx.guild.roles.get(ctx.guildConfig.muteRole);
+                const muteRole = ctx.guild.roles.get(ctx.guildConfig.muteRole);
 
-                    if (muteRole) {
-                        return ctx.success(
-                            `Mute role for **${ctx.guild.name}**: ${muteRole.mention} (ID: ${muteRole.id})`,
-                            { allowedMentions: { roles: false } },
-                        );
-                    }
+                if (muteRole) {
+                    return ctx.success(
+                        `Mute role for **${ctx.guild.name}**: ${muteRole.mention} (ID: ${muteRole.id})`,
+                        { allowedMentions: { roles: false } },
+                    );
                 }
-            
+            }
+
             return ctx.error(`This server doesn\'t have a mute role configured.`);
         }
 
@@ -38,8 +38,8 @@ const muterole = new Command({
         }
 
         ctx.guildConfig.muteRole = role.id;
-        await ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { muteRole: role.id } });
-        
+        ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { muteRole: role.id } });
+
         return ctx.success('Mute role updated.');
     }
 });

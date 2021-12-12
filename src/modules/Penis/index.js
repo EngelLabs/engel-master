@@ -5,7 +5,7 @@ const penisExchangeBuddies = [
     '366789046669934593', // Lysankya
     '338082875394097153', // sempai
     '329768023869358081', // timtoy
-    '756389805071269908', // Mr.GodAtEverything
+    // '756389805071269908', // Mr.GodAtEverything
     '769350257430626325', // aerro
     '555081433153011727', // choppedliver
     '485963117369491466', // Equinox.

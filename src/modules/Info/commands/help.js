@@ -9,8 +9,8 @@ module.exports = new Command({
     info: 'Get help for a command or module',
     examples: [
         'help prefix',
-        'help tag edit',
-        'help Info',
+        'help ban',
+        'help utility',
     ],
     cooldown: 1500,
     execute: function (ctx) {
@@ -39,40 +39,38 @@ module.exports = new Command({
             return ctx.send({ embed });
         }
 
-        const module = ctx.bot.modules.get(str);
+        let command = ctx.bot.commands.get(ctx.args.shift());
 
-        if (!module || ((module.private || module.internal) && !ctx.isAdmin)) {
-            let command = ctx.bot.commands.get(ctx.args[0]);
+        while (command && command.commands && ctx.args.length) {
+            const subcommand = command.commands.get(ctx.args[0]);
 
-            if (!command) return ctx.error('No command or module exists by that name');
+            /*
+            if (!subcommand) return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
+            */
 
+            if (!subcommand) break;
+
+            command = subcommand;
             ctx.args.shift();
+        }
 
-            while (command.commands && ctx.args.length) {
-                const subcommand = command.commands.get(ctx.args[0]);
+        if (!command || ((command.module.private || command.module.internal) && !ctx.isAdmin)) {
+            const module = ctx.bot.modules.get(str);
 
-                // if (!subcommand) return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
-                if (!subcommand) break;
-
-                ctx.args.shift();
-                command = subcommand;
-            }
-
-            if ((command.hidden && !ctx.isAdmin) ||
-                ((command.module.private || command.module.internal) && !ctx.isAdmin)) {
-                return ctx.error('No command or module exists by that name');
+            if (!module || ((module.private || module.internal) && !ctx.isAdmin)) {
+                return ctx.error('No command or module exists by that name.');
             }
 
             const verbose = ctx.moduleConfig ? ctx.moduleConfig.verbose : true;
 
-            const embed = ctx.module.getCommandHelp(command, ctx.prefix, ctx.isAdmin, verbose);
+            const embed = ctx.module.getModuleHelp(module, ctx.prefix, ctx.isAdmin, verbose);
 
             return ctx.send({ embed });
         }
 
         const verbose = ctx.moduleConfig ? ctx.moduleConfig.verbose : true;
 
-        const embed = ctx.module.getModuleHelp(module, ctx.prefix, ctx.isAdmin, verbose);
+        const embed = ctx.module.getCommandHelp(command, ctx.prefix, ctx.isAdmin, verbose);
 
         return ctx.send({ embed });
     }
