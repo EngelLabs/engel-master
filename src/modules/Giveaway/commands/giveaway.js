@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const Giveaway = require('../../../models/Giveaway');
 const prettyMS = require('pretty-ms');
 
 

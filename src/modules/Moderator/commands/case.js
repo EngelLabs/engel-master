@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const ModLog = require('../../../models/ModLog');
 const prettyMS = require('pretty-ms');
 
 
@@ -24,7 +23,7 @@ module.exports = new Command({
         }
 
         try {
-            var modlog = await ModLog
+            var modlog = await ctx.models.ModLog
                 .findOne({ guild: ctx.guild.id, case: caseNum })
                 .lean()
                 .exec();

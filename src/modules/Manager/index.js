@@ -63,17 +63,15 @@ class Manager extends Module {
             }
         }
 
-        const commandName = command.parent ? command.rootName : command.name;
-
-        if (guildConfig.commands && guildConfig.commands[commandName]) {
-            checkPerms(guildConfig.commands[commandName]);
+        if (guildConfig.commands && guildConfig.commands[command.rootName]) {
+            checkPerms(guildConfig.commands[command.rootName]);
         } else if (guildConfig[command.module.dbName]) {
             checkPerms(guildConfig[command.module.dbname]);
         } else {
             checkPerms(guildConfig);
         }
 
-        if (!config.commands[command.dbName].enabled) {
+        if (config.commands[command.dbName] && config.commands[command.dbName].disabled) {
             msgArray.push('This command has been disabled globally');
         }
 
@@ -81,7 +79,7 @@ class Manager extends Module {
         //     infoArray.push('This command hasn\'t been configured for this server yet');
         // }
 
-        if (guildConfig.commands && ((command.parent && guildConfig.commands[command.dbName] === false) || (!command.parent && guildConfig.commands[command.dbName] && guildConfig.commands[command.dbName].enabled === false))) {
+        if (command.rich && guildConfig.commands[command.dbName] && guildConfig.commands[command.dbName].disabled) {
             msgArray.push('This command is disabled in this server');
         }
 
@@ -106,7 +104,7 @@ class Manager extends Module {
             color: config.colours.loading,
         };
 
-        if (!config.modules[module.dbName].enabled) {
+        if (config.modules[module.dbName].disabled) {
             msgArray.push('This module has been disabled globally');
         }
 
@@ -114,7 +112,7 @@ class Manager extends Module {
             infoArray.push('This module hasn\'t been configured for this server yet');
         }
 
-        if (guildConfig[module.dbName] && guildConfig[module.dbName].enabled === false) {
+        if (guildConfig[module.dbName] && guildConfig[module.dbName].disabled) {
             msgArray.push('This module is disabled in this server');
         }
 

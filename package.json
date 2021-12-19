@@ -8,7 +8,8 @@
     "dev": "npx nodemon -i src/modules/",
     "config": "node src/scripts/config.js",
     "config:create": "node src/scripts/config.js create",
-    "config:delete": "node src/scripts/config.js delete"
+    "config:delete": "node src/scripts/config.js delete",
+    "config:register": "node src/scripts/config.js register"
   },
   "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
   "dependencies": {

@@ -63,6 +63,7 @@ class Core extends Module {
 
         this.listeners = [];
         this.botListeners = [];
+
         this.listeners.push(this.messageCreate.bind(this));
         this.listeners.push(this.guildCreate.bind(this));
         this.listeners.push(this.guildDelete.bind(this));
@@ -90,22 +91,19 @@ class Core extends Module {
                 .set('Content-Type', 'application/json')
                 .send({ embeds: [embed] });
         } catch (err) {
-            this.logger.error(err, { at: 'Core.postEmbed' });
+            // this.logger.error(err, { at: 'Core.postEmbed' });
         }
     }
 
-    log(msg, level = 'debug') {
-        return this.logger[level](`[Modules.Core] ${msg}`);
-    }
-
     async messageCreate(message) {
-        if (message.author.bot || !this.bot.ready || !this.bot.config) return;
+        if (message.author.bot || !this.bot.ready) return;
 
         const isAdmin = this.checks.isAdmin(message);
         const config = this.bot.config;
 
-        if ((config.dev || config.adminOnly || config.shutup) && !isAdmin) return;
-        if (config.users.blacklisted.includes(message.author.id)) return;
+        if (config.dev && !config.users.testers.includes(message.author.id)) return;
+        if ((config.adminOnly || config.shutup) && !isAdmin) return;
+        if (config.users.blacklisted.includes(message.author.id) && !isAdmin) return;
 
         if (!isAdmin) {
             const last = this.globalCooldowns.get(message.author.id);
@@ -124,14 +122,14 @@ class Core extends Module {
             try {
                 guildConfig = await this.bot.guilds.getOrFetch(message.channel.guild.id);
             } catch (err) {
-                return this.logger.error(err);
+                return this.log(err, 'error');
             }
 
             if (!guildConfig) {
                 try {
                     guildConfig = await this.bot.guilds.create(message.channel.guild.id);
                 } catch (err) {
-                    return this.logger.error(err);
+                    return this.log(err, 'error');
                 }
             }
 
@@ -139,7 +137,7 @@ class Core extends Module {
             guildConfig = Object.assign({}, config.dmConfig);
         }
 
-        if (guildConfig.blacklisted && !isAdmin) return;
+        if (guildConfig.isIgnored && !isAdmin) return;
 
         let prefixes = basePrefixes.concat(guildConfig.prefixes);
 
@@ -188,17 +186,15 @@ class Core extends Module {
         });
 
         if (!isAdmin || (isAdmin && config.dev)) {
-            if (!command.disableModuleCheck) {
-                if (module.commandCheck) {
-                    if (!await module.commandCheck(ctx)) return;
-                } else {
-                    if (!(
-                        this.checks.isOwner(ctx) ||
-                        this.checks.isServerAdmin(ctx) ||
-                        this.checks.canInvoke(ctx)
-                    )) return;
-                }
+            if (!command.disableModuleCheck && module.commandCheck) {
+                if (!await module.commandCheck(ctx)) return;
             }
+            
+            if (!(
+                this.checks.isOwner(ctx) ||
+                this.checks.isServerAdmin(ctx) ||
+                this.checks.canInvoke(ctx)
+            )) return;
 
             if (command.check && !await command.check(ctx)) return;
 
@@ -233,7 +229,7 @@ class Core extends Module {
             const commandName = command.dbName;
 
             if (!command.alwaysEnabled) {
-                if (ctx.moduleConfig && ctx.moduleConfig.enabled === false) {
+                if (ctx.moduleConfig && ctx.moduleConfig.disabled) {
                     return ctx.error(`The \`${module.name}\` module is disabled in this server.`);
                 }
 
@@ -241,8 +237,8 @@ class Core extends Module {
                     let isEnabled = true,
                         disabledCmdName;
 
-                    if (command.parent) {
-                        if (guildConfig.commands[command.rootName] && guildConfig.commands[command.rootName].enabled === false) {
+                    if (!command.rich) {
+                        if (guildConfig.commands[command.rootName] && guildConfig.commands[command.rootName].disabled) {
                             isEnabled = false;
                             disabledCmdName = command.rootName;
                         } else if (guildConfig.commands[commandName] === false) {
@@ -250,7 +246,7 @@ class Core extends Module {
                             disabledCmdName = command.qualName;
                         }
                     } else {
-                        if (guildConfig.commands[commandName] && guildConfig.commands[commandName].enabled === false) {
+                        if (guildConfig.commands[commandName] && guildConfig.commands[commandName].disabled) {
                             isEnabled = false;
                             disabledCmdName = command.qualName;
                         }
@@ -262,11 +258,11 @@ class Core extends Module {
                 }
             }
 
-            if (config.modules[moduleName] && !config.modules[moduleName].enabled) {
+            if (config.modules[moduleName] && config.modules[moduleName].disabled) {
                 return ctx.error('Sorry, this module has been disabled globally. Try again later.');
             }
 
-            if (config.commands[commandName] && !config.commands[commandName].enabled) {
+            if (config.commands[commandName] && config.commands[commandName].disabled) {
                 return ctx.error('Sorry, this command has been disabled globally. Try again later.');
             }
         }
@@ -294,19 +290,31 @@ class Core extends Module {
         }
 
         try {
+            let execute;
+
+            if (command.namespace) {
+                execute = () => {
+                    const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
+
+                    return ctx.send({ embed });
+                }
+            } else {
+                execute = () => command.execute(ctx);
+            }
+
             if (command.before) {
                 await command.before(ctx);
             }
 
             if (!ctx.done) {
-                await command.execute(ctx);
+                await execute();
 
                 if (command.after) {
                     await command.after(ctx);
                 }
             }
         } catch (err) {
-            this.logger.error(err);
+            this.log(err, 'error');
             ctx.err = err;
             this.bot.emit('commandError', ctx);
             return ctx.error('Sorry, something went wrong.');
@@ -418,7 +426,7 @@ class Core extends Module {
             text += `, Guild "${guild.name}" (${guild.id})`;
         }
 
-        this.log(text);
+        this.log(text, 'debug');
 
         if (!isAdmin && !this.bot.config.dev) {
             const doc = {
@@ -431,8 +439,8 @@ class Core extends Module {
                 },
             };
 
-            CommandLog.create(doc)
-                .catch(this.logger.error);
+            this.models.CommandLog.create(doc)
+                .catch(err => this.log(err, 'error'));
         }
     }
 
@@ -458,8 +466,8 @@ class Core extends Module {
                 failed: true,
             };
 
-            CommandLog.create(doc)
-                .catch(this.logger.error);
+            this.models.CommandLog.create(doc)
+                .catch(err => this.log(err, 'error'));
         }
     }
 }

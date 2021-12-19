@@ -77,6 +77,10 @@ module.exports = {
                 '827788394401890374',
                 '828377832950464572',
             ],
+            testers: [
+                '329768023869358081', // timtoy#1336
+                '403354067520323587', // catto#0924
+            ],
             blacklisted: [],
         },
         webhooks: {
@@ -113,5 +117,6 @@ module.exports = {
         cooldownWarnDeleteAfter: 8000,
         shutup: false,
         adminOnly: false,
+        updateInterval: 25000,
     },
 };

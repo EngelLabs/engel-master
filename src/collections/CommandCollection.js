@@ -1,5 +1,4 @@
 const Collection = require('../structures/Collection');
-const Config = require('../models/Config');
 const logger = require('../core/logger');
 
 
@@ -17,13 +16,13 @@ class CommandCollection extends Collection {
             this._getConfig(command)
                 .forEach(c => {
                     if (!c) return;
-                    
+
                     update['commands.' + c.name] = c
                 });
         }
 
         return new Promise((resolve, reject) => {
-            Config.updateOne({ state: config.state }, { $set: update })
+            this.bot.models.Config.updateOne({ state: config.state }, { $set: update })
                 .exec()
                 .then(resolve)
                 .catch(reject);
@@ -53,7 +52,7 @@ class CommandCollection extends Collection {
 
         return ret;
     }
-    
+
     log() {
         logger.info(`[Commands] ${this.unique().size} registered.`);
         logger.info(`[Commands] ${this.all().length} total registered.`);

@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 const reload = require('require-reload')(require);
 const Collection = require('../structures/Collection');
-const Config = require('../models/Config');
 const logger = require('../core/logger');
 
 const modulesPath = path.join(__dirname, '..', 'modules');
@@ -30,7 +29,7 @@ class ModuleCollection extends Collection {
 
         return new Promise((resolve, reject) => {
             if (update) {
-                Config.updateOne({ state: config.state }, { $set: update })
+                this.bot.models.Config.updateOne({ state: config.state }, { $set: update })
                     .exec()
                     .then(resolve)
                     .catch(reject);
@@ -47,6 +46,12 @@ class ModuleCollection extends Collection {
 
         try {
             module = new (reload('../modules/' + moduleName));
+
+            if (module.disabled) {
+                logger.debug(`[Modules] Skipping disabled module "${module.name}".`);
+
+                return false;
+            }
 
             module.inject(this.bot);
 

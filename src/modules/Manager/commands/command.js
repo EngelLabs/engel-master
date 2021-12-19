@@ -12,20 +12,22 @@ module.exports = new Command({
     cooldown: 3000,
     requiredArgs: 1,
     alwaysEnabled: true,
-    execute: async function ({
+    execute: function ({
         bot,
         guildConfig,
-        isAdmin,
         args,
         success,
         error
     }) {
         let command = bot.commands.get(args[0]);
 
-        args.shift();
-        const module = command.module;
+        if (!command || command.hidden || command.module.private || command.module.internal) {
+            return error(`Command \`${args[0]}\` not found.`);
+        }
 
-        while (command.commands && args.length) {
+        args.shift();
+
+        while (command && command.commands && args.length) {
             const subcommand = command.commands.get(args[0]);
 
             if (!subcommand) {
@@ -36,41 +38,42 @@ module.exports = new Command({
             command = subcommand;
         }
 
-        if (!command || ((command.hidden || module.private || module.internal) && !isAdmin)) {
+        if (!command || command.hidden || command.module.private || command.module.internal) {
             return error(`Command \`${args[0]}\` not found.`);
         }
 
         if (command.alwaysEnabled) return error('That command can\'t be disabled.');
 
-        const isSubcommand = typeof command.parent !== 'undefined';
         const commandName = command.dbName;
         let toggle;
 
         guildConfig.commands = guildConfig.commands || {};
 
-        if (isSubcommand) {
+        if (!command.rich) {
             toggle = typeof guildConfig.commands[commandName] !== 'undefined' ? !guildConfig.commands[commandName] : false;
             guildConfig.commands[commandName] = toggle;
         } else {
             const commandConfig = guildConfig.commands[commandName] = guildConfig.commands[commandName] || {};
-            toggle = commandConfig.enabled = typeof commandConfig.enabled !== 'undefined' ? !commandConfig.enabled : false;
+            toggle = commandConfig.disabled = !commandConfig.disabled;
         }
 
         queryString = 'commands.' + commandName;
 
-        if (!isSubcommand) {
-            queryString += '.enabled';
+        if (command.rich) {
+            queryString += '.disabled';
         }
 
-        await bot.guilds.update(guildConfig.id, {
+        bot.guilds.update(guildConfig.id, {
             $set: {
                 [queryString]: toggle
             }
         });
 
-        return success(toggle ?
-            `Command \`${command.qualName}\` enabled.` :
-            `Command \`${command.qualName}\` disabled.`
+        console.log(toggle);
+
+        return success(toggle
+            ? `Command \`${command.qualName}\` disabled.`
+            : `Command \`${command.qualName}\` enabled.`
         );
     }
 });

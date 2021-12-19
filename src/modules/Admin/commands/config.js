@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const Guild = require('../../../models/Guild');
 
 
 const before = ctx => {
@@ -37,7 +36,7 @@ config.command({
     before,
     dmEnabled: true,
     execute: async function (ctx) {
-        const result = await Guild.deleteOne({ id: ctx.guildId });
+        const result = await ctx.models.Guild.deleteOne({ id: ctx.guildId });
 
         return result.deletedCount
             ? ctx.success(`Guild \`${ctx.guildId}\`'s configuration deleted.`)

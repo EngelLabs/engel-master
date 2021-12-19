@@ -11,9 +11,9 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
     } else {
         delCommand = ctx.guildConfig.delCommand ? typeof ctx.guildConfig.delCommand !== 'undefined' : false;
     }
-    
+
     if (!delCommand) {
-        ctx.loadingReaction()
+        ctx.addLoadingReaction()
             .catch(() => false);
     } else {
         ctx.module.deleteCommand(ctx);
@@ -34,7 +34,7 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
         if (!delCommand) ctx.removeLoadingReaction().catch(() => false);
         return ctx.error(`${err}`);
     }
-    
+
     if (!delCommand) {
         ctx.removeLoadingReaction()
             .catch(() => false);

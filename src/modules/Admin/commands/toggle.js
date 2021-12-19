@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const Config = require('../../../models/Config');
 
 
 module.exports = new Command({
@@ -14,7 +13,7 @@ module.exports = new Command({
             return ctx.error(`\`${key}\` is not a valid boolean key.`);
         }
 
-        await Config.updateOne({ state: ctx.config.state }, { $set: { [key]: !value } });
+        await ctx.models.Config.updateOne({ state: ctx.config.state }, { $set: { [key]: !value } });
         await ctx.bot.updateConfig();
         return ctx.success(`Updated key \`${key}\`, value: \`${ctx.config[key]}\``)
     }

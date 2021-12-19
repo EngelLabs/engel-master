@@ -1,4 +1,3 @@
-const Guild = require('../models/Guild');
 const logger = require('../core/logger');
 
 
@@ -65,7 +64,7 @@ class GuildCollection extends Map {
 
     fetch(id) {
         return new Promise((resolve, reject) => {
-            Guild.findOne({ id })
+            this.bot.models.Guild.findOne({ id })
                 .lean()
                 .exec()
                 .then(guild => {
@@ -94,7 +93,7 @@ class GuildCollection extends Map {
         };
 
         const p = new Promise((resolve, reject) => {
-            Guild.create(doc)
+            this.bot.models.Guild.create(doc)
                 .then(guild => {
                     if (this.cache) {
                         this.set(id, guild);
@@ -124,7 +123,7 @@ class GuildCollection extends Map {
 
     update(id, update) {
         return new Promise((resolve, reject) => {
-            Guild.updateOne({ id: id.id || id }, update)
+            this.bot.models.Guild.updateOne({ id: id.id || id }, update)
                 .exec()
                 .then(resolve)
                 .catch(reject);

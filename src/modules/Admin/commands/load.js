@@ -5,6 +5,7 @@ module.exports = new Command({
     name: 'load',
     info: 'Load modules',
     usage: '[...modules]',
+    aliases: ['l'],
     dmEnabled: true,
     execute: function (ctx) {
         if (!ctx.config.dev) {

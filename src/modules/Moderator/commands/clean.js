@@ -20,7 +20,7 @@ module.exports = new Command({
             return ctx.error(`Count \`${ctx.args[0]}\` is invalid.`);
         }
 
-        ctx.loadingReaction().catch(() => false);
+        ctx.addLoadingReaction().catch(() => false);
 
         let messages = await ctx.eris.getMessages(ctx.channel.id, { limit: count, before: ctx.message.id });
 

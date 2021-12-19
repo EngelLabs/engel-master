@@ -12,25 +12,25 @@ module.exports = new Command({
     cooldown: 3000,
     requiredArgs: 1,
     alwaysEnabled: true,
-    execute: async function ({ bot, guildConfig, isAdmin, args, success, error }) {
+    execute: function ({ bot, guildConfig, args, success, error }) {
         const module = bot.modules.get(args[0].slice(0, 1).toUpperCase() + args[0].slice(1));
 
-        if (!module || ((module.private || module.internal) && !isAdmin)) {
+        if (!module || module.private || module.internal) {
             return error(`Module \`${args[0]}\` not found.`);
         }
 
         const moduleName = module.dbName;
 
         const moduleConfig = guildConfig[moduleName] = guildConfig[moduleName] || {};
-        moduleConfig.enabled = typeof moduleConfig.enabled !== 'undefined' ? !moduleConfig.enabled : false;
+        moduleConfig.disabled = !moduleConfig.disabled;
 
-        const queryString = 'modules.' + moduleName + '.enabled';
+        const queryString = 'modules.' + moduleName + '.disabled';
         
-        await bot.guilds.update(guildConfig.id, {$set: {[queryString]: moduleConfig.enabled}});
+        bot.guilds.update(guildConfig.id, {$set: {[queryString]: moduleConfig.disabled}});
 
-        return success(moduleConfig.enabled
-            ? `Module \`${module.name}\` enabled.`
-            : `Module \`${module.name}\` disabled.`
+        return success(moduleConfig.disabled
+            ? `Module \`${module.name}\` disabled.`
+            : `Module \`${module.name}\` enabled.`
         );
     }
 });

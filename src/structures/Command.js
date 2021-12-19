@@ -15,7 +15,7 @@ class Command {
     }
 
     get module() {
-        return this._module ? this._module : this.parent.module;
+        return this._module || this.parent.module;
     }
 
     set module(module) {
@@ -43,12 +43,20 @@ class Command {
         command.commands.add(this);
     }
 
+    get rich() {
+        return this._rich || !this.parent;
+    }
+
+    set rich(value) {
+        this._rich = value;
+    }
+
     get config() {
         if (this.hidden ||
             this.module.private ||
             this.module.internal) return;
             
-        const ret = { enabled: true, name: this.dbName };
+        const ret = { disabled: false, name: this.dbName };
 
         if (this.usage && this.usage.length) ret.usage = this.usage;
         if (this.info && this.info.length) ret.info = this.info;

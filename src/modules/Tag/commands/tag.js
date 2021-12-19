@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const Tag = require('../../../models/Tag');
 
 
 const tag = new Command({
@@ -11,7 +10,7 @@ const tag = new Command({
     execute: async function (ctx) {
         const name = ctx.args.join(' ');
 
-        const tag = await Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
+        const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
 
         return tag
             ? ctx.send(tag.content).catch(() => false)

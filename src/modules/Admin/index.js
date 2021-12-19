@@ -1,4 +1,5 @@
 const Module = require('../../structures/Module');
+const Command = require('../../structures/Command');
 
 
 class Admin extends Module {
@@ -7,6 +8,22 @@ class Admin extends Module {
 
         this.private = true;
         this.info = 'Admin-only commands';
+    }
+
+    injectHook() {
+        const admin = new Command({
+            name: 'admin',
+            aliases: ['a'],
+            namespace: true,
+            hidden: true,
+            info: 'Namespace for admin commands',
+        });
+
+        for (const command of this.commands) {
+            command.parent = admin;
+        }
+
+        this.commands = [admin];
     }
 
     commandCheck(ctx) {

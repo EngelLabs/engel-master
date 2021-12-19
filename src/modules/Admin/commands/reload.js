@@ -5,6 +5,7 @@ const reload = new Command({
     name: 'reload',
     info: 'Reload modules',
     usage: '[...modules]',
+    aliases: ['r'],
     dmEnabled: true,
     execute: function (ctx) {
         if (!ctx.config.dev) {
@@ -32,7 +33,7 @@ reload.command({
             return ctx.error(`Something went wrong: ${err}`);
         }
 
-        return ctx.successReaction();
+        return ctx.addSuccessReaction();
     }
 });
 

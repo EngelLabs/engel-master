@@ -1,7 +1,4 @@
 const Command = require('../../../structures/Command');
-const CommandLog = require('../../../models/CommandLog');
-const Guild = require('../../../models/Guild');
-const Config = require('../../../models/Config');
 
 
 module.exports = new Command({
@@ -11,12 +8,13 @@ module.exports = new Command({
     aliases: ['evaluate', 'e'],
     dmEnabled: true,
     execute: async function (ctx) {
-        let { message, guild, author, bot, member, channel,
-            args, eris, guildConfig, config, baseConfig, logger } = ctx,
+        let { send, message, guild, author, bot, member, channel,
+            args, eris, guildConfig, config, baseConfig, logger,
+            models, mongoose, database, redis, me, permissions } = ctx,
             __res;
 
         try {
-            __res = await Promise.resolve(eval(ctx.args.join(' ')));
+            __res = await eval(ctx.args.join(' '));
         } catch (err) {
             __res = `Rejection: ${err && err.toString ? err.toString() : err}`;
         }
@@ -27,6 +25,6 @@ module.exports = new Command({
                 .replace(process.env.CLIENT_TOKEN, '[[redacted]]');
         }
 
-        return ctx.send('```js\n' + __res + '\n```' );
+        return ctx.send('```js\n' + __res + '\n```');
     },
 });

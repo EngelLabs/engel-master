@@ -1,5 +1,4 @@
 const Module = require('../../structures/Module');
-const ModLog = require('../../models/ModLog');
 const prettyMS = require('pretty-ms');
 const { Permissions } = require('eris').Constants;
 
@@ -17,6 +16,8 @@ class Moderator extends Module {
     }
 
     injectHook() {
+        this.helper = this.bot.modules.get('modhelper');
+        
         this.tasks = [];
         this.tasks.push(
             [this.checkTimers.bind(this), 15000],
@@ -33,7 +34,7 @@ class Moderator extends Module {
         let modlogs;
 
         try {
-            modlogs = await ModLog.find({ expiry: { $lte: Date.now() } });
+            modlogs = await this.models.ModLog.find({ expiry: { $lte: Date.now() } });
         } catch (err) {
             this.logger.error(err);
             return;
@@ -251,7 +252,7 @@ class Moderator extends Module {
 
             this.logger.info(`[Modules.Moderator] Created modlog C${caseCount} G${guildConfig.id}.`);
 
-            ModLog.create(data)
+            this.models.ModLog.create(data)
                 .then(resolve)
                 .catch(reject);
         });
@@ -269,7 +270,7 @@ class Moderator extends Module {
         }
 
         return new Promise((resolve, reject) => {
-            ModLog.find(filter)
+            this.models.ModLog.find(filter)
                 .lean()
                 .exec()
                 .then(modlogs => {
@@ -374,6 +375,12 @@ class Moderator extends Module {
             });
     }
 
+    _isEnabled(guildConfig) {
+        if (!guildConfig.mod) return false;
+
+        return !guildConfig.mod.disabled;
+    }
+
     async timer_mute({ guild, user }) {
         guild = this.eris.guilds.get(guild);
 
@@ -382,7 +389,7 @@ class Moderator extends Module {
         if (!this.bot.checks.hasGuildPermissions(guild, 'manageRoles')) return;
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
-        if (!guildConfig || !this.bot.checks.moduleIsEnabled(this.dbName, guildConfig)) return;
+        if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
         const muteRole = guildConfig.muteRole;
         if (!muteRole) return;
@@ -413,7 +420,7 @@ class Moderator extends Module {
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
 
-        if (!guildConfig || !this.bot.checks.moduleIsEnabled(this.dbName, guildConfig)) return;
+        if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
         this.eris.unbanGuildMember(guild.id, user.id, 'module: Moderator. Auto unban')
             .then(() => {
@@ -440,7 +447,7 @@ class Moderator extends Module {
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
 
-        if (!guildConfig || !this.bot.checks.moduleIsEnabled(this.dbName, guildConfig)) return;
+        if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
         let overwrite = channel.permissionOverwrites.get(guild.id);
         let allow = overwrite.allow || BigInt(0),
@@ -488,7 +495,7 @@ class Moderator extends Module {
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
 
-        if (!guildConfig || !this.bot.checks.moduleIsEnabled(this.dbName, guildConfig)) return;
+        if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
         let overwrite = channel.permissionOverwrites.get(user.id);
         let allow = overwrite && overwrite.allow || BigInt(0),

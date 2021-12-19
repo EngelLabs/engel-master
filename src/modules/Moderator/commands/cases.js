@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const ModLog = require('../../../models/ModLog');
 const prettyMS = require('pretty-ms');
 
 
@@ -22,7 +21,7 @@ module.exports = new Command({
         if (isNaN(userId)) return ctx.error(userId);
 
         try {
-            var modlogs = await ModLog
+            var modlogs = await ctx.models.ModLog
                 .find({ guild: ctx.guildConfig.id, 'user.id': userId })
                 .lean()
                 .exec();

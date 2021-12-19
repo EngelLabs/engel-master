@@ -11,7 +11,7 @@ module.exports = new Command({
     execute: function (ctx) {
         const owner = ctx.eris.users.get(ctx.config.author.id);
 
-        if (!owner) return ctx.errorReaction();
+        if (!owner) return ctx.addErrorReaction();
 
         const embed = {
             description: `[Support server](${ctx.config.guilds.official.invite} "Very cool server, join it")`,

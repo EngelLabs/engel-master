@@ -7,8 +7,16 @@ class Context {
         Object.assign(this, options);
     }
 
+    get mongoose() {
+        return this.bot.mongoose;
+    }
+
     get database() {
-        return this.bot.database;
+        return this.bot.mongoose.connection;
+    }
+
+    get models() {
+        return this.bot.mongoose.models;
     }
 
     get redis() {
@@ -52,16 +60,15 @@ class Context {
     }
 
     get topRole() {
-        // lol this getter used to be so fucking stupid
-        // return this.message.channel.guild.members.get(this.eris.users.get(this.baseConfig.clientId).id).roles.map(id => this.message.channel.guild.roles.get(id)).map((prev, curr) => curr && curr.position > prev.position ? curr : prev);
         const me = this.me;
-        if (me.roles.length) {
-            const roles = this.guild.roles;
-            return me.roles.map(id => roles.get(id)).reduce((prev, curr) => curr && curr.position > prev.position ? curr : prev);
-        }
-        // if this is confusing for anyone else:
-        // this.me.roles is an array of role ids, and .map() is called to get full Role objects-
-        // -at which point its reduced to role with the highest position. this getter can return undefined.
+        if (!me.roles.length) return;
+
+        const roles = this.guild.roles;
+        return me.roles.map(id => roles.get(id)).reduce((prev, curr) => curr && curr.position > prev.position ? curr : prev);
+    }
+
+    get helper() {
+        return this.module.helper;
     }
 
     get moduleConfig() {
@@ -107,7 +114,7 @@ class Context {
         return this.eris.createMessage(this.channel.id, options, ...args);
     }
 
-    _sendResponse = (content, options = {}, colour, emoji) => {
+    _sendResponse(content, options = {}, colour, emoji) {
         if (!content) return Promise.resolve();
 
         if (this.guild) {
@@ -176,19 +183,19 @@ class Context {
         return this.send('<' + this.bot.config.emojis.loading + '>');
     }
 
-    errorReaction = () => {
+    addErrorReaction = () => {
         return this.eris.addMessageReaction(
             this.channel.id, this.message.id, this.bot.config.emojis.error
         );
     }
 
-    successReaction = () => {
+    addSuccessReaction = () => {
         return this.eris.addMessageReaction(
             this.channel.id, this.message.id, this.bot.config.emojis.success
         );
     }
 
-    loadingReaction = () => {
+    addLoadingReaction = () => {
         return this.eris.addMessageReaction(
             this.channel.id, this.message.id, this.bot.config.emojis.loading
         );

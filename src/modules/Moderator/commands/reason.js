@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const ModLog = require('../../../models/ModLog');
 
 
 module.exports = new Command({
@@ -31,7 +30,7 @@ module.exports = new Command({
             ? { $set: { reason: reason } }
             : { $unset: { reason: null } };
 
-        const result = await ModLog
+        const result = await ctx.models.ModLog
             .updateOne(filter, update)
             .exec();
         

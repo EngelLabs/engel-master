@@ -1,4 +1,5 @@
 const Command = require('../../../structures/Command');
+const moment = require('moment');
 
 
 module.exports = new Command({
@@ -26,7 +27,7 @@ module.exports = new Command({
             fields: [
                 { name: 'ID', value: role.id, inline: false },
                 { name: 'Colour', value: role.color ? role.color : 'Default', inline: false },
-                { name: 'Created at', value: new Date(role.createdAt).toString(), inline: false },
+                { name: 'Created at', value: moment(role.createdAt).format('LLLL'), inline: false },
                 { name: 'Bearers', value: ctx.guild.members.filter(m => m.roles.includes(role.id)).length, inline: false },
             ],
             footer: {

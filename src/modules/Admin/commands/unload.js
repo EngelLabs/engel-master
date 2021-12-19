@@ -5,6 +5,7 @@ module.exports = new Command({
     name: 'unload',
     info: 'Unload modules',
     usage: '[...modules]',
+    aliases: ['u'],
     dmEnabled: true,
     execute: function (ctx) {
         if (!ctx.config.dev) {

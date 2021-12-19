@@ -4,8 +4,7 @@ const Eris = require('eris');
 const logger = require('./logger');
 const redis = require('./redis');
 const baseConfig = require('./baseConfig');
-const database = require('../models');
-const Config = require('../models/Config');
+const mongoose = require('../models');
 const CommandCollection = require('../collections/CommandCollection');
 const ModuleCollection = require('../collections/ModuleCollection');
 const GuildCollection = require('../collections/GuildCollection');
@@ -13,9 +12,9 @@ const GuildCollection = require('../collections/GuildCollection');
 let EventEmitter;
 
 try {
-    EventEmitter = require('eventemitter3').EventEmitter;
+    EventEmitter = require('eventemitter3');
 } catch {
-    EventEmitter = require('events').EventEmitter;
+    EventEmitter = require('events');
 }
 
 
@@ -34,42 +33,43 @@ class Bot extends EventEmitter {
         return baseConfig;
     }
 
-    get database() {
-        return database;
+    get mongoose() {
+        return mongoose;
+    }
+
+    get models() {
+        return mongoose.models;
     }
 
     get redis() {
         return redis;
     }
 
-    get config() {
-        return this._config;
-    }
-
-    set config(config) {
-        if (!config) throw new Error(`Configuration not found for state ${baseConfig.state}`);
-
-        return (this._config = config);
-    }
-
     updateConfig() {
         return this.getConfig()
-            .then(config => this.config = config)
+            .then(config => {
+                if (!config) {
+                    logger.error(`Configuration not found for state ${baseConfig.state}`);
+
+                    return;
+                }
+
+                return this.config = config;
+            })
             .catch(err => {
-                logger.error(err)
-                return Promise.reject(err)
+                logger.error(err);
+
+                return Promise.reject(err);
             });
     }
 
     getConfig() {
         return new Promise((resolve, reject) => {
-            Config.findOne({
-                state: baseConfig.state
-            })
+            this.models.Config.findOne({ state: baseConfig.state })
                 .lean()
                 .exec()
                 .then(resolve)
-                .catch(reject)
+                .catch(reject);
         });
     }
 
@@ -79,9 +79,9 @@ class Bot extends EventEmitter {
 
             options = Object.assign(options || {}, baseConfig.defaultOptions);
 
-            this.config = await this.getConfig();
+            const config = this.config = await this.getConfig();
 
-            if (!this.config.dev) {
+            if (!config.dev) {
                 process.on('unhandledRejection', (reason, promise) => {
                     logger.error(`Unhandled Promise rejection at promise ${promise}. Reason: ${reason}`);
                 });
@@ -99,12 +99,14 @@ class Bot extends EventEmitter {
             this.modules = new ModuleCollection(this);
             this.guilds = new GuildCollection(this, { cache: !options.disableCache });
 
-            setInterval(this.updateConfig.bind(this), 25000);
+            setInterval(this.updateConfig.bind(this), config.updateInterval);
 
             this.modules.load();
 
-            await this.modules.register(this.config);
-            await this.commands.register(this.config);
+            if (config.dev) {
+                this.commands.register(config);
+                this.modules.register(config);
+            }
 
             eris
                 .on('connect', () => {

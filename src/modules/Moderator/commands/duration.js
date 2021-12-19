@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const ModLog = require('../../../models/ModLog');
 const prettyMS = require('pretty-ms');
 
 
@@ -31,7 +30,7 @@ module.exports = new Command({
             case: caseNum
         };
 
-        const result = await ModLog
+        const result = await ctx.models.ModLog
             .updateOne(filter, { $set: { duration: duration * 1000, expiry: Date.now() + duration * 1000 } })
             .exec();
         

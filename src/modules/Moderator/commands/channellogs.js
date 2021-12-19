@@ -1,5 +1,4 @@
 const Command = require('../../../structures/Command');
-const ModLog = require('../../../models/ModLog');
 const prettyMS = require('pretty-ms');
 
 
@@ -24,7 +23,7 @@ module.exports = new Command({
 
         if (isNaN(channelId)) return ctx.error(channelId);
 
-        const modlogs = await ModLog
+        const modlogs = await ctx.models.ModLog
             .find({ guild: ctx.guild.id, 'channel.id': channelId })
             .lean()
             .exec();

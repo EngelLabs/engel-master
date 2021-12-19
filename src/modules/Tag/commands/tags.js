@@ -1,21 +1,17 @@
 const Command = require('../../../structures/Command');
-const Tag = require('../../../models/Tag');
 
 
 const tags = new Command({
     name: 'tags',
     info: 'Commands to manage tags',
-    execute: function (ctx) {
-        const embed = ctx.bot.commands.getHelp(tags, ctx.prefix, ctx.isAdmin);
-
-        return ctx.send({ embed });
-    }
+    namespace: true,
 });
 
 tags.command({
     name: 'find',
     usage: '<*tag name>',
     info: 'Find a server tag',
+    rich: true,
     requiredArgs: 1,
     execute: function (ctx) {
         return ctx.bot.commands.get('tag').execute(ctx);
@@ -26,11 +22,12 @@ tags.command({
     name: 'info',
     usage: '<*tag name>',
     info: 'Get info about a server tag',
+    rich: true,
     requiredArgs: 1,
     execute: async function (ctx) {
         const name = ctx.args.join(' ');
 
-        const tag = await Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
+        const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
 
         if (!tag) return ctx.error(`Tag \`${name}\` not found.`);
 
@@ -68,6 +65,7 @@ tags.command({
     name: 'create',
     usage: '<tag name> <*tag content>',
     info: 'Create a server tag',
+    rich: true,
     requiredArgs: 1,
     execute: async function (ctx) {
         let name, content;
@@ -94,7 +92,7 @@ tags.command({
         }
 
         try {
-            await Tag.create({ guild: ctx.guild.id, author: ctx.author.id, name, content }).exec();
+            await ctx.models.Tag.create({ guild: ctx.guild.id, author: ctx.author.id, name, content }).exec();
         } catch {
             // Duplicate key error most likely.
             return ctx.error(`Tag \`${name}\` already exists.`);
@@ -110,6 +108,7 @@ tags.command({
     name: 'name',
     usage: '<tag name> <*new name>',
     info: 'Edit a tag\'s name',
+    rich: true,
     requiredArgs: 1,
     execute: async function (ctx) {
         let name, newName;
@@ -135,7 +134,7 @@ tags.command({
             return ctx.error(`\`${name}\` cannot be used as a tag name.`);
         }
 
-        const result = await Tag.updateOne({ guild: ctx.guild.id, name }, { $set: { name: newName } }).exec();
+        const result = await ctx.models.Tag.updateOne({ guild: ctx.guild.id, name }, { $set: { name: newName } }).exec();
 
         return result.matchedCount
             ? ctx.success(`Tag \`${name}\` edited. New name: \`${newName}\`.`)
@@ -151,6 +150,7 @@ tags.command({
     aliases: [
         'content',
     ],
+    rich: true,
     requiredArgs: 1,
     execute: async function (ctx) {
         let name, content;
@@ -173,7 +173,7 @@ tags.command({
         if (!name || !name.length) return ctx.error('Missing tag name.');
         if (!content || !content.length) return ctx.error('Missing new tag content.');
 
-        const result = await Tag.updateOne({ guild: ctx.guild.id, name }, { $set: { content } }).exec();
+        const result = await ctx.models.Tag.updateOne({ guild: ctx.guild.id, name }, { $set: { content } }).exec();
 
         return result.modifiedCount
             ? ctx.success(`Tag \`${name}\` edited. New content: \`${content}\`.`)
@@ -182,9 +182,10 @@ tags.command({
 });
 
 tags.command({
-    name: 'del',
+    name: 'delete',
     usage: '<*tag name>',
     info: 'Delete a server tag',
+    rich: true,
     requiredArgs: 1,
     execute: async function (ctx) {
         const filter = {
@@ -193,7 +194,7 @@ tags.command({
             name: ctx.args.join(' '),
         };
 
-        const result = await Tag.deleteOne(filter).exec();
+        const result = await ctx.models.Tag.deleteOne(filter).exec();
 
         if (result.deletedCount) {
             ctx.logger.info(`[Modules.Tag] Deleted "${name}" G${ctx.guild.id}.`);

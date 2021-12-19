@@ -19,77 +19,66 @@ class Checks {
     }
 
     canInvoke(ctx) {
-        const roles = ctx.member.roles,
-            channel = ctx.channel;
-        let hasOverride = false,
-            config;
+        const roles = ctx.member.roles;
+        const channel = ctx.channel;
 
-        // check if command configuration override exists
-        if (config = ctx.commandConfig) {
-            // check channels & roles
-            if (config.allowedRoles && config.allowedRoles.length && !roles.find(id => roles.includes(id))) return false;
-            if (config.allowedChannels && config.allowedChannels.length && !config.allowedChannels.find(c => c.id === channel.id)) return false;
-            if (config.ignoredRoles && config.ignoredRoles.length && roles.find(id => roles.includes(id))) return false;
-            if (config.ignoredChannels && config.ignoredChannels.length && config.allowedChannels.find(c => c.id === channel.id)) return false;
-            
-            // check if an override actually exists for the command
-            hasOverride = (
-                (typeof config.allowedRoles !== 'undefined' && config.allowedRoles.length > 0) ||
-                (typeof config.allowedChannels !== 'undefined' && config.allowedChannels.length > 0) ||
-                (typeof config.ignoredRoles !== 'undefined' && config.ignoredRoles.length > 0) ||
-                (typeof config.ignoredChannels !== 'undefined' && config.ignoredChannels.length > 0)
-            );
-        }
-        
-        // check if no command override exists & module configuration override exists
-        if (!hasOverride && (config = ctx.moduleConfig)) {
-            // check channels & roles
-            if (config.allowedRoles && config.allowedRoles.length && !roles.find(id => roles.includes(id))) return false;
-            if (config.allowedChannels && config.allowedChannels.length && !config.allowedChannels.find(c => c.id === channel.id)) return false;
-            if (config.ignoredRoles && config.ignoredRoles.length && roles.find(id => roles.includes(id))) return false;
-            if (config.ignoredChannels && config.ignoredChannels.length && config.allowedChannels.find(c => c.id === channel.id)) return false;
-            
-            // check if an override actually exists for the module
-            hasOverride = (
-                (typeof config.allowedRoles !== 'undefined' && config.allowedRoles.length > 0) ||
-                (typeof config.allowedChannels !== 'undefined' && config.allowedChannels.length > 0) ||
-                (typeof config.ignoredRoles !== 'undefined' && config.ignoredRoles.length > 0) ||
-                (typeof config.ignoredChannels !== 'undefined' && config.ignoredChannels.length > 0)
-            );
-        }
+        let canInvoke = false;
+        let overrideExists = false;
 
-        // check if no module override exists
-        if (!hasOverride) {
-            config = ctx.guildConfig;
+        const checkPerms = c => {
+            if (!c) return false;
 
-            // check channels & roles
-            if (config.allowedRoles && config.allowedRoles.length && !roles.find(id => roles.includes(id))) return false;
-            if (config.allowedChannels && config.allowedChannels.length && !config.allowedChannels.find(c => c.id === channel.id)) return false;
-            if (config.ignoredRoles && config.ignoredRoles.length && roles.find(id => roles.includes(id))) return false;
-            if (config.ignoredChannels && config.ignoredChannels.length && config.allowedChannels.find(c => c.id === channel.id)) return false;
-            
-            // check if an override actually exists
-            hasOverride = (
-                (typeof config.allowedRoles !== 'undefined' && config.allowedRoles.length > 0) ||
-                (typeof config.allowedChannels !== 'undefined' && config.allowedChannels.length > 0) ||
-                (typeof config.ignoredRoles !== 'undefined' && config.ignoredRoles.length > 0) ||
-                (typeof config.ignoredChannels !== 'undefined' && config.ignoredChannels.length > 0)
-            );
+            if (c.allowedRoles && c.allowedRoles.length) {
+                overrideExists = true;
+
+                if (!c.allowedRoles.find(id => roles.includes(id))) return false;
+            }
+
+            if (c.allowedChannels && c.allowedChannels.length) {
+                overrideExists = true;
+
+                if (!c.allowedChannels.find(id => id === channel.id)) return false;
+            }
+
+            if (c.ignoredRoles && c.ignoredRoles.length) {
+                overrideExists = true;
+
+                if (c.ignoredRoles.find(id => roles.includes(id))) return false;
+            }
+
+            if (c.ignoredChannels && c.ignoredChannels.length) {
+                overrideExists = true;
+
+                if (c.ignoredChannels.find(id => id === channel.id)) return false;
+            }
+
+            if (overrideExists) return true;
+
+            return false;
         }
 
-        // user has passed checks for any one of the three overrides above
-        if (hasOverride) return true;
+        canInvoke = checkPerms(ctx.commandConfig);
 
-        // no configuration exists, check if module is enabled by default for users to use
-        if (!hasOverride && ctx.module.defaultEnabled) return true;
+        if (!canInvoke && !overrideExists) {
+            canInvoke = checkPerms(ctx.moduleConfig);
+        }
 
-        // no configuration exists, return false (module/command has to be configured to be used)
-        return false;
+        if (!canInvoke && !overrideExists) {
+            canInvoke = checkPerms(ctx.guildConfig);
+        }
+
+        if (!canInvoke && !overrideExists && ctx.module.defaultEnabled) {
+            return true;
+        }
+
+        console.log(canInvoke);
+
+        return canInvoke;
     }
 
     hasGuildPermissions(guild, ...requiredPerms) {
         const permissions = guild.permissionsOf(this.eris.user.id);
-        
+
         for (const perm of requiredPerms) {
             if (!permissions.has(perm)) return false;
         }
@@ -97,9 +86,10 @@ class Checks {
         return true;
     }
 
-    moduleIsEnabled(moduleName, guildConfig) {
-        if (!guildConfig[moduleName]) return true;
-        return guildConfig[moduleName].enabled !== false;
+    moduleIsEnabled(module, guildConfig) {
+        if (!guildConfig[module.dbName]) return true;
+        
+        return !guildConfig[moduleName].disabled;
     }
 
     commandIsEnabled(commandName, guildConfig, isSubcommand) {
@@ -109,8 +99,8 @@ class Checks {
         if (isSubcommand) {
             return guildConfig.commands[commandName] !== false;
         }
-        
-        return guildConfig.commands[commandName].enabled !== false;
+
+        return !!guildConfig.commands[commandName].disabled;
     }
 }
 

@@ -31,7 +31,7 @@ class Info extends Module {
         const qualName = command.qualName;
 
         const embed = {
-            title: `Command "${qualName}" help`,
+            title: `Command "${qualName}" info`,
             description: `**Module:** ${command.module.name}`,
             color: this.bot.config.colours.loading,
         };
@@ -93,7 +93,7 @@ class Info extends Module {
      */
     getModuleHelp(module, prefix = '?', includeHidden = false, verbose = true) {
         const embed = {
-            title: `Module "${module.name}" help`,
+            title: `Module "${module.name}" info`,
             description: '',
             color: this.bot.config.colours.loading,
         };

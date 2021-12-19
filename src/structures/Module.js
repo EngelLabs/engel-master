@@ -20,9 +20,22 @@ class Module {
     get eris() {
         return this.bot.eris;
     }
-    
+
+    get models() {
+        return this.bot.models;
+    }
+
     get logger() {
         return logger;
+    }
+
+    log(msg, level = 'info') {
+        if (level === 'error') {
+            logger.error(`[Modules.${this.name}] Something went wrong.`);
+            console.error(msg);
+        } else {
+            logger[level](`[Modules.${this.name}] ${msg}`);
+        }
     }
 
     get _dir() {
@@ -30,12 +43,12 @@ class Module {
     }
 
     getConfig() {
-        const ret = { enabled: true, name: this.dbName };
+        const ret = { disabled: false, name: this.dbName };
 
         if (this.info && this.info.length) ret.info = this.info;
 
         if (this.aliases && this.aliases.length) ret.aliases = this.aliases;
-        
+
         return Object.assign(ret, this.config);
     }
 
@@ -58,9 +71,7 @@ class Module {
                 logger.error(`[Modules.${this.name}] No command found for "${path}"`);
                 continue;
             }
-            
-            command.module = this;
-        
+
             commands.push(command);
         }
 
@@ -117,6 +128,8 @@ class Module {
 
         if (this.commands) {
             for (const command of this.commands) {
+                command.module = this;
+
                 bot.commands.add(command);
             }
         }
@@ -129,6 +142,8 @@ class Module {
                     name: (listener.event || listener.name).replace('bound', '').trim(),
                     execute: listener.execute || listener
                 };
+
+                copied.execute = copied.execute.bind(this);
 
                 this._boundListeners.push(copied);
                 bot.eris.addListener(copied.name, copied.execute);
@@ -143,6 +158,8 @@ class Module {
                     name: (listener.event || listener.name).replace('bound', '').trim(),
                     execute: listener.execute || listener
                 };
+
+                copied.execute = copied.execute.bind(this);
 
                 this._boundBotListeners.push(copied);
                 bot.addListener(copied.name, copied.execute);
