@@ -94,6 +94,11 @@ class Context {
         if (options.embed) {
             if (!options.embeds) options.embeds = [];
 
+            if (options.embed.colour) {
+                options.embed.color = options.embed.colour;
+                delete options.embed.colour;
+            }
+            
             options.embeds.push(options.embed);
 
             delete options.embed;

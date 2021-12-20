@@ -6,6 +6,7 @@ const messageSchema = new Schema({
     author: { type: Object },
     channel: { type: Object },
     guild: { type: String },
+    createdAt: { type: Date },
 },
     { collection: 'messages' },
 );

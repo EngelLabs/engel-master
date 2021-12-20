@@ -24,7 +24,7 @@ module.exports = new Command({
         const moduleConfig = guildConfig[moduleName] = guildConfig[moduleName] || {};
         moduleConfig.disabled = !moduleConfig.disabled;
 
-        const queryString = 'modules.' + moduleName + '.disabled';
+        const queryString = moduleName + '.disabled';
         
         bot.guilds.update(guildConfig.id, {$set: {[queryString]: moduleConfig.disabled}});
 

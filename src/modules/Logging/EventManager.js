@@ -1,10 +1,74 @@
+const colorMapping = {
+    yellow: 14921762,
+    red: 12202793
+};
+
+
+
 class EventManager {
     constructor(module) {
+        this.module = module;
         this.bot = module.bot;
-        this.listeners = module.listeners = [];
+        this.eris = module.eris;
+
+        this.scheduled = {};
 
         this.registerEvent('messageUpdate');
         this.registerEvent('messageDelete');
+
+        module.tasks.push(
+            [this.dispatchWebhooks.bind(this, 6500)]
+        );
+    }
+
+    dispatchWebhooks() {
+        const allEmbeds = this.scheduled;
+
+        this.scheduled = {};
+
+        for (const key in allEmbeds) {
+            const { guildConfig, eventConfig, embeds } = allEmbeds[key];
+
+            this.executeWebhook(guildConfig, eventConfig, embeds);
+        }
+    }
+
+    async executeWebhook(guildConfig, eventConfig, embeds) {
+        while (embeds.length) {
+            const toSend = embeds.splice(0, 10);
+
+            try {
+                await this.eris.executeWebhook(eventConfig.webhook.id, eventConfig.webhook.token, { embeds: toSend });
+            } catch (err) {
+                if (err.code === 10015) {
+                    let msg = '';
+
+                    msg += 'One of my webhooks were removed from this channel.\n';
+                    msg += 'Logs sent using said webhook have been put on hold.\n';
+                    msg += 'Please reconfigure webhooks using the `logging refresh` command.';
+
+                    this.eris.createMessage(eventConfig.channel, msg).catch(() => false);
+
+                    const update = {
+                        [`logging.${eventConfig.name}.webhook`]: null,
+                        [`logging.${eventConfig.name}.channel`]: null,
+                    };
+
+                    this.bot.guilds.update(guildConfig, { $unset: update });
+
+                    if (guildConfig.logging && guildConfig.logging[eventConfig.name]) {
+                        const actual = guildConfig.logging[eventConfig.name];
+
+                        delete actual.webhook;
+                        delete actual.channel;
+                    }
+
+                    break;
+                } else {
+                    this.module.log(err, 'error')
+                }
+            }
+        }
     }
 
     registerEvent(methodName) {
@@ -12,7 +76,7 @@ class EventManager {
             const o = args[0];
             let guildID;
 
-            if (o instanceof Message) {
+            if (o.channel) {
                 if (o.author.bot) return;
 
                 guildID = o.channel.guild && o.channel.guild.id;
@@ -27,14 +91,23 @@ class EventManager {
             const guildConfig = await this.bot.guilds.getOrFetch(guildID);
 
             if (!guildConfig || guildConfig.isIgnored);
-            if (!guildConfig.logging || guildConfig.logging.disabled) return;
 
-            const embed = this[methodName].call(this, guildConfig, ...args);
+            const moduleConfig = guildConfig.logging;
+            if (!moduleConfig || moduleConfig.disabled) return;
 
-            embed.color = this.resolveColour(guildConfig, embed.color);
+            const eventConfig = moduleConfig[methodName];
+            if (!eventConfig || eventConfig.disabled) return;
+            if (!eventConfig.webhook || !eventConfig.channel) return;
+
+            const embed = await this['_' + methodName](guildConfig, ...args);
+
+            if (typeof embed.color !== 'undefined') {
+                embed.color = eventConfig.color || moduleConfig[embed.color] || colorMapping[embed.color];
+            }
+
             embed.timestamp = embed.timestamp || new Date().toISOString();
 
-            /* ... */
+            this.scheduleEmbed(guildConfig, eventConfig, methodName, embed);
         }
 
         const listener = {
@@ -42,14 +115,21 @@ class EventManager {
             execute: wrapped,
         };
 
+        this['_' + methodName] = this[methodName].bind(this);
         this[methodName] = wrapped;
-        this.listeners.push(listener);
+        this.module.listeners.push(listener);
     }
 
-    resolveColour(guildConfig, color) {
-        const moduleConfig = guildConfig.logging;
+    scheduleEmbed(guildConfig, eventConfig, eventName, embed) {
+        if (!this.scheduled[eventConfig.webhook.id]) {
+            this.scheduled[eventConfig.webhook.id] = {
+                guildConfig: guildConfig,
+                eventConfig: Object.assign({ name: eventName }, eventConfig),
+                embeds: []
+            };
+        }
 
-        /* ... */
+        this.scheduled[eventConfig.webhook.id].embeds.push(embed);
     }
 
     messageDelete(_, message) {
