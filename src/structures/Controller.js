@@ -78,7 +78,9 @@ class Controller {
 
     async getUserData(req) {
         const token = req.session.token;
-        const [user, guilds] = await Promise.all([
+        let user, guilds;
+
+        [user, guilds] = await Promise.all([
             this.apiRequest(token, '/users/@me'),
             this.apiRequest(token, '/users/@me/guilds')
         ]);
@@ -93,15 +95,15 @@ class Controller {
     }
 
     success(res, data) {
-        return this._successResponse(res, 200, data);
+        return this._successResponse(res, 200, data || 'OK');
     }
 
     created(res, data) {
-        return this._successResponse(res, 201, data);
+        return this._successResponse(res, 201, data || 'OK');
     }
 
     empty(res) {
-        return this._successResponse(res, 204);
+        return this._successResponse(res, 204, 'OK');
     }
 
     badRequest(res, code = 0, msg) {

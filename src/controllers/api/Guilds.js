@@ -57,10 +57,14 @@ class Guilds extends Controller {
             update.muteRole = req.body.muteRole;
         }
         if (req.body.prefixes instanceof Array) {
-            update = update || {};
-            update.prefixes = req.body.prefixes.length
-                ? req.body.prefixes
+            const prefixes = req.body.prefixes.length
+                ? req.body.prefixes.filter(p => p.length && p.length <= 12)
                 : this.config.prefixes.default;
+            
+            if (prefixes.length && prefixes.length <= 15) {
+                update = update || {};
+                update.prefixes = prefixes;
+            }
         }
         if (typeof req.body.delCommand === 'boolean') {
             update = update || {};

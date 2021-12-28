@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "start": "src/index.js",
-    "watch": "concurrently -k -p  \"[{pid}-{name}]\" -n \"APP,SASS,REACT\" \"npm run watch:server\" \"npm run watch:sass\" \"npm run watch:react\"",
-    "watch:server": "nodemon --delay 1 --verbose --ext hbs,js,css",
+    "dev": "concurrently -k -p  \"[{pid}-{name}]\" -n \"APP,SASS,REACT\" \"npm run watch:server\" \"npm run watch:sass\" \"npm run watch:react\"",
+    "watch:server": "nodemon --delay 1 --verbose --ext js",
     "watch:sass": "npx sass -w sass:public/css",
     "watch:react": "npm run build --prefix react"
   },

@@ -4,7 +4,7 @@ export default class Navbar extends Component {
     render() {
         return (
             <nav className="navbar">
-                <a className="..." href="/login" title="Login via Discord">Login</a>
+                <a className="list-item button is-special" href="/login" title="Login via Discord">Login</a>
             </nav>
         )
     }

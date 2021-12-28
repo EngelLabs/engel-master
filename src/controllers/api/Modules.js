@@ -9,11 +9,7 @@ class Modules extends Controller {
 
         return [
             {
-                uri: baseUri + '/:name',
-                patch: this.patch.bind(this),
-            },
-            {
-                uri: baseUri + '/moderator',
+                uri: baseUri + '/mod',
                 patch: this.patchModerator.bind(this),
             },
         ];

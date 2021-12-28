@@ -40,22 +40,21 @@ class Server {
         return baseConfig;
     }
 
-    get config() {
-        return this._config;
-    }
-
-    set config(config) {
-        if (!config) throw new Error(`Configuration not found for state ${baseConfig.state}`);
-
-        return (this._config = config);
-    }
-
     updateConfig() {
         return this.getConfig()
-            .then(config => this.config = config)
+            .then(config => {
+                if (!config) {
+                    logger.error(`Configuration not found for state ${baseConfig.state}`);
+
+                    return;
+                }
+
+                return this.config = config;
+            })
             .catch(err => {
-                logger.error(err)
-                return Promise.reject(err)
+                logger.error(err);
+
+                return Promise.reject(err);
             });
     }
 
@@ -65,7 +64,7 @@ class Server {
                 state: baseConfig.state
             })
                 .then(resolve)
-                .catch(reject)
+                .catch(reject);
         });
     }
 
@@ -132,6 +131,9 @@ class Server {
             const files = glob.sync(controllersPath + '/**');
             const controllers = [];
 
+            this._middlewares = [];
+            this._routes = [];
+
             for (const file of files) {
                 try {
                     var Controller = require(file);
@@ -144,6 +146,25 @@ class Server {
                 this.registerController(controller);
                 controllers.push(controller);
             }
+
+            for (const { uri, handler } of this._middlewares) {
+                if (uri && uri.length) {
+                    this.app.use(uri, handler);
+                } else {
+                    this.app.use(handler);
+                }
+    
+                logger.debug(`[Server] middleware(${uri || '*'}, ${handler.name})`);
+            }
+    
+            for (const { method, uri, handler } of this._routes) {
+                this.app[method](uri, handler);
+    
+                logger.debug(`[Server] ${method}(${uri}, ${handler})`);
+            }
+
+            delete this._middlewares;
+            delete this._routes;
 
             logger.info(`[Controllers] ${controllers.length} registered.`);
 
@@ -168,15 +189,11 @@ class Server {
     }
 
     registerController(controller) {
-        const middlewares = [];
-        const routes = [];
-        // we have to load the route middleware before the route handlers
-
         const sort = (uri, method, handler) => {
-            if (uri === 'use') {
-                middlewares.push({ method, handler });
+            if (method === 'use') {
+                this._middlewares.push({ uri, handler });
             } else {
-                routes.push({ uri, method, handler });
+                this._routes.push({ uri, method, handler });
             }
         }
 
@@ -193,16 +210,6 @@ class Server {
                 } else {
                     sort(uri, method, handler);
                 }
-            }
-
-            for (const { uri, handler } of middlewares) {
-                this.app.use(uri, handler);
-                logger.debug(`[Server] middleware(${uri}, ${handler})`);
-            }
-
-            for (const { method, uri, handler } of routes) {
-                this.app[method](uri, handler);
-                logger.debug(`[Server] ${method}(${uri}, ${handler})`);
             }
         }
     }

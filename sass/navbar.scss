@@ -1,3 +1,40 @@
+@import './common/app';
+
+
 .navbar {
-    color: lightblue
+    background-color: $dark-grey;
+
+    a:visited {
+        color: inherit;
+    }
+
+    .button {
+        display: block;
+        width: 60px;
+        height: 30px;
+        border-radius: 5px;
+        text-align: center;
+        text-decoration: none;
+        background-color: $pale-blue;
+
+        padding-top: 5px;
+
+        // display: block;
+        // width: 115px;
+        // height: 25px;
+        // background: #4E9CAF;
+        // padding: 10px;
+        // text-align: center;
+        // border-radius: 5px;
+        // color: white;
+        // font-weight: bold;
+        // line-height: 25px;
+
+
+        // border-style: solid;
+        // border-width : 1px 1px 1px 1px;
+        // text-decoration: none;
+        // padding : 4px;
+        // border-color : #000000
+    }
 }
