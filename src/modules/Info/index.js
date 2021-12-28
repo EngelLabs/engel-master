@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Info extends Module {
@@ -33,7 +33,7 @@ class Info extends Module {
         const embed = {
             title: `Command "${qualName}" info`,
             description: `**Module:** ${command.module.name}`,
-            color: this.bot.config.colours.loading,
+            color: this.config.colours.loading,
         };
 
         if (command.usage && command.usage.length) {

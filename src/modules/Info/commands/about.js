@@ -1,5 +1,5 @@
 const prettyMS = require('pretty-ms');
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 module.exports = new Command({

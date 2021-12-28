@@ -1,6 +1,7 @@
 const Module = require('../../structures/Module');
 const prettyMS = require('pretty-ms');
-const { Permissions } = require('eris').Constants;
+const reload = require('require-reload')(require);
+const TimerHandler = reload('./TimerHandler');
 
 
 const hierarchyError = 'My highest role\'s position isn\'t high enough to {action} this user.';
@@ -16,42 +17,11 @@ class Moderator extends Module {
     }
 
     injectHook() {
-        this.helper = this.bot.modules.get('modhelper');
+        const timerHandler = new TimerHandler(this);
         
-        this.tasks = [];
-        this.tasks.push(
-            [this.checkTimers.bind(this), 15000],
-        );
-    }
-
-    /**
-     * Find and handle expired timers
-     * @returns {Promise<void>}
-     */
-    async checkTimers() {
-        if (!this.bot.ready) return;
-
-        let modlogs;
-
-        try {
-            modlogs = await this.models.ModLog.find({ expiry: { $lte: Date.now() } });
-        } catch (err) {
-            this.logger.error(err);
-            return;
-        }
-
-        if (!modlogs || !modlogs.length) return;
-
-        for (const modlog of modlogs) {
-            const key = 'timer_' + modlog.type.split(' ')[0];
-            if (!this[key]) continue;
-
-            this[key](modlog);
-            this.logger.info(`[Modules.Moderator] ${key} timer handled G${modlog.guild}.`);
-            ModLog
-                .updateOne({ _id: modlog._id }, { $unset: { expiry: null } })
-                .exec();
-        }
+        this.tasks = [
+            [timerHandler, 15000],
+        ];
     }
 
     userProtectedCheck(ctx, member, action) {
@@ -380,146 +350,7 @@ class Moderator extends Module {
 
         return !guildConfig.mod.disabled;
     }
-
-    async timer_mute({ guild, user }) {
-        guild = this.eris.guilds.get(guild);
-
-        if (!guild) return;
-
-        if (!this.bot.checks.hasGuildPermissions(guild, 'manageRoles')) return;
-
-        const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
-        if (!guildConfig || !this._isEnabled(guildConfig)) return;
-
-        const muteRole = guildConfig.muteRole;
-        if (!muteRole) return;
-
-        const member = guild.members.get(user.id);
-        if (!member) return;
-
-        if (member.roles.includes(muteRole)) {
-            this.eris.removeGuildMemberRole(guild.id, member.id, muteRole, 'module: Moderator. Auto unmute')
-                .then(() => {
-                    this.createModeration({
-                        guildConfig: guildConfig,
-                        mod: this.eris.user,
-                        user: member,
-                        type: 'unmute [Auto]',
-                    });
-                })
-                .catch(() => false);
-        }
-    }
-
-    async timer_ban({ guild, user }) {
-        guild = this.eris.guilds.get(guild);
-
-        if (!guild) return;
-
-        if (!this.bot.checks.hasGuildPermissions(guild, 'banMembers')) return;
-
-        const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
-
-        if (!guildConfig || !this._isEnabled(guildConfig)) return;
-
-        this.eris.unbanGuildMember(guild.id, user.id, 'module: Moderator. Auto unban')
-            .then(() => {
-                this.createModeration({
-                    guildConfig: guildConfig,
-                    mod: this.eris.user,
-                    user: user,
-                    type: 'unban [Auto]',
-                });
-            })
-            .catch(() => false);
-    }
-
-    async timer_lock({ guild, channel }) {
-        guild = this.eris.guilds.get(guild);
-
-        if (!guild) return;
-
-        channel = guild.channels.get(channel.id);
-
-        if (!channel) return;
-
-        if (!this.bot.checks.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
-
-        const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
-
-        if (!guildConfig || !this._isEnabled(guildConfig)) return;
-
-        let overwrite = channel.permissionOverwrites.get(guild.id);
-        let allow = overwrite.allow || BigInt(0),
-            deny = overwrite.deny || BigInt(0);
-
-        if (overwrite) {
-            const perms = overwrite.json;
-
-            if (perms.sendMessages === false) {
-                deny ^= Permissions.sendMessages;
-            }
-            if (perms.addReactions === false) {
-                deny ^= Permissions.addReactions;
-            }
-            if (perms.voiceConnect === false) {
-                deny ^= Permissions.voiceConnect;
-            }
-            if (perms.voiceSpeak === false) {
-                deny ^= Permissions.voiceSpeak;
-            }
-        }
-
-        this.eris.editChannelPermission(channel.id, guild.id, allow, deny, 0, 'module: Moderator. Automatic unlock')
-            .then(() => {
-                this.createModeration({
-                    guildConfig: guildConfig,
-                    mod: this.eris.user,
-                    channel: channel,
-                    type: 'unlock [Auto]',
-                });
-            })
-            .catch(() => false);
-    }
-
-    async timer_block({ guild, channel, user }) {
-        guild = this.eris.guilds.get(guild);
-
-        if (!guild) return;
-
-        channel = guild.channels.get(channel.id);
-
-        if (!channel) return;
-
-        if (!this.bot.checks.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
-
-        const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
-
-        if (!guildConfig || !this._isEnabled(guildConfig)) return;
-
-        let overwrite = channel.permissionOverwrites.get(user.id);
-        let allow = overwrite && overwrite.allow || BigInt(0),
-            deny = overwrite && overwrite.deny || BigInt(0);
-
-        if (overwrite && overwrite.json.viewChannel === false) {
-            deny ^= Permissions.viewChannel;
-        } else {
-            return;
-        }
-
-        this.eris.editChannelPermission(channel.id, user.id, allow, deny, 1, 'module: Moderator. Automatic unblock')
-            .then(() => {
-                this.createModeration({
-                    guildConfig: guildConfig,
-                    mod: this.eris.user,
-                    user: user,
-                    channel: channel,
-                    type: 'unblock [Auto]',
-                });
-            })
-            .catch(() => false);
-    }
 }
 
 
-module.exports = Moderator
+module.exports = Moderator;

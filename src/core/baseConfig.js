@@ -1,63 +1,60 @@
-'use-strict';
+const { parsed, error } = require('dotenv').config();
+if (!parsed && error) {
+    if (error.code === 'ENOENT') {
+        console.error('.env file not found!');
 
-require('dotenv').config();
-const pkg = require('../../package.json');
+        process.exit(1);
+    }
+
+    throw error;
+}
 
 
-module.exports = {
-    name: pkg.name,
-    version: pkg.version,
+const getenv = require('getenv');
+const package = require('../../package.json');
+
+/**
+ * Static configuration
+ */
+const baseConfig = {
+    name: package.name,
+    version: package.version,
+    lib: 'eris',
     env: process.env.NODE_ENV,
-    state: process.env.STATE,
-    logLevel: process.env.LOG_LEVEL || 'debug',
-    clientId: process.env.CLIENT_ID,
-    token: 'Bot ' + process.env.CLIENT_TOKEN,
-    mongoUri: process.env.MONGO_URI,
-    redisPort: process.env.REDIS_PORT,
-    redisHost: process.env.REDIS_HOST,
-    defaultOptions: {
-        disableCache: false,
-        eris: {
-            intents: [
-                'directMessages',
-                'guilds',
-                'guildMembers',
-                'guildMessages',
-            ],
-            restMode: true,
-            messageLimit: 15,
-            getAllUsers: true,
-        },
+    dev: process.env.NODE_ENV === 'development',
+    logger: {
+        level: getenv.string('LOGGER_LEVEL', 'debug'),
+    },
+    client: {
+        id: getenv.string('CLIENT_ID'),
+        token: getenv.string('CLIENT_TOKEN'),
+        state: getenv.string('CLIENT_STATE'),
+    },
+    mongo: {
+        host: getenv.string('MONGO_HOST', 'localhost'),
+        port: getenv.int('MONGO_PORT', 27017),
+        db: getenv.string('MONGO_DATABASE', 'discordbot'),
+    },
+    redis: {
+        host: getenv.string('REDIS_HOST', 'localhost'),
+        port: getenv.int('REDIS_PORT', 6379),
     },
     globalDefaults: {
-        dev: process.env.NODE_ENV === 'development',
         author: {
             id: '329768023869358081',
             name: 'timtoy#1336',
         },
         client: {
-            shards: 1,
-            clusterNames: [],
-            permissions: 379968,
+            permissions: 0,
         },
-        lib: 'eris',
-        name: pkg.name,
         prefixes: {
             private: [
-                'l.uwu.',
+                't.uwu.',
                 'tim pls ',
-                '', // enables prefix-less command invocation
+                '',
             ],
             default: [
                 '?',
-            ],
-        },
-        dmConfig: {
-            prefixes: [
-                't.',
-                '?',
-                '!',
-                '', // enables prefix-less command invocation
             ],
         },
         guilds: {
@@ -66,7 +63,7 @@ module.exports = {
                 invite: 'https://discord.gg/ZZpqkn6HdG'
             },
             protected: ['828010463476056137'],
-            testing: [],
+            testing: ['828010463476056137'], // to be moved to dedicated guild soon
         },
         users: {
             developers: [
@@ -107,16 +104,28 @@ module.exports = {
             loading: ':SockBot_Loading:870386378150645880',
             staff: ':SockBotStaff:847231667294961736'
         },
+        dmConfig: {
+            prefixes: [
+                't.',
+                '?',
+                '!',
+                '',
+            ],
+        },
         disableEmojis: true,
-        commands: {},
-        modules: {},
         globalCooldown: 700,
         commandCooldown: 2500,
         cooldownWarn: true,
         cooldownWarnDelete: true,
         cooldownWarnDeleteAfter: 8000,
-        shutup: false,
         adminOnly: false,
-        updateInterval: 25000,
-    },
+        configRefreshInterval: 25000,
+        messageCache: true,
+        guildCache: true,
+        guildUncacheInterval: 60000,
+        paused: false,
+    }
 };
+
+
+module.exports = baseConfig;

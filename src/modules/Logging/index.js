@@ -1,6 +1,6 @@
 const Module = require('../../structures/Module');
 const reload = require('require-reload')(require);
-const EventManager = reload('./EventManager');
+const Events = reload('./Events');
 
 
 class Logging extends Module {
@@ -9,93 +9,135 @@ class Logging extends Module {
 
         this.aliases = ['logs', 'serverlogging'];
         this.info = 'Enables logging various server events to channels';
-
-        // this.disabled = true;
     }
 
     injectHook() {
         this.tasks = [];
         this.listeners = [];
+        this.scheduled = {};
 
-        this.listeners.push(this.messageCreate.bind(this));
-        this.listeners.push(this.messageUpdate.bind(this));
-        this.listeners.push(this.messageDelete.bind(this));
+        this.events = new Events(this);
+
+        const wrap = fn => this.wrapListener(fn);
+
+        this.listeners.push(wrap(this.messageUpdate.bind(this)));
+        this.listeners.push(wrap(this.messageDelete.bind(this)));
+        this.listeners.push(wrap(this.guildRoleCreate.bind(this)));
+        this.listeners.push(wrap(this.guildRoleDelete.bind(this)));
+        this.listeners.push(wrap(this.guildRoleUpdate.bind(this)));
 
         this.tasks.push(
-            [this.deleteMessages.bind(this), 120000]
+            [this.dispatchWebhooks.bind(this), 6500],
         );
-
-        this.manager = new EventManager(this);
-    }
-    
-    deleteMessages() {
-        return this.models.Message
-            .deleteMany({ createdAt: { $lte: Date.now() - (4 * 24 * 60 * 60 * 1000) }})
-            .exec();
     }
 
-    async preMessage(message) {
-        if (message.author && message.author.bot) return false;
+    wrapListener(fn) {
+        const wrapped = async payload => {
+            const { guildConfig, isDM } = payload;
 
-        let guildID;
+            if (isDM || !guildConfig) return;
 
-        if (message.channel && message.channel.guild) {
-            guildID = message.channel.guild.id;
-        } else {
-            guildID = message.guildID;
+            const config = this.bot.config;
+
+            if (config.dev && !config.guilds.testing.includes(guildConfig.id)) return;
+
+            if (!guildConfig.logging || guildConfig.logging.disabled) return;
+
+            if (config.shutup && (guildConfig.id !== config.guilds.official.id)) return;
+
+            return fn(payload);
         }
 
-        if (!guildID) return false;
-
-        const guildConfig = await this.bot.guilds.getOrFetch(guildID);
-
-        return guildConfig && guildConfig.logging && !guildConfig.logging.disabled;
-    }
-
-    async messageCreate(message) {
-        if (!await this.preMessage(message)) return;
-
-        const copied = {
-            id: message.id,
-            content: message.content,
-            author: {
-                id: message.author.id,
-                username: message.author.username,
-                discriminator: message.author.discriminator,
-                avatarURL: message.author.avatarURL,
-            },
-            channel: {
-                id: message.channel.id,
-                name: message.channel.name,
-            },
-            guild: message.channel.guild.id,
-            createdAt: message.createdAt,
+        const listener = {
+            event: fn.name,
+            execute: wrapped
         };
 
-        return this.models.Message.create(copied);
+        return listener;
     }
 
-    messageUpdate(message, oldMessage) {
-        if (!message.content) return;
-        if (oldMessage && oldMessage.content === message.content) return;
+    dispatchWebhooks() {
+        const allEmbeds = this.scheduled;
 
-        return this.models.Message
-            .updateOne(
-                { id: message.id, 'channel.id': message.channel.id },
-                { $set: { content: message.content } })
-            .exec();
+        this.scheduled = {};
+
+        for (const key in allEmbeds) {
+            const { guildConfig, eventConfig, embeds } = allEmbeds[key];
+
+            this.executeWebhook(guildConfig, eventConfig, embeds);
+        }
     }
 
-    messageDelete(message) {
-        if (!this.preMessage(message)) return;
-        const guildID = message.guildID ||
-            (message.channel && message.channel.guild && message.channel.guild.id);
+    async executeWebhook(guildConfig, eventConfig, embeds) {
+        while (embeds.length) {
+            const toSend = embeds.splice(0, 10);
 
-        if (!guildID) return;
+            try {
+                await this.eris.executeWebhook(eventConfig.webhook.id, eventConfig.webhook.token, { embeds: toSend });
+            } catch (err) {
+                if (err.code === 10015) {
+                    let msg = '';
 
-        return this.models.Message
-            .deleteOne({ id: message.id, guild: guildID })
-            .exec();
+                    msg += 'One of my webhooks were removed from this channel.\n';
+                    msg += 'Logs sent using said webhook have been put on hold.\n';
+                    msg += 'Please reconfigure webhooks using the `logging refresh` command.';
+
+                    this.eris.createMessage(eventConfig.channel, msg).catch(() => false);
+
+                    const update = {
+                        [`logging.${eventConfig.name}.webhook`]: null,
+                        [`logging.${eventConfig.name}.channel`]: null,
+                    };
+
+                    this.bot.guilds.update(guildConfig, { $unset: update });
+
+                    if (guildConfig.logging && guildConfig.logging[eventConfig.name]) {
+                        const actual = guildConfig.logging[eventConfig.name];
+
+                        delete actual.webhook;
+                        delete actual.channel;
+                    }
+
+                    break;
+                } else {
+                    this.log(err, 'error');
+                }
+            }
+        }
+    }
+
+    scheduleEmbeds(guildConfig, eventConfig, webhook, eventName, embeds) {
+        if (!this.scheduled[webhook.id]) {
+            this.scheduled[webhook.id] = {
+                guildConfig: guildConfig,
+                eventConfig: Object.assign({ name: eventName, webhook }, eventConfig),
+                embeds: embeds
+            };
+        } else {
+            this.scheduled[webhook.id].embeds.push(...embeds);
+        }
+    }
+
+    guildRoleCreate({ guildConfig, guild, role }) {
+        return this.events.guildRoleCreate(guildConfig, guild, role);
+    }
+
+    guildRoleDelete({ guildConfig, guild, role }) {
+        return this.events.guildRoleDelete(guildConfig, guild, role);
+    }
+
+    guildRoleUpdate({ guildConfig, guild, role, oldRole }) {
+        return this.events.guildRoleUpdate(guildConfig, guild, role, oldRole);
+    }
+
+    messageUpdate({ guildConfig, message, oldMessage }) {
+        if (oldMessage.content !== message.content) {
+            return this.events.messageContentUpdate(guildConfig, message, oldMessage);
+        }
+    }
+
+    messageDelete({ guildConfig, message }) {
+        return this.events.messageDelete(guildConfig, message);
     }
 }
 

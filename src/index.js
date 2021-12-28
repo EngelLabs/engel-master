@@ -1,21 +1,9 @@
-#!/usr/bin/env node
 'use strict';
 
 global.Promise = require('bluebird');
-const cluster = require('cluster');
 
+const Bot = require('./core/Bot');
 
-if (cluster.isMaster) {
-    const Manager = require('./core/Manager');
+const bot = new Bot();
 
-    const manager = new Manager();
-
-    manager.run();
-
-} else {
-    const Bot = require('./core/Bot');
-
-    const bot = new Bot();
-
-    bot.run();
-}
+bot.start();

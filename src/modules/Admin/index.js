@@ -1,5 +1,5 @@
-const Module = require('../../structures/Module');
-const Command = require('../../structures/Command');
+const Module = require('../../core/structures/Module');
+const Command = require('../../core/structures/Command');
 
 
 class Admin extends Module {

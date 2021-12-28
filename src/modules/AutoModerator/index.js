@@ -10,12 +10,12 @@ class AutoModerator extends Module {
         this.info = 'Automate moderation for your server';
     }
 
-    injectHook() {
-        this.listeners = [];
-        this.listeners.push(this.messageCreate.bind(this));
-    }
+    // injectHook() {
+    //     this.listeners = [];
+    //     this.listeners.push(this.messageCreate.bind(this));
+    // }
 
-    messageCreate(message) {
+    messageCreate({ guildConfig, message }) {
         if (!this.bot.ready) return;
 
         const config = this.bot.config;

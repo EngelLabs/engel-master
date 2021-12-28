@@ -1,144 +1,148 @@
-'use strict';
-
-const Eris = require('eris');
-const logger = require('./logger');
-const redis = require('./redis');
+const logger = require('./utils/logger');
 const baseConfig = require('./baseConfig');
-const mongoose = require('../models');
-const CommandCollection = require('../collections/CommandCollection');
-const ModuleCollection = require('../collections/ModuleCollection');
-const GuildCollection = require('../collections/GuildCollection');
+const Eris = require('./clients/Eris');
+const Redis = require('./clients/Redis');
+const Mongoose = require('./clients/Mongoose');
+const CommandCollection = require('./collections/CommandCollection');
+const ModuleCollection = require('./collections/ModuleCollection');
+const GuildCollection = require('./collections/GuildCollection');
+const CacheManager = require('./managers/CacheManager');
+const EventManager = require('./managers/EventManager');
+const Converter = require('./helpers/Converter');
+const Moderator = require('./helpers/Moderator');
+const Permission = require('./helpers/Permission');
 
-let EventEmitter;
 
-try {
-    EventEmitter = require('eventemitter3');
-} catch {
-    EventEmitter = require('events');
-}
+let _instance = null;
 
 
-class Bot extends EventEmitter {
+/**
+ * Represents a Discord bot
+ * @class Bot
+ */
+class Bot {
     constructor() {
-        super();
-
-        Bot.instance = this;
+        _instance = this;
     }
 
+    static get instance() {
+        return _instance;
+    }
+
+    /**
+     * Logger instance
+     */
     get logger() {
         return logger;
     }
 
+    /**
+     * Mongoose models
+     */
+    get models() {
+        return this.mongoose.models;
+    }
+
+    /**
+     * Base configuration object
+     * @type {Object}
+     */
     get baseConfig() {
         return baseConfig;
     }
 
-    get mongoose() {
-        return mongoose;
+    /**
+     * The program state
+     * @type {String}
+     */
+    get state() {
+        return baseConfig.client.state;
     }
 
-    get models() {
-        return mongoose.models;
+    /**
+     * Whether the service is ready
+     */
+    get isReady() {
+        return (
+            this._ready &&
+            this._erisIsReady &&
+            this._mongoIsReady &&
+            this._redisIsReady
+        );
     }
 
-    get redis() {
-        return redis;
-    }
-
-    updateConfig() {
-        return this.getConfig()
+    /**
+     * Fetch configuration
+     * @returns {Promise<Object|any>}
+    */
+    getConfig() {
+        return this.models.Config
+            .findOne({ state: this.state })
+            .lean()
+            .exec()
             .then(config => {
                 if (!config) {
-                    logger.error(`Configuration not found for state ${baseConfig.state}`);
+                    logger.error(`Configuration not found for state ${this.state}`);
 
-                    return;
+                    process.send && process.send({ op: 'config', d: this.state });
+                    process.exit(1);
                 }
 
-                return this.config = config;
-            })
-            .catch(err => {
-                logger.error(err);
-
-                return Promise.reject(err);
+                return config;
             });
     }
 
-    getConfig() {
-        return new Promise((resolve, reject) => {
-            this.models.Config.findOne({ state: baseConfig.state })
-                .lean()
-                .exec()
-                .then(resolve)
-                .catch(reject);
-        });
+    setup() {
+        this.eris = new Eris(this);
+        this.redis = new Redis(this);
+        this.mongoose = new Mongoose(this);
+
+        this.events = new EventManager(this);
+        this.cache = new CacheManager(this);
+
+        this.converter = new Converter(this);
+        this.moderation = new Moderator(this);
+        this.permissions = new Permission(this);
+
+        this.guilds = new GuildCollection(this);
+        this.commands = new CommandCollection(this);
+        this.modules = new ModuleCollection(this);
+
+        this.modules.load();
     }
 
-    async run(options) {
+    /**
+     * Start the bot
+     */
+    async start() {
         try {
-            logger.info(`[Bot] Starting ${baseConfig.name} (${baseConfig.state}, v${baseConfig.version}).`);
+            this.setup();
 
-            options = Object.assign(options || {}, baseConfig.defaultOptions);
+            await this.getConfig().then(c => this.config = c);
 
-            const config = this.config = await this.getConfig();
+            this.guilds.setup();
 
-            if (!config.dev) {
-                process.on('unhandledRejection', (reason, promise) => {
-                    logger.error(`Unhandled Promise rejection at promise ${promise}. Reason: ${reason}`);
-                });
+            setInterval(
+                () => this.getConfig().then(c => this.config = c),
+                this.config.configRefreshInterval
+            );
+
+            if (baseConfig.dev) {
+                Promise.all([this.modules.register(), this.commands.register()])
+                    .then(() => this._ready = true);
             }
 
-            const eris = this.eris = new Eris(baseConfig.token, options.eris);
-
-            const me = await eris.getSelf();
-
-            if (baseConfig.clientId !== me.id) {
-                throw new Error(`Invalid clientId ${baseConfig.clientId} provided. Actual user ID: ${me.id}`);
-            }
-
-            this.commands = new CommandCollection(this);
-            this.modules = new ModuleCollection(this);
-            this.guilds = new GuildCollection(this, { cache: !options.disableCache });
-
-            setInterval(this.updateConfig.bind(this), config.updateInterval);
-
-            this.modules.load();
-
-            if (config.dev) {
-                this.commands.register(config);
-                this.modules.register(config);
-            }
-
-            eris
-                .on('connect', () => {
-                    logger.info('[Eris] Connected.');
-                })
-                .on('disconnect', () => {
-                    logger.info('[Eris] Disconnected.');
-                    this.ready = false;
-                })
-                .on('ready', () => {
-                    logger.info('[Eris] Ready.');
-                    this.ready = true;
-                })
-                .on('error', err => {
-                    logger.error('[Eris] Something went wrong.');
-                    console.error(err);
-                })
-                .on('warn', msg => {
-                    logger.warn(`[Eris] ${msg}`)
-                });
-
-            await eris.connect();
+            await this.eris.connect();
 
         } catch (err) {
             logger.error(`[Bot] Something went wrong.`);
             console.error(err);
 
-            process.send && process.send({ op: 'close' });
-
+            process.send && process.send('close');
             process.exit(1);
         }
     }
 }
+
 
 module.exports = Bot;
