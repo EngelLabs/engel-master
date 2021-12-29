@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 const reload = require('require-reload')(require);
 const Events = reload('./Events');
 
@@ -14,9 +14,9 @@ class Logging extends Module {
     injectHook() {
         this.tasks = [];
         this.listeners = [];
-        this.scheduled = {};
+        this._scheduled = {};
 
-        this.events = new Events(this);
+        this._events = new Events(this);
 
         const wrap = fn => this.wrapListener(fn);
 
@@ -37,7 +37,7 @@ class Logging extends Module {
 
             if (isDM || !guildConfig) return;
 
-            const config = this.bot.config;
+            const config = this.config;
 
             if (config.dev && !config.guilds.testing.includes(guildConfig.id)) return;
 
@@ -57,9 +57,9 @@ class Logging extends Module {
     }
 
     dispatchWebhooks() {
-        const allEmbeds = this.scheduled;
+        const allEmbeds = this._scheduled;
 
-        this.scheduled = {};
+        this._scheduled = {};
 
         for (const key in allEmbeds) {
             const { guildConfig, eventConfig, embeds } = allEmbeds[key];
@@ -107,37 +107,37 @@ class Logging extends Module {
     }
 
     scheduleEmbeds(guildConfig, eventConfig, webhook, eventName, embeds) {
-        if (!this.scheduled[webhook.id]) {
-            this.scheduled[webhook.id] = {
+        if (!this._scheduled[webhook.id]) {
+            this._scheduled[webhook.id] = {
                 guildConfig: guildConfig,
                 eventConfig: Object.assign({ name: eventName, webhook }, eventConfig),
                 embeds: embeds
             };
         } else {
-            this.scheduled[webhook.id].embeds.push(...embeds);
+            this._scheduled[webhook.id].embeds.push(...embeds);
         }
     }
 
     guildRoleCreate({ guildConfig, guild, role }) {
-        return this.events.guildRoleCreate(guildConfig, guild, role);
+        return this._events.guildRoleCreate(guildConfig, guild, role);
     }
 
     guildRoleDelete({ guildConfig, guild, role }) {
-        return this.events.guildRoleDelete(guildConfig, guild, role);
+        return this._events.guildRoleDelete(guildConfig, guild, role);
     }
 
     guildRoleUpdate({ guildConfig, guild, role, oldRole }) {
-        return this.events.guildRoleUpdate(guildConfig, guild, role, oldRole);
+        return this._events.guildRoleUpdate(guildConfig, guild, role, oldRole);
     }
 
     messageUpdate({ guildConfig, message, oldMessage }) {
         if (oldMessage.content !== message.content) {
-            return this.events.messageContentUpdate(guildConfig, message, oldMessage);
+            return this._events.messageContentUpdate(guildConfig, message, oldMessage);
         }
     }
 
     messageDelete({ guildConfig, message }) {
-        return this.events.messageDelete(guildConfig, message);
+        return this._events.messageDelete(guildConfig, message);
     }
 }
 

@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const moment = require('moment');
 
 
@@ -19,7 +19,7 @@ module.exports = new Command({
 
         if (ctx.args.length) {
             try {
-                user = await ctx.bot.converter.member(ctx, ctx.args.join(' '));
+                user = await ctx.bot.helpers.converter.member(ctx, ctx.args.join(' '));
             } catch (err) {
                 return ctx.error(err);
             }
@@ -27,17 +27,17 @@ module.exports = new Command({
             if (ctx.message.messageReference
                 && ctx.message.messageReference.messageID
                 && ctx.message.messageReference.channelID === ctx.channel.id) {
-                    try {
-                        const msg = ctx.channel.messages.get(ctx.message.messageReference.messageID) 
-                            || await ctx.channel.getMessage(ctx.message.messageReference.messageID);
+                try {
+                    const msg = ctx.channel.messages.get(ctx.message.messageReference.messageID)
+                        || await ctx.channel.getMessage(ctx.message.messageReference.messageID);
 
-                        user = msg.member ? msg.member : ctx.member;
-                    } catch {
-                        user = ctx.member;
-                    }
-                } else {
+                    user = msg.member ? msg.member : ctx.member;
+                } catch {
                     user = ctx.member;
                 }
+            } else {
+                user = ctx.member;
+            }
         }
 
         if (!user) return ctx.error(`Member \`${ctx.args.join(' ')}\` not found.`);

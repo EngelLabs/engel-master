@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const purgeMessages = async (ctx, count, check, reason, type) => {
@@ -85,7 +85,7 @@ purge.command({
         let user;
 
         try {
-            user = await ctx.bot.converter.user(ctx, ctx.args[0]);
+            user = await ctx.bot.helpers.converter.user(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }

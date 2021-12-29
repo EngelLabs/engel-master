@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 COMMAND_TYPES = {

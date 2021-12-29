@@ -8,10 +8,8 @@ const reload = new Command({
     aliases: ['r'],
     dmEnabled: true,
     execute: function (ctx) {
-        if (!ctx.config.dev) {
-            return ctx.error('WARNING: Don\'t modify module state during production.');
-        }
-
+        if (!ctx.baseConfig.dev) return Promise.resolve();
+        
         try {
             var res = ctx.bot.modules.reload(ctx.args.length ? ctx.args : false);
         } catch (err) {

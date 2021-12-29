@@ -112,6 +112,8 @@ const baseConfig = {
                 '',
             ],
         },
+        commands: {},
+        modules: {},
         disableEmojis: true,
         globalCooldown: 700,
         commandCooldown: 2500,

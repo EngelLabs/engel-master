@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const mute = new Command({
@@ -17,10 +17,10 @@ const mute = new Command({
 
         try {
             // var user = (
-            //     await ctx.bot.converter.member(ctx, ctx.args[0]) ||
-            //     await ctx.bot.converter.user(ctx, args.args[0])
+            //     await ctx.bot.helpers.converter.member(ctx, ctx.args[0]) ||
+            //     await ctx.bot.helpers.converter.user(ctx, args.args[0])
             // );
-            var user = await ctx.bot.converter.member(ctx, ctx.args[0]);
+            var user = await ctx.bot.helpers.converter.member(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -39,7 +39,7 @@ const mute = new Command({
 
         ctx.args.shift();
 
-        const duration = ctx.bot.converter.duration(ctx.args[0]);
+        const duration = ctx.bot.helpers.converter.duration(ctx.args[0]);
 
         // if (duration && duration < 300) return ctx.error('Duration must be at least 5 minutes.');
 

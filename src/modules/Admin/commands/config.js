@@ -1,9 +1,19 @@
 const Command = require('../../../core/structures/Command');
 
 
-const before = ctx => {
+const beforeConfig = ctx => {
+    ctx.key = ctx.args[0];
+    ctx.value = ctx.config[ctx.key];
+}
+
+const afterConfig = async ctx => {
+    await ctx.models.Config.updateOne({ state: ctx.config.state }, { $set: { [ctx.key]: ctx.value} });
+    await ctx.bot.updateConfig();
+    return ctx.success(`Updated key \`${ctx.key}\`, value: \`${ctx.config[ctx.key]}\``);
+}
+
+const beforeGuild = ctx => {
     if (!ctx.args.length && !ctx.guild) {
-        ctx.done = true;
         return ctx.error('Must provide a guild ID.');
     }
 
@@ -12,9 +22,69 @@ const before = ctx => {
 
 const config = new Command({
     name: 'config',
+    aliases: ['c'],
+    info: "Manage the bot's configuration",
+    namespace: true,
+});
+
+config.command({
+    name: 'toggle',
+    usage: '<key>',
+    aliases: ['t'],
+    info: 'Toggle a boolean value in configuration',
+    before: beforeConfig,
+    after: afterConfig,
+    requiredArgs: 1,
+    execute: async function (ctx) {
+        if (typeof ctx.value !== 'boolean') {
+            return ctx.error(`\`${ctx.key}\` is not a valid key.`);
+        }
+
+        ctx.value = !ctx.value
+    }
+});
+
+config.command({
+    name: 'string',
+    usage: '<key>',
+    aliases: ['s'],
+    info: 'Change a string value in configuration',
+    before: beforeConfig,
+    after: afterConfig,
+    requiredArgs: 2,
+    execute: async function (ctx) {
+        if (typeof ctx.value !== 'string') {
+            return ctx.error(`\`${ctx.key}\` is not a valid key.`);
+        }
+
+        ctx.value = ctx.args[1];
+    }
+});
+
+config.command({
+    name: 'number',
+    usage: '<key>',
+    aliases: ['n', 'i', 'int'],
+    info: 'Change a number value in configuration',
+    before: beforeConfig,
+    after: afterConfig,
+    requiredArgs: 2,
+    execute: async function (ctx) {
+        if (typeof ctx.value !== 'number') {
+            return ctx.error(`\`${ctx.key}\` is not a valid key.`);
+        }
+
+        ctx.value = parseInt(ctx.args[1]);
+    }
+
+});
+
+const guild = config.command({
+    name: 'guild',
     usage: '[guild]',
-    info: 'Manage a guild\'s configuration',
-    before,
+    aliases: ['g'],
+    info: "Manage a guild's configuration",
+    before: beforeGuild,
     dmEnabled: true,
     execute: async function (ctx) {
         const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
@@ -29,11 +99,11 @@ const config = new Command({
     }
 });
 
-config.command({
+guild.command({
     name: 'delete',
     aliases: ['d', 'del'],
-    info: 'Delete a guild\'s configuration',
-    before,
+    info: "Delete a guild's configuration",
+    before: beforeGuild,
     dmEnabled: true,
     execute: async function (ctx) {
         const result = await ctx.models.Guild.deleteOne({ id: ctx.guildId });

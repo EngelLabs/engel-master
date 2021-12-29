@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const { Permissions } = require('eris').Constants;
 
 
@@ -18,9 +18,9 @@ module.exports = new Command({
     ],
     execute: async function (ctx) {
         let channel;
-        
+
         try {
-            channel = await ctx.bot.converter.textChannel(ctx, ctx.args[0]);
+            channel = await ctx.bot.helpers.converter.textChannel(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -40,9 +40,9 @@ module.exports = new Command({
                 perms.sendMessages === true
                 // perms.voiceConnect === undefined ||
                 // perms.voiceConnect === true
-                ) {
-                    return ctx.error('That channel is already unlocked.');
-                }
+            ) {
+                return ctx.error('That channel is already unlocked.');
+            }
 
             deny = BigInt(overwrite.deny || 0);
 

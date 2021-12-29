@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Event extends Module {
@@ -6,6 +6,7 @@ class Event extends Module {
         super();
 
         this.info = 'Conduct a server event.';
+        this.disabled = true;
     }
 }
 

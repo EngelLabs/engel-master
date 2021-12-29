@@ -16,7 +16,7 @@ module.exports = new Command({
     execute: async function (ctx) {
         const module = ctx.bot.modules.get(ctx.args.join(' '));
 
-        if (!module || ((module.private || module.internal) && !ctx.isAdmin)) {
+        if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
             return ctx.error('No module exists by that name.');
         }
 

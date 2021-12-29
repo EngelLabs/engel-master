@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const { Permissions } = require('eris').Constants;
 
 
@@ -20,7 +20,7 @@ module.exports = new Command({
         let user;
 
         try {
-            user = await ctx.bot.converter.member(ctx, ctx.args[0]);
+            user = await ctx.bot.helpers.converter.member(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -35,7 +35,7 @@ module.exports = new Command({
             let errored = false;
 
             try {
-                channel = await ctx.bot.converter.channel(ctx, ctx.args[0]);
+                channel = await ctx.bot.helpers.converter.channel(ctx, ctx.args[0]);
             } catch (err) {
                 errored = true;
             }
@@ -87,7 +87,7 @@ module.exports = new Command({
             channel: channel,
             type: 'block'
         });
-        
+
         ctx.module.deleteCommand(ctx);
 
         return ctx.success(`${user.username}#${user.discriminator} unblocked from ${channel.mention}.`);

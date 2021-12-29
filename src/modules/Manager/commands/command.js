@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 module.exports = new Command({
@@ -21,7 +21,7 @@ module.exports = new Command({
     }) {
         let command = bot.commands.get(args[0]);
 
-        if (!command || command.hidden || command.module.private || command.module.internal) {
+        if (!command || command.hidden || command.module.private || command.module.internal || command.module.disabled) {
             return error(`Command \`${args[0]}\` not found.`);
         }
 
@@ -38,7 +38,7 @@ module.exports = new Command({
             command = subcommand;
         }
 
-        if (!command || command.hidden || command.module.private || command.module.internal) {
+        if (!command || command.hidden || command.module.private || command.module.internal || command.module.disabled) {
             return error(`Command \`${args[0]}\` not found.`);
         }
 

@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Ticket extends Module {
@@ -6,6 +6,7 @@ class Ticket extends Module {
         super();
 
         this.info = 'Enables server ticket creation';
+        this.disabled = true;
     }
 }
 

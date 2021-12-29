@@ -184,8 +184,8 @@ class EventManager extends Base {
         if (!this.bot.isReady || message.author.bot) return;
 
         const payload = {
-            isAdmin: this.bot.permissions.isAdmin(message.author.id),
-            isTester: this.bot.permissions.isTester(message.author.id),
+            isAdmin: this.bot.helpers.permissions.isAdmin(message.author.id),
+            isTester: this.bot.helpers.permissions.isTester(message.author.id),
             isDM: !message.channel.guild,
             message: message,
         };

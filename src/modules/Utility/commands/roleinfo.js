@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const moment = require('moment');
 
 
@@ -13,7 +13,7 @@ module.exports = new Command({
     ],
     execute: async function (ctx) {
         try {
-            var role = await ctx.bot.converter.role(ctx, ctx.args.join(' '));
+            var role = await ctx.bot.helpers.converter.role(ctx, ctx.args.join(' '));
         } catch (err) {
             return ctx.error(err);
         }

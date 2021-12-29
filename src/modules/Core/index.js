@@ -1,9 +1,10 @@
 const Module = require('../../core/structures/Module');
 const Context = require('../../core/structures/Context');
+const Permission = require('../../core/helpers/Permission');
 const baseConfig = require('../../core/baseConfig');
 
 
-const basePrefixes = [`<@${baseConfig.clientId}> `, `<@!${baseConfig.clientId}> `];
+const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
 
 
 class Core extends Module {
@@ -15,8 +16,9 @@ class Core extends Module {
     }
 
     injectHook() {
-        this.cooldowns = new Map();
-        this.globalCooldowns = new Map();
+        this._cooldowns = new Map();
+        this._globalCooldowns = new Map();
+        this._permissions = new Permission(this.bot);
 
         this.listeners = [];
 
@@ -50,7 +52,7 @@ class Core extends Module {
 
         return this.handleCommand(payload);
     }
-    
+
     handleAdmin(p) {
         const ctx = this.resolveContext(p);
 
@@ -72,35 +74,35 @@ class Core extends Module {
         if (config.users.blacklisted.includes(message.author.id)) return;
         if (isDM && !config.dmCommands) return;
 
-        const last = this.globalCooldowns.get(message.author.id);
+        const last = this._globalCooldowns.get(message.author.id);
 
         if (last) {
             if (Date.now() - last <= config.globalCooldown) return;
 
-            this.globalCooldowns.delete(message.author.id);
+            this._globalCooldowns.delete(message.author.id);
         }
 
         const ctx = this.resolveContext(p);
 
         if (!ctx) return;
 
-        const { command, module, isAdmin } = ctx;
+        const { command, module } = ctx;
 
         if (!command.disableModuleCheck && module.commandCheck) {
             if (!await module.commandCheck(ctx)) return;
         }
 
         if (!(
-            this.bot.permissions.isOwner(ctx) ||
-            this.bot.permissions.isServerAdmin(ctx) ||
-            this.bot.permissions.canInvoke(ctx)
+            this._permissions.isOwner(ctx) ||
+            this._permissions.isServerAdmin(ctx) ||
+            this._permissions.canInvoke(ctx)
         )) return;
 
         if (command.check && !await command.check(ctx)) return;
 
         const key = message.author.id + command.qualName;
 
-        const activeCooldown = this.cooldowns.get(key);
+        const activeCooldown = this._cooldowns.get(key);
         if (activeCooldown && (Date.now() - activeCooldown.time) <= activeCooldown.cooldown) {
             if (!activeCooldown.warned && config.cooldownWarn) {
                 activeCooldown.warned = true;
@@ -119,11 +121,11 @@ class Core extends Module {
 
         const cooldown = typeof command.cooldown !== 'undefined' ? command.cooldown : config.commandCooldown;
         const now = Date.now();
-        this.cooldowns.set(key, {
+        this._cooldowns.set(key, {
             time: now,
             cooldown: cooldown
         });
-        this.globalCooldowns.set(message.author.id, now);
+        this._globalCooldowns.set(message.author.id, now);
 
         const moduleName = module.dbName;
         const commandName = command.dbName;
@@ -261,7 +263,7 @@ class Core extends Module {
             if (!ctx.done) {
                 await execute();
 
-                if (command.after) {
+                if (!ctx.done && command.after) {
                     await command.after(ctx);
                 }
             }
@@ -303,7 +305,7 @@ class Core extends Module {
         const embed = {
             description: msg.description.join('\n'),
             timestamp: new Date().toISOString(),
-            color: this.bot.config.colours.success,
+            color: this.config.colours.success,
             footer: { text: msg.footer.join('\n') },
         };
 
@@ -321,7 +323,7 @@ class Core extends Module {
     }
 
     guildDelete({ guild }) {
-        const eris = this.bot.eris;
+        const eris = this.eris;
 
         let allMembers = 0;
 
@@ -347,7 +349,7 @@ class Core extends Module {
         const embed = {
             description: msgs.description.join('\n'),
             timestamp: new Date().toISOString(),
-            color: this.bot.config.colours.error,
+            color: this.config.colours.error,
             footer: { text: msgs.footer.join('\n') },
         };
 
@@ -378,7 +380,7 @@ class Core extends Module {
 
         this.log(text, 'debug');
 
-        if (!isAdmin && !this.bot.config.dev) {
+        if (!isAdmin && !this.config.dev) {
             const doc = {
                 name: command.dbName,
                 message: {
@@ -404,7 +406,7 @@ class Core extends Module {
         this.log(text, 'error');
         console.error(err);
 
-        if (!isAdmin && !this.bot.config.dev) {
+        if (!isAdmin && !this.config.dev) {
             const doc = {
                 name: command.dbName,
                 message: {

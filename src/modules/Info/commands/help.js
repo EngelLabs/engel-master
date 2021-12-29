@@ -54,10 +54,10 @@ module.exports = new Command({
             ctx.args.shift();
         }
 
-        if (!command || ((command.module.private || command.module.internal) && !ctx.isAdmin)) {
+        if (!command || ((command.module.private || command.module.internal || command.module.disabled) && !ctx.isAdmin)) {
             const module = ctx.bot.modules.get(str);
 
-            if (!module || ((module.private || module.internal) && !ctx.isAdmin)) {
+            if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
                 return ctx.error('No command or module exists by that name.');
             }
 

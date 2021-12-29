@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const unban = new Command({
@@ -13,7 +13,7 @@ const unban = new Command({
     requiredPermissions: ['banMembers'],
     execute: async function (ctx) {
         try {
-            var user = await ctx.bot.converter.user(ctx, ctx.args[0]);
+            var user = await ctx.bot.helpers.converter.user(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }

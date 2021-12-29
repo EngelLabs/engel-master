@@ -35,14 +35,6 @@ class Module extends Base {
         this.loadListeners();
     }
 
-    get commands() {
-        return this._commands;
-    }
-
-    set commands(value) {
-        return (this._commands = value);
-    }
-
     /**
      * Log a message
      * @param {String} msg The message to log
@@ -57,19 +49,24 @@ class Module extends Base {
     }
 
     get globalConfig() {
-        if (this.internal || this.private) return;
+        if (this.internal || this.private || this.disabled) return;
 
         const ret = {};
 
-        for (const key in this) {
-            if (key.startsWith('_')) continue;
+        const fields = [
+            'name',
+            'dbName',
+            'info',
+            'aliases',
+            'allowedByDefault',
+            'requiredPermissions',
+        ]
 
+        for (const key of fields) {
             const value = this[key];
             
-            if (value instanceof Array && !value.length) {
-                this.log(`Skipping "${key}": Array's length is 0.`, 'debug');
-                continue;
-            }
+            if (value === undefined) continue;
+            if (value instanceof Array && !value.length) continue;
 
             ret[key] = value;
         }

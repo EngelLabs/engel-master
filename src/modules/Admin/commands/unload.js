@@ -8,10 +8,8 @@ module.exports = new Command({
     aliases: ['u'],
     dmEnabled: true,
     execute: function (ctx) {
-        if (!ctx.config.dev) {
-            return ctx.error('WARNING: Don\'t modify modules state during production.');
-        }
-
+        if (!ctx.baseConfig.dev) return Promise.resolve();
+        
         try {
             var res = ctx.bot.modules.unload(ctx.args.length ? ctx.args : false);
         } catch (err) {

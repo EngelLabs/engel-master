@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Level extends Module {
@@ -6,6 +6,7 @@ class Level extends Module {
         super();
 
         this.info = 'Level up with server activity, gain xp, and spend it!';
+        this.disabled = true;
     }
 }
 

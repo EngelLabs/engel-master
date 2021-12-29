@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const { Permissions } = require('eris').Constants;
 
 
@@ -20,7 +20,7 @@ module.exports = new Command({
         let user;
 
         try {
-            user = await ctx.bot.converter.member(ctx, ctx.args[0]);
+            user = await ctx.bot.helpers.converter.member(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -41,7 +41,7 @@ module.exports = new Command({
             let errored = false;
 
             try {
-                channel = await ctx.bot.converter.channel(ctx, ctx.args[0]);
+                channel = await ctx.bot.helpers.converter.channel(ctx, ctx.args[0]);
             } catch (err) {
                 errored = true;
             }
@@ -72,7 +72,7 @@ module.exports = new Command({
             deny = Permissions.viewChannel;
         }
 
-        const duration = ctx.bot.converter.duration(ctx.args.shift());
+        const duration = ctx.bot.helpers.converter.duration(ctx.args.shift());
         const reason = ctx.args.join(' ');
 
         const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;

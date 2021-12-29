@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class ReactionRole extends Module {
@@ -7,7 +7,6 @@ class ReactionRole extends Module {
 
         this.aliases = ['rr', 'reactionroles'];
         this.info = 'Reaction based role management';
-
         this.disabled = true;
     }
 }

@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const prettyMS = require('pretty-ms');
 
 
@@ -31,7 +31,7 @@ const giveaway = new Command({
             let msg;
 
             try {
-                msg = await ctx.bot.helper.waitFor('messageCreate', check, 30000);
+                msg = await ctx.waitFor('messageCreate', check, 30000);
             } catch (err) {
                 ctx.send(_('Giveaway creation timed out.'));
                 return false;
@@ -105,7 +105,7 @@ const giveaway = new Command({
             const arg = msg.content.split(' ')[0];
 
             try {
-                channel = await ctx.bot.converter.textChannel(ctx, arg);
+                channel = await ctx.helpers.converter.textChannel(ctx, arg);
 
                 if (!channel) {
                     msg = await exchange(_(`Channel \`${arg}\` not found, please try again.`));
@@ -124,7 +124,7 @@ const giveaway = new Command({
 
             const arg = msg.content.split(' ')[0];
 
-            duration = ctx.bot.converter.duration(arg);
+            duration = ctx.bot.helpers.converter.duration(arg);
 
             if (!duration) {
                 msg = await exchange(_(`Duration \`${arg}\` is invalid, please try again.`));

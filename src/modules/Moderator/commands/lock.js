@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const { Permissions } = require('eris').Constants;
 
 
@@ -17,9 +17,9 @@ module.exports = new Command({
     ],
     execute: async function (ctx) {
         let channel;
-        
+
         try {
-            channel = await ctx.bot.converter.textChannel(ctx, ctx.args[0]);
+            channel = await ctx.bot.helpers.converter.textChannel(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -37,9 +37,9 @@ module.exports = new Command({
 
             if (perms.sendMessages === false
                 // perms.voiceConnect === false
-                ) {
-                    return ctx.error('That channel is already locked.');
-                }
+            ) {
+                return ctx.error('That channel is already locked.');
+            }
 
             // i'm going to be honest, i don't really have any idea
             // how discord permissions work. i find it hard to visualize
@@ -76,7 +76,7 @@ module.exports = new Command({
 
         ctx.args.shift();
 
-        const duration = ctx.bot.converter.duration(ctx.args.shift());
+        const duration = ctx.bot.helpers.converter.duration(ctx.args.shift());
         const reason = ctx.args.join(' ');
 
         const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
@@ -95,7 +95,7 @@ module.exports = new Command({
             duration: duration,
             reason: reason,
         });
-        
+
         ctx.module.deleteCommand(ctx);
 
         return ctx.success(`Channel ${channel.mention} locked.`);

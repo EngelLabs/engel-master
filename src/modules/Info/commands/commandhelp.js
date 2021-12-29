@@ -35,7 +35,7 @@ module.exports = new Command({
         }
 
         if ((command.hidden && !ctx.isAdmin) ||
-            ((command.module.private || command.module.internal) && !ctx.isAdmin)) {
+            ((command.module.private || command.module.internal || command.module.disabled) && !ctx.isAdmin)) {
             return ctx.error('No command exists by that name');
         }
 

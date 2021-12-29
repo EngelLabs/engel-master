@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const muterole = new Command({
@@ -25,7 +25,7 @@ const muterole = new Command({
         let role;
 
         try {
-            role = await ctx.bot.converter.role(ctx, ctx.args[0]);
+            role = await ctx.bot.helpers.converter.role(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -62,7 +62,7 @@ muterole.command({
     requiredPermissions: ['manageRoles', 'manageChannels'],
     execute: async function (ctx) {
         try {
-            var role = await ctx.bot.helper.createMuteRole(ctx.guild, ctx.guildConfig);
+            var role = await ctx.bot.helpers.moderation.createMuteRole(ctx.guild, ctx.guildConfig);
         } catch (err) {
             return ctx.error(err.toString());
         }

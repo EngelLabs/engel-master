@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const kick = new Command({
@@ -13,7 +13,7 @@ const kick = new Command({
     requiredPermissions: ['kickMembers'],
     execute: async function (ctx) {
         try {
-            var user = await ctx.bot.converter.member(ctx, ctx.args[0]);
+            var user = await ctx.bot.helpers.converter.member(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -31,7 +31,7 @@ const kick = new Command({
 
         ctx.module.sendDM(ctx, user, `You were kicked from ${ctx.guild.name}`, null, reason);
 
-        const auditReason = (reason && reason.length ? reason : 'No reason provided' ) + ' | ' + `Moderator: ${ctx.author.id}`;
+        const auditReason = (reason && reason.length ? reason : 'No reason provided') + ' | ' + `Moderator: ${ctx.author.id}`;
 
         try {
             await user.kickGuildMember(ctx.guild.id, user.id, auditReason);

@@ -28,6 +28,14 @@ class Command {
         return this._parent;
     }
 
+    get commands() {
+        return this._commands;
+    }
+
+    set commands(value) {
+        return (this._commands = value);
+    }
+
     set parent(command) {
         if (this._parent) {
             throw new Error(`Subcommand is already registered to ${this._parent.qualName}`)
@@ -55,23 +63,34 @@ class Command {
 
     get globalConfig() {
         if (this.hidden ||
+            this.disabled ||
             this.module.private ||
-            this.module.internal) return;
+            this.module.internal ||
+            this.module.disabled) return;
 
-        const ret = {};
+        const ret = { name: this.dbName, module: this.module.dbName };
 
-        for (const key in this) {
+        const fields = [
+            'info',
+            'aliases',
+            'usage',
+            'examples',
+            'cooldown',
+            'requiredPermissions',
+            'dmEnabled',
+            'alwaysEnabled',
+            'requiredArgs',
+        ];
+
+        for (const key of fields) {
+
             const value = this[key];
             
-            if (value instanceof Array && !value.length) {
-                logger.debug(`[Commands.${this.dbName}] Skipping "${key}": Array's length is 0.`);
-                continue;
-            }
+            if (value === undefined) continue;
+            if (value instanceof Array && !value.length) continue;
 
             ret[key] = value;
         }
-
-        ret.name = this.dbName;
         
         return ret;
     }

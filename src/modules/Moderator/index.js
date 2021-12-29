@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 const prettyMS = require('pretty-ms');
 const reload = require('require-reload')(require);
 const TimerHandler = reload('./TimerHandler');
@@ -18,7 +18,7 @@ class Moderator extends Module {
 
     injectHook() {
         const timerHandler = new TimerHandler(this);
-        
+
         this.tasks = [
             [timerHandler, 15000],
         ];
@@ -280,7 +280,7 @@ class Moderator extends Module {
         }
 
         try {
-            role = await this.bot.helper.createMuteRole(guild, guildConfig);
+            role = await this.bot.helpers.moderation.createMuteRole(guild, guildConfig);
         } catch (err) {
             return Promise.reject(err);
         }

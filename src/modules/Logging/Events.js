@@ -1,5 +1,5 @@
 const moment = require('moment');
-const Base = require('../../structures/Base');
+const Base = require('../../core/structures/Base');
 
 
 const colorMapping = {
@@ -14,7 +14,7 @@ const colorMapping = {
  */
 class Events extends Base {
     constructor(module) {
-        super();
+        super(module.bot);
         
         for (const fn of Object.values(this)) {
             if (typeof fn !== 'function') continue;
@@ -55,11 +55,8 @@ class Events extends Base {
 
             this['_' + fn.name] = fn;
             this[fn.name] = wrapped;
-            module.log(`Registered event "${fn.name}"`, 'debug');
+            this.log(`Registered event "${fn.name}"`, 'debug', 'Modules.Logging.Events');
         }
-
-        this.bot = module.bot;
-        this.module = module;
     }
 
     messageDelete = (_, message) => {

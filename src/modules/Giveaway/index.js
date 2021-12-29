@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Giveaway extends Module {
@@ -6,6 +6,7 @@ class Giveaway extends Module {
         super();
 
         this.info = 'Conduct server giveaways';
+        this.disabled = true;
     }
 }
 

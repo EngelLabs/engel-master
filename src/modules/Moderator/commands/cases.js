@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const prettyMS = require('pretty-ms');
 
 
@@ -16,7 +16,7 @@ module.exports = new Command({
     cooldown: 10000,
     requiredArgs: 1,
     execute: async function (ctx) {
-        const userId = ctx.bot.converter.userId(ctx.args[0]);
+        const userId = ctx.bot.helpers.converter.userId(ctx.args[0]);
 
         if (isNaN(userId)) return ctx.error(userId);
 

@@ -16,25 +16,21 @@ class ModuleCollection extends Collection {
     }
 
     register() {
-        let update;
+        this.bot.config.modules = {};
 
-        [...this.unique()].map(m => m.globalConfig).forEach(m => {
-            if (!m) return;
+        [...this.unique()]
+            .map(m => m.globalConfig)
+            .forEach(m => {
+                if (!m) return;
 
-            update = update || {};
-            
-            update['modules.' + m.dbName] = this.bot.config.modules[m.dbName] = m;
-        });
+                this.bot.config.modules[m.dbName] = m;
+            });
 
         return new Promise((resolve, reject) => {
-            if (update) {
-                this.bot.models.Config.updateOne({ state: this.bot.state }, { $set: update })
-                    .exec()
-                    .then(resolve)
-                    .catch(reject);
-            }
-
-            resolve(false);
+            this.bot.models.Config.updateOne({ state: this.bot.state }, { $set: { modules: this.bot.config.modules } })
+                .exec()
+                .then(resolve)
+                .catch(reject);
         });
     }
 
@@ -55,6 +51,8 @@ class ModuleCollection extends Collection {
             module.inject(this.bot);
 
             this.add(module);
+
+            logger.debug(`[Modules] Loaded "${module.name}".`)
 
             return true;
 

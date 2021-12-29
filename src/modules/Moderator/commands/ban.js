@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const ban = new Command({
@@ -14,7 +14,7 @@ const ban = new Command({
     requiredPermissions: ['banMembers'],
     execute: async function (ctx) {
         try {
-            var user = await ctx.bot.converter.user(ctx, ctx.args[0]);
+            var user = await ctx.bot.helpers.converter.user(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
@@ -40,7 +40,7 @@ const ban = new Command({
             return ctx.error(`\`delete message days\` must be a value between 1 and 7, not \`${deleteMessageDays}\``);
         }
 
-        const duration = ctx.bot.converter.duration(ctx.args[0]);
+        const duration = ctx.bot.helpers.converter.duration(ctx.args[0]);
 
         if (duration) ctx.args.shift();
 
@@ -48,7 +48,7 @@ const ban = new Command({
 
         ctx.module.sendDM(ctx, user, `You were banned from ${ctx.guild.name}`, duration, reason);
 
-        const auditReason = (reason && reason.length ? reason : 'No reason provided' ) + ` | Moderator: ${ctx.author.id}`;
+        const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
         try {
             await ctx.eris.banGuildMember(ctx.guild.id, user.id, deleteMessageDays, auditReason);

@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Utility extends Module {
@@ -7,7 +7,7 @@ class Utility extends Module {
 
         this.info = 'Commands to provide information about Discord objects';
         this.aliases = ['util', 'utils'];
-        this.defaultEnabled = true;
+        this.allowedByDefault = true;
     }
 }
 

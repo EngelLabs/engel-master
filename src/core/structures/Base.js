@@ -51,28 +51,24 @@ class Base {
             throw new Error('Cannot construct instances of Base directly');
         }
 
-        // importing it here cause of some weird cyclic stuff idk
+        // importing it here cause of some weird cyclic dependency stuff idk
         if (!Bot) Bot = require('../Bot');
 
-        this._bot = bot || Bot.instance;
-    }
-
-    get bot() {
-        return this._bot;
+        this.bot = bot || Bot.instance;
     }
 
     /**
      * The Eris client instance
      */
     get eris() {
-        return this._bot.eris;
+        return this.bot.eris;
     }
 
     /**
      * The app state
      */
     get state() {
-        return this._bot.state;
+        return this.bot.state;
     }
 
     /**
@@ -80,7 +76,7 @@ class Base {
      * @type {Object}
      */
     get config() {
-        return this._bot.config;
+        return this.bot.config;
     }
 
     /**
@@ -88,35 +84,39 @@ class Base {
      * @type {Object}
      */
     get baseConfig() {
-        return this._bot.baseConfig;
+        return this.bot.baseConfig;
     }
 
     /**
      * The logger instance
      */
     get logger() {
-        return this._bot.logger;
+        return this.bot.logger;
     }
 
     /**
      * The Mongoose instance
      */
     get mongoose() {
-        return this._bot.mongoose;
+        return this.bot.mongoose;
     }
 
     /**
      * The models registered to the Mongoose instance
      */
     get models() {
-        return this._bot.models;
+        return this.bot.models;
     }
 
     /**
      * The redis client instance
      */
     get redis() {
-        return this._bot.redis;
+        return this.bot.redis;
+    }
+
+    get helpers() {
+        return this.bot.helpers;
     }
 
     get permissionsMapping() {

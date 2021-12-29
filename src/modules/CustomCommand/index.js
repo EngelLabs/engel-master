@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class CustomCommand extends Module {
@@ -8,6 +8,7 @@ class CustomCommand extends Module {
         this.dbName = 'cc';
         this.aliases = ['cc', 'customcommands']
         this.info = 'Create custom bot commands for your server';
+        this.disabled = true;
     }
 }
 

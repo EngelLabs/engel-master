@@ -73,7 +73,7 @@ class Permission extends Base {
             canInvoke = checkPerms(ctx.guildConfig);
         }
 
-        if (!canInvoke && !overrideExists && ctx.module.defaultEnabled) {
+        if (!canInvoke && !overrideExists && ctx.module.allowedByDefault) {
             return true;
         }
 

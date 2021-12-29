@@ -98,7 +98,24 @@ class Context extends Base {
         return this.eris.createMessage(this.channel.id, options, ...args);
     }
 
+    /**
+     * 
+     * @param {String} content Content to sent
+     * @param {Object} options Options to apply
+     * @param {Boolean} options.force Whether to ignore ctx.done
+     * @param {Number} colour Colour to apply to the embed
+     * @param {String} emoji Emoji to prefix to the message
+     * @returns 
+     */
     _sendResponse(content, options = {}, colour, emoji) {
+        if (this.done && !options.force) {
+            this.log(`Skipping response as context has already been responded to.`);
+
+            return Promise.resolve();
+        }
+
+        this.done = true;
+
         if (!content) return Promise.resolve();
 
         if (this.guild) {

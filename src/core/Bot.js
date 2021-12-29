@@ -8,9 +8,9 @@ const ModuleCollection = require('./collections/ModuleCollection');
 const GuildCollection = require('./collections/GuildCollection');
 const CacheManager = require('./managers/CacheManager');
 const EventManager = require('./managers/EventManager');
-const Converter = require('./helpers/Converter');
-const Moderator = require('./helpers/Moderator');
 const Permission = require('./helpers/Permission');
+const Moderator = require('./helpers/Moderator');
+const Converter = require('./helpers/Converter');
 
 
 let _instance = null;
@@ -92,6 +92,15 @@ class Bot {
             });
     }
 
+    async updateConfig() {
+        try {
+            await this.getConfig().then(c => this.config = c)
+        } catch (err) {
+            logger.error('[Bot] Something went wrong.');
+            console.error(err);
+        }
+    }
+
     setup() {
         this.eris = new Eris(this);
         this.redis = new Redis(this);
@@ -100,9 +109,11 @@ class Bot {
         this.events = new EventManager(this);
         this.cache = new CacheManager(this);
 
-        this.converter = new Converter(this);
-        this.moderation = new Moderator(this);
-        this.permissions = new Permission(this);
+        this.helpers = {
+            converter: new Converter(this),
+            moderation: new Moderator(this),
+            permissions: new Permission(this),
+        }
 
         this.guilds = new GuildCollection(this);
         this.commands = new CommandCollection(this);
@@ -123,7 +134,7 @@ class Bot {
             this.guilds.setup();
 
             setInterval(
-                () => this.getConfig().then(c => this.config = c),
+                this.updateConfig.bind(this),
                 this.config.configRefreshInterval
             );
 

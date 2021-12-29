@@ -9,40 +9,22 @@ class CommandCollection extends Collection {
     }
 
     register() {
-        let update;
+        this.bot.config.commands = {};
 
-        [...this.unique()]
-            .map(command => this.getConfig(command))
+        this.all()
+            .map(command => command.globalConfig)
             .forEach(c => {
                 if (!c) return;
-
-                update = update || {};
-
-                update['commands.' + c.name] = this.bot.config.commands[c.name] = c;
+                
+                this.bot.config.commands[c.name] = c;
             });
 
-        if (update) {
-            return new Promise((resolve, reject) => {
-                this.bot.models.Config.updateOne({ state: this.bot.state }, { $set: update })
-                    .exec()
-                    .then(resolve)
-                    .catch(reject);
-            });
-        }
-        
-        return Promise.resolve(false);
-    }
-
-    getConfig(command) {
-        const ret = [command.globalConfig];
-
-        if (command.commands) {
-            for (const subcommand of command.commands.unique()) {
-                ret.push(...this.getConfig(subcommand));
-            }
-        }
-
-        return ret.filter(c => c);
+        return new Promise((resolve, reject) => {
+            this.bot.models.Config.updateOne({ state: this.bot.state }, { $set: { commands: this.bot.config.commands } })
+                .exec()
+                .then(resolve)
+                .catch(reject);
+        });
     }
 
     all() {
@@ -50,11 +32,11 @@ class CommandCollection extends Collection {
 
         for (const command of this.unique()) {
             if (command.commands) {
-                ret.push(...command.commands.all());
+                ret.push(command.commands.all());
             }
         }
 
-        return ret;
+        return ret.flat();
     }
 }
 

@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Announcement extends Module {
@@ -6,6 +6,7 @@ class Announcement extends Module {
         super();
 
         this.info = 'Automated announcements';
+        this.disabled = true;
     }
 }
 

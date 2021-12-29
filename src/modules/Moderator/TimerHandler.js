@@ -53,7 +53,7 @@ class TimerHandler {
 
         if (!guild) return;
 
-        if (!this.bot.permissions.hasGuildPermissions(guild, 'manageRoles')) return;
+        if (!this.bot.helpers.permissions.hasGuildPermissions(guild, 'manageRoles')) return;
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
         if (!guildConfig || !this._isEnabled(guildConfig)) return;
@@ -83,7 +83,7 @@ class TimerHandler {
 
         if (!guild) return;
 
-        if (!this.bot.permissions.hasGuildPermissions(guild, 'banMembers')) return;
+        if (!this.bot.helpers.permissions.hasGuildPermissions(guild, 'banMembers')) return;
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
 
@@ -110,7 +110,7 @@ class TimerHandler {
 
         if (!channel) return;
 
-        if (!this.bot.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
+        if (!this.bot.helpers.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
 
@@ -158,7 +158,7 @@ class TimerHandler {
 
         if (!channel) return;
 
-        if (!this.bot.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
+        if (!this.bot.helpers.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
         const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
 

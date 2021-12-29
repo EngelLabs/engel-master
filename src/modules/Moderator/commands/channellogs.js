@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 const prettyMS = require('pretty-ms');
 
 
@@ -16,7 +16,7 @@ module.exports = new Command({
         let channelId;
 
         try {
-            channelId = ctx.bot.converter.channelId(ctx.args[0]);
+            channelId = ctx.bot.helpers.converter.channelId(ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }

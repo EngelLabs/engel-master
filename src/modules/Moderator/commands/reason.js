@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 module.exports = new Command({
@@ -33,7 +33,7 @@ module.exports = new Command({
         const result = await ctx.models.ModLog
             .updateOne(filter, update)
             .exec();
-        
+
         if (!result.matchedCount) return ctx.error(`Case \`${ctx.args[0]}\` not found.`);
 
         return reason && reason.length

@@ -7,7 +7,7 @@ class Info extends Module {
 
         this.aliases = ['information'];
         this.info = 'Commands to provide information about the bot';
-        this.defaultEnabled = true;
+        this.allowedByDefault = true;
     }
 
     injectHook() {

@@ -1,4 +1,4 @@
-const Module = require('../../structures/Module');
+const Module = require('../../core/structures/Module');
 
 
 class Fun extends Module {
@@ -6,6 +6,7 @@ class Fun extends Module {
         super();
 
         this.info = 'Commands that are (hopefully) fun';
+        this.disabled = true;
     }
 }
 

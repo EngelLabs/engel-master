@@ -1,4 +1,4 @@
-const Command = require('../../../structures/Command');
+const Command = require('../../../core/structures/Command');
 
 
 const unmute = new Command({
@@ -14,17 +14,17 @@ const unmute = new Command({
     execute: async function (ctx) {
         if (!ctx.guildConfig.muteRole ||
             !ctx.guild.roles.get(ctx.guildConfig.muteRole)) {
-                return ctx.error(`This server doesn\'t have a mute role. See \`${ctx.prefix}help muterole\` to set one up.`);
-            }
+            return ctx.error(`This server doesn\'t have a mute role. See \`${ctx.prefix}help muterole\` to set one up.`);
+        }
 
         const role = ctx.guild.roles.get(ctx.guildConfig.muteRole);
 
         try {
             // var user = (
-            //     await ctx.bot.converter.member(ctx, ctx.args[0]) ||
-            //     await ctx.bot.converter.user(ctx, ctx.args[0])
+            //     await ctx.bot.helpers.converter.member(ctx, ctx.args[0]) ||
+            //     await ctx.bot.helpers.converter.user(ctx, ctx.args[0])
             // );
-            var user = await ctx.bot.converter.member(ctx, ctx.args[0]);
+            var user = await ctx.bot.helpers.converter.member(ctx, ctx.args[0]);
         } catch (err) {
             return ctx.error(err);
         }
