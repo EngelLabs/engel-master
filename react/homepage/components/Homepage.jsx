@@ -1,11 +1,7 @@
-import React, { Component } from 'react'
-import axios from 'axios';
+import React, { Component } from 'react';
 
 export default class Homepage extends Component {
     render() {
-        return (
-            <div>
-            </div>
-        )
+        return <div></div>
     }
 }

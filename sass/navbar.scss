@@ -1,40 +1,60 @@
-@import './common/app';
+@import './core/common';
 
 
 .navbar {
-    background-color: $dark-grey;
-
-    a:visited {
-        color: inherit;
-    }
+    overflow: hidden;
 
     .button {
+        position: static;
         display: block;
-        width: 60px;
-        height: 30px;
-        border-radius: 5px;
         text-align: center;
         text-decoration: none;
-        background-color: $pale-blue;
+        float: left;
+        color: white;
+        margin-top: 15px;
 
-        padding-top: 5px;
+        &.is-important {
+            padding-top: 10px;
+            float: right;
+            height: 30px;
+            width: 85px;
+            border-radius: 10px;
+            margin-right: 15px;
+            background: $pale-blue;
+            transition: background 0.2s ease-in;
 
-        // display: block;
-        // width: 115px;
-        // height: 25px;
-        // background: #4E9CAF;
-        // padding: 10px;
-        // text-align: center;
-        // border-radius: 5px;
-        // color: white;
-        // font-weight: bold;
-        // line-height: 25px;
+            &:hover {
+                background: $pale-red;
+            }
+        }
 
+        &.is-info {
+            margin-left: 20px;
 
-        // border-style: solid;
-        // border-width : 1px 1px 1px 1px;
-        // text-decoration: none;
-        // padding : 4px;
-        // border-color : #000000
+            &::after {
+                content: '';
+                width: 0px;
+                height: 1px;
+                display: block;
+                background: white;
+                transition: 100ms;
+            }
+    
+            &:hover::after {
+                width: 100%;
+            }
+        }
+
+        &.is-gold {
+            &::after {
+                background: $premium;
+            }
+
+            transition: 600ms;
+
+            &:hover {
+                color: $premium;
+            }
+        }
     }
 }

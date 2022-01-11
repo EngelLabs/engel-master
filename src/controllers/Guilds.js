@@ -1,7 +1,7 @@
 
 'use strict';
 
-const Controller = require('../../structures/Controller');
+const Controller = require('../core/structures/Controller');
 
 
 class Guilds extends Controller {

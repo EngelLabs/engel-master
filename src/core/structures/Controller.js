@@ -1,6 +1,6 @@
 'use strict';
 
-const Server = require('../core/Server');
+const Server = require('../Server');
 const superagent = require('superagent');
 const { Permissions } = require('eris').Constants;
 

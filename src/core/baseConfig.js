@@ -1,30 +1,44 @@
-'use-strict';
+const { parsed, error } = require('dotenv').config();
+if (!parsed && error) {
+    if (error.code === 'ENOENT') {
+        console.error('.env file not found!');
 
-require('dotenv').config();
-const pkg = require('../../package.json');
+        process.exit(1);
+    }
+
+    throw error;
+}
+
+
+const getenv = require('getenv');
+const package = require('../../package.json');
 
 
 module.exports = {
-    name: pkg.name,
-    version: pkg.version,
-    port: process.env.SITE_PORT,
-    secret: process.env.SITE_SECRET,
+    name: package.name,
+    version: package.version,
     env: process.env.NODE_ENV,
-    state: process.env.STATE,
-    logLevel: process.env.LOG_LEVEL || 'debug',
+    dev: process.env.NODE_ENV === 'development',
+    logger: {
+        level: getenv.string('LOGGER_LEVEL', 'debug'),
+    },
+    site: {
+        port: getenv.string('SITE_PORT', '8080'),
+        secret: getenv.string('SITE_SECRET'),
+    },
     client: {
-        id: process.env.CLIENT_ID,
-        token: process.env.CLIENT_TOKEN,
-        secret: process.env.CLIENT_SECRET,
+        id: getenv.string('CLIENT_ID'),
+        token: getenv.string('CLIENT_TOKEN'),
+        secret: getenv.string('CLIENT_SECRET'),
+        state: getenv.string('CLIENT_STATE'),
     },
-    mongoUri: process.env.MONGO_URI,
+    mongo: {
+        host: getenv.string('MONGO_HOST', '127.0.0.1'),
+        port: getenv.string('MONGO_PORT', '27017'),
+        db: getenv.string('MONGO_DATABASE', 'discordbot'),
+    },
     redis: {
-        port: process.env.REDIS_PORT,
-        host: process.env.REDIS_HOST,
-    },
-    defaultOptions: {
-        eris: {
-            restMode: true,
-        },
+        host: getenv.string('REDIS_HOST', '127.0.0.1'),
+        port: getenv.string('REDIS_PORT', '6379'),
     },
 };

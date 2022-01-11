@@ -1,5 +1,8 @@
-const Controller = require('../structures/Controller');
+const Controller = require('../core/structures/Controller');
 const superagent = require('superagent');
+
+
+const inviteUrl = `https://discord.com/api/oauth2/authorize?client_id=827788394401890374&permissions=0&scope=bot`;
 
 
 class Index extends Controller {
@@ -13,6 +16,10 @@ class Index extends Controller {
             {
                 uri: '/',
                 get: this.get.bind(this),
+            },
+            {
+                uri: '/invite',
+                get: this.invite.bind(this),
             },
             {
                 uri: '/login',
@@ -50,10 +57,14 @@ class Index extends Controller {
     }
 
     get(req, res) {
-        res.locals.scripts.push('/js/react/homepage.js');
+        // res.locals.scripts.push('/js/react/homepage.js');
         res.locals.stylesheets.push('/css/index.css');
 
         return res.render('index');
+    }
+
+    invite(req, res) {
+        return res.redirect(inviteUrl);
     }
 
     async login(req, res) {

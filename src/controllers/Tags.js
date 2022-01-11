@@ -1,4 +1,4 @@
-const Controller = require('../../structures/Controller');
+const Controller = require('../core/structures/Controller');
 
 const tagDataFields = ['name', 'content', 'author'];
 const tagUpdateFields = ['name', 'content'];

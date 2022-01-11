@@ -4,6 +4,7 @@
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela%20Round">
     <title>{{config.name}}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 
@@ -11,10 +12,14 @@
     <link rel="stylesheet" href={{this}}>
     {{/each}}
 
+    {{#if user}}
+    <script type="text/javascript">window.user = '{{user}}';</script>
+    {{/if}}
+
 </head>
 
 <body>
-    <nav id="navbar-mount"></nav>
+    <div id="navbar-mount"></div>
 
     <!--
     {{#if user}}
