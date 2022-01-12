@@ -7,16 +7,14 @@ class GuildCollection extends Map {
 
         this.bot = bot;
         this._creating = {};
-    }
 
-    setup() {
-        if (this.bot.config.guildCache) {
-            setInterval(this.uncache.bind(this), this.bot.config.guildUncacheInterval);
+        if (bot.config.guildCache) {
+            setInterval(this.uncache.bind(this), bot.config.guildUncacheInterval);
 
-            this.bot.redis.subscribe('guildUpdate');
-            this.bot.redis.on('message', (chnl, msg) => chnl === 'guildUpdate' && this.guildUpdate(msg));
-            this.bot.eris.on('guildCreate', this.guildCreate.bind(this));
-            this.bot.eris.on('guildDelete', this.guildDelete.bind(this));
+            bot.redis.subscribe('guildUpdate');
+            bot.redis.on('message', (chnl, msg) => chnl === 'guildUpdate' && this.guildUpdate(msg));
+            bot.eris.on('guildCreate', this.guildCreate.bind(this));
+            bot.eris.on('guildDelete', this.guildDelete.bind(this));
         }
     }
 

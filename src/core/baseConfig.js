@@ -28,16 +28,17 @@ const baseConfig = {
     client: {
         id: getenv.string('CLIENT_ID'),
         token: getenv.string('CLIENT_TOKEN'),
+        secret: getenv.string('CLIENT_SECRET'),
         state: getenv.string('CLIENT_STATE'),
     },
     mongo: {
-        host: getenv.string('MONGO_HOST', 'localhost'),
-        port: getenv.int('MONGO_PORT', 27017),
+        host: getenv.string('MONGO_HOST', '127.0.0.1'),
+        port: getenv.string('MONGO_PORT', '27017'),
         db: getenv.string('MONGO_DATABASE', 'discordbot'),
     },
     redis: {
-        host: getenv.string('REDIS_HOST', 'localhost'),
-        port: getenv.int('REDIS_PORT', 6379),
+        host: getenv.string('REDIS_HOST', '127.0.0.1'),
+        port: getenv.string('REDIS_PORT', '6379'),
     },
     globalDefaults: {
         author: {

@@ -101,37 +101,34 @@ class Bot {
         }
     }
 
-    setup() {
-        this.eris = new Eris(this);
-        this.redis = new Redis(this);
-        this.mongoose = new Mongoose(this);
-
-        this.events = new EventManager(this);
-        this.cache = new CacheManager(this);
-
-        this.helpers = {
-            converter: new Converter(this),
-            moderation: new Moderator(this),
-            permissions: new Permission(this),
-        }
-
-        this.guilds = new GuildCollection(this);
-        this.commands = new CommandCollection(this);
-        this.modules = new ModuleCollection(this);
-
-        this.modules.load();
-    }
-
     /**
      * Start the bot
      */
     async start() {
         try {
-            this.setup();
+            logger.info(`[Bot] Starting ${baseConfig.name} (env=${baseConfig.env} s=${this.state}, v=${baseConfig.version}).`);
+
+            this.mongoose = new Mongoose(this);
 
             await this.getConfig().then(c => this.config = c);
 
-            this.guilds.setup();
+            this.eris = new Eris(this);
+            this.redis = new Redis(this);
+
+            this.events = new EventManager(this);
+            this.cache = new CacheManager(this);
+            
+            this.helpers = {
+                converter: new Converter(this),
+                moderation: new Moderator(this),
+                permissions: new Permission(this),
+            };
+
+            this.guilds = new GuildCollection(this);
+            this.commands = new CommandCollection(this);
+            this.modules = new ModuleCollection(this);
+
+            this.modules.load();
 
             setInterval(
                 this.updateConfig.bind(this),

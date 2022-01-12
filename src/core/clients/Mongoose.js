@@ -41,7 +41,8 @@ class Mongoose extends Base {
         const uri = `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
         
         client.connect(uri, {
-            connectTimeoutMS: 30000,
+            connectTimeoutMS: 4500,
+            serverSelectionTimeoutMS: 2000,
             keepAlive: true,
         });
 

@@ -9,7 +9,7 @@ const baseConfig = require('../baseConfig');
 const logger = winston.createLogger({
     level: baseConfig.logger.level,
     format: winston.format.combine(
-        winston.format.timestamp({ format: 'YYYY-MM-DD HH:MM:SS' }),
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:SSS' }),
         winston.format.colorize({ level: true }),
         winston.format.printf(info => `[${info.timestamp}] [${info.level}] ${info.message}`),
     ),
