@@ -4,6 +4,6 @@ import Homepage from './components/Homepage.jsx';
 
 
 ReactDOM.render(
-    <Homepage />,
-    document.getElementById('homepage-mount')
+        <Homepage />,
+        document.getElementById('root-mount')
 );

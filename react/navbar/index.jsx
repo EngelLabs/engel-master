@@ -4,6 +4,6 @@ import Navbar from './components/Navbar.jsx';
 
 
 ReactDOM.render(
-    <Navbar />,
-    document.getElementById('navbar-mount')
+        <Navbar />,
+        document.getElementById('navbar-mount')
 );

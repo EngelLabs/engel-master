@@ -2,26 +2,26 @@ const Collection = require('../structures/Collection');
 
 
 class ModuleCollection extends Collection {
-    constructor(server) {
-        super();
-        
-        this.server = server;
-        this.load();
-    }
+        constructor(server) {
+                super();
 
-    load() {
-        const modules = this.server.config.modules;
-        const logger = this.server.logger;
-
-        for (const key in modules) {
-            const module = Object.assign({}, modules[key]);
-
-            this.set(module.dbName, module);
-            logger.debug(`[Modules] Loaded "${module.dbName}"`);
+                this.server = server;
+                this.load();
         }
 
-        logger.info(`[Modules] ${this.size} registered.`);
-    }
+        load() {
+                const modules = this.server.config.modules;
+                const logger = this.server.logger;
+
+                for (const key in modules) {
+                        const module = Object.assign({}, modules[key]);
+
+                        this.set(module.dbName, module);
+                        logger.debug(`[Modules] Loaded "${module.dbName}"`);
+                }
+
+                logger.info(`[Modules] ${this.size} registered.`);
+        }
 
 }
 

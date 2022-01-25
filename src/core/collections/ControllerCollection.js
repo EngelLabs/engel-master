@@ -1,80 +1,111 @@
 const fs = require('fs');
 const path = require('path');
-const Collection = require('../structures/Collection');
 
 const controllersPath = path.resolve('src/controllers');
 
 
-class ControllerCollection extends Collection {
-    constructor(server) {
-        super();
+class ControllerCollection extends Map {
+        constructor(server) {
+                super();
 
-        this.server = server;
-        this.load();
-    }
-
-    load() {
-        const app = this.server.app;
-        const logger = this.server.logger;
-        const middlewares = [];
-        const routes = [];
-
-        const sort = (uri, method, handler) => {
-            if (method === 'use') {
-                middlewares.push({ uri, handler });
-            } else {
-                routes.push({ uri, method, handler });
-            }
+                this.server = server;
+                this.load();
         }
 
-        const files = fs.readdirSync(controllersPath);
+        load() {
+                const app = this.server.app;
+                const logger = this.server.logger;
 
-        for (const file of files) {
-            try {
-                const Controller = require(controllersPath + '/' + file);
-                const controller = new Controller;
+                this._middlewares = [];
+                this._routes = [];
 
-                for (const route of controller) {
-                    const uri = route.uri;
-        
-                    delete route.uri;
-        
-                    for (const [method, handler] of Object.entries(route)) {
-                        if (uri instanceof Array) {
-                            for (const _uri of uri) {
-                                sort(_uri, method, handler);
-                            }
-                        } else {
-                            sort(uri, method, handler);
-                        }
-                    }
+                this._loadControllers(controllersPath);
+
+                this._middlewares.sort((a, b) => {
+                        return a.uri.length - b.uri.length
+                });
+
+                for (const { uri, handler } of this._middlewares) {
+                        app.use(uri, handler);
+
+                        logger.debug(`[Controllers] middleware(${uri || '*'})`);
                 }
 
-                this.set(Controller.name, controller);
-            } catch (err) {
-                logger.error('[Controllers] Something went wrong.');
-                console.error(err);
-            }
+                for (const { method, uri, handler } of this._routes) {
+                        app[method](uri, handler);
+
+                        logger.debug(`[Controllers] ${method}(${uri})`);
+                }
+
+                logger.info(`[Controllers] ${this.size} registered.`);
         }
 
-        for (const { uri, handler } of middlewares) {
-            if (uri && uri.length) {
-                app.use(uri, handler);
-            } else {
-                app.use(handler);
-            }
+        _loadControllers(controllerPath) {
+                let controller;
 
-            logger.debug(`[Controllers] middleware(${uri || '*'}, ${handler.name})`);
+                try {
+                        controller = require(controllerPath);
+                } catch (err) {
+                        let skip = false;
+
+                        if (err.code && err.code === 'MODULE_NOT_FOUND') {
+                                skip = true;
+                        }
+
+                        if (!skip) {
+                                throw err;
+                        }
+                }
+
+                if (!controller) {
+                        let dirs;
+
+                        try {
+                                dirs = fs.readdirSync(controllerPath);
+                        } catch (err) {
+                                if (err && ['ENOENT', 'ENOTDIR'].includes(err.code)) {
+                                        return;
+                                }
+
+                                throw err;
+                        }
+
+                        for (const dir of dirs) {
+                                this._loadControllers(controllerPath + '/' + dir);
+                        }
+
+                        return;
+                }
+
+                if (!(controller instanceof Array)) {
+                        controller = [controller];
+                }
+
+                for (const route of controller) {
+                        let uriArray = route.uri;
+
+                        if (!(uriArray instanceof Array)) {
+                                uriArray = [uriArray];
+                        }
+
+                        delete route.uri;
+
+                        for (let [method, handler] of Object.entries(route)) {
+                                handler = handler.bind(null, this.server);
+
+                                for (const uri of uriArray) {
+                                        if (method === 'use') {
+                                                this._middlewares.push({ uri, handler });
+                                        } else {
+                                                this._routes.push({ uri, method, handler });
+                                        }
+                                }
+                        }
+
+                        this.set(uriArray, route);
+                }
+
         }
-
-        for (const { method, uri, handler } of routes) {
-            app[method](uri, handler);
-
-            logger.debug(`[Controllers] ${method}(${uri}, ${handler.name})`);
-        }
-
-        logger.info(`[Controllers] ${this.size} registered.`);
-    }
 }
 
 
