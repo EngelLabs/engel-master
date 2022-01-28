@@ -13,36 +13,39 @@ class GuildCollection extends Map {
                 bot.eris.on('guildCreate', this.guildCreate.bind(this));
                 bot.eris.on('guildDelete', this.guildDelete.bind(this));
 
+                bot.on('config', this._configure.bind(this));
+        }
+
+        _configure(config) {
+                if (config.guildCache && config.guildUncacheInterval !== this.config?.guildUncacheInterval) {
+                        clearInterval(this._uncacheInterval);
+
+                        this._uncacheInterval = setInterval(this.uncache.bind(this), config.guildUncacheInterval);
+                }
+                
+                this.config = config;
         }
 
         uncache() {
-                if (!this.bot.isReady) return;
-
                 const now = Date.now();
 
                 for (const guild of this.values()) {
-                        if (now - guild._cachedAt > this.bot.config.guildMaxAge) {
+                        if (now - guild._cachedAt > this.config.guildMaxAge) {
                                 this.delete(guild.id);
                         }
                 }
         }
 
         guildCreate({ id }) {
-                if (!this.bot.isReady) return;
-
                 this.fetch(id)
                         .then(guild => !guild && this.create(id));
         }
 
         guildDelete({ id }) {
-                if (!this.bot.isReady) return;
-
                 this.delete(id);
         }
 
         guildUpdate(chnl, id) {
-                if (!this.bot.isReady) return;
-                
                 if (chnl !== 'guildUpdate') return;
 
                 if (this.bot.eris.guilds.has(id)) {
@@ -54,7 +57,7 @@ class GuildCollection extends Map {
                 id = id.id || id;
 
                 return new Promise((resolve, reject) => {
-                        if (this.cache) {
+                        if (this.config?.guildCache) {
                                 const ret = this.get(id);
 
                                 if (ret) return resolve(ret);
@@ -74,7 +77,7 @@ class GuildCollection extends Map {
                                 .lean()
                                 .exec()
                                 .then(guild => {
-                                        if (guild && this.cache) {
+                                        if (guild && this.config?.guildCache) {
                                                 this.set(id, guild);
                                         }
 
@@ -103,13 +106,13 @@ class GuildCollection extends Map {
 
                 const doc = {
                         id: id,
-                        prefixes: this.bot.config.prefixes.default,
+                        prefixes: this.config.prefixes.default,
                 };
 
                 const p = new Promise((resolve, reject) => {
                         this.bot.models.Guild.create(doc)
                                 .then(guild => {
-                                        if (this.cache) {
+                                        if (this.config?.guildCache) {
                                                 this.set(id, guild);
                                         }
 
