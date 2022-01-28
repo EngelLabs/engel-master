@@ -98,9 +98,7 @@ tags.command({
                                 return ctx.error(`Tag \`${name}\` already exists.`);
                         }
 
-                        this.log(err, 'error');
-                        
-                        return ctx.error('Sorry, something went wrong.');
+                        throw err;
                 }
 
                 ctx.log(`Created "${name}" G${ctx.guild.id}.`);

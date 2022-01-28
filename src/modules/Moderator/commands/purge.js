@@ -24,9 +24,7 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
         } catch (err) {
                 if (!delCommand) ctx.removeLoadingReaction().catch(() => false);
 
-                ctx.log(err, 'error');
-
-                return ctx.error('Sorry, something went wrong.');
+                throw err;
         }
 
         if (!delCommand) {
