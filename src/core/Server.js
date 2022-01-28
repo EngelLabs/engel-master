@@ -134,7 +134,6 @@ class Server {
                 if (!config) {
                         logger.error(`Configuration not found for state ${this.state}`);
 
-                        process.send?.({ op: 'config', d: this.state });
                         process.exit(1);
                 }
 
