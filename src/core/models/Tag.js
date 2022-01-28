@@ -2,12 +2,12 @@ const { Schema, model } = require('mongoose');
 
 
 const tagSchema = new Schema({
-        name: { type: String },
-        content: { type: String },
-        guild: { type: String, index: true },
-        author: { type: String },
-        createdAt: { type: Date, default: Date.now },
-        editedAt: { type: Date },
+        name: { type: String, required: true },
+        content: { type: String, required: true },
+        guild: { type: String, required: true, index: true },
+        author: { type: String, required: true },
+        createdAt: { type: Date, required: true, default: Date.now },
+        editedAt: { type: Date, required: false },
 },
         { collection: 'tags' },
 );
@@ -18,7 +18,7 @@ tagSchema.static('findOneAndIncrement', (...args) => {
                         .lean()
                         .exec()
                         .then(res => {
-                                if (res) Tag.incrementUses(res.guild, res.name);
+                                res && Tag.incrementUses(res.guild, res.name);
 
                                 resolve(res);
                         })

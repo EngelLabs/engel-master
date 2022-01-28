@@ -42,7 +42,7 @@ class Module extends Base {
          * @param {String} prefix Module name (for context)
          * @returns {any}
          */
-        log(msg, level = 'info', prefix) {
+        log(msg, level = 'debug', prefix) {
                 prefix = prefix || this.name;
 
                 return super.log(msg, level, `Modules.${prefix}`);

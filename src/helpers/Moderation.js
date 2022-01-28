@@ -49,7 +49,7 @@ class Moderation extends Base {
                                 }
                         }
 
-                        const commandConfig = guildConfig.commands && guildConfig.commands[commandName];
+                        const commandConfig = guildConfig.commands?.[commandName];
                         const moduleConfig = guildConfig[moduleName];
 
                         if (commandConfig &&
@@ -76,7 +76,7 @@ class Moderation extends Base {
 
         deleteCommand(guildConfig, message, moduleName, commandName) {
                 return new Promise(resolve => {
-                        const commandConfig = guildConfig.commands && guildConfig.commands[commandName];
+                        const commandConfig = guildConfig.commands?.[commandName];
                         const moduleConfig = guildConfig[moduleName];
 
                         const del = () => {
@@ -307,7 +307,7 @@ class Moderation extends Base {
                 return member.roles.includes(guildConfig.muteRole);
         }
 
-        purgeMessages(guildConfig, mod, type) {
+        purgeMessages(guildConfig, channel, mod, type, check, count, before, reason) {
                 return new Promise((resolve, reject) => {
                         const limit = parseInt(count || 100, 10);
 

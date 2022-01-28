@@ -8,7 +8,7 @@ module.exports = new Command({
         aliases: ['l'],
         dmEnabled: true,
         execute: function (ctx) {
-                if (!ctx.config.dev) return Promise.resolve();
+                if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 try {
                         var res = ctx.bot.modules.load(ctx.args.length ? ctx.args : false);

@@ -61,14 +61,14 @@ module.exports = new Command({
                                 return ctx.error('No command or module exists by that name.');
                         }
 
-                        const verbose = ctx.moduleConfig ? ctx.moduleConfig.verbose : true;
+                        const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
 
                         const embed = ctx.module.getModuleHelp(module, ctx.prefix, ctx.isAdmin, verbose);
 
                         return ctx.send({ embed });
                 }
 
-                const verbose = ctx.moduleConfig ? ctx.moduleConfig.verbose : true;
+                const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
 
                 const embed = ctx.module.getCommandHelp(command, ctx.prefix, ctx.isAdmin, verbose);
 

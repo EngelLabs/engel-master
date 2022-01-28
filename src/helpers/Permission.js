@@ -30,7 +30,7 @@ class Permission extends Base {
         }
 
         canInvoke(ctx) {
-                const roles = ctx.member.roles,
+                const roles = ctx.member?.roles,
                         channel = ctx.channel;
 
                 let canInvoke = false,

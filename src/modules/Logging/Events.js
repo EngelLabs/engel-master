@@ -65,7 +65,7 @@ class Events extends Base {
                 msg += `**Message Deleted**\n`;
                 msg += `**Channel:** ${message.channel.mention} (${message.channel.id})\n`;
                 msg += `**Author:** ${message.author.mention} (${message.author.id})\n`;
-                msg += `**Created:** ${moment(message.createdAt).format('LLLL')}\n`;
+                msg += `**Created:** ${moment(message.createdAt).utc().format('LLLL')}\n`;
                 msg += `**Content:** ${message.content}`;
 
                 const embed = {
@@ -125,7 +125,7 @@ class Events extends Base {
                 msg += `**Message Edited**\n`;
                 msg += `**Channel:** ${message.channel.mention} (${message.channel.id})\n`;
                 msg += `**Author:** ${message.author.mention} (${message.author.id})\n`;
-                msg += `**Created:** ${moment(message.createdAt).format('LLLL')}\n`;
+                msg += `**Created:** ${moment(message.createdAt).utc().format('LLLL')}\n`;
                 msg += `**Before:** ${oldMessage.content}\n`;
                 msg += `**After:** ${message.content}`;
 
@@ -230,7 +230,7 @@ class Events extends Base {
                 msg += `**Name:** ${role.name}\n`;
                 msg += `**Colour:** ${'#' + role.color.toString(16)}\n`;
                 msg += `**Hoisted:** ${role.hoist}\n`;
-                msg += `**Created:** ${moment(role.createdAt).format('LLLL')}\n`;
+                msg += `**Created:** ${moment(role.createdAt).utc().format('LLLL')}\n`;
                 msg += `**Permissions:** ${this._formatRolePermissions(role.permissions)}`;
 
                 return {
@@ -263,7 +263,7 @@ class Events extends Base {
 
                 msg = `**Role Updated**\n` + msg;
                 msg += `**Bearers:** ${guild.members.filter(m => m.roles.includes(role.id)).length}\n`;
-                msg += `**Created:** ${moment(role.createdAt).format('LLLL')}`;
+                msg += `**Created:** ${moment(role.createdAt).utc().format('LLLL')}`;
 
                 return {
                         description: msg,

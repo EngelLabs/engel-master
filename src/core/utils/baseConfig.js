@@ -21,7 +21,7 @@ const baseConfig = {
         version: package.version,
         lib: 'eris',
         env: process.env.NODE_ENV,
-        isDev: process.env.NODE_ENV === 'development',
+        dev: process.env.NODE_ENV === 'development',
         logger: {
                 level: getenv.string('LOGGER_LEVEL', 'debug'),
         },
@@ -125,7 +125,8 @@ const baseConfig = {
                 guildCache: true,
                 guildUncacheInterval: 30000,
                 guildMaxAge: 10000,
-                paused: false
+                paused: false,
+                apiToken: '',
         }
 };
 

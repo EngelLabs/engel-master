@@ -61,7 +61,7 @@ module.exports = new Command({
                 if (ctx.isAdmin || ctx.isStaff) {
                         const role = ctx.isAdmin ? 'developer' : 'staff';
 
-                        embed.description = `<${ctx.config.emojis.staff}> ${ctx.config.name} ${role}`;
+                        embed.description = `<${ctx.config.emojis.staff}> ${ctx.baseConfig.name} ${role}`;
                 }
 
                 return ctx.send({ embed });

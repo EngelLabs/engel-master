@@ -4,12 +4,12 @@ const Command = require('../../../core/structures/Command');
 const purgeMessages = async (ctx, count, check, reason, type) => {
         let result, delCommand;
 
-        if (ctx.commandConfig && typeof ctx.commandConfig.delCommand !== 'undfined') {
-                delCommand = ctx.commandConfig.delCommand;
-        } else if (ctx.moduleConfig && typeof ctx.moduleConfig.delCommand !== 'undefined') {
-                delCommand = ctx.moduleConfig.delCommand;
+        if (ctx.commandConfig && ctx.commandConfig.del !== undefined) {
+                delCommand = ctx.commandConfig.del;
+        } else if (ctx.moduleConfig && ctx.moduleConfig.delCommands !== undefined) {
+                delCommand = ctx.moduleConfig.delCommands;
         } else {
-                delCommand = ctx.guildConfig.delCommand ? typeof ctx.guildConfig.delCommand !== 'undefined' : false;
+                delCommand = ctx.guildConfig.delCommands;
         }
 
         if (!delCommand) {
@@ -20,19 +20,13 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
         }
 
         try {
-                result = await ctx.module.purge({
-                        guildConfig: ctx.guildConfig,
-                        channel: ctx.channel,
-                        type: type || ctx.command.name,
-                        mod: ctx.author,
-                        before: ctx.message.id,
-                        count: count,
-                        check: check,
-                        reason: reason,
-                });
+                result = await ctx.module.purgeMessages(ctx, type, check, count, ctx.message.id, reason);
         } catch (err) {
                 if (!delCommand) ctx.removeLoadingReaction().catch(() => false);
-                return ctx.error(`${err}`);
+
+                ctx.log(err, 'error');
+
+                return ctx.error('Sorry, something went wrong.');
         }
 
         if (!delCommand) {

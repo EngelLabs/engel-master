@@ -54,7 +54,6 @@ class Bot {
          */
         get isReady() {
                 return (
-                        this._ready &&
                         this._erisIsReady &&
                         this._mongoIsReady &&
                         this._redisIsReady

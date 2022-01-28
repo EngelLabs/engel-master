@@ -24,12 +24,12 @@ module.exports = new Command({
                                 { name: 'Process', value: `PID: ${process.pid}`, inline: true }, // TODO: add more info here
                         ],
                         author: {
-                                name: `${ctx.config.name} v${ctx.config.version}`,
+                                name: `${ctx.baseConfig.name} v${ctx.baseConfig.version}`,
                                 url: ctx.eris.user.avatarURL,
                         },
                         timestamp: new Date().toISOString(),
                         footer: {
-                                text: `Built with ${ctx.config.lib}`
+                                text: `Built with ${ctx.baseConfig.lib}`
                         }
                 };
 

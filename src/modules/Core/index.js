@@ -1,9 +1,9 @@
 const Module = require('../../core/structures/Module');
 const Context = require('../../core/structures/Context');
-const config = require('../../core/config');
+const baseConfig = require('../../core/utils/baseConfig');
 
 
-const basePrefixes = [`<@${config.client.id}> `, `<@!${config.client.id}> `];
+const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
 
 
 class Core extends Module {
@@ -45,7 +45,7 @@ class Core extends Module {
         }
 
         messageCreate(payload) {
-                if (payload.isAdmin && !config.dev) {
+                if (payload.isAdmin && !baseConfig.dev) {
                         return this.handleAdmin(payload);
                 }
 
@@ -64,7 +64,7 @@ class Core extends Module {
                 const { isTester, isDM, message } = p;
                 let { guildConfig } = p;
 
-                if (config.dev && !isTester) return;
+                if (baseConfig.dev && !isTester) return;
 
                 if (guildConfig) {
                         if (guildConfig.isIgnored) return;
@@ -135,14 +135,18 @@ class Core extends Module {
 
                 if (!command.alwaysEnabled) {
                         if (ctx.moduleConfig && ctx.moduleConfig.disabled) {
-                                return ctx.error(`The \`${module.name}\` module is disabled in this server.`);
+                                if (!guildConfig.noDisableWarning) {
+                                        ctx.error(`The \`${module.name}\` module is disabled in this server.`);
+                                }
+
+                                return;
                         }
 
                         if (guildConfig && guildConfig.commands) {
                                 let isEnabled = true,
                                         disabledCmdName;
 
-                                if (!command.rich) {
+                                if (command.parent) {
                                         if (guildConfig.commands[command.rootName] && guildConfig.commands[command.rootName].disabled) {
                                                 isEnabled = false;
                                                 disabledCmdName = command.rootName;
@@ -158,7 +162,11 @@ class Core extends Module {
                                 }
 
                                 if (!isEnabled) {
-                                        return ctx.error(`The \`${disabledCmdName}\` command is disabled in this server.`);
+                                        if (!guildConfig.noDisableWarning) {
+                                                ctx.error(`The \`${disabledCmdName}\` command is disabled in this server.`);
+                                        }
+
+                                        return;
                                 }
                         }
                 }
@@ -221,6 +229,15 @@ class Core extends Module {
                 });
         }
 
+        deleteCommand(ctx) {
+                const moduleName = ctx.module.dbName;
+                const commandName = ctx.command.parent ? ctx.command.dbName : ctx.command.qualName;
+
+                return this.helpers.moderation.deleteCommand(
+                        ctx.guildConfig, ctx.message, moduleName, commandName,
+                );
+        }
+
         async executeCommand(ctx) {
                 const { command, prefix, isAdmin, args } = ctx;
 
@@ -249,6 +266,8 @@ class Core extends Module {
                 try {
                         let execute;
 
+                        this.deleteCommand(ctx);
+
                         if (command.namespace) {
                                 execute = () => {
                                         const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
@@ -271,7 +290,6 @@ class Core extends Module {
                                 }
                         }
                 } catch (err) {
-                        this.log(err, 'error');
                         ctx.err = err;
                         this.commandError(ctx);
 
@@ -383,7 +401,7 @@ class Core extends Module {
 
                 this.log(text);
 
-                if (!isAdmin && !this.config.dev) {
+                if (!isAdmin && !this.baseConfig.dev) {
                         const doc = {
                                 name: command.dbName,
                                 message: {
@@ -409,7 +427,7 @@ class Core extends Module {
                 this.logger.error(text);
                 console.error(err);
 
-                if (!isAdmin && !this.config.dev) {
+                if (!isAdmin && !this.baseConfig.dev) {
                         const doc = {
                                 name: command.dbName,
                                 message: {

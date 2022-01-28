@@ -9,22 +9,56 @@ module.exports = new Command({
         dmEnabled: true,
         execute: async function (ctx) {
                 let { message, guild, author, bot, member, channel,
-                        args, eris, guildConfig, config, config, logger,
+                        args, eris, guildConfig, baseConfig, config, logger,
                         models, mongoose, database, redis, me, permissions } = ctx,
-                        __res;
+                        __ctx = ctx, __res;
+
+                let api = (method, uri, data = {}) => {
+                        const superagent = require('superagent');
+
+                        return superagent[method]('http://localhost:8080/api' + uri)
+                                .set('Accept', 'application/json')
+                                .set('User-Agent', __ctx.baseConfig.name)
+                                .set('Authorization', __ctx.config.apiToken)
+                                .send(data)
+                                .then(resp => { return { s: resp?.status, d: resp?.body?.data } })
+                                .catch(err => { return { s: err?.response?.status, d: err?.response?.body } });
+                }
+
+                let body = __ctx.args.join(' ').replace('\n', '') || 'undefined';
+
+                if (body.startsWith('```') && body.endsWith('```')) {
+                        body = body.slice(3, -3);
+
+                        if (body.startsWith('js')) {
+                                body = body.slice(2).trimLeft();
+                        }
+                }
+
+                if (!body.includes('return')) {
+                        body = `return ${body}`;
+                }
 
                 try {
-                        __res = `Resolved: ${await eval(`(async () => { await (${ctx.args.join(' ')}); })()`)}`;
+                        __res = await eval(`(async () => { ${body} })()`);
+
+                        if (typeof __res === 'object') {
+                                try {
+                                        __res = JSON.stringify(__res);
+                                } catch { }
+                        }
+
+                        if (__res && __res.toString) {
+                                __res = __res
+                                        .toString()
+                                        .replace(__ctx.baseConfig.client.token, '[[redacted]]');
+                        }
+
+                        __res = `Resolved: ${__res}`;
                 } catch (err) {
-                        __res = `Rejected: ${err && err.toString ? err.toString() : err}`;
+                        __res = `Rejected: ${err?.toString?.() || err}`;
                 }
 
-                if (__res && __res.toString) {
-                        __res = __res
-                                .toString()
-                                .replace(ctx.config.client.token, '[[redacted]]');
-                }
-
-                return ctx.codeblock(__res, 'js');
+                return __ctx.codeblock(__res, 'js');
         },
 });

@@ -52,14 +52,6 @@ class Command {
                 command.commands.add(this);
         }
 
-        get rich() {
-                return this._rich || !this.parent;
-        }
-
-        set rich(value) {
-                this._rich = value;
-        }
-
         get globalConfig() {
                 if (this.hidden ||
                         this.disabled ||

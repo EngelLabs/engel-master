@@ -59,6 +59,8 @@ class Base {
 
                 // importing it here cause of some weird cyclic dependency stuff idk
                 if (!Bot) Bot = require('../Bot');
+                
+                this.bot = bot || Bot.instance;
 
                 if (!helpers) {
                         for (const name of fs.readdirSync(helpersPath)) {
@@ -87,8 +89,6 @@ class Base {
                                 helpers[helperName] = helper;
                         }
                 }
-
-                this.bot = bot || Bot.instance;
         }
 
         /**
@@ -149,7 +149,7 @@ class Base {
         }
 
         /**
-         * Helpers mapping
+         * Mapping of helpers
          */
         get helpers() {
                 return helpers;
@@ -180,7 +180,7 @@ class Base {
          * @param {String} prefix Log prefix (for context)
          * @returns {any}
          */
-        log(msg, level = 'info', prefix) {
+        log(msg, level = 'debug', prefix) {
                 if (!msg) return;
 
                 prefix = prefix || this.logPrefix || this.constructor.name;

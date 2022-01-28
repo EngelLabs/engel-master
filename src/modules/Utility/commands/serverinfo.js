@@ -15,7 +15,7 @@ module.exports = new Command({
                         roles = guild.roles.map(r => r.mention).join(', ');
 
                 const embed = {
-                        colour: ctx.config.colours.info,
+                        color: ctx.config.colours.info,
                         timestamp: new Date().toISOString(),
                         fields: [
                                 { name: 'ID', value: guild.id, inline: true },

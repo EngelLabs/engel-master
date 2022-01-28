@@ -8,7 +8,7 @@ const reload = new Command({
         aliases: ['r'],
         dmEnabled: true,
         execute: function (ctx) {
-                if (!ctx.config.dev) return Promise.resolve();
+                if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 try {
                         var res = ctx.bot.modules.reload(ctx.args.length ? ctx.args : false);

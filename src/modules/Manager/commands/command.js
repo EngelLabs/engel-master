@@ -43,8 +43,8 @@ module.exports = new Command({
 
                 ctx.guildConfig.commands = ctx.guildConfig.commands || {};
 
-                if (!command.rich) {
-                        toggle = typeof ctx.guildConfig.commands[commandName] !== 'undefined' ? !ctx.guildConfig.commands[commandName] : false;
+                if (!command.parent) {
+                        toggle = ctx.guildConfig.commands[commandName] !== undefined ? !ctx.guildConfig.commands[commandName] : false;
                         ctx.guildConfig.commands[commandName] = toggle;
                 } else {
                         const commandConfig = ctx.guildConfig.commands[commandName] = ctx.guildConfig.commands[commandName] || {};
@@ -53,7 +53,7 @@ module.exports = new Command({
 
                 queryString = 'commands.' + commandName;
 
-                if (command.rich) {
+                if (command.parent) {
                         queryString += '.disabled';
                 }
 

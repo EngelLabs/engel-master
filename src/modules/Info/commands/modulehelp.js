@@ -20,7 +20,7 @@ module.exports = new Command({
                         return ctx.error('No module exists by that name.');
                 }
 
-                const verbose = ctx.moduleConfig ? ctx.moduleConfig.verbose : true;
+                const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
 
                 const embed = ctx.module.getModuleHelp(module, ctx.prefix, ctx.isAdmin, verbose);
 

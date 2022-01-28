@@ -1,5 +1,6 @@
 const { Client } = require('eris');
 const Base = require('../structures/Base');
+const baseConfig = require('../utils/baseConfig');
 
 
 const options = {
@@ -29,12 +30,12 @@ class Eris extends Base {
                 super(bot);
 
                 const client = new Client(
-                        'Bot ' + this.baseConfig.client.token, options
+                        'Bot ' + baseConfig.client.token, options
                 );
 
                 client
                         .on('connect', () => {
-                                this.log('Connected.', 'info')
+                                this.log('Connected.', 'info');
                         })
                         .on('disconnect', () => {
                                 this.log('Disconnected.', 'info');
@@ -61,9 +62,9 @@ class Eris extends Base {
         async connect() {
                 const me = await this.getSelf();
 
-                if (this.baseConfig.client.id !== me.id) {
+                if (baseConfig.client.id !== me.id) {
                         throw new Error(
-                                `Invalid clientId ${this.baseConfig.client.id} provided. Actual user ID: ${me.id}`
+                                `Invalid clientId ${baseConfig.client.id} provided. Actual user ID: ${me.id}`
                         );
                 }
 

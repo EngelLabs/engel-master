@@ -37,15 +37,6 @@ class Moderator extends Module {
                         guildConfig, guild, member, author, action, commandName, moduleName, resolve
                 );
         }
-
-        deleteCommand(ctx) {
-                const moduleName = ctx.module.dbName;
-                const commandName = ctx.command.rich ? ctx.command.dbName : ctx.command.qualName;
-
-                return this.helpers.moderation.deleteCommand(
-                        ctx.guildConfig, ctx.message, moduleName, commandName,
-                );
-        }
  
 
         sendDM(ctx, user, msg, duration, reason) {
@@ -106,9 +97,10 @@ class Moderator extends Module {
                 return this.helpers.moderation.isMuted(ctx.guildConfig, member);
         }
 
-        purgeMessages(ctx, type) {
+        purgeMessages(ctx, type, check, count, before, reason) {
                 return this.helpers.moderation.purgeMessages(
-                        ctx.guildConfig, ctx.author, type
+                        ctx.guildConfig, ctx.channel, ctx.author,
+                        type, check, count, before, reason,
                 );
         }
 }

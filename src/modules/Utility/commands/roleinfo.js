@@ -27,7 +27,7 @@ module.exports = new Command({
                         fields: [
                                 { name: 'ID', value: role.id, inline: false },
                                 { name: 'Colour', value: role.color ? role.color : 'Default', inline: false },
-                                { name: 'Created at', value: moment(role.createdAt).format('LLLL'), inline: false },
+                                { name: 'Created at', value: moment(role.createdAt).utc().format('LLLL'), inline: false },
                                 { name: 'Bearers', value: ctx.guild.members.filter(m => m.roles.includes(role.id)).length, inline: false },
                         ],
                         footer: {

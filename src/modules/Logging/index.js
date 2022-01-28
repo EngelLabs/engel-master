@@ -39,7 +39,7 @@ class Logging extends Module {
 
                         const config = this.config;
 
-                        if (config.dev && !config.guilds.testing.includes(guildConfig.id)) return;
+                        if (this.baseConfig.dev && !config.guilds.testing.includes(guildConfig.id)) return;
 
                         if (!guildConfig.logging || guildConfig.logging.disabled) return;
 

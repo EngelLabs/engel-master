@@ -38,7 +38,6 @@ prefix.command({
         usage: '<*prefix>',
         info: 'Replace server prefixes with given prefix',
         aliases: ['='],
-        rich: true,
         cooldown: 6000,
         requiredArgs: 1,
         execute: async function (ctx) {
@@ -65,7 +64,6 @@ prefix.command({
         usage: '<*prefix>',
         info: 'Add a server prefix',
         aliases: ['+'],
-        rich: true,
         cooldown: 4000,
         requiredArgs: 1,
         execute: async function (ctx) {
@@ -100,7 +98,6 @@ prefix.command({
         usage: '<*prefix>',
         aliases: ['-'],
         info: 'Remove a server prefix',
-        rich: true,
         cooldown: 4000,
         requiredArgs: 1,
         execute: async function (ctx) {

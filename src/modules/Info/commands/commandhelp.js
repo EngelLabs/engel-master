@@ -20,12 +20,12 @@ module.exports = new Command({
 
                 ctx.args.shift();
 
-                while (command.commands && args.length) {
+                while (command.commands && ctx.args.length) {
                         const subcommand = command.commands.get(ctx.args[0]);
 
                         /*
                         if (!subcommand) {
-                            return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
+                            return ctx.error(`Command "${command.qualName}" has no subcommand "${ctx.args[0]}"`);
                         }
                         */
                         if (!subcommand) break;
@@ -39,7 +39,7 @@ module.exports = new Command({
                         return ctx.error('No command exists by that name');
                 }
 
-                const verbose = ctx.moduleConfig ? ctx.moduleConfig.verbose : true;
+                const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
 
                 const embed = ctx.module.getCommandHelp(command, ctx.prefix, ctx.isAdmin, verbose);
 

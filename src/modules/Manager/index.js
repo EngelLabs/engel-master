@@ -63,7 +63,7 @@ class Manager extends Module {
                         }
                 }
 
-                if (guildConfig.commands && guildConfig.commands[command.rootName]) {
+                if (guildConfig.commands?.[command.rootName]) {
                         checkPerms(guildConfig.commands[command.rootName]);
                 } else if (guildConfig[command.module.dbName]) {
                         checkPerms(guildConfig[command.module.dbname]);
@@ -71,7 +71,7 @@ class Manager extends Module {
                         checkPerms(guildConfig);
                 }
 
-                if (config.commands[command.dbName] && config.commands[command.dbName].disabled) {
+                if (config.commands?.[command.dbName]?.disabled) {
                         msgArray.push('This command has been disabled globally');
                 }
 
@@ -79,7 +79,7 @@ class Manager extends Module {
                 //     infoArray.push('This command hasn\'t been configured for this server yet');
                 // }
 
-                if (command.rich && guildConfig.commands[command.dbName] && guildConfig.commands[command.dbName].disabled) {
+                if (command.parent && guildConfig?.commands?.[command.dbName]?.disabled) {
                         msgArray.push('This command is disabled in this server');
                 }
 
@@ -97,7 +97,7 @@ class Manager extends Module {
         }
 
         debugModule(module, channel, guildConfig) {
-                const config = this._config;
+                const config = this.config;
                 const [msgArray, infoArray] = this._debug(channel, guildConfig);
                 const embed = {
                         title: `Module "${module.name}" debug`,
