@@ -52,7 +52,7 @@ class Bot extends EventEmitter {
         }
 
         /**
-         * The program state
+         * The app state
          * @type {String}
          */
         get state() {
