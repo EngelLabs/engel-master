@@ -22,11 +22,9 @@ module.exports = async function (server, req, res) {
         const filter = {
                 guild: req.params.id,
                 name: req.body.name,
-                author: req.session.user.id,
         };
 
         if (req.session.isAdmin) {
-                if (req.body.author !== undefined) filter.author = req.body.author || filter.author;
                 if (req.body.newGuild !== undefined) update.guild = req.body.newGuild;
                 if (req.body.newName !== undefined) update.name = req.body.newName;
                 if (req.body.newAuthor !== undefined) update.author = req.body.newAuthor;
