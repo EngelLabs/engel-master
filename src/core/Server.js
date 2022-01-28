@@ -112,16 +112,7 @@ class Server {
 
         async updateConfig() {
                 try {
-                        await this.getConfig()
-                                .then(config => {
-                                        if (!config) {
-                                                logger.error(`Configuration not found for state ${baseConfig.state}`);
-
-                                                return;
-                                        }
-
-                                        return this.config = config;
-                                })
+                        return (this.config = await this.getConfig());
                 } catch (err) {
                         logger.error(err);
 
@@ -133,6 +124,25 @@ class Server {
                 return this.database
                         .collection('configurations')
                         .findOne({ state: this.state });
+        }
+
+        get config() {
+                return this._config;
+        }
+
+        set config(config) {
+                if (!config) {
+                        logger.error(`Configuration not found for state ${this.state}`);
+
+                        process.send?.({ op: 'config', d: this.state });
+                        process.exit(1);
+                }
+
+                if (config.configRefreshInterval !== this._config?.configRefreshInterval) {
+                        clearInterval(this._configInterval);
+
+                        this._configInterval = setInterval(this.updateConfig.bind(this), config.configRefreshInterval);
+                }
         }
 
         async start() {
