@@ -28,7 +28,9 @@ tags.command({
 
                 const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
 
-                if (!tag) return ctx.error(`Tag \`${name}\` not found.`);
+                if (!tag) {
+                        return ctx.error(`Tag \`${name}\` not found.`);
+                }
 
                 const author = ctx.eris.users.get(tag.author);
 
@@ -65,23 +67,24 @@ tags.command({
         name: 'create',
         usage: '<tag name> <*tag content>',
         info: 'Create a server tag',
-        requiredArgs: 1,
+        requiredArgs: 2,
         execute: async function (ctx) {
                 let name, content;
 
                 if (ctx.args[0].startsWith('"')) {
-                        const args = ctx.args.join(' ').slice(1);
+                        const text = ctx.args.join(' ').slice(1);
 
-                        idx = args.indexOf('"');
+                        const idx = text.indexOf('"');
+
                         if (idx !== -1) {
-                                name = args.substr(0, idx).trim();
-                                content = args.slice(idx + 1).trim();
+                                name = text.substr(0, idx).trim();
+                                content = text.slice(idx + 1).trim();
                         }
                 }
 
                 if (name === undefined && content === undefined) {
-                        name = ctx.args[0];
-                        content = ctx.args.slice(1).join(' ');
+                        name = ctx.args.shift();
+                        content = ctx.args.join(' ');
                 }
 
                 if (!name || !name.length) return ctx.error('Missing tag name.');
@@ -112,7 +115,7 @@ tags.command({
         name: 'edit',
         usage: '<tag name> <*new content>',
         info: "Edit a tag's content",
-        requiredArgs: 1,
+        requiredArgs: 2,
         execute: async function (ctx) {
                 let name, content;
 
@@ -148,21 +151,17 @@ tags.command({
         info: 'Delete a server tag',
         requiredArgs: 1,
         execute: async function (ctx) {
-                const filter = {
-                        guild: ctx.guild.id,
-                        author: ctx.author.id,
-                        name: ctx.args.join(' '),
-                };
+                const name = ctx.args.join(' ');
 
-                const result = await ctx.models.Tag.deleteOne(filter);
+                const result = await ctx.models.Tag.deleteOne({ guild: ctx.guild.id, name });
 
                 if (result.deletedCount) {
                         ctx.log(`Deleted "${name}" G${ctx.guild.id}.`);
                 }
 
                 return result.deletedCount
-                        ? ctx.success(`Tag \`${filter.name}\` deleted.`)
-                        : ctx.error(`Tag \`${filter.name}\` not found.`);
+                        ? ctx.success(`Tag \`${name}\` deleted.`)
+                        : ctx.error(`Tag \`${name}\` not found.`);
 
         }
 });
