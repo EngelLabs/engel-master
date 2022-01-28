@@ -9,12 +9,20 @@ const GuildCollection = require('./collections/GuildCollection');
 const CacheManager = require('./managers/CacheManager');
 const EventManager = require('./managers/EventManager');
 
+let EventEmitter;
+
+try {
+        EventEmitter = require('eventemitter3');
+} catch {
+        EventEmitter = require('events');
+}
+
 
 /**
  * Represents a Discord bot
  * @class Bot
  */
-class Bot {
+class Bot extends EventEmitter {
         constructor() {
                 Bot.instance = this;
         }
@@ -76,6 +84,8 @@ class Bot {
                                         process.send && process.send({ op: 'config', d: this.state });
                                         process.exit(1);
                                 }
+
+                                this.emit('config', config);
 
                                 return config;
                         });
