@@ -26,7 +26,7 @@ reload.command({
         dmEnabled: true,
         execute: async function (ctx) {
                 try {
-                        await ctx.bot.updateConfig();
+                        await ctx.bot.configure();
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }

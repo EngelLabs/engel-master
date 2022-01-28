@@ -8,7 +8,7 @@ const beforeConfig = ctx => {
 
 const afterConfig = async ctx => {
         await ctx.models.Config.updateOne({ state: ctx.config.state }, { $set: { [ctx.key]: ctx.value } });
-        await ctx.bot.updateConfig();
+        await ctx.bot.configure();
         return ctx.success(`Updated key \`${ctx.key}\`, value: \`${ctx.config[ctx.key]}\``);
 }
 
