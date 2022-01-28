@@ -15,10 +15,8 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
         if (!delCommand) {
                 ctx.addLoadingReaction()
                         .catch(() => false);
-        } else {
-                ctx.module.deleteCommand(ctx);
         }
-
+        
         try {
                 result = await ctx.module.purgeMessages(ctx, type, check, count, ctx.message.id, reason);
         } catch (err) {

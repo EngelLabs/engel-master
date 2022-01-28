@@ -87,8 +87,6 @@ module.exports = new Command({
 
                 ctx.module.createModlog(ctx, 'block', duration, null, reason, ctx.author, user, channel);
 
-                ctx.module.deleteCommand(ctx);
-
                 ctx.module.customResponse(ctx, 'block', user, channel);
         }
 })

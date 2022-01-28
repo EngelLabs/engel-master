@@ -61,8 +61,6 @@ const unmute = new Command({
                         type: 'mute',
                 });
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.success(`User **${user.username}#${user.discriminator}** unmuted.`);
         }
 });

@@ -88,8 +88,6 @@ module.exports = new Command({
                         type: 'lock',
                 });
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.success(`Channel ${channel.mention} unlocked.`);
         }
 });

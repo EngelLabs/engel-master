@@ -88,8 +88,6 @@ module.exports = new Command({
                         type: 'block'
                 });
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.success(`${user.username}#${user.discriminator} unblocked from ${channel.mention}.`);
         }
 });

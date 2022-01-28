@@ -96,8 +96,6 @@ module.exports = new Command({
                         reason: reason,
                 });
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.success(`Channel ${channel.mention} locked.`);
         }
 });

@@ -56,8 +56,6 @@ module.exports = new Command({
                         await eris.deleteMessage(channel.id, lastMsg).catch(() => false);
                 }
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.removeLoadingReaction().catch(() => false);
         }
 });

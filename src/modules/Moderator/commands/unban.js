@@ -46,8 +46,6 @@ const unban = new Command({
             type: 'ban',
         });
 
-        ctx.module.deleteCommand(ctx);
-
         return ctx.success(`User **${user.username}#${user.discriminator}** unbanned.`);
     }
 });

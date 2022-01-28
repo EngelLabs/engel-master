@@ -43,8 +43,6 @@ const kick = new Command({
                         reason: reason,
                 });
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.success(`User **${user.username}#${user.discriminator}** kicked.`);
         }
 });

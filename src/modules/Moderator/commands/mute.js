@@ -62,8 +62,6 @@ const mute = new Command({
                         reason: reason,
                 });
 
-                ctx.module.deleteCommand(ctx);
-
                 return ctx.success(`User **${user.username}#${user.discriminator}** muted.`);
         }
 });

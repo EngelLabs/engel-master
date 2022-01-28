@@ -53,8 +53,6 @@ const ban = new Command({
 
                 ctx.module.createModlog(ctx, 'ban', duration, null, reason, ctx.author, user, null);
 
-                ctx.module.deleteCommand(ctx);
-
                 ctx.module.customResponse(ctx, 'ban', user, null);
         }
 });
