@@ -25,7 +25,7 @@ try {
 class Bot extends EventEmitter {
         constructor() {
                 super();
-                
+
                 Bot.instance = this;
         }
 
@@ -70,6 +70,29 @@ class Bot extends EventEmitter {
                 );
         }
 
+        get config() {
+                return this._config;
+        }
+
+        set config(config) {
+                if (!config) {
+                        logger.error(`Configuration not found for state ${this.state}`);
+
+                        process.send && process.send({ op: 'config', d: this.state });
+                        process.exit(1);
+                }
+
+                this.emit('config', config);
+
+                if (config.configRefreshInterval !== this._config?.configRefreshInterval) {
+                        clearInterval(this._configInterval);
+
+                        this._configInterval = setInterval(this.configure.bind(this), config.configRefreshInterval);
+                }
+
+                this._config = config;
+        }
+
         /**
          * Fetch configuration
          * @returns {Promise<Object|any>}
@@ -78,36 +101,16 @@ class Bot extends EventEmitter {
                 return this.models.Config
                         .findOne({ state: this.state })
                         .lean()
-                        .exec()
-                        .then(config => {
-                                if (!config) {
-                                        logger.error(`Configuration not found for state ${this.state}`);
-
-                                        process.send && process.send({ op: 'config', d: this.state });
-                                        process.exit(1);
-                                }
-
-                                this.emit('config', config);
-
-                                return config;
-                        });
+                        .exec();
         }
 
-        async updateConfig() {
+        async configure() {
                 try {
-                        await this.getConfig().then(c => this.config = c)
+                        this.config = await this.getConfig();
                 } catch (err) {
                         logger.error('[Bot] Something went wrong.');
                         console.error(err);
                 }
-        }
-
-        async configure() {
-                this.config = await this.getConfig();
-
-                setInterval(this.updateConfig.bind(this), this.config.configRefreshInterval);
-
-                this._ready = true;
         }
 
         /**
@@ -128,7 +131,7 @@ class Bot extends EventEmitter {
                         this.commands = new CommandCollection(this);
                         this.modules = new ModuleCollection(this);
 
-                        await this.configure();
+                        this.config = await this.getConfig();
 
                         this.modules.load();
 
