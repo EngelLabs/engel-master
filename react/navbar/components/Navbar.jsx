@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-// import Router from 'react-router';
 
 export default class Navbar extends Component {
         render() {

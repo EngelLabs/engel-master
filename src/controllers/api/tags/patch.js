@@ -1,18 +1,23 @@
-const tagUpdateFields = ['name', 'content'];
+const fields = ['name', 'content'];
 
 
 module.exports = async function (server, req, res) {
-        const data = {};
-
-        for (const key of tagUpdateFields) {
-                if (req.body.hasOwnProperty(key)) {
-                        data[key] = req.body[key];
+        for (const key of fields) {
+                if (!req.body.hasOwnProperty(key)) {
+                        return server.response(400, res, 30001, `Field "${key}" is missing`)
                 }
 
-                if (typeof data[key] !== 'string' || !data[key].length) {
+                const val = req.body[key];
+
+                if (typeof val !== 'string' || !val.length) {
                         return server.response(400, res, 30001, `Field "${key}" is invalid`);
                 }
         }
+
+        const update = {};
+        
+        update.editedAt = Date.now();
+        update.content = req.body.content;
 
         const filter = {
                 guild: req.params.id,
@@ -20,15 +25,22 @@ module.exports = async function (server, req, res) {
                 author: req.session.user.id,
         };
 
-        // if (req.body.author) filter.author = req.body.author;
+        if (req.session.isAdmin) {
+                if (req.body.author !== undefined) filter.author = req.body.author || filter.author;
+                if (req.body.newGuild !== undefined) update.guild = req.body.newGuild;
+                if (req.body.newName !== undefined) update.name = req.body.newName;
+                if (req.body.newAuthor !== undefined) update.author = req.body.newAuthor;
+        
+                if (update.content === '_same') {
+                        delete update.content;
+                }
+        }
 
-        result = await server.collection('tags').updateOne(filter, { $set: data });
+        const result = await server.collection('tags').findOneAndUpdate(filter, { $set: update }, { returnDocument: 'after' });
 
-        if (!result.matchedCount) {
+        if (!result.value) {
                 return server.response(404, res, 0, 'Unknown tag');
         }
 
-        const tag = await server.collection('tags').findOne(filter);
-
-        return server.response(200, res, tag);
+        return server.response(200, res, result.value);
 }

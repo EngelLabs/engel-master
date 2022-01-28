@@ -2,6 +2,18 @@ const successResponse = (res, status, data) => {
         if (typeof data === 'string') {
                 res.set('Content-Type', 'text/plain');
         } else if (data !== undefined) {
+                if (data instanceof Array) {
+                        data = data.map(o => {
+                                delete o.__v;
+                                delete o._id;
+
+                                return o;
+                        });
+                } else {
+                        delete data.__v;
+                        delete data._id;
+                }
+
                 data = { data };
 
                 res.set('Content-Type', 'application/json');

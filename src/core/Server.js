@@ -60,13 +60,19 @@ class Server {
                 return superagent
                         .get('https://discord.com/api/v9' + path)
                         .set('Accept', 'application/json')
-                        .set('Authorization', 'Bearer ' + token)
+                        .set('Authorization', token)
                         .set('User-Agent', baseConfig.name)
                         .then(resp => resp.body);
         }
 
-        async fetchUserData(req, res) {
+        async fetchUserData(req) {
                 const token = req.session.token;
+
+                if (this.config.apiToken && req.headers.authorization === this.config.apiToken) {
+                        req.session.user = await this.apiRequest(token, '/users/@me');
+
+                        return;
+                }
 
                 const [user, allGuilds] = await Promise.all([
                                 this.apiRequest(token, '/users/@me'),
@@ -82,13 +88,15 @@ class Server {
                 const isAdmin = this.config.users.developers.includes(user.id);
 
                 Object.assign(req.session, { user, guilds, allGuilds, isAdmin });
+        }
 
+        syncLocals(req, res) {
                 if (!req.url.includes('api')) {
                         Object.assign(res.locals, {
-                                user: JSON.stringify(user),
-                                guilds: JSON.stringify(guilds),
-                                allGuilds: JSON.stringify(allGuilds),
-                                isAdmin: JSON.stringify(isAdmin),
+                                user: JSON.stringify(req.session.user),
+                                guilds: JSON.stringify(req.session.guilds),
+                                allGuilds: JSON.stringify(req.session.allGuilds),
+                                isAdmin: JSON.stringify(req.session.isAdmin),
                         });
                 }
         }

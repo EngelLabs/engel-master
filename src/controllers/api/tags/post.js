@@ -17,7 +17,8 @@ module.exports = async function (server, req, res) {
         }
 
         data.guild = req.params.id;
-        data.author = req.session.user.id;
+        data.author = (req.session.isAdmin && req.body.author) || req.session.user.id;
+        data.createdAt = Date.now();
 
         try {
                 await server.collection('tags').insertOne(data);

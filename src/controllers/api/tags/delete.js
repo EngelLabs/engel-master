@@ -1,7 +1,8 @@
 module.exports = async function (server, req, res) {
         const filter = { guild: req.params.id, author: req.session.user.id };
 
-        // if (req.body.author) filter.author = req.body.author;
+        filter.author = (req.session.isAdmin && req.body.author) || req.session.user.id;
+        
         if (req.body.tags instanceof Array && req.body.tags.length) {
                 const tags = req.body.tags.filter(o => typeof o === 'string' && o.length);
 

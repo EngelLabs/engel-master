@@ -5,16 +5,23 @@ module.exports = async function (server, req, res, next) {
                 stylesheets: ['/css/navbar.css'],
         };
 
+        if (server.config.apiToken && req.headers.authorization === server.config.apiToken) {
+                req.session.token = 'Bot ' + server.baseConfig.client.token;
+                req.session.isAdmin = true;
+        }
+
         if (!req.session.token) {
                 return next();
         }
+
+        server.syncLocals(req, res);
 
         if (req.session.lastSync && (Date.now() - req.session.lastSync) < 1000) {
                 return next();
         }
 
         try {
-                await server.fetchUserData(req, res);
+                await server.fetchUserData(req);
         } catch (err) {
                 if (err && err.response) {
                         if (err.response.status == 401) {
@@ -33,5 +40,5 @@ module.exports = async function (server, req, res, next) {
 
         req.session.lastSync = Date.now();
 
-        return next()
+        return next();
 }

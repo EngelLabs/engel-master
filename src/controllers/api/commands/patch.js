@@ -1,63 +1,57 @@
-module.exports = function (server, req, res) {
-        const command = server.commands.get(req.params.name);
+module.exports = async function (server, req, res) {
+        const command = server.commands.get(req.body.name);
 
         if (!command) return server.response(403, res, 10002, 'Unknown command');
 
         let update;
 
-        if (typeof req.body.enabled === 'boolean') {
-                update = {};
-                update.enabled = req.body.enabled;
+        const set = (condition, k, v) => {
+                if (!condition) return;
+
+                update = update || {};
+
+                if (command.isSubcommand) {
+                        update = v;
+                } else {
+                        update = update || {};
+                        update[`commands.${command.name}.${k}`] = v;
+                }
         }
+
+        set(typeof req.body.disabled === 'boolean', 'disabled', req.body.disabled);
 
         if (!command.isSubcommand) {
-                if (typeof req.body.delAfterUse === 'boolean') {
-                        update = update || {};
-                        update.delAfterUse = req.body.delAfterUse;
-                }
+                set(typeof req.body.del === 'boolean', 'del', req.body.del);
 
-                if (req.body.allowedRoles instanceof Array) {
-                        update = update || {};
-                        update.allowedRoles = req.body.allowedRoles;
-                }
+                set(req.body.allowedRoles instanceof Array, 'allowedRoles', req.body.allowedRoles);
 
-                if (req.body.ignoredRoles instanceof Array) {
-                        update = update || {};
-                        update.ignoredRoles = req.body.ignoredRoles;
-                }
+                set(req.body.ignoredRoles instanceof Array, 'ignoredRoles', req.body.ignoredRoles);
+                
+                set(req.body.allowedChannels instanceof Array, 'allowedChannels', req.body.allowedChannels);
 
-                if (req.body.allowedChannels instanceof Array) {
-                        update = update || {};
-                        update.allowedChannels = req.body.allowedChannels;
-                }
-
-                if (req.body.ignoredChannels instanceof Array) {
-                        update = update || {};
-                        update.ignoredChannels = req.body.ignoredChannels;
-                }
+                set(req.body.ignoredChannels instanceof Array, 'ignoredChannels', req.body.ignoredChannels);
         }
 
-        if (!update) {
+        if (!update === undefined) {
                 return server.response(400, res, 30001, 'Invalid response body');
         }
 
-        if (!command.isSubcommand) {
-                for (const key in update) {
-                        update[`commands.${command.dbName}.${key}`] = update[key];
+        let result;
 
-                        delete update[key];
-                }
-        } else {
-                update[`commands.${command.dbName}`] = update.enabled;
+        try {
+                result = await server.collection('guilds')
+                        .findOneAndUpdate({ id: req.params.id }, { $set: update }, { returnDocument: 'after' })
 
-                delete update.enabled;
+                server.redis.publish('guildUpdate', req.params.id);
+        } catch (err) {
+                server.log(err, 'error', 'api/commands.patch');
+
+                return server.response(500, res);
         }
 
-        return server.updateGuild(req.params.id, { $set: update })
-                .then(() => server.response(204, res))
-                .catch(err => {
-                        server.log(err, 'error', '/api/commands.patch');
+        if (!result.value) {
+                return server.response(403, res, 10001, 'Unknown guild');
+        }
 
-                        return server.response(500, res);
-                });
+        return server.response(200, res, result.value.commands?.[command.name]);
 }

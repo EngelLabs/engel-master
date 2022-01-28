@@ -39,19 +39,18 @@ module.exports = async function (server, req, res) {
                                 .set('Content-Type', 'application/x-www-form-urlencoded')
                                 .set('User-Agent', baseConfig.name)
                                 .send(data);
-                } catch (err) {
-                        server.log(err, 'error', '/login.get');
-
-                        return server.response(500, res);
+                } catch {
+                        return res.redirect('/login')
                 }
 
                 req.session.token = resp.body.access_token;
 
-                await server.fetchUserData(req, res);
+                await server.fetchUserData(req);
+                server.syncLocals(req, res);
 
                 server.log(`Authorized ${req.session.user.id}.`, 'info', '/login.get');
 
-                return server.renderer.index(req, res);
+                return res.redirect('/');
         }
 
         redirectUri = encodeURIComponent(redirectUri);
