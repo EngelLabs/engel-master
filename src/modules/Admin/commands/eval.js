@@ -43,7 +43,11 @@ module.exports = new Command({
                 try {
                         __res = await eval(`(async () => { ${body} })()`);
 
-                        try { __res = JSON.stringify(__res); } catch { }
+                        if (typeof __res === 'object') {
+                                try {
+                                        __res = JSON.stringify(__res);
+                                } catch { }
+                        }
 
                         if (__res && __res.toString) {
                                 __res = __res
