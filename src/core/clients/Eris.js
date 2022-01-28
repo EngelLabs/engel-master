@@ -27,7 +27,6 @@ const options = {
         messageLimit: 0,
 };
 
-Map.prototype
 
 class Eris extends Base {
         /**
