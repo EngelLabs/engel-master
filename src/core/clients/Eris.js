@@ -15,10 +15,19 @@ const options = {
                 'guildPresences',
                 'guildVoiceStates',
         ],
+        allowedMentions: {
+                everyone: false,
+                roles: false,
+                users: true,
+                repliedUser: true,
+        },
+        autoreconnect: true,
+        compress: true,
         restMode: true,
         messageLimit: 0,
-        getAllUsers: true,
 };
+
+Map.prototype
 
 class Eris extends Base {
         /**
