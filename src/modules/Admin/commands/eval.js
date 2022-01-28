@@ -6,6 +6,7 @@ module.exports = new Command({
         info: 'Evaluate some js',
         usage: '<*code>',
         aliases: ['evaluate', 'e'],
+        cooldown: 0,
         dmEnabled: true,
         execute: async function (ctx) {
                 let { message, guild, author, bot, member, channel,
