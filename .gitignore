@@ -129,3 +129,4 @@ dist
 .env
 public/js/react/
 public/css/
+.DS_Store
