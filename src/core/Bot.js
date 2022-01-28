@@ -24,6 +24,8 @@ try {
  */
 class Bot extends EventEmitter {
         constructor() {
+                super();
+                
                 Bot.instance = this;
         }
 
