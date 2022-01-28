@@ -3,53 +3,53 @@
  * @class Collection
  */
 class Collection extends Map {
-    /**
-     * Get a unique set of values
-     * @returns {Set}
-     */
-    unique() {
-        return new Set(this.values());
-    }
-
-    /**
-     * Add an item
-     * @param {Object} item The item to add
-     */
-    add(item) {
-        this.set(item.name, item);
-
-        if (item.aliases) {
-            for (const alias of item.aliases) {
-                this.set(alias, item);
-            }
+        /**
+         * Get a unique set of values
+         * @returns {Set}
+         */
+        unique() {
+                return new Set(this.values());
         }
-    }
 
-    /**
-     * Remove an item
-     * @param {Object} item The item to remove
-     */
-    remove(item) {
-        this.delete(item.name);
+        /**
+         * Add an item
+         * @param {Object} item The item to add
+         */
+        add(item) {
+                this.set(item.name, item);
 
-        if (item.aliases) {
-            for (const alias of item.aliases) {
-                this.delete(alias);
-            }
+                if (item.aliases) {
+                        for (const alias of item.aliases) {
+                                this.set(alias, item);
+                        }
+                }
         }
-    }
 
-    set(key, value) {
-        return super.set(key && key.toLowerCase ? key.toLowerCase() : key, value);
-    }
+        /**
+         * Remove an item
+         * @param {Object} item The item to remove
+         */
+        remove(item) {
+                this.delete(item.name);
 
-    get(key, value) {
-        return super.get(key && key.toLowerCase ? key.toLowerCase() : key, value);
-    }
+                if (item.aliases) {
+                        for (const alias of item.aliases) {
+                                this.delete(alias);
+                        }
+                }
+        }
 
-    delete(key) {
-        return super.delete(key && key.toLowerCase ? key.toLowerCase() : key);
-    }
+        set(key, value) {
+                return super.set(key && key.toLowerCase ? key.toLowerCase() : key, value);
+        }
+
+        get(key, value) {
+                return super.get(key && key.toLowerCase ? key.toLowerCase() : key, value);
+        }
+
+        delete(key) {
+                return super.delete(key && key.toLowerCase ? key.toLowerCase() : key);
+        }
 }
 
 

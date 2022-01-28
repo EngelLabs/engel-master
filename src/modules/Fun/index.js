@@ -2,12 +2,12 @@ const Module = require('../../core/structures/Module');
 
 
 class Fun extends Module {
-    constructor() {
-        super();
+        constructor() {
+                super();
 
-        this.info = 'Commands that are (hopefully) fun';
-        this.disabled = true;
-    }
+                this.info = 'Commands that are (hopefully) fun';
+                this.disabled = true;
+        }
 }
 
 

@@ -2,12 +2,12 @@ const Module = require('../../core/structures/Module');
 
 
 class Music extends Module {
-    constructor() {
-        super();
+        constructor() {
+                super();
 
-        this.info = 'Play some music!';
-        this.disabled = true;
-    }
+                this.info = 'Play some music!';
+                this.disabled = true;
+        }
 }
 
 

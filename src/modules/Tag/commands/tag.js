@@ -2,20 +2,20 @@ const Command = require('../../../core/structures/Command');
 
 
 const tag = new Command({
-    name: 'tag',
-    usage: '<*tag name>',
-    info: 'Find a server tag.',
-    requiredArgs: 1,
-    disableModuleCheck: true,
-    execute: async function (ctx) {
-        const name = ctx.args.join(' ');
+        name: 'tag',
+        usage: '<*tag name>',
+        info: 'Find a server tag.',
+        requiredArgs: 1,
+        disableModuleCheck: true,
+        execute: async function (ctx) {
+                const name = ctx.args.join(' ');
 
-        const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
+                const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
 
-        return tag
-            ? ctx.send(tag.content).catch(() => false)
-            : ctx.error(`Tag \`${name}\` not found.`);
-    }
+                return tag
+                        ? ctx.send(tag.content).catch(() => false)
+                        : ctx.error(`Tag \`${name}\` not found.`);
+        }
 });
 
 

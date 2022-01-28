@@ -2,12 +2,12 @@ const Module = require('../../core/structures/Module');
 
 
 class Ticket extends Module {
-    constructor() {
-        super();
+        constructor() {
+                super();
 
-        this.info = 'Enables server ticket creation';
-        this.disabled = true;
-    }
+                this.info = 'Enables server ticket creation';
+                this.disabled = true;
+        }
 }
 
 

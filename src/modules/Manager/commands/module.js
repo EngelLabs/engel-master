@@ -2,35 +2,35 @@ const Command = require('../../../core/structures/Command');
 
 
 module.exports = new Command({
-    name: 'module',
-    usage: '<module>',
-    info: 'Enable or disable a module',
-    examples: [
-        'module moderator',
-        'module logging',
-    ],
-    cooldown: 3000,
-    requiredArgs: 1,
-    alwaysEnabled: true,
-    execute: function ({ bot, guildConfig, args, success, error }) {
-        const module = bot.modules.get(args[0].slice(0, 1).toUpperCase() + args[0].slice(1));
+        name: 'module',
+        usage: '<module>',
+        info: 'Enable or disable a module',
+        examples: [
+                'module moderator',
+                'module logging',
+        ],
+        cooldown: 3000,
+        requiredArgs: 1,
+        alwaysEnabled: true,
+        execute: function (ctx) {
+                const module = ctx.bot.modules.get(ctx.args[0].slice(0, 1).toUpperCase() + ctx.args[0].slice(1));
 
-        if (!module || module.private || module.internal || module.disabled) {
-            return error(`Module \`${args[0]}\` not found.`);
+                if (!module || module.private || module.internal || module.disabled) {
+                        return ctx.error(`Module \`${ctx.args[0]}\` not found.`);
+                }
+
+                const moduleName = module.dbName;
+
+                const moduleConfig = ctx.guildConfig[moduleName] = ctx.guildConfig[moduleName] || {};
+                moduleConfig.disabled = !moduleConfig.disabled;
+
+                const queryString = moduleName + '.disabled';
+
+                ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
+
+                return ctx.success(moduleConfig.disabled
+                        ? `Module \`${module.name}\` disabled.`
+                        : `Module \`${module.name}\` enabled.`
+                );
         }
-
-        const moduleName = module.dbName;
-
-        const moduleConfig = guildConfig[moduleName] = guildConfig[moduleName] || {};
-        moduleConfig.disabled = !moduleConfig.disabled;
-
-        const queryString = moduleName + '.disabled';
-
-        bot.guilds.update(guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
-
-        return success(moduleConfig.disabled
-            ? `Module \`${module.name}\` disabled.`
-            : `Module \`${module.name}\` enabled.`
-        );
-    }
 });

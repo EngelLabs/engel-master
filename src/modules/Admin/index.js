@@ -3,32 +3,32 @@ const Command = require('../../core/structures/Command');
 
 
 class Admin extends Module {
-    constructor() {
-        super();
+        constructor() {
+                super();
 
-        this.private = true;
-        this.info = 'Admin-only commands';
-    }
-
-    injectHook() {
-        const admin = new Command({
-            name: 'admin',
-            aliases: ['a'],
-            namespace: true,
-            hidden: true,
-            info: 'Namespace for admin commands',
-        });
-
-        for (const command of this.commands) {
-            command.parent = admin;
+                this.private = true;
+                this.info = 'Admin-only commands';
         }
 
-        this.commands = [admin];
-    }
+        injectHook() {
+                const admin = new Command({
+                        name: 'admin',
+                        aliases: ['a'],
+                        namespace: true,
+                        hidden: true,
+                        info: 'Namespace for admin commands',
+                });
 
-    commandCheck(ctx) {
-        return ctx.author.id === ctx.config.author.id;
-    }
+                for (const command of this.commands) {
+                        command.parent = admin;
+                }
+
+                this.commands = [admin];
+        }
+
+        commandCheck(ctx) {
+                return ctx.author.id === ctx.config.author.id;
+        }
 }
 
 

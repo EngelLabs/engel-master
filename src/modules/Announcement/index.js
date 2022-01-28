@@ -2,12 +2,12 @@ const Module = require('../../core/structures/Module');
 
 
 class Announcement extends Module {
-    constructor() {
-        super();
+        constructor() {
+                super();
 
-        this.info = 'Automated announcements';
-        this.disabled = true;
-    }
+                this.info = 'Automated announcements';
+                this.disabled = true;
+        }
 }
 
 

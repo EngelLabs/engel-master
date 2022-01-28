@@ -3,230 +3,212 @@ const Base = require('../structures/Base');
 let EventEmitter;
 
 try {
-    EventEmitter = require('eventemitter3');
+        EventEmitter = require('eventemitter3');
 } catch {
-    EventEmitter = require('events');
+        EventEmitter = require('events');
 }
 
 
 /**
- * Manage event dispatching
+ * Event dispatch manager
  * @class EventManager
  */
 class EventManager extends Base {
-    constructor(bot) {
-        super(bot);
-        EventEmitter.call(this);
+        constructor(bot) {
+                super(bot);
+                EventEmitter.call(this);
 
-        this._registeredEvents = {};
-    }
-
-    registerListener(event, execute) {
-        if (!this[event]) {
-            return this.eris.addListener(event, execute);
+                this._registeredEvents = {};
         }
 
-        if (!this._registeredEvents[event]) {
-            const wrapped = async (...args) => {
-                try {
-                    const payload = await this[event](...args);
-
-                    if (!payload) return;
-
-                    this.emit(event, payload);
-                } catch (err) {
-                    this.bot.logger.error(`[EventManager] Something went wrong.`);
-                    console.error(err);
+        registerListener(event, execute) {
+                if (!this[event]) {
+                        return this.eris.addListener(event, execute);
                 }
-            }
 
-            this.eris.addListener(event, wrapped);
-            this._registeredEvents[event] = { handler: wrapped, listeners: [execute] };
-        } else {
-            this._registeredEvents[event].listeners.push(execute);
+                if (!this._registeredEvents[event]) {
+                        const wrapped = async (...args) => {
+                                try {
+                                        // pause the entire event dispatch system when all core components aren't ready.
+                                        if (!this.bot.isReady) return;
+
+                                        const payload = await this[event](...args);
+
+                                        if (!payload) return;
+
+                                        this.emit(event, payload);
+                                } catch (err) {
+                                        this.log(err, 'error');
+                                }
+                        }
+
+                        this.eris.addListener(event, wrapped);
+                        this._registeredEvents[event] = { handler: wrapped, listeners: [execute] };
+                } else {
+                        this._registeredEvents[event].listeners.push(execute);
+                }
+
+                this.addListener(event, execute);
+
+                this.log(`Added listener for event "${event}".`);
+
+                return this;
         }
 
-        this.addListener(event, execute);
+        unregisterListener(event, execute) {
+                if (!this[event]) {
+                        return this.eris.removeListener(event, execute);
+                }
 
-        this.bot.logger.debug(`[EventManager] Added listener for event "${event}"`);
+                if (this._registeredEvents[event]) {
+                        let listeners = this._registeredEvents[event].listeners.filter(l => l.execute = execute);
 
-        return this;
-    }
+                        if (!listeners.length) {
+                                this.eris.removeListener(event, this._registeredEvents[event].handler);
+                                delete this._registeredEvents[event];
+                        } else {
+                                this._registeredEvents[event].listeners = listeners;
+                        }
+                }
 
-    unregisterListener(event, execute) {
-        if (!this[event]) {
-            return this.eris.removeListener(event, execute);
+                this.removeListener(event, execute);
+
+                this.log(`Removed listener for event "${event}".`);
+
+                return this;
         }
 
-        if (this._registeredEvents[event]) {
-            let listeners = this._registeredEvents[event].listeners.filter(l => l.execute = execute);
+        async guildCreate(guild) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guilodConfig: await this.bot.guilds.getOrFetch(guild.id, { createIfNotFound: true }),
+                        guild: guild,
+                };
 
-            if (!listeners.length) {
-                this.eris.removeListener(event, this._registeredEvents[event].handler);
-                delete this._registeredEvents[event];
-            } else {
-                this._registeredEvents[event].listeners = listeners;
-            }
+                return payload;
         }
 
-        this.removeListener(event, execute);
+        async guildDelete(guild) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                };
 
-        this.bot.logger.debug(`[EventManager] Removed listener for event "${event}"`);
+                return payload;
+        }
 
-        return this;
-    }
+        async guildChannelCreate(guild, channel) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                        channel: channel,
+                };
 
-    async guildCreate(guild) {
-        if (!this.bot.isReady) return;
+                return payload;
+        }
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guilodConfig: await this.bot.guilds.getOrFetch(guild.id, { createIfNotFound: true }),
-            guild: guild,
-        };
+        async guildChannelUpdate(guild, channel, oldChannel) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                        channel: channel,
+                        oldChannel: oldChannel,
+                };
 
-        return payload;
-    }
+                return payload;
+        }
 
-    async guildDelete(guild) {
-        if (!this.bot.isReady) return;
+        async guildChannelDelete(guild, channel) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                        channel: channel,
+                };
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-        };
+                return payload;
+        }
 
-        return payload;
-    }
+        async guildRoleCreate(guild, role) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                        role: role,
+                };
 
-    async guildChannelCreate(guild, channel) {
-        if (!this.bot.isReady) return;
+                return payload;
+        }
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-            channel: channel,
-        };
+        async guildRoleDelete(guild, role) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                        role: role,
+                };
 
-        return payload;
-    }
+                return payload;
+        }
 
-    async guildChannelUpdate(guild, channel, oldChannel) {
-        if (!this.bot.isReady) return;
+        async guildRoleUpdate(guild, role, oldRole) {
+                const payload = {
+                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
+                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
+                        guild: guild,
+                        role: role,
+                        oldRole: oldRole,
+                };
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-            channel: channel,
-            oldChannel: oldChannel,
-        };
+                return payload;
+        }
 
-        return payload;
-    }
+        async messageCreate(message) {
+                if (message.author.bot) return;
 
-    async guildChannelDelete(guild, channel) {
-        if (!this.bot.isReady) return;
+                const payload = {
+                        isAdmin: this.helpers.permissions.isAdmin(message.author.id),
+                        isTester: this.helpers.permissions.isTester(message.author.id),
+                        isDM: !message.channel.guild,
+                        message: message,
+                };
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-            channel: channel,
-        };
+                if (payload.isDM) return payload;
 
-        return payload;
-    }
+                payload.guildConfig = await this.bot.guilds.getOrFetch(message.channel.guild.id, { createIfNotFound: true });
 
-    async guildRoleCreate(guild, role) {
-        if (!this.bot.isReady) return;
+                return payload;
+        }
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-            role: role,
-        };
+        async messageDelete(message) {
+                message = this.bot.cache.getMessage[message.id];
 
-        return payload;
-    }
+                if (!message) return;
 
-    async guildRoleDelete(guild, role) {
-        if (!this.bot.isReady) return;
+                const payload = {
+                        message: message,
+                        guildConfig: await this.bot.guilds.getOrFetch(message.channel.guild.id),
+                };
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-            role: role,
-        };
+                return payload;
+        }
 
-        return payload;
-    }
+        async messageUpdate(message, oldMessage) {
+                oldMessage = this.bot.cache.getMessage[message.id];
 
-    async guildRoleUpdate(guild, role, oldRole) {
-        if (!this.bot.isReady) return;
+                if (!oldMessage) return;
 
-        const payload = {
-            isTesting: this.bot.config.guilds.testing.includes(guild.id),
-            guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-            guild: guild,
-            role: role,
-            oldRole: oldRole,
-        };
+                const payload = {
+                        message: message,
+                        oldMessage: Object.assign({}, oldMessage),
+                        guildConfig: await this.bot.guilds.getOrFetch(oldMessage.channel.guild.id),
+                };
 
-        return payload;
-    }
-
-    async messageCreate(message) {
-        if (!this.bot.isReady || message.author.bot) return;
-
-        const payload = {
-            isAdmin: this.bot.helpers.permissions.isAdmin(message.author.id),
-            isTester: this.bot.helpers.permissions.isTester(message.author.id),
-            isDM: !message.channel.guild,
-            message: message,
-        };
-
-        if (payload.isDM) return payload;
-
-        payload.guildConfig = await this.bot.guilds.getOrFetch(message.channel.guild.id, { createIfNotFound: true });
-
-        return payload;
-    }
-
-    async messageDelete(message) {
-        if (!this.bot.isReady) return;
-
-        message = this.bot.cache.getMessage[message.id];
-
-        if (!message) return;
-
-        const payload = {
-            message: message,
-            guildConfig: await this.bot.guilds.getOrFetch(message.channel.guild.id),
-        };
-
-        return payload;
-    }
-
-    async messageUpdate(message, oldMessage) {
-        if (!this.bot.isReady) return;
-
-        oldMessage = this.bot.cache.getMessage[message.id];
-
-        if (!oldMessage) return;
-
-        const payload = {
-            message: message,
-            oldMessage: Object.assign({}, oldMessage),
-            guildConfig: await this.bot.guilds.getOrFetch(oldMessage.channel.guild.id),
-        };
-
-        return payload;
-    }
+                return payload;
+        }
 }
 
 Object.assign(EventManager.prototype, EventEmitter.prototype);

@@ -2,12 +2,12 @@ const Module = require('../../core/structures/Module');
 
 
 class Level extends Module {
-    constructor() {
-        super();
+        constructor() {
+                super();
 
-        this.info = 'Level up with server activity, gain xp, and spend it!';
-        this.disabled = true;
-    }
+                this.info = 'Level up with server activity, gain xp, and spend it!';
+                this.disabled = true;
+        }
 }
 
 
