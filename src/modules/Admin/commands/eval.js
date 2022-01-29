@@ -11,7 +11,7 @@ module.exports = new Command({
         execute: async function (ctx) {
                 let { message, guild, author, bot, member, channel,
                         args, eris, guildConfig, baseConfig, config, logger,
-                        models, mongoose, redis, me, permissions } = ctx,
+                        models, mongoose, redis, me, permissions, helpers } = ctx,
                         __ctx = ctx, __res;
 
                 let api = (method, uri, data = {}) => {
