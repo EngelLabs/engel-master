@@ -60,6 +60,7 @@ module.exports = new Command({
                         __res = `Rejected: ${err?.toString?.() || err}`;
                 }
 
-                return __ctx.codeblock(__res, 'js');
+                return __ctx.codeblock(__res, 'js')
+                        .catch(err => ctx.error(err?.toString?.()));
         },
 });
