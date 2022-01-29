@@ -142,6 +142,8 @@ class Server {
 
                         this._configInterval = setInterval(this.updateConfig.bind(this), config.configRefreshInterval);
                 }
+
+                return (this._config = config);
         }
 
         async start() {
