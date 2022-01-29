@@ -101,15 +101,6 @@ class Server {
                 }
         }
 
-        updateGuild(id, update) {
-                return this.collection('guilds').updateOne({ id }, update)
-                        .then(result => {
-                                this.redis.publish('guildUpdate', id);
-
-                                return result;
-                        });
-        }
-
         async updateConfig() {
                 try {
                         return (this.config = await this.getConfig());
