@@ -12,7 +12,7 @@ const Eris = require('./clients/Eris');
 const Redis = require('./clients/Redis');
 const MongoDB = require('./clients/MongoDB');
 const Renderer = require('./helpers/Renderer')
-const responseHandlers = require('./helpers/response');
+const Responder = require('./helpers/Responder');
 const ModuleCollection = require('./collections/ModuleCollection');
 const CommandCollection = require('./collections/CommandCollection');
 const ControllerCollection = require('./collections/ControllerCollection');
@@ -50,10 +50,6 @@ class Server {
                 }
 
                 return this.logger[level](`[${prefix}] ${msg}`);
-        }
-
-        response(status, ...args) {
-                return responseHandlers[status](...args);
         }
 
         apiRequest(token, path) {
@@ -145,6 +141,7 @@ class Server {
                         this.redis = new Redis(this);
 
                         this.renderer = new Renderer(this);
+                        this.response = new Responder(this);
 
                         const app = this.app = express();
 
