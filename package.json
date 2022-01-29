@@ -5,7 +5,7 @@
     "description": "A Discord bot to provide some nice utilities.",
     "scripts": {
         "start": "node src/index.js",
-        "dev": "nodemon --delay 3 -i src/modules/",
+        "dev": "npx nodemon --delay 3 -i src/modules/",
         "config": "node src/scripts/config.js"
     },
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
