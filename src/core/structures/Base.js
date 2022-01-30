@@ -41,8 +41,6 @@ const permissionsMapping = {
         voiceRequestToSpeak: 'Request To Speak',
 };
 
-const helpersPath = path.resolve('src/helpers');
-
 /**
  * Base class with various getters and helper methods
  * @class Base
@@ -63,6 +61,8 @@ class Base {
                 this.bot = bot || Bot.instance;
 
                 if (!helpers) {
+                        const helpersPath = path.resolve('src/helpers');
+
                         for (const name of fs.readdirSync(helpersPath)) {
                                 helpers = helpers || {};
 
