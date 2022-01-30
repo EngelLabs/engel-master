@@ -10,7 +10,7 @@ const mute = new Command({
         requiredPermissions: ['manageRoles', 'manageChannels'],
         execute: async function (ctx) {
                 try {
-                        var role = await ctx.module.resolveMuteRole(ctx.guild, ctx.guildConfig);
+                        var role = await ctx.helpers.moderation.resolveMuteRole(ctx.guild, ctx.guildConfig);
                 } catch (err) {
                         return ctx.error(err);
                 }
