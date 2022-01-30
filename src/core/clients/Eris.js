@@ -72,7 +72,7 @@ class Eris extends Base {
 
                 if (baseConfig.client.id !== me.id) {
                         throw new Error(
-                                `Invalid clientId ${baseConfig.client.id} provided. Actual user ID: ${me.id}`
+                                `Invalid client ID ${baseConfig.client.id} provided. Actual user ID: ${me.id}`
                         );
                 }
 
