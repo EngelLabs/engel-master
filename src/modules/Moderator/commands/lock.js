@@ -19,7 +19,7 @@ module.exports = new Command({
                 let channel;
 
                 try {
-                        channel = await ctx.helpers.converter.textChannel(ctx, ctx.args[0]);
+                        channel = await ctx.helpers.converter.textChannel(ctx.guild, ctx.args[0]);
                 } catch (err) {
                         return ctx.error(err);
                 }

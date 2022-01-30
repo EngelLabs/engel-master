@@ -105,7 +105,7 @@ const giveaway = new Command({
                         const arg = msg.content.split(' ')[0];
 
                         try {
-                                channel = await ctx.helpers.converter.textChannel(ctx, arg);
+                                channel = await ctx.helpers.converter.textChannel(ctx.guild, arg);
 
                                 if (!channel) {
                                         msg = await exchange(_(`Channel \`${arg}\` not found, please try again.`));

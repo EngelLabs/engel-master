@@ -25,7 +25,7 @@ const muterole = new Command({
                 let role;
 
                 try {
-                        role = await ctx.helpers.converter.role(ctx, ctx.args[0]);
+                        role = await ctx.helpers.converter.role(ctx.guild, ctx.args[0]);
                 } catch (err) {
                         return ctx.error(err);
                 }

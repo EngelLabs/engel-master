@@ -13,7 +13,7 @@ module.exports = new Command({
         requiredArgs: 2,
         execute: async function (ctx) {
                 try {
-                        var user = await ctx.helpers.converter.user(ctx, ctx.args[0]);
+                        var user = await ctx.helpers.converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }

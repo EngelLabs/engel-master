@@ -75,7 +75,7 @@ purge.command({
                 let user;
 
                 try {
-                        user = await ctx.helpers.converter.user(ctx, ctx.args[0]);
+                        user = await ctx.helpers.converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }

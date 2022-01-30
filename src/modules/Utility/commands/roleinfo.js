@@ -4,7 +4,7 @@ const moment = require('moment');
 
 module.exports = new Command({
         name: 'roleinfo',
-        usage: '<*role>',
+        usage: '<role>',
         requiredArgs: 1,
         aliases: ['rinfo'],
         examples: [
@@ -13,12 +13,12 @@ module.exports = new Command({
         ],
         execute: async function (ctx) {
                 try {
-                        var role = await ctx.helpers.converter.role(ctx, ctx.args.join(' '));
+                        var role = await ctx.helpers.converter.role(ctx.guild, ctx.args[0]);
                 } catch (err) {
-                        return ctx.error(err);
+                        return ctx.error(err.toString?.());
                 }
 
-                if (!role) return ctx.error(`Role \`${ctx.args.join(' ')}\` not found.`);
+                if (!role) return ctx.error(`Role \`${ctx.args[0]}\` not found.`);
 
                 const embed = {
                         color: role.color,

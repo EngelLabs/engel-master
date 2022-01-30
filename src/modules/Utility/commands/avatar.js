@@ -15,7 +15,7 @@ module.exports = new Command({
 
                 if (ctx.args.length) {
                         try {
-                                user = await ctx.helpers.converter.member(ctx, ctx.args[0]);
+                                user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
                         } catch (err) {
                                 return ctx.error(err);
                         }

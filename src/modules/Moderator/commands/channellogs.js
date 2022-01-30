@@ -16,7 +16,7 @@ module.exports = new Command({
                 let channelId;
 
                 try {
-                        channelId = ctx.helpers.converter.channelId(ctx.args[0]);
+                        channelId = ctx.helpers.converter.channelID(ctx.args[0]);
                 } catch (err) {
                         return ctx.error(err);
                 }

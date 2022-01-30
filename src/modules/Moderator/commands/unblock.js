@@ -20,7 +20,7 @@ module.exports = new Command({
                 let user;
 
                 try {
-                        user = await ctx.helpers.converter.member(ctx, ctx.args[0]);
+                        user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -35,7 +35,7 @@ module.exports = new Command({
                         let errored = false;
 
                         try {
-                                channel = await ctx.helpers.converter.channel(ctx, ctx.args[0]);
+                                channel = await ctx.helpers.converter.channel(ctx.guild, ctx.args[0]);
                         } catch (err) {
                                 errored = true;
                         }

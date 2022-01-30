@@ -13,7 +13,7 @@ const kick = new Command({
         requiredPermissions: ['kickMembers'],
         execute: async function (ctx) {
                 try {
-                        var user = await ctx.helpers.converter.member(ctx, ctx.args[0]);
+                        var user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
