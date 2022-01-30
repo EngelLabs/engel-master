@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS,REACT\" \"npm run watch:server\" \"npm run watch:sass\" \"npm run watch:react\"",
-    "watch:server": "npx nodemon --delay 2 -w src",
+    "watch:server": "npx nodemon --delay 2 -i public -i react -i styles -i views",
     "watch:sass": "npx sass -w styles:public/css",
     "watch:react": "npm run build --prefix react"
   },
