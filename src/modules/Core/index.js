@@ -396,7 +396,7 @@ class Core extends Module {
                 let text = `Command "${command.qualName}" U${author.id}`;
 
                 if (guild) {
-                        text += `G${guild.id}`;
+                        text += ` G${guild.id}`;
                 }
 
                 this.log(text);
@@ -421,7 +421,7 @@ class Core extends Module {
                 let text = `Command "${command.qualName}" U${author.id}`;
 
                 if (guild) {
-                        text += `G${guild.id}`;
+                        text += ` G${guild.id}`;
                 }
 
                 this.logger.error(text);
