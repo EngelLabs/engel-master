@@ -12,7 +12,7 @@ const prefix = new Command({
                 let msg;
 
                 if (!ctx.guild) {
-                        prefixes = ctx.guildConfig.prefixes.filter(({ length }) => length);
+                        const prefixes = ctx.guildConfig.prefixes.filter(({ length }) => length);
                         msg = `Hi! My prefix${prefixes.length > 1 ? 'es' : ''} in dms are: `;
                         msg += prefixes.map(p => `\`${p}\``).join(', ');
                         msg += '\nYou can also use commands by mentioning me';
@@ -111,17 +111,14 @@ prefix.command({
                         return ctx.error('That prefix doesn\'t exist.');
                 }
 
-                let update;
+                let update = { $pull: { prefixes: prefix } };
 
-                if (ctx.guildConfig.prefixes.length > 0) {
-                        update = { $pull: { prefixes: prefix } };
+                ctx.guildConfig.prefixes = ctx.guildConfig.prefixes.filter(p => p !== prefix);
 
-                        ctx.guildConfig.prefixes = ctx.guildConfig.prefixes.filter(p => p !== prefix);
-
-                } else {
+                if (!ctx.guildConfig.prefixes.length) {
                         update = { $set: { prefixes: ctx.config.prefixes.default } };
 
-                        ctx.guildConfig.prefixes = ctx.config.prefixes.default;
+                        ctx.guildConfig.prefixes = ctx.config.prefixes.default.concat();
                 }
 
                 ctx.bot.guilds.update(ctx.guildConfig, update);
