@@ -23,9 +23,9 @@ const prefix = new Command({
                 } else {
                         if (ctx.guildConfig.prefixes.length > 1) {
                                 msg = `Prefixes for **${ctx.guild.name}**: `;
-                                msg += ctx.guildConfig.prefixes.map(p => `\`${p}\``).join(', ');
+                                msg += ctx.guildConfig.prefixes.map(p => `\`${p}\``).join(', ') + '.';
                         } else {
-                                msg = `Prefix for **${ctx.guild.name}**: \`${ctx.guildConfig.prefixes[0]}\``
+                                msg = `Prefix for **${ctx.guild.name}**: \`${ctx.guildConfig.prefixes[0]}\`.`
                         }
                 }
 
@@ -55,7 +55,7 @@ prefix.command({
                 ctx.guildConfig.prefixes = [prefix];
                 ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { prefixes: [prefix] } });
 
-                return ctx.success(`Replaced prefixes with \`${prefix}\``);
+                return ctx.success(`Replaced prefixes with \`${prefix}\`.`);
         }
 });
 
