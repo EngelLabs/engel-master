@@ -55,8 +55,14 @@ class Eris extends Base {
 
                                 this.bot._erisIsReady = true;
                         })
-                        .on('error', err => {
-                                this.log(err, 'error');
+                        .on('error', (err, shard) => {
+                                if (!err) return;
+
+                                if (shard !== undefined) {
+                                        this.log(err, 'error', `Shard ${shard}`);
+                                } else {
+                                        this.log(err, 'error');
+                                }
                         })
                         .on('warn', msg => {
                                 this.log(msg, 'warn');
