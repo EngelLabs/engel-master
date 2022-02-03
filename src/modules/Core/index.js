@@ -225,6 +225,7 @@ class Core extends Module {
                         command,
                         module,
                         isDM,
+                        isAdmin,
                         guildConfig,
                 });
         }
