@@ -36,7 +36,7 @@ class Info extends Module {
                         color: this.config.colours.info,
                 };
 
-                if (command.usage && command.usage.length) {
+                if (command.usage?.length) {
                         embed.description += `\n**Usage:** ${prefix}${qualName} ${command.usage}`;
                 } else {
                         embed.description += `\n**Usage:** ${prefix}${qualName}`
@@ -46,11 +46,11 @@ class Info extends Module {
                         embed.description += `\n**Cooldown:** ${command.cooldown / 1000} seconds`;
                 }
 
-                if (command.info && command.info.length) {
+                if (command.info?.length) {
                         embed.description += `\n**Info:** ${command.info}`;
                 }
 
-                if (command.aliases && command.aliases.length) {
+                if (command.aliases?.length) {
                         embed.description += `\n**Aliases:** ${command.aliases.join(', ')}`;
                 }
 
@@ -61,7 +61,7 @@ class Info extends Module {
                                 .map(cmd => cmd.name)
                                 .join(', ');
 
-                        if (msg && msg.length) {
+                        if (msg?.length) {
                                 embed.description += `\n**Subcommands [${commands.length}]:** ${msg}`;
 
                                 if (verbose) {
@@ -72,7 +72,7 @@ class Info extends Module {
                         }
                 }
 
-                if (command.examples && command.examples.length) {
+                if (command.examples?.length) {
                         embed.description += `\n**Examples:**\n${command.examples.map(e => prefix + e).join('\n')}`;
                 }
 
@@ -109,7 +109,7 @@ class Info extends Module {
                                 .map(cmd => `\t**${cmd.name}**: ${cmd.info || 'No info provided'}`)
                                 .join('\n');
 
-                        if (msg && msg.length) {
+                        if (msg?.length) {
                                 embed.description = `**Commands [${commands.length}]:**\n${msg}`;
                         }
                 }

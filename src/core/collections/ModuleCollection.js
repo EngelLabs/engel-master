@@ -88,7 +88,7 @@ class ModuleCollection extends Collection {
         }
 
         load(moduleNames) {
-                moduleNames = moduleNames && moduleNames.length
+                moduleNames = moduleNames?.length
                         ? moduleNames
                         : fs.readdirSync(modulesPath)
                                 .map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
@@ -110,7 +110,7 @@ class ModuleCollection extends Collection {
         }
 
         unload(moduleNames = []) {
-                moduleNames = moduleNames && moduleNames.length
+                moduleNames = moduleNames?.length
                         ? moduleNames.map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
                         : this.unique();
 
@@ -124,7 +124,7 @@ class ModuleCollection extends Collection {
         }
 
         reload(moduleNames = []) {
-                moduleNames = moduleNames && moduleNames.length
+                moduleNames = moduleNames?.length
                         ? moduleNames.map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
                         : [...this.unique()].map(m => m.name);
 

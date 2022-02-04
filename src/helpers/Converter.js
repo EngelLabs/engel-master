@@ -79,7 +79,7 @@ class Converter extends Base {
                 return new Promise((resolve, reject) => {
                         this.channel(guild, argument, fetch)
                                 .then(channel => {
-                                        if (channel && channel.type !== ChannelTypes.GUILD_TEXT) {
+                                        if (channel?.type !== ChannelTypes.GUILD_TEXT) {
                                                 return reject(`${channel.mention} is not a text channel.`);
                                         }
 

@@ -153,11 +153,11 @@ class Core extends Module {
                         }
                 }
 
-                if (config.modules[moduleName] && config.modules[moduleName].disabled) {
+                if (config.modules?.[moduleName]?.disabled) {
                         return ctx.error('Sorry, this module has been disabled globally. Try again later.');
                 }
 
-                if (config.commands[commandName] && config.commands[commandName].disabled) {
+                if (config.commands?.[commandName]?.disabled) {
                         return ctx.error('Sorry, this command has been disabled globally. Try again later.');
                 }
 
@@ -224,7 +224,7 @@ class Core extends Module {
         async executeCommand(ctx) {
                 const { command, prefix, isAdmin, args } = ctx;
 
-                if (command.requiredArgs && args.length < command.requiredArgs) {
+                if (args.length < command?.requiredArgs) {
                         const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
 
                         return ctx.send({ embed });
@@ -288,10 +288,10 @@ class Core extends Module {
                 let allMembers = 0;
 
                 for (const guild of eris.guilds.values()) {
-                        allMembers += guild.members.size;
+                        allMembers += guild.members.size || 0;
                 }
 
-                const guildOwner = guild.members && guild.members.get(guild.ownerID);
+                const guildOwner = guild.members?.get?.(guild.ownerID);
 
                 const msg = {
                         description: [
@@ -332,10 +332,10 @@ class Core extends Module {
                 let allMembers = 0;
 
                 for (const guild of eris.guilds.values()) {
-                        allMembers += guild.members.size;
+                        allMembers += guild.members.size || 0;
                 }
 
-                const guildOwner = guild.members && guild.members.get(guild.ownerID);
+                const guildOwner = guild.members?.get?.(guild.ownerID);
 
                 const msgs = {
                         description: [

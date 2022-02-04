@@ -45,7 +45,7 @@ const mute = new Command({
 
                 ctx.module.sendDM(ctx, user, `You were muted in ${ctx.guild.name}`, duration, reason);
 
-                const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
+                const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
                 try {
                         await ctx.eris.addGuildMemberRole(ctx.guild.id, user.id, role.id, auditReason);

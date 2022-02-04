@@ -199,7 +199,7 @@ class Base {
                 const me = guild.members.get(this.eris.user.id);
                 if (!me || !me.roles.length) return;
 
-                return me.roles.map(id => guild.roles.get(id)).reduce((prev, curr) => curr && curr.position > prev.position ? curr : prev);
+                return me.roles.map(id => guild.roles.get(id)).reduce((prev, curr) => curr?.position > prev.position ? curr : prev);
         }
 
         waitFor(eventName, fn, timeout) {

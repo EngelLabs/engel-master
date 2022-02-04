@@ -4,9 +4,9 @@ const Command = require('../../../core/structures/Command');
 const purgeMessages = async (ctx, count, check, reason, type) => {
         let result, delCommand;
 
-        if (ctx.commandConfig && ctx.commandConfig.del !== undefined) {
+        if (ctx.commandConfig?.del !== undefined) {
                 delCommand = ctx.commandConfig.del;
-        } else if (ctx.moduleConfig && ctx.moduleConfig.delCommands !== undefined) {
+        } else if (ctx.moduleConfig?.delCommands !== undefined) {
                 delCommand = ctx.moduleConfig.delCommands;
         } else {
                 delCommand = ctx.guildConfig.delCommands;
@@ -108,7 +108,7 @@ purge.command({
                 return purgeMessages(
                         ctx,
                         ctx.args.shift(),
-                        msg => msg.embeds && msg.embeds.length,
+                        msg => msg.embeds?.length,
                         ctx.args.join(' '),
                 );
         }
@@ -181,7 +181,7 @@ purge.command({
                 return purgeMessages(
                         ctx,
                         args.shift(),
-                        msg => msg.content && msg.content.includes(text),
+                        msg => msg.content?.includes?.(text),
                         args.join(' '),
                 );
         }

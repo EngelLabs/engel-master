@@ -32,8 +32,7 @@ const muterole = new Command({
 
                 if (!role) return ctx.error(`Role \`${ctx.args[0]}\` not found.`);
 
-                const topRole = ctx.topRole;
-                if (topRole && role.position >= topRole.position) {
+                if (role.position >= ctx.topRole?.position) {
                         return ctx.error('That role\'s position is too high; It has to be below my highest role.');
                 }
 

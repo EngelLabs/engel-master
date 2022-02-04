@@ -39,25 +39,25 @@ class Permission extends Base {
                 const checkPerms = c => {
                         if (!c) return false;
 
-                        if (c.allowedRoles && c.allowedRoles.length) {
+                        if (c.allowedRoles?.length) {
                                 if (!overrideExists) overrideExists = true;
 
                                 if (!c.allowedRoles.find(id => roles.includes(id))) return false;
                         }
 
-                        if (c.allowedChannels && c.allowedChannels.length) {
+                        if (c.allowedChannels?.length) {
                                 if (!overrideExists) overrideExists = true;
 
                                 if (!c.allowedChannels.find(id => id === channel.id)) return false;
                         }
 
-                        if (c.ignoredRoles && c.ignoredRoles.length) {
+                        if (c.ignoredRoles?.length) {
                                 if (!overrideExists) overrideExists = true;
 
                                 if (c.ignoredRoles.find(id => roles.includes(id))) return false;
                         }
 
-                        if (c.ignoredChannels && c.ignoredChannels.length) {
+                        if (c.ignoredChannels?.length) {
                                 if (!overrideExists) overrideExists = true;
 
                                 if (c.ignoredChannels.find(id => id === channel.id)) return false;

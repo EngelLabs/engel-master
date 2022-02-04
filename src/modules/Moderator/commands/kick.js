@@ -27,7 +27,7 @@ const kick = new Command({
 
                 ctx.module.sendDM(ctx, user, `You were kicked from ${ctx.guild.name}`, null, reason);
 
-                const auditReason = (reason && reason.length ? reason : 'No reason provided') + ' | ' + `Moderator: ${ctx.author.id}`;
+                const auditReason = (reason?.length ? reason : 'No reason provided') + ' | ' + `Moderator: ${ctx.author.id}`;
 
                 try {
                         await user.kickGuildMember(ctx.guild.id, user.id, auditReason);

@@ -91,7 +91,7 @@ class Logging extends Module {
 
                                         this.bot.guilds.update(guildConfig, { $unset: update });
 
-                                        if (guildConfig.logging && guildConfig.logging[eventConfig.name]) {
+                                        if (guildConfig.logging?.[eventConfig.name]) {
                                                 const actual = guildConfig.logging[eventConfig.name];
 
                                                 delete actual.webhook;

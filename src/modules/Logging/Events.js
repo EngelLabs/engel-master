@@ -26,7 +26,7 @@ class Events extends Base {
 
                                 if (!eventConfig || eventConfig.disabled || !eventConfig.channel) return;
 
-                                const webhook = moduleConfig.webhooks && moduleConfig.webhooks[eventConfig.channel];
+                                const webhook = moduleConfig.webhooks?.[eventConfig.channel];
 
                                 if (!webhook) return;
 
@@ -39,7 +39,7 @@ class Events extends Base {
                                 for (const embed of embeds) {
                                         if (typeof embed.color !== 'undefined') {
                                                 embed.color = eventConfig.color ||
-                                                        (moduleConfig.colors && moduleConfig.colors[embed.color]) ||
+                                                        (moduleConfig.colors?.[embed.color]) ||
                                                         colorMapping[embed.color] || null;
                                         }
 

@@ -29,7 +29,7 @@ function createConfig() {
     return mongoose.models.Config.create({ state })
         .then(() => logger.info('Created config.'))
         .catch(err => {
-            if (err && err.code === 11000) return logger.error('Cannot create config (DuplicateKeyError).');
+            if (err?.code === 11000) return logger.error('Cannot create config (DuplicateKeyError).');
             logError(err)
         })
         .finally(() => registerConfig()

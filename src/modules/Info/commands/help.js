@@ -41,7 +41,7 @@ module.exports = new Command({
 
                 let command = ctx.bot.commands.get(ctx.args.shift());
 
-                while (command && command.commands && ctx.args.length) {
+                while (command?.commands && ctx.args.length) {
                         const subcommand = command.commands.get(ctx.args[0]);
 
                         /*

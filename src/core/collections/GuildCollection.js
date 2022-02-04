@@ -81,7 +81,7 @@ class GuildCollection extends Map {
                                                 this.set(id, guild);
                                         }
 
-                                        if (!guild && options && options.createIfNotFound) {
+                                        if (!guild && options?.createIfNotFound) {
                                                 return this.create(id)
                                                         .then(resolve)
                                                         .catch(reject);

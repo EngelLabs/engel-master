@@ -41,7 +41,7 @@ module.exports = new Command({
                                 }
 
                                 if (m.duration) {
-                                        const isActive = m.expiry && m.expiry > Date.now() ? 'true' : 'false';
+                                        const isActive = m.expiry > Date.now() ? 'true' : 'false';
                                         ret += `**Duration:** ${prettyMS(m.duration)} (active: ${isActive})\n`;
                                 }
 
@@ -51,7 +51,7 @@ module.exports = new Command({
 
                                 ret += `**Moderator:** ${m.mod.name} (${m.mod.id})\n`;
 
-                                if (m.reason && m.reason.length) {
+                                if (m.reaso?.length) {
                                         ret += `**Reason:** ${m.reason}\n`;
                                 }
 

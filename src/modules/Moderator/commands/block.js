@@ -50,8 +50,8 @@ module.exports = new Command({
 
                 const overwrite = channel.permissionOverwrites.get(user.id);
 
-                let allow = overwrite && overwrite.allow || BigInt(0),
-                        deny = overwrite && overwrite.deny || BigInt(0);
+                let allow = overwrite?.allow || BigInt(0),
+                        deny = overwrite?.deny || BigInt(0);
 
                 if (overwrite) {
                         const perms = overwrite.json;
@@ -75,7 +75,7 @@ module.exports = new Command({
 
                 const reason = ctx.args.join(' ');
 
-                const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
+                const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
                 ctx.module.sendDM(ctx.guildConfig, user, `You were blocked from #${channel.name}`, duration, reason);
 

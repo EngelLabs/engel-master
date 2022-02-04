@@ -39,7 +39,7 @@ const unmute = new Command({
 
                 const reason = ctx.args.join(' ');
 
-                const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
+                const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
                 try {
                         await ctx.eris.removeGuildMemberRole(ctx.guild.id, user.id, role.id, auditReason);

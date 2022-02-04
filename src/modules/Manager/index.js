@@ -36,17 +36,17 @@ class Manager extends Module {
                 }
 
                 const checkPerms = config => {
-                        if (config.allowedRoles && config.allowedRoles.length) {
+                        if (config.allowedRoles?.length) {
                                 const allowedRoles = config.allowedRoles.filter(id => channel.guild.roles.has(id));
                                 infoArray.push(`This command is allowed for the following roles: ${allowedRoles.map(id => `<@&${id}>`).join('\n')}`);
                         }
 
-                        if (config.ignoredRoles && config.ignoredRoles.length) {
+                        if (config.ignoredRoles?.length) {
                                 const ignoredRoles = config.ignoredRoles.filter(id => channel.guild.roles.has(id));
                                 infoArray.push(`This command is allowed for the following roles: ${ignoredRoles.map(id => `<@&${id}>`).join('\n')}`);
                         }
 
-                        if (config.allowedChannels && config.allowedChannels.length) {
+                        if (config.allowedChannels?.length) {
                                 const allowedChannels = config.allowedChannels.filter(id => channel.guild.channels.has(id));
                                 infoArray.push(`This command is allowed in the following channels: ${allowedChannels.map(id => `<#${id}>`).join('\n')}`);
                                 if (!allowedChannels.find(id => id === channel.id)) {
@@ -54,7 +54,7 @@ class Manager extends Module {
                                 }
                         }
 
-                        if (config.ignoredChannels && config.ignoredChannels.length) {
+                        if (config.ignoredChannels?.length) {
                                 const ignoredChannels = config.ignoredChannels.filter(id => channel.guild.channels.has(id));
                                 infoArray.push(`This command is not allowed in the following channels: ${ignoredChannels.map(id => `<#${id}>`).join('\n')}`);
                                 if (!ignoredChannels.find(id => id === channel.id)) {

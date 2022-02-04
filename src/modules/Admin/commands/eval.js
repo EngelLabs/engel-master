@@ -49,7 +49,7 @@ module.exports = new Command({
                                 } catch { }
                         }
 
-                        if (__res && __res.toString) {
+                        if (__res?.toString) {
                                 __res = __res
                                         .toString()
                                         .replace(__ctx.baseConfig.client.token, '[[redacted]]');

@@ -22,9 +22,7 @@ module.exports = new Command({
 
                         if (!user) return ctx.error(`Member \`${ctx.args[0]}\` not found.`);
                 } else {
-                        if (ctx.message.messageReference
-                                && ctx.message.messageReference.messageID
-                                && ctx.message.messageReference.channelID === ctx.channel.id) {
+                        if (ctx.message.messageReference?.channelID === ctx.channel.id) {
                                 try {
                                         const msg = (
                                                 ctx.channel.messages.get(ctx.message.messageReference.messageID) ||

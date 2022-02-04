@@ -13,7 +13,7 @@ class Moderation extends Base {
 
                 action = action || 'moderate';
 
-                if (author && member.id === author.id) {
+                if (member.id === author?.id) {
                         return resolve(`You cannot ${action} yourself.`);
                 }
 
@@ -35,7 +35,7 @@ class Moderation extends Base {
                         }
                 }
 
-                if (member.roles && member.roles.length) {
+                if (member.roles?.length) {
                         const roles = member.guild.roles;
                         const topRole = this.getTopRole(guild);
 
@@ -43,7 +43,7 @@ class Moderation extends Base {
                                 if (member.roles.find(id => {
                                         const r = roles.get(id);
 
-                                        return r && r.position >= topRole.position;
+                                        return r?.position >= topRole.position;
                                 })) {
                                         return resolve(`My highest role's position isn't high enough to ${action} this user.`);
                                 }
@@ -52,17 +52,13 @@ class Moderation extends Base {
                         const commandConfig = guildConfig.commands?.[commandName];
                         const moduleConfig = guildConfig[moduleName];
 
-                        if (commandConfig &&
-                                commandConfig.protectedRoles &&
-                                commandConfig.protectedRoles.length) {
+                        if (commandConfig?.protectedRoles?.length) {
                                 const protectedRoles = commandConfig.protectedRoles;
                                 if (member.roles.find(id => protectedRoles.includes(id))) {
                                         return resolve('That user is protected.');
                                 }
                         } else {
-                                if (moduleConfig &&
-                                        moduleConfig.protectedRoles &&
-                                        moduleConfig.protectedRoles.length) {
+                                if (moduleConfig?.protectedRoles?.length) {
                                         const protectedRoles = moduleConfig.protectedRoles;
                                         if (member.roles.find(id => protectedRoles.includes(id))) {
                                                 return resolve('That user is protected.');
@@ -86,9 +82,9 @@ class Moderation extends Base {
                                         .catch(resolve);
                         }
 
-                        if (commandConfig && commandConfig.del !== undefined) {
+                        if (commandConfig?.del !== undefined) {
                                 return commandConfig.del ? del() : resolve();
-                        } else if (moduleConfig && moduleConfig.delCommands !== undefined) {
+                        } else if (moduleConfig?.delCommands !== undefined) {
                                 return moduleConfig.del ? del() : resolve();
                         } else if (guildConfig.delCommands) {
                                 return del();
@@ -212,7 +208,7 @@ class Moderation extends Base {
                                 data.channel = channel;
                         }
 
-                        if (reason && reason.length) {
+                        if (reason?.length) {
                                 data.reason = reason;
                         }
 
@@ -272,7 +268,7 @@ class Moderation extends Base {
                 }
 
                 if (m.duration) {
-                        const isActive = m.expiry && m.expiry > Date.now() ? 'true' : 'false';
+                        const isActive = m.expiry > Date.now() ? 'true' : 'false';
                         msg += `**Duration:** ${prettyMS(m.duration)} (active: ${isActive})\n`;
                 }
 
@@ -283,13 +279,13 @@ class Moderation extends Base {
 
                 msg += `**Moderator:** ${m.mod.name} (${m.mod.id})\n`;
 
-                if (m.reason && m.reason.length) {
+                if (m.reason?.length) {
                         msg += `**Reason:** ${m.reason}\n`;
                 }
 
                 if (m.duration) {
                         msg += `**Duration:** ${prettyMS(m.duration)}\n`;
-                        msg += `**Active:** ${m.expiry && m.expiry > Date.now() ? 'true' : 'false'})\n`;
+                        msg += `**Active:** ${m.expiry > Date.now() ? 'true' : 'false'})\n`;
                 }
 
                 return msg;
@@ -340,7 +336,7 @@ class Moderation extends Base {
 
                                         type = type ? `purge [${type}]` : 'purge';
 
-                                        const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${mod.id}`;
+                                        const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${mod.id}`;
 
                                         this.eris.deleteMessages(channel.id, messages, auditReason)
                                                 .then(() => {

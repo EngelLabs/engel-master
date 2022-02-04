@@ -49,7 +49,7 @@ class Moderator extends Module {
                 }
 
                 if (ctx.moduleConfig.includeReason && reason !== null) {
-                        msg += `\nReason: ${reason && reason.length ? reason : 'N/A'}`;
+                        msg += `\nReason: ${reason?.length ? reason : 'N/A'}`;
                 }
 
                 return this.helpers.moderation.sendDM(ctx.guildConfig, user, msg);
@@ -71,9 +71,7 @@ class Moderator extends Module {
                 let text;
 
                 if (ctx.guildConfig.isPremium) {
-                        const moduleConfig = ctx.moduleConfig;
-
-                        text = moduleConfig && moduleConfig.responses && moduleConfig.responses[type];
+                        text = ctx.moduleConfig?.responses?.[type];
                 }
 
                 text = text || defaultResponses[type];

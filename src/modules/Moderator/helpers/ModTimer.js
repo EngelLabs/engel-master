@@ -169,10 +169,10 @@ class ModTimer extends Base {
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
                 let overwrite = channel.permissionOverwrites.get(user.id);
-                let allow = overwrite && overwrite.allow || BigInt(0),
-                        deny = overwrite && overwrite.deny || BigInt(0);
+                let allow = overwrite?.allow || BigInt(0),
+                        deny = overwrite?.deny || BigInt(0);
 
-                if (overwrite && overwrite.json.viewChannel === false) {
+                if (overwrite?.json?.viewChannel === false) {
                         deny ^= Permissions.viewChannel;
                 } else {
                         return;

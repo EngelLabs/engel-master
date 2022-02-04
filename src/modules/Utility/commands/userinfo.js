@@ -24,9 +24,7 @@ module.exports = new Command({
                                 return ctx.error(err);
                         }
                 } else {
-                        if (ctx.message.messageReference
-                                && ctx.message.messageReference.messageID
-                                && ctx.message.messageReference.channelID === ctx.channel.id) {
+                        if (ctx.message.messageReference?.channelID === ctx.channel.id) {
                                 try {
                                         const msg = ctx.channel.messages.get(ctx.message.messageReference.messageID)
                                                 || await ctx.channel.getMessage(ctx.message.messageReference.messageID);

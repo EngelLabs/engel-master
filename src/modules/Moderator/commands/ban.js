@@ -41,7 +41,7 @@ const ban = new Command({
 
                 const reason = ctx.args.join(' ');
 
-                const auditReason = (reason && reason.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
+                const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
                 ctx.module.sendDM(ctx.guildConfig, user, `You were banned from ${ctx.guild.name}`, duration, reason);
 

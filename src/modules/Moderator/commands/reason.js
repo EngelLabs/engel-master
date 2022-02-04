@@ -26,7 +26,7 @@ module.exports = new Command({
                         case: caseNum
                 };
 
-                const update = reason && reason.length
+                const update = reason?.length
                         ? { $set: { reason: reason } }
                         : { $unset: { reason: null } };
 
@@ -36,7 +36,7 @@ module.exports = new Command({
 
                 if (!result.matchedCount) return ctx.error(`Case \`${ctx.args[0]}\` not found.`);
 
-                return reason && reason.length
+                return reason?.length
                         ? ctx.success(`Case \`${caseNum}\`'s reason updated.`)
                         : ctx.success(`Case \`${caseNum}\`'s reason removed.`);
         }

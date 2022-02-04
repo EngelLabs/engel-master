@@ -49,7 +49,7 @@ class Context extends Base {
         }
 
         get commandConfig() {
-                return this.guildConfig.commands && this.guildConfig.commands[this.command.rootName];
+                return this.guildConfig.commands?.[this.command.rootName];
         }
 
         set commandConfig(config) {
@@ -128,7 +128,7 @@ function createResponseFunction(name) {
                 const colour = this.config.colours[name];
                 const emoji = this.config.emojis[name];
 
-                if (this.done && options && !options.force) {
+                if (this.done && !options?.force) {
                         this.log('Skipping response as context has already been responded to.');
 
                         return Promise.resolve();
