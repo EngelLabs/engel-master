@@ -15,10 +15,6 @@ module.exports = new Command({
         execute: function (ctx) {
                 let command = ctx.bot.commands.get(ctx.args[0]);
 
-                if (!command || command.hidden || command.module.private || command.module.internal || command.module.disabled) {
-                        return ctx.error(`Command \`${ctx.args[0]}\` not found.`);
-                }
-
                 ctx.args.shift();
 
                 while (command && command.commands && ctx.args.length) {
