@@ -38,34 +38,34 @@ module.exports = new Command({
 
                 if (command.alwaysEnabled) return ctx.error('That command can\'t be disabled.');
 
-                const commandName = command.dbName;
-                let toggle;
+                let enabled;
+                let update;
 
-                ctx.guildConfig.commands = ctx.guildConfig.commands || {};
+                const name = command.parent ? command.dbName : command.name;
 
-                if (!command.parent) {
-                        toggle = ctx.guildConfig.commands[commandName] !== undefined ? !ctx.guildConfig.commands[commandName] : false;
-                        ctx.guildConfig.commands[commandName] = toggle;
-                } else {
-                        const commandConfig = ctx.guildConfig.commands[commandName] = ctx.guildConfig.commands[commandName] || {};
-                        toggle = commandConfig.disabled = !commandConfig.disabled;
-                }
-
-                queryString = 'commands.' + commandName;
+                const commands = ctx.guildConfig.commands = ctx.guildConfig.commands || {};
 
                 if (command.parent) {
-                        queryString += '.disabled';
+                        commands[name] = commands.hasOwnProperty(name) ? !commands[name] : false;
+
+                        enabled = commands[name];
+
+                        update = { ['commands.' + name]: commands[name] };
+                } else {
+                        const commandConfig = commands[name] = commands[name] || {};
+
+                        commandConfig.disabled = !commandConfig.disabled;
+
+                        enabled = !commandConfig.disabled;
+
+                        update = { ['commands.' + name + '.disabled']: commandConfig.disabled };
                 }
 
-                ctx.bot.guilds.update(ctx.guildConfig.id, {
-                        $set: {
-                                [queryString]: toggle
-                        }
-                });
+                ctx.bot.guilds.update(ctx.guildConfig, { $set: update });
 
-                return ctx.success(toggle
-                        ? `Command \`${command.qualName}\` disabled.`
-                        : `Command \`${command.qualName}\` enabled.`
+                return ctx.success(enabled
+                        ? `Command \`${command.qualName}\` enabled.`
+                        : `Command \`${command.qualName}\` disabled.`
                 );
         }
 });
