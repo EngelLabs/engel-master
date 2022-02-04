@@ -30,7 +30,7 @@ class Moderator extends Module {
                 
                 const { author, guild, guildConfig, command } = ctx;
 
-                const commandName = command.root ? command.qualName : command.rootName;
+                const commandName = command.rootName;
                 const moduleName = this.dbName;
 
                 return this.helpers.moderation.canModerate(
