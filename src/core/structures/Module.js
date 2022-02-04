@@ -230,6 +230,14 @@ class Module extends Base {
          * @returns {any}
          */
         ejectHook() { }
+
+        isEnabled(guildConfig) {
+                if (guildConfig[this.dbName]?.disabled) {
+                        return false;
+                }
+
+                return true;
+        }
 }
 
 

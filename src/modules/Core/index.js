@@ -134,7 +134,7 @@ class Core extends Module {
                 const commandName = command.dbName;
 
                 if (!command.alwaysEnabled) {
-                        if (ctx.moduleConfig && ctx.moduleConfig.disabled) {
+                        if (!module.isEnabled(guildConfig)) {
                                 if (!guildConfig.noDisableWarning) {
                                         ctx.error(`The \`${module.name}\` module is disabled in this server.`);
                                 }
@@ -142,32 +142,14 @@ class Core extends Module {
                                 return;
                         }
 
-                        if (guildConfig && guildConfig.commands) {
-                                let isEnabled = true,
-                                        disabledCmdName;
+                        const [enabled, cmdName] = command.isEnabled(guildConfig, true);
 
-                                if (command.parent) {
-                                        if (guildConfig.commands[command.rootName] && guildConfig.commands[command.rootName].disabled) {
-                                                isEnabled = false;
-                                                disabledCmdName = command.rootName;
-                                        } else if (guildConfig.commands[commandName] === false) {
-                                                isEnabled = false;
-                                                disabledCmdName = command.qualName;
-                                        }
-                                } else {
-                                        if (guildConfig.commands[commandName] && guildConfig.commands[commandName].disabled) {
-                                                isEnabled = false;
-                                                disabledCmdName = command.qualName;
-                                        }
+                        if (!enabled) {
+                                if (!guildConfig.noDisableWarning) {
+                                        ctx.error(`The \`${cmdName}\` command is disabled in this server.`);
                                 }
 
-                                if (!isEnabled) {
-                                        if (!guildConfig.noDisableWarning) {
-                                                ctx.error(`The \`${disabledCmdName}\` command is disabled in this server.`);
-                                        }
-
-                                        return;
-                                }
+                                return;
                         }
                 }
 
@@ -232,7 +214,7 @@ class Core extends Module {
 
         deleteCommand(ctx) {
                 const moduleName = ctx.module.dbName;
-                const commandName = ctx.command.parent ? ctx.command.dbName : ctx.command.qualName;
+                const commandName = ctx.command.rootName;
 
                 return this.helpers.moderation.deleteCommand(
                         ctx.guildConfig, ctx.message, moduleName, commandName,
