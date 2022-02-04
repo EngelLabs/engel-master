@@ -78,7 +78,6 @@ class Bot extends EventEmitter {
                 if (!config) {
                         logger.error(`Configuration not found for state ${this.state}`);
 
-                        process.send?.({ op: 'config', d: this.state });
                         process.exit(1);
                 }
 
@@ -145,8 +144,7 @@ class Bot extends EventEmitter {
                 } catch (err) {
                         logger.error(`[Bot] Something went wrong.`);
                         console.error(err);
-
-                        process.send?.('close');
+                        
                         process.exit(1);
                 }
         }
