@@ -36,7 +36,9 @@ module.exports = new Command({
                         return ctx.error(`Command \`${ctx.args[0]}\` not found.`);
                 }
 
-                if (command.alwaysEnabled) return ctx.error('That command can\'t be disabled.');
+                if (command.alwaysEnabled) {
+                        return ctx.error("That command can't be disabled.");
+                }
 
                 let enabled;
                 let update;
