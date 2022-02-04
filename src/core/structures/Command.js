@@ -113,6 +113,26 @@ class Command {
 
                 return subcommand;
         }
+
+        isEnabled(guildConfig, returnName = false) {
+                const resolve = returnName
+                        ? (enabled, name) => [enabled, name]
+                        : (enabled) => enabled;
+
+                if (guildConfig.commands) {
+                        const commands = guildConfig.commands;
+
+                        if (commands[this.rootName]?.disabled) {
+                                return resolve(false, this.rootName);
+                        }
+
+                        if (this.parent && commands[this.dbName] === false) {
+                                return resolve(false, this.qualName);
+                        }
+                }
+
+                return resolve(true);
+        }
 }
 
 

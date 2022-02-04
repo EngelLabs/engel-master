@@ -79,10 +79,24 @@ class Manager extends Module {
                 //     infoArray.push('This command hasn\'t been configured for this server yet');
                 // }
 
-                if (command.parent && guildConfig?.commands?.[command.dbName]?.disabled) {
-                        msgArray.push('This command is disabled in this server');
-                }
+                if (guildConfig.commands) {
+                        const commands = guildConfig.commands;
 
+                        if (command.parent) {
+                                if (commands[command.rootName]?.disabled) {
+                                        msgArray.push("This command's parent is disabled in this server");
+                                }
+
+                                if (commands[command.dbName] === false) {
+                                        msgArray.push('This command is disabled in this server');
+                                }
+                        } else {
+                                if (commands[command.name]?.disabled) {
+                                        msgArray.push('This command is disabled in this server');
+                                }
+                        }
+                }
+                
                 if (command.debug) {
                         const debug = command.debug(command, channel, guildConfig);
 
