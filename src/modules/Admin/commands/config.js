@@ -127,6 +127,8 @@ guild.command({
         execute: async function (ctx) {
                 const result = await ctx.models.Guild.deleteOne({ id: ctx.guildId });
 
+                ctx.bot.guilds.delete(ctx.guildId);
+
                 return result.deletedCount
                         ? ctx.success(`Guild \`${ctx.guildId}\`'s configuration deleted.`)
                         : ctx.error(`Guild \`${ctx.guildId}\` has not been configured.`);
