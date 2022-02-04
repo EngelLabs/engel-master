@@ -126,7 +126,7 @@ class Manager extends Module {
                         infoArray.push('This module hasn\'t been configured for this server yet');
                 }
 
-                if (guildConfig[module.dbName] && guildConfig[module.dbName].disabled) {
+                if (!module.isEnabled(guildConfig)) {
                         msgArray.push('This module is disabled in this server');
                 }
 
