@@ -38,7 +38,11 @@ module.exports = new Command({
                         }
                 }
 
-                const avURL = (user.user || user).dynamicAvatarURL(null, 1024);
+                const format = user.avatar?.includes?.('_a')
+                        ? 'gif'
+                        : 'png';
+
+                const avURL = (user.user || user).dynamicAvatarURL(format, 1024);
 
                 const embed = {
                         description: `[${user.username}#${user.discriminator}'s avatar](${avURL} "Not a rick roll")`,
