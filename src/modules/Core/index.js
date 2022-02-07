@@ -95,7 +95,7 @@ class Core extends Module {
                         if (!await module.commandCheck(ctx)) return;
                 }
 
-                if (!(
+                if (!isDM && !(
                         this._permissions.isOwner(ctx) ||
                         this._permissions.isServerAdmin(ctx) ||
                         this._permissions.canInvoke(ctx)
@@ -133,7 +133,7 @@ class Core extends Module {
                 const moduleName = module.dbName;
                 const commandName = command.dbName;
 
-                if (!command.alwaysEnabled) {
+                if (!isDM && !command.alwaysEnabled) {
                         if (!module.isEnabled(guildConfig)) {
                                 if (!guildConfig.noDisableWarning) {
                                         ctx.error(`The \`${module.name}\` module is disabled in this server.`);
@@ -222,7 +222,7 @@ class Core extends Module {
         }
 
         async executeCommand(ctx) {
-                const { command, prefix, isAdmin, args } = ctx;
+                const { command, prefix, isDM, isAdmin, args } = ctx;
 
                 if (args.length < command?.requiredArgs) {
                         const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
@@ -230,7 +230,7 @@ class Core extends Module {
                         return ctx.send({ embed });
                 }
 
-                if (command.requiredPermissions) {
+                if (!isDM && command.requiredPermissions) {
                         const permissions = ctx.permissions;
                         const missingPermissions = [];
 
@@ -249,7 +249,7 @@ class Core extends Module {
                 try {
                         let execute;
 
-                        this.deleteCommand(ctx);
+                        if (!isDM) this.deleteCommand(ctx);
 
                         if (command.namespace) {
                                 execute = () => {
