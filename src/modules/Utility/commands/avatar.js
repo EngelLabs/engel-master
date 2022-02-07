@@ -10,6 +10,7 @@ module.exports = new Command({
                 'avatar @timtoy',
         ],
         info: 'View a server member\'s avatar',
+        dmEnabled: true,
         execute: async function (ctx) {
                 let user;
 
