@@ -10,6 +10,7 @@ class Core extends Module {
         constructor() {
                 super();
 
+                this.private = true;
                 this.internal = true;
                 this.info = 'Core module';
         }
@@ -25,6 +26,24 @@ class Core extends Module {
                 this.listeners.push(this.guildCreate.bind(this));
                 this.listeners.push(this.guildDelete.bind(this));
                 this.listeners.push(this.rawWS.bind(this));
+
+                const admin = new Command({
+                        name: 'admin',
+                        aliases: ['a'],
+                        namespace: true,
+                        hidden: true,
+                        info: 'Namespace for admin commands',
+                });
+
+                for (const command of this.commands) {
+                        command.parent = admin;
+                }
+
+                this.commands = [admin];
+        }
+
+        commandCheck(ctx) {
+                return ctx.author.id === ctx.config.author.id;
         }
 
         async postEmbed(embed) {
