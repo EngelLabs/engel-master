@@ -78,95 +78,50 @@ class EventManager extends Base {
                 return this;
         }
 
-        async guildCreate(guild) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guilodConfig: await this.bot.guilds.getOrFetch(guild.id, { createIfNotFound: true }),
-                        guild: guild,
-                };
+        async _guildPayload(payload, guildID, createIfNotFound = false) {
+                payload.isTesting = this.bot.config.guilds.testing.includes(guildID);
+                payload.guildConfig = await this.bot.guilds.getOrFetch(guildID, { createIfNotFound });
 
                 return payload;
         }
 
-        async guildDelete(guild) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                };
-
-                return payload;
+        guildCreate(guild) {
+                return this._guildPayload({ guild }, guild.id, true);
         }
 
-        async guildChannelCreate(guild, channel) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                        channel: channel,
-                };
-
-                return payload;
+        guildDelete(guild) {
+                return this._guildPayload({ guild }, guild.id);
         }
 
-        async guildChannelUpdate(guild, channel, oldChannel) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                        channel: channel,
-                        oldChannel: oldChannel,
-                };
-
-                return payload;
+        guildUpdate(guild, oldGuild) {
+                return this._guildPayload({ guild, oldGuild }, guild.id);
         }
 
-        async guildChannelDelete(guild, channel) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                        channel: channel,
-                };
-
-                return payload;
+        guildChannelCreate(guild, channel) {
+                return this._guildPayload({ guild, channel }, guild.id);
         }
 
-        async guildRoleCreate(guild, role) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                        role: role,
-                };
-
-                return payload;
+        guildChannelDelete(guild, channel) {
+                return this._guildPayload({ guild, channel }, guild.id);
         }
 
-        async guildRoleDelete(guild, role) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                        role: role,
-                };
-
-                return payload;
+        guildChannelUpdate(guild, channel, oldChannel) {
+                return this._guildPayload({ guild, channel, oldChannel }, guild.id);
         }
 
-        async guildRoleUpdate(guild, role, oldRole) {
-                const payload = {
-                        isTesting: this.bot.config.guilds.testing.includes(guild.id),
-                        guildConfig: await this.bot.guilds.getOrFetch(guild.id),
-                        guild: guild,
-                        role: role,
-                        oldRole: oldRole,
-                };
-
-                return payload;
+        guildRoleCreate(guild, role) {
+                return this._guildPayload({ guild, role }, guild.id);
         }
 
-        async messageCreate(message) {
+        guildRoleDelete(guild, role) {
+                return this._guildPayload({ guild, role }, guild.id);
+        }
+
+        guildRoleUpdate(guild, role, oldRole) {
+                return this._guildPayload({ guild, role, oldRole }, guild.id);
+        }
+
+        messageCreate(message) {
                 if (message.author.bot) return;
 
                 const payload = {
@@ -178,39 +133,32 @@ class EventManager extends Base {
 
                 if (payload.isDM) return payload;
 
-                payload.guildConfig = await this.bot.guilds.getOrFetch(message.channel.guild.id, { createIfNotFound: true });
-
-                return payload;
+                return this._guildPayload(payload, message.channel.guild.id, true);
         }
 
-        async messageDelete(message) {
+        messageDelete(message) {
                 message = this.bot.cache.getMessage[message.id];
 
-                if (!message) return;
+                if (!message) return Promise.resolve();
 
-                const payload = {
-                        message: message,
-                        guildConfig: await this.bot.guilds.getOrFetch(message.channel.guild.id),
-                };
-
-                return payload;
+                return this._guildPayload({ message }, message.channel.guild.id);
         }
 
-        async messageUpdate(message, oldMessage) {
-                oldMessage = this.bot.cache.getMessage[message.id];
+        messageUpdate(message) {
+                const oldMessage = this.bot.cache.getMessage(message.id);
 
-                if (!oldMessage) return;
-
+                if (!oldMessage) return Promise.resolve();
+                
                 const payload = {
                         message: message,
                         oldMessage: Object.assign({}, oldMessage),
-                        guildConfig: await this.bot.guilds.getOrFetch(oldMessage.channel.guild.id),
                 };
 
-                return payload;
+                return this._guildPayload(payload, oldMessage.channel.guild.id);
         }
 }
 
 Object.assign(EventManager.prototype, EventEmitter.prototype);
+
 
 module.exports = EventManager;
