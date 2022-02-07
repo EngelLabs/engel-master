@@ -15,7 +15,7 @@ module.exports = new Command({
 
                 if (ctx.args.length) {
                         try {
-                                user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
+                                user = await ctx.helpers.converter.user(ctx.args[0], true);
                         } catch (err) {
                                 return ctx.error(err);
                         }
@@ -29,20 +29,20 @@ module.exports = new Command({
                                                 await ctx.channel.getMessage(ctx.message.messageReference.messageID)
                                         );
 
-                                        user = msg.member ? msg.member : ctx.member;
+                                        user = msg.author || ctx.author;
                                 } catch {
-                                        user = ctx.member;
+                                        user = ctx.author;
                                 }
                         } else {
-                                user = ctx.member;
+                                user = ctx.author;
                         }
                 }
 
-                const format = user.avatar?.includes?.('_a')
+                const format = user.avatar?.startsWith?.('a_')
                         ? 'gif'
                         : 'png';
 
-                const avURL = (user.user || user).dynamicAvatarURL(format, 1024);
+                const avURL = user.dynamicAvatarURL(format, 4096);
 
                 const embed = {
                         description: `[${user.username}#${user.discriminator}'s avatar](${avURL} "Not a rick roll")`,
