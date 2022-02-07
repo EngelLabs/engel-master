@@ -14,9 +14,9 @@ module.exports = async function (server, req, res, next) {
                 return next();
         }
 
-        server.syncLocals(req, res);
-
         if (req.session.lastSync && (Date.now() - req.session.lastSync) < 1000) {
+                server.syncLocals(req, res);
+
                 return next();
         }
 
@@ -26,19 +26,20 @@ module.exports = async function (server, req, res, next) {
                 if (err && err.response) {
                         if (err.response.status == 401) {
                                 req.session.destroy(err => {
-                                        err && this.log('Error while destroying session: ' + err, 'error', '/index.use');
+                                        err && server.log('Error while destroying session: ' + err, 'error', '/index.use');
                                 });
 
                                 return res.redirect('/login');
                         }
                 }
 
-                console.error(err);
+                server.log(err, 'error', '/index.use');
 
                 return next();
         }
 
         req.session.lastSync = Date.now();
+        server.syncLocals(req, res);
 
         return next();
 }
