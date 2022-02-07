@@ -43,7 +43,7 @@ module.exports = async function (server, req, res) {
                         return res.redirect('/login')
                 }
 
-                req.session.token = resp.body.access_token;
+                req.session.token = 'Bearer ' + resp.body.access_token;
 
                 await server.fetchUserData(req);
                 server.syncLocals(req, res);
