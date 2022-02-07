@@ -1,4 +1,5 @@
 const Module = require('../../core/structures/Module');
+const Command = require('../../core/structures/Command');
 const Context = require('../../core/structures/Context');
 const baseConfig = require('../../core/utils/baseConfig');
 
