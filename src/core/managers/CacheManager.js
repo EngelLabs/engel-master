@@ -67,7 +67,7 @@ class CacheManager extends Base {
                 for (const id in this._messages) {
                         const message = this._messages[id];
 
-                        if (message.guild.id === guild.id) {
+                        if (message.channel.guild.id === guild.id) {
                                 delete this._messages[id];
                         }
                 }
