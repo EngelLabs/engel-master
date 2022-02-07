@@ -29,11 +29,11 @@ class Context extends Base {
         }
 
         get me() {
-                return this.guild && this.guild.members.get(this.eris.user.id);
+                return this.guild?.members?.get?.(this.eris.user.id);
         }
 
         get permissions() {
-                return this.channel.permissionsOf(this.eris.user.id);
+                return this.channel.permissionsOf?.(this.eris.user.id);
         }
 
         get topRole() {
