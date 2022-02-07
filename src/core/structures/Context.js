@@ -29,7 +29,7 @@ class Context extends Base {
         }
 
         get me() {
-                return this.guild.members.get(this.eris.user.id);
+                return this.guild && this.guild.members.get(this.eris.user.id);
         }
 
         get permissions() {
