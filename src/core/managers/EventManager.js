@@ -112,13 +112,13 @@ class EventManager extends Base {
         }
 
         guildEmojisUpdate(guild, emojis, oldEmojis) {
-                if (!oldEmojis) return;
+                if (!oldEmojis) return Promise.resolve();
 
                 return this._guildPayload({ guild, emojis, oldEmojis }, guild.id);
         }
 
         guildStickersUpdate(guild, stickers, oldStickers) {
-                if (!oldStickers) return;
+                if (!oldStickers) return Promise.resolve();
 
                 return this._guildPayload({ guild, stickers, oldStickers }, guild.id);
         }
