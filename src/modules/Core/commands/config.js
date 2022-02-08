@@ -106,17 +106,19 @@ guild.command({
         before: beforeGuild,
         dmEnabled: true,
         execute: async function (ctx) {
-                const result = await ctx.bot.guilds.update(ctx.guildConfig, { $set: { isPremium: !ctx.guildConfig.isPremium } });
+                const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
+
+                const result = await ctx.bot.guilds.update(guildConfig, { $set: { isPremium: !guildConfig.isPremium } });
 
                 if (!result.modifiedCount) {
                         return ctx.error('Could not update that guild.');
                 }
 
-                await ctx.bot.guilds.fetch(ctx.guildId);
+                await ctx.bot.guilds.fetch(guildConfig.id);
 
-                return ctx.success(`Guild \`${ctx.guildId}\`'s premium set to: ${ctx.guildConfig.isPremium}`)
+                return ctx.success(`Guild \`${guildConfig.id}\`'s premium set to: ${guildConfig.isPremium}`);
         }
-})
+});
 
 guild.command({
         name: 'delete',
@@ -133,7 +135,7 @@ guild.command({
                         ? ctx.success(`Guild \`${ctx.guildId}\`'s configuration deleted.`)
                         : ctx.error(`Guild \`${ctx.guildId}\` has not been configured.`);
         }
-})
+});
 
 
 module.exports = config;
