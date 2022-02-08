@@ -22,7 +22,7 @@ class Permission extends Base {
         isAdmin(userID) {
                 const config = this.config;
 
-                return userID === config.author.id || config.developers.includes(userID);
+                return userID === config.author.id || config.users.developers.includes(userID);
         }
 
         isTester(userID) {
