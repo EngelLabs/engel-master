@@ -109,7 +109,7 @@ class Bot extends EventEmitter {
          */
         async start() {
                 try {
-                        logger.info(`[Bot] Starting ${baseConfig.name} (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
+                        logger.info(`[Bot] Starting ${baseConfig.name}[${baseConfig.client.name}] (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
 
                         this.eris = new Eris(this);
                         this.redis = new Redis(this);
