@@ -65,7 +65,7 @@ class Core extends Module {
         }
 
         messageCreate(payload) {
-                if (payload.isAdmin && !baseConfig.dev) {
+                if (payload.isAdmin) {
                         return this.handleAdmin(payload);
                 }
 
@@ -84,7 +84,7 @@ class Core extends Module {
                 const { isTester, isTesting, isDM, message } = p;
                 let { guildConfig } = p;
 
-                if (baseConfig.dev && (!isTester || !isTesting)) return;
+                if (baseConfig.dev && (!isTester || (!isDM && !isTesting))) return;
 
                 if (guildConfig) {
                         if (guildConfig.isIgnored) return;
@@ -191,6 +191,7 @@ class Core extends Module {
 
                 if (isAdmin) {
                         prefixes = prefixes.concat(this.config.prefixes.private);
+                        prefixes.push(baseConfig.client.name + '?');
                 }
 
                 prefixes.sort((a, b) => b.length - a.length);
@@ -198,6 +199,10 @@ class Core extends Module {
                 const prefix = prefixes.find(str => message.content.startsWith(str));
 
                 if (typeof prefix !== 'string') return;
+
+                if (!isDM && guildConfig.client !== baseConfig.client.name && prefix !== baseConfig.client.name + '?') {
+                        return;
+                }
 
                 const args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
 
