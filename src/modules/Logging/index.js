@@ -1,6 +1,5 @@
 const Module = require('../../core/structures/Module');
-const reload = require('require-reload')(require);
-const Events = reload('./helpers/Events');
+const Events = require('require-reload')('./helpers/Events', require);
 
 
 class Logging extends Module {
