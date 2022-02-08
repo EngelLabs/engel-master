@@ -136,7 +136,7 @@ guild.command({
 
                 const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
 
-                return ctx.success(`Guild \`${guildConfig.id}\`'s client set to: ${guildConfig.isPremium}`);
+                return ctx.success(`Guild \`${guildConfig.id}\`'s client set to: ${guildConfig.client}`);
         }
 });
 
