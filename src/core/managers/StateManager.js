@@ -8,6 +8,7 @@ class CacheManager extends Base {
         constructor(bot) {
                 super(bot);
 
+                this._voiceStates = {};
                 this._messages = {};
 
                 this.bot.events

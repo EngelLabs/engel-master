@@ -6,7 +6,7 @@ const Mongoose = require('./clients/Mongoose');
 const CommandCollection = require('./collections/CommandCollection');
 const ModuleCollection = require('./collections/ModuleCollection');
 const GuildCollection = require('./collections/GuildCollection');
-const CacheManager = require('./managers/CacheManager');
+const StateManager = require('./managers/StateManager');
 const EventManager = require('./managers/EventManager');
 
 let EventEmitter;
@@ -124,7 +124,7 @@ class Bot extends EventEmitter {
                         this.mongoose = new Mongoose(this);
 
                         this.events = new EventManager(this);
-                        this.cache = new CacheManager(this);
+                        this.state = new StateManager(this);
 
                         this.guilds = new GuildCollection(this);
                         this.commands = new CommandCollection(this);

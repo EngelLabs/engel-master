@@ -271,7 +271,7 @@ class EventManager extends Base {
         }
 
         messageDelete(message) {
-                message = this.bot.cache.getMessage[message.id];
+                message = this.bot.state.getMessage[message.id];
 
                 if (!message) return Promise.resolve();
 
@@ -279,9 +279,9 @@ class EventManager extends Base {
         }
 
         messageDeleteBulk(messages) {
-                const cache = this.bot.cache;
+                const state = this.bot.state;
 
-                messages = messages.map(m => cache.getMessage(m.id)).filter(m => m);
+                messages = messages.map(m => state.getMessage(m.id)).filter(m => m);
 
                 if (!messages.length) return Promise.resolve();
 
@@ -289,7 +289,7 @@ class EventManager extends Base {
         }
 
         messageUpdate(message) {
-                const oldMessage = this.bot.cache.getMessage(message.id);
+                const oldMessage = this.bot.state.getMessage(message.id);
 
                 if (!oldMessage) return Promise.resolve();
 
