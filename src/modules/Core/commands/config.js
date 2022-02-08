@@ -126,7 +126,7 @@ guild.command({
         info: "Change a guild's client",
         before: beforeGuild,
         dmEnabled: true,
-        requiredArgs: 1,
+        requiredArgs: 2,
         execute: async function (ctx) {
                 const result = await ctx.bot.guilds.update(ctx.guildId, { $set: { client: ctx.args[1] } });
 
