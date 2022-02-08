@@ -1,3 +1,4 @@
+const baseConfig = require('../utils/baseConfig');
 const logger = require('../utils/logger');
 
 
@@ -107,6 +108,7 @@ class GuildCollection extends Map {
                 const doc = {
                         id: id,
                         prefixes: this.config.prefixes.default,
+                        client: baseConfig.client.name,
                 };
 
                 const p = new Promise((resolve, reject) => {

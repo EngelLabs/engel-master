@@ -2,7 +2,8 @@ const { Schema, model } = require('mongoose');
 
 
 const guildSchema = new Schema({
-        id: { type: String, required: true, index: true },
+        id: { type: String, required: true },
+        client: { type: String, required: true },
         prefixes: { type: Array, required: true },
         muteRole: { type: String, required: false },
         commands: { type: Object, required: false },
@@ -16,6 +17,8 @@ const guildSchema = new Schema({
 },
         { collection: 'guilds', strict: false, minimize: false },
 );
+
+guildSchema.index({ id: 1 }, { unique: true });
 
 
 module.exports = model('Guild', guildSchema);
