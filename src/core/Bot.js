@@ -52,14 +52,6 @@ class Bot extends EventEmitter {
         }
 
         /**
-         * The app state
-         * @type {String}
-         */
-        get state() {
-                return baseConfig.client.state;
-        }
-
-        /**
          * Whether the service is ready
          */
         get isReady() {
@@ -76,7 +68,7 @@ class Bot extends EventEmitter {
 
         set config(config) {
                 if (!config) {
-                        logger.error(`Configuration not found for state ${this.state}`);
+                        logger.error(`Configuration not found for state ${baseConfig.client.state}`);
 
                         process.exit(1);
                 }
@@ -98,7 +90,7 @@ class Bot extends EventEmitter {
         */
         getConfig() {
                 return this.models.Config
-                        .findOne({ state: this.state })
+                        .findOne({ state: baseConfig.client.state })
                         .lean()
                         .exec();
         }
@@ -117,7 +109,7 @@ class Bot extends EventEmitter {
          */
         async start() {
                 try {
-                        logger.info(`[Bot] Starting ${baseConfig.name} (env=${baseConfig.env} s=${this.state}, v=${baseConfig.version}).`);
+                        logger.info(`[Bot] Starting ${baseConfig.name} (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
 
                         this.eris = new Eris(this);
                         this.redis = new Redis(this);

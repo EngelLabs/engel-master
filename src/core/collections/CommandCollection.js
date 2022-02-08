@@ -1,4 +1,5 @@
 const Collection = require('../structures/Collection');
+const baseConfig = require('../utils/baseConfig');
 
 
 class CommandCollection extends Collection {
@@ -20,7 +21,7 @@ class CommandCollection extends Collection {
                         });
 
                 return new Promise((resolve, reject) => {
-                        this.bot.models.Config.updateOne({ state: this.bot.state }, { $set: { commands: this.bot.config.commands } })
+                        this.bot.models.Config.updateOne({ state: baseConfig.client.state }, { $set: { commands: this.bot.config.commands } })
                                 .exec()
                                 .then(resolve)
                                 .catch(reject);

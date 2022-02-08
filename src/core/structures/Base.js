@@ -102,7 +102,7 @@ class Base {
          * The app state
          */
         get state() {
-                return this.bot.state;
+                return this.baseConfig.client.state;
         }
 
         /**

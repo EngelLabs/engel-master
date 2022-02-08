@@ -2,7 +2,7 @@
 const bot = new (require('../core/Bot'));
 const mongoose = bot.mongoose = new (require('../core/clients/Mongoose'))(bot);
 const { logger } = bot;
-const state = process.argv[3] || bot.state;
+const state = process.argv[3] || bot.baseConfig.client.state
 const opt = process.argv[2];
 logger.info(`State: "${state}".`);
 if (['c', 'create'].includes(opt)) createConfig();

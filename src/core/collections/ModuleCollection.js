@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const reload = require('require-reload')(require);
 const Collection = require('../structures/Collection');
+const baseConfig = require('../utils/baseConfig');
 const logger = require('../utils/logger');
 
 const modulesPath = path.resolve('src/modules');
@@ -27,7 +28,7 @@ class ModuleCollection extends Collection {
                         });
 
                 return new Promise((resolve, reject) => {
-                        this.bot.models.Config.updateOne({ state: this.bot.state }, { $set: { modules: this.bot.config.modules } })
+                        this.bot.models.Config.updateOne({ state: baseConfig.client.state }, { $set: { modules: this.bot.config.modules } })
                                 .exec()
                                 .then(resolve)
                                 .catch(reject);
