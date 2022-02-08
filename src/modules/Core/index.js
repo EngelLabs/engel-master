@@ -81,10 +81,10 @@ class Core extends Module {
         }
 
         async handleCommand(p) {
-                const { isTester, isDM, message } = p;
+                const { isTester, isTesting, isDM, message } = p;
                 let { guildConfig } = p;
 
-                if (baseConfig.dev && !isTester) return;
+                if (baseConfig.dev && (!isTester || !isTesting)) return;
 
                 if (guildConfig) {
                         if (guildConfig.isIgnored) return;
