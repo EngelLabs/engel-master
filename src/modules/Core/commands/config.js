@@ -106,7 +106,7 @@ guild.command({
         before: beforeGuild,
         dmEnabled: true,
         execute: async function (ctx) {
-                const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
+                let guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
 
                 const result = await ctx.bot.guilds.update(guildConfig, { $set: { isPremium: !guildConfig.isPremium } });
 
@@ -114,9 +114,29 @@ guild.command({
                         return ctx.error('Could not update that guild.');
                 }
 
-                await ctx.bot.guilds.fetch(guildConfig.id);
+                guildConfig = await ctx.bot.guilds.fetch(guildConfig.id);
 
                 return ctx.success(`Guild \`${guildConfig.id}\`'s premium set to: ${guildConfig.isPremium}`);
+        }
+});
+
+guild.command({
+        name: 'client',
+        aliases: ['c'],
+        info: "Change a guild's client",
+        before: beforeGuild,
+        dmEnabled: true,
+        requiredArgs: 1,
+        execute: async function (ctx) {
+                const result = await ctx.bot.guilds.update(ctx.guildId, { $set: { client: ctx.args[1] } });
+
+                if (!result.modifiedCount) {
+                        return ctx.error('Could not update that guild.');
+                }
+
+                const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
+
+                return ctx.success(`Guild \`${guildConfig.id}\`'s client set to: ${guildConfig.isPremium}`);
         }
 });
 
