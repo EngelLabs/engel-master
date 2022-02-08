@@ -12,6 +12,8 @@ if (!parsed && error) {
 const getenv = require('getenv');
 const package = require('../../../package.json');
 
+const NAME = getenv.string('CLIENT_NAME').toUpperCase();
+
 /**
  * Static configuration
  */
@@ -25,10 +27,11 @@ const baseConfig = {
                 level: getenv.string('LOGGER_LEVEL', 'debug'),
         },
         client: {
-                id: getenv.string('CLIENT_ID'),
-                token: getenv.string('CLIENT_TOKEN'),
-                secret: getenv.string('CLIENT_SECRET'),
+                name: getenv.string('CLIENT_NAME'),
                 state: getenv.string('CLIENT_STATE'),
+                id: getenv.string('CLIENT_' + NAME + '_ID'),
+                token: getenv.string('CLIENT_' + NAME + '_TOKEN'),
+                secret: getenv.string('CLIENT_' + NAME + '_SECRET'),
         },
         mongo: {
                 host: getenv.string('MONGO_HOST', '127.0.0.1'),
@@ -45,11 +48,7 @@ const baseConfig = {
                         name: 'timtoy#1336',
                 },
                 prefixes: {
-                        private: [
-                                't.uwu.',
-                                'tim pls ',
-                                '',
-                        ],
+                        private: [],
                         default: [
                                 '?',
                         ],
@@ -132,7 +131,6 @@ const baseConfig = {
                 apiToken: '',
         }
 };
-
 
 
 module.exports = baseConfig;
