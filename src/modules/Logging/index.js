@@ -32,13 +32,13 @@ class Logging extends Module {
 
         wrapListener(fn) {
                 const wrapped = async payload => {
-                        const { guildConfig, isDM } = payload;
+                        const { guildConfig, isTesting, isDM } = payload;
 
                         if (isDM || !guildConfig) return;
 
-                        const config = this.config;
+                        if (this.baseConfig.dev && !isTesting) return;
 
-                        if (this.baseConfig.dev && !config.guilds.testing.includes(guildConfig.id)) return;
+                        const config = this.config;
 
                         if (!guildConfig.logging || guildConfig.logging.disabled) return;
 
