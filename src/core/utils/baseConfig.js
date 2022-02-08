@@ -9,7 +9,6 @@ if (!parsed && error) {
         throw error;
 }
 
-
 const getenv = require('getenv');
 const package = require('../../../package.json');
 
@@ -20,8 +19,8 @@ const baseConfig = {
         name: package.name,
         version: package.version,
         lib: 'eris',
-        env: process.env.NODE_ENV,
-        dev: process.env.NODE_ENV === 'development',
+        env: getenv.string('NODE_ENV'),
+        dev: getenv.string('NODE_ENV') === 'development',
         logger: {
                 level: getenv.string('LOGGER_LEVEL', 'debug'),
         },
@@ -63,20 +62,24 @@ const baseConfig = {
                 },
                 guilds: {
                         official: {
-                                id: '828010463476056137',
-                                invite: 'https://discord.gg/ZZpqkn6HdG'
+                                id: '932441828073017354',
+                                invite: 'https://discord.gg/TJnMgKF5m6',
                         },
-                        protected: ['828010463476056137'],
-                        testing: ['828010463476056137'], // to be moved to dedicated guild soon
+                        protected: ['932441828073017354'],
+                        testing: ['928418564191424523'], // to be moved to dedicated guild soon
                 },
                 users: {
                         developers: [
-                                '329768023869358081',
+                                '329768023869358081', // timtoy#1336
                         ],
                         protected: [
-                                '329768023869358081',
-                                '827788394401890374',
-                                '828377832950464572',
+                                '329768023869358081', // timtoy#1336
+                                '827788394401890374', // timbot#3566
+                                '913588451226554438', // timbot#0680
+                                '940009875558256660', // timbot#1907
+                                '940010513130225675', // timbot#6826
+                                '828029312984285225', // timbot#5433
+                                '828377832950464572', // timbot#4156
                         ],
                         testers: [
                                 '329768023869358081', // timtoy#1336
