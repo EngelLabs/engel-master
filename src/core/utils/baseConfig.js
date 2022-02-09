@@ -29,6 +29,7 @@ const baseConfig = {
         client: {
                 name: getenv.string('CLIENT_NAME'),
                 state: getenv.string('CLIENT_STATE'),
+                premium: getenv.boolish('CLIENT_' + NAME + '_PREMIUM', false),
                 id: getenv.string('CLIENT_' + NAME + '_ID'),
                 token: getenv.string('CLIENT_' + NAME + '_TOKEN'),
                 secret: getenv.string('CLIENT_' + NAME + '_SECRET'),
