@@ -52,7 +52,7 @@ class Core extends Module {
         clearCooldowns() {
                 if (this.cooldowns.size) {
                         for (const [key, cooldown] of this.cooldowns.values()) {
-                                if ((Date.now() - cooldown.time) < cooldown.cooldown) {
+                                if ((Date.now() - cooldown.time) >= cooldown.cooldown) {
                                         this.cooldowns.delete(key);
                                 }
                         }
@@ -62,7 +62,7 @@ class Core extends Module {
                         const config = this.config;
 
                         for (const [key, time] of this.globalCooldowns.values()) {
-                                if ((Date.now() - time) < config.globalCooldown) {
+                                if ((Date.now() - time) >= config.globalCooldown) {
                                         this.globalCooldowns.delete(key);
                                 }
                         }
