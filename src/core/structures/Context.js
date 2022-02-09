@@ -176,6 +176,12 @@ function createEmojiResponseFunction(name) {
 
 function createAddReactionFunction(name) {
         return function () {
+                const perms = this.permissions;
+
+                if (perms && !perms.has('useExternalEmojis')) {
+                        return Promise.resolve();
+                }
+
                 return this.eris.addMessageReaction(
                         this.channel.id, this.message.id, this.config.emojis[name]
                 );
@@ -184,6 +190,12 @@ function createAddReactionFunction(name) {
 
 function createRemoveReactionFunction(name) {
         return function () {
+                const perms = this.permissions;
+
+                if (perms && !perms.has('useExternalEmojis')) {
+                        return Promise.resolve();
+                }
+                
                 return this.eris.removeMessageReaction(
                         this.channel.id, this.message.id, this.config.emojis[name]
                 );
