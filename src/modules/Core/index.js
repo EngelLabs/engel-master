@@ -21,8 +21,10 @@ class Core extends Module {
                 this._globalCooldowns = new Map();
                 this._permissions = this.helpers.permissions;
 
+                this.tasks = [];
                 this.listeners = [];
 
+                this.tasks.push([this.clearCooldowns.bind(this), 5000])
                 this.listeners.push(this.messageCreate.bind(this));
                 this.listeners.push(this.guildCreate.bind(this));
                 this.listeners.push(this.guildDelete.bind(this));
@@ -45,6 +47,26 @@ class Core extends Module {
 
         commandCheck(ctx) {
                 return ctx.author.id === ctx.config.author.id;
+        }
+
+        clearCooldowns() {
+                if (this._cooldowns.size) {
+                        for (const [key, cooldown] of this._cooldowns.values()) {
+                                if ((Date.now() - cooldown.time) < cooldown.cooldown) {
+                                        this._cooldowns.delete(key);
+                                }
+                        }
+                }
+
+                if (this._globalCooldowns.size) {
+                        const config = this.config;
+
+                        for (const [key, time] of this._globalCooldowns.values()) {
+                                if ((Date.now() - time) < config.globalCooldown) {
+                                        this._cooldowns.delete(key);
+                                }
+                        }
+                }
         }
 
         async postEmbed(embed) {
