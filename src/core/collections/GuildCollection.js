@@ -91,8 +91,6 @@ class GuildCollection extends Map {
                                         resolve(guild);
                                 })
                                 .catch(err => {
-                                        logger.error(err);
-
                                         reject(err);
                                 });
                 });
@@ -121,8 +119,6 @@ class GuildCollection extends Map {
                                         resolve(guild);
                                 })
                                 .catch(err => {
-                                        logger.error(err);
-
                                         reject(err);
                                 })
                                 .finally(() => {
