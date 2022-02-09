@@ -17,9 +17,9 @@ class Core extends Module {
         }
 
         injectHook() {
-                this._cooldowns = new Map();
-                this._globalCooldowns = new Map();
-                this._permissions = this.helpers.permissions;
+                this.cooldowns = new Map();
+                this.globalCooldowns = new Map();
+                this.permissions = this.helpers.permissions;
 
                 this.tasks = [];
                 this.listeners = [];
@@ -50,20 +50,20 @@ class Core extends Module {
         }
 
         clearCooldowns() {
-                if (this._cooldowns.size) {
-                        for (const [key, cooldown] of this._cooldowns.values()) {
+                if (this.cooldowns.size) {
+                        for (const [key, cooldown] of this.cooldowns.values()) {
                                 if ((Date.now() - cooldown.time) < cooldown.cooldown) {
-                                        this._cooldowns.delete(key);
+                                        this.cooldowns.delete(key);
                                 }
                         }
                 }
 
-                if (this._globalCooldowns.size) {
+                if (this.globalCooldowns.size) {
                         const config = this.config;
 
-                        for (const [key, time] of this._globalCooldowns.values()) {
+                        for (const [key, time] of this.globalCooldowns.values()) {
                                 if ((Date.now() - time) < config.globalCooldown) {
-                                        this._cooldowns.delete(key);
+                                        this.globalCooldowns.delete(key);
                                 }
                         }
                 }
@@ -119,12 +119,12 @@ class Core extends Module {
                 if (isDM && !config.dmCommands) return;
                 if (config.users.blacklisted.includes(message.author.id)) return;
 
-                const last = this._globalCooldowns.get(message.author.id);
+                const last = this.globalCooldowns.get(message.author.id);
 
                 if (last) {
                         if (Date.now() - last <= config.globalCooldown) return;
 
-                        this._globalCooldowns.delete(message.author.id);
+                        this.globalCooldowns.delete(message.author.id);
                 }
 
                 const ctx = this.resolveContext(p);
@@ -138,16 +138,16 @@ class Core extends Module {
                 }
 
                 if (!isDM && !(
-                        this._permissions.isOwner(ctx) ||
-                        this._permissions.isServerAdmin(ctx) ||
-                        this._permissions.canInvoke(ctx)
+                        this.permissions.isOwner(ctx) ||
+                        this.permissions.isServerAdmin(ctx) ||
+                        this.permissions.canInvoke(ctx)
                 )) return;
 
                 if (command.check && !await command.check(ctx)) return;
 
                 const key = message.author.id + command.qualName;
 
-                const activeCooldown = this._cooldowns.get(key);
+                const activeCooldown = this.cooldowns.get(key);
                 if (activeCooldown && (Date.now() - activeCooldown.time) <= activeCooldown.cooldown) {
                         if (!activeCooldown.warned && config.cooldownWarn) {
                                 activeCooldown.warned = true;
@@ -166,11 +166,11 @@ class Core extends Module {
 
                 const cooldown = typeof command.cooldown !== 'undefined' ? command.cooldown : config.commandCooldown;
                 const now = Date.now();
-                this._cooldowns.set(key, {
+                this.cooldowns.set(key, {
                         time: now,
                         cooldown: cooldown
                 });
-                this._globalCooldowns.set(message.author.id, now);
+                this.globalCooldowns.set(message.author.id, now);
 
                 const moduleName = module.dbName;
                 const commandName = command.dbName;
