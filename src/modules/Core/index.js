@@ -88,7 +88,7 @@ class Core extends Module {
 
                 if (guildConfig) {
                         if (guildConfig.isIgnored) return;
-                        if (guildConfig.isPremium && !guildConfig.hasPremium) return;
+                        if (guildConfig.isPremium && (!baseConfig.client.premium || guildConfig.hasPremium)) return;
                 }
 
                 const config = this.config;
@@ -184,14 +184,15 @@ class Core extends Module {
                 return this.executeCommand(ctx);
         }
 
-        resolveContext({ guildConfig, message, isAdmin, isDM }) {
+        resolveContext({ guildConfig, message, isAdmin, isTesting, isDM }) {
                 if (isDM) guildConfig = Object.assign({}, this.config.dmConfig);
 
                 let prefixes = basePrefixes.concat(guildConfig.prefixes);
+                const adminPrefix = baseConfig.client.name + '?';
 
                 if (isAdmin) {
                         prefixes = prefixes.concat(this.config.prefixes.private);
-                        prefixes.push(baseConfig.client.name + '?');
+                        prefixes.push(adminPrefix);
                 }
 
                 prefixes.sort((a, b) => b.length - a.length);
@@ -200,7 +201,11 @@ class Core extends Module {
 
                 if (typeof prefix !== 'string') return;
 
-                if (!isDM && guildConfig.client !== baseConfig.client.name && prefix !== baseConfig.client.name + '?') {
+                if (!isDM && guildConfig.client !== baseConfig.client.name && prefix !== adminPrefix) {
+                        if (!isTesting && message.channel.guild.ownerID !== this.eris.user.id) {
+                                this.eris.leaveGuild(guildConfig.id).catch(() => false);
+                        }
+
                         return;
                 }
 
