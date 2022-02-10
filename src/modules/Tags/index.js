@@ -1,7 +1,7 @@
 const Module = require('../../core/structures/Module');
 
 
-class Tag extends Module {
+class Tags extends Module {
         constructor() {
                 super();
 
@@ -10,4 +10,4 @@ class Tag extends Module {
 }
 
 
-module.exports = Tag;
+module.exports = Tags;

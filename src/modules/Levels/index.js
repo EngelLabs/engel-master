@@ -1,14 +1,14 @@
 const Module = require('../../core/structures/Module');
 
 
-class Ticket extends Module {
+class Levels extends Module {
         constructor() {
                 super();
 
-                this.info = 'Enables server ticket creation';
+                this.info = 'Level up with server activity, gain xp, and spend it!';
                 this.disabled = true;
         }
 }
 
 
-module.exports = Ticket;
+module.exports = Levels;

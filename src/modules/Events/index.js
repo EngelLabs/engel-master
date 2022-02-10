@@ -1,14 +1,14 @@
 const Module = require('../../core/structures/Module');
 
 
-class Giveaway extends Module {
+class Events extends Module {
         constructor() {
                 super();
 
-                this.info = 'Conduct server giveaways';
+                this.info = 'Conduct a server event.';
                 this.disabled = true;
         }
 }
 
 
-module.exports = Giveaway;
+module.exports = Events;

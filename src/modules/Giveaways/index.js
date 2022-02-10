@@ -1,14 +1,14 @@
 const Module = require('../../core/structures/Module');
 
 
-class Level extends Module {
+class Giveaways extends Module {
         constructor() {
                 super();
 
-                this.info = 'Level up with server activity, gain xp, and spend it!';
+                this.info = 'Conduct server giveaways';
                 this.disabled = true;
         }
 }
 
 
-module.exports = Level;
+module.exports = Giveaways;

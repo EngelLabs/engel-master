@@ -1,14 +1,14 @@
 const Module = require('../../core/structures/Module');
 
 
-class Announcement extends Module {
+class Tickets extends Module {
         constructor() {
                 super();
 
-                this.info = 'Automated announcements';
+                this.info = 'Enables server ticket creation';
                 this.disabled = true;
         }
 }
 
 
-module.exports = Announcement;
+module.exports = Tickets;

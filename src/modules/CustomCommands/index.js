@@ -1,7 +1,7 @@
 const Module = require('../../core/structures/Module');
 
 
-class CustomCommand extends Module {
+class CustomCommands extends Module {
         constructor() {
                 super();
 
@@ -13,4 +13,4 @@ class CustomCommand extends Module {
 }
 
 
-module.exports = CustomCommand;
+module.exports = CustomCommands;

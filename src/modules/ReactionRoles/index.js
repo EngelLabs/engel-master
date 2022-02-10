@@ -1,15 +1,15 @@
 const Module = require('../../core/structures/Module');
 
 
-class ReactionRole extends Module {
+class ReactionRoles extends Module {
         constructor() {
                 super();
 
-                this.aliases = ['rr', 'reactionroles'];
+                this.aliases = ['rr', 'reactionrole'];
                 this.info = 'Reaction based role management';
                 this.disabled = true;
         }
 }
 
 
-module.exports = ReactionRole;
+module.exports = ReactionRoles;
