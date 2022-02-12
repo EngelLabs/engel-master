@@ -1,15 +1,26 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 
 
-const beforeConfig = ctx => {
-        ctx.key = ctx.args[0];
-        ctx.value = ctx.config[ctx.key];
+const getNested = (value, key) => {
+        for (const k of key.split('.')) {
+                value = value?.[k];
+        }
+
+        return value;
 }
 
 const afterConfig = async ctx => {
-        await ctx.models.Config.updateOne({ state: ctx.config.state }, { $set: { [ctx.key]: ctx.value } });
-        await ctx.bot.configure();
-        return ctx.success(`Updated key \`${ctx.key}\`, value: \`${ctx.config[ctx.key]}\``);
+        if (!ctx._config) {
+                return ctx.error(`Config does not exist for state \`${ctx.args.state}\``);
+        }
+
+        let o = getNested(ctx._config, ctx.args.key);
+
+        if (typeof o === 'object') {
+                o = JSON.stringify(o);
+        }
+
+        return ctx.success(`Key \`${ctx.args.key}\`, value \`${o}\``);
 }
 
 const beforeGuild = ctx => {
@@ -24,59 +35,73 @@ const config = new Command({
         name: 'config',
         aliases: ['c'],
         info: "Manage the bot's configuration",
-        namespace: true,
+        namespace: true
 });
 
 config.command({
-        name: 'toggle',
-        usage: '<key>',
-        aliases: ['t'],
-        info: 'Toggle a boolean value in configuration',
-        before: beforeConfig,
+        name: 'set',
+        aliases: ['write'],
+        info: 'Set a value in configuration',
+        options: [
+                { name: 'key', alias: 'k', required: true },
+                { name: 'value', alias: 'v', required: true },
+                { name: 'type', alias: 't', default: 'string' },
+                { name: 'state', alias: 's', default: ctx => ctx.state },
+        ],
         after: afterConfig,
-        requiredArgs: 1,
-        execute: async function (ctx) {
-                if (typeof ctx.value !== 'boolean') {
-                        return ctx.error(`\`${ctx.key}\` is not a valid key.`);
+        execute: function (ctx) {
+                let value = ctx.args.value;
+
+                switch (ctx.args.type.toLowerCase()) {
+                        case 'str':
+                        case 'string':
+                                value = String(value);
+
+                                break;
+                        case 'num':
+                        case 'number':
+                        case 'int':
+                        case 'integer':
+                                value = Number(value);
+
+                                break;
+                        case 'bool':
+                        case 'boolean':
+                                try { value = eval(value); } catch { }
+
+                                break;
+                        default:
+                                return ctx.error(`Unknown type \`${ctx.args.type}\`.`);
                 }
 
-                ctx.value = !ctx.value
+                return ctx.models.Config.findOne({ state: ctx.args.state }).then(config => {
+                        if (getNested(config, ctx.args.key)?.constructor !== value.constructor) {
+                                return ctx.error(`Invalid key \`${ctx.args.key}\`.`);
+                        }
+
+                        return ctx.models.Config.findOneAndUpdate({ state: ctx.args.state }, { $set: { [ctx.args.key]: value } }, { new: true })
+                                .then(config => {
+                                        ctx._config = config;
+                                });
+                });
         }
 });
 
 config.command({
-        name: 'string',
-        usage: '<key>',
-        aliases: ['s'],
-        info: 'Change a string value in configuration',
-        before: beforeConfig,
+        name: 'get',
+        aliases: ['read'],
+        info: 'Get a value from configuration',
+        options: [
+                { name: 'key', alias: 'k', required: true },
+                { name: 'state', alias: 's', default: ctx => ctx.state },
+        ],
         after: afterConfig,
-        requiredArgs: 2,
-        execute: async function (ctx) {
-                if (typeof ctx.value !== 'string') {
-                        return ctx.error(`\`${ctx.key}\` is not a valid key.`);
-                }
-
-                ctx.value = ctx.args[1];
+        execute: function (ctx) {
+                return ctx.models.Config.findOne({ state: ctx.args.state })
+                        .then(config => {
+                                ctx._config = config;
+                        });
         }
-});
-
-config.command({
-        name: 'number',
-        usage: '<key>',
-        aliases: ['n', 'i', 'int'],
-        info: 'Change a number value in configuration',
-        before: beforeConfig,
-        after: afterConfig,
-        requiredArgs: 2,
-        execute: async function (ctx) {
-                if (typeof ctx.value !== 'number') {
-                        return ctx.error(`\`${ctx.key}\` is not a valid key.`);
-                }
-
-                ctx.value = parseInt(ctx.args[1]);
-        }
-
 });
 
 const guild = config.command({
