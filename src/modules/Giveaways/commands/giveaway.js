@@ -1,4 +1,4 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 const prettyMS = require('pretty-ms');
 
 

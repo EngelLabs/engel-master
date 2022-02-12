@@ -1,4 +1,4 @@
-const Module = require('../../core/structures/Module');
+const { Module } = require('@timbot/core');
 
 
 class Manager extends Module {
@@ -96,7 +96,7 @@ class Manager extends Module {
                                 }
                         }
                 }
-                
+
                 if (command.debug) {
                         const debug = command.debug(command, channel, guildConfig);
 

@@ -1,4 +1,4 @@
-const Base = require('../core/structures/Base');
+const { Base } = require('@timbot/core');
 
 
 /**

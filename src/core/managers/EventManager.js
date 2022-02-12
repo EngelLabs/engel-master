@@ -1,4 +1,4 @@
-const Base = require('../structures/Base');
+const { Base } = require('@timbot/core');
 
 let EventEmitter;
 

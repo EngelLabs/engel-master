@@ -1,5 +1,5 @@
 const { Schema, model } = require('mongoose');
-const { globalDefaults: defaults, client } = require('../utils/baseConfig');
+const { globalDefaults: defaults, client } = require('../core/utils/baseConfig');
 
 const configSchemaBase = { state: { type: String, default: client.state } };
 

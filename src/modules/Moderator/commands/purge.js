@@ -1,4 +1,4 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 
 
 const purgeMessages = async (ctx, count, check, reason, type) => {
@@ -16,7 +16,7 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
                 ctx.addLoadingReaction()
                         .catch(() => false);
         }
-        
+
         try {
                 result = await ctx.module.purgeMessages(ctx, type, check, count, ctx.message.id, reason);
         } catch (err) {

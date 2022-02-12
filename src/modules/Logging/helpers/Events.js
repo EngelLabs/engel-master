@@ -1,5 +1,5 @@
 const moment = require('moment');
-const Base = require('../../../core/structures/Base');
+const { Base } = require('@timbot/core');
 
 
 const colorMapping = {

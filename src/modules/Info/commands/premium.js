@@ -1,11 +1,11 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 
 
 module.exports = new Command({
         name: 'premium',
         info: 'Get information regarding Premium',
         cooldown: 30000,
-        execute: function(ctx) {
+        execute: function (ctx) {
                 let msg = '';
 
                 msg += 'Premium enables an improved timbot experience by giving you access to an improved and extended feature set.\n';

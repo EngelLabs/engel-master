@@ -1,4 +1,4 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 const { Permissions } = require('eris').Constants;
 
 

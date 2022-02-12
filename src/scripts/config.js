@@ -1,6 +1,6 @@
 // GOOD LUCK with reading this code lol
 const bot = new (require('../core/Bot'));
-const mongoose = bot.mongoose = new (require('../core/clients/Mongoose'))(bot);
+const mongoose = bot.mongoose = new (require('@timbot/core').Mongoose)(bot);
 const { logger } = bot;
 const state = process.argv[3] || bot.baseConfig.client.state
 const opt = process.argv[2];
@@ -38,8 +38,8 @@ function createConfig() {
         );
 }
 async function registerConfig() {
-    bot.commands = new (require('../core/collections/CommandCollection'))(bot);
-    bot.modules = new (require('../core/collections/ModuleCollection'))(bot);
+    bot.commands = new (require('@timbot/core').CommandCollection)(bot);
+    bot.modules = new (require('@timbot/core').ModuleCollection)(bot);
     bot.modules.load();
     await mongoose.models.Config.findOne({ state }).then(config => bot.config = config);
     if (!bot.config) return logger.error('Config not found.');

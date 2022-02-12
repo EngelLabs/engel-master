@@ -1,5 +1,5 @@
 const { exec } = require('child_process');
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 
 
 module.exports = new Command({
@@ -23,7 +23,7 @@ module.exports = new Command({
                                         } catch (err) {
                                                 ctx.codeblock(err?.toString?.() || err);
                                         }
-                                        
+
                                         if (parsed) {
                                                 ctx.send(parsed.share);
                                         }

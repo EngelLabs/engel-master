@@ -1,5 +1,5 @@
 const prettyMS = require('pretty-ms');
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 
 
 module.exports = new Command({

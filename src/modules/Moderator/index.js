@@ -1,4 +1,4 @@
-const Module = require('../../core/structures/Module');
+const { Module } = require('@timbot/core');
 const ModTimer = require('require-reload')('./helpers/ModTimer', require);
 const prettyMS = require('pretty-ms');
 
@@ -27,7 +27,7 @@ class Moderator extends Module {
 
         canModerate(ctx, member, action) {
                 const resolve = msg => { ctx.error(msg); }
-                
+
                 const { author, guild, guildConfig, command } = ctx;
 
                 const commandName = command.rootName;
@@ -37,7 +37,7 @@ class Moderator extends Module {
                         guildConfig, guild, member, author, action, commandName, moduleName, resolve
                 );
         }
- 
+
 
         sendDM(ctx, user, msg, duration, reason) {
                 if (!ctx.moduleConfig || !ctx.moduleConfig.dmUser) {

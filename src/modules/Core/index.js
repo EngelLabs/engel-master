@@ -1,6 +1,8 @@
-const Module = require('../../core/structures/Module');
-const Command = require('../../core/structures/Command');
-const Context = require('../../core/structures/Context');
+const {
+        Module,
+        Command,
+        Context
+} = require('@timbot/core');
 const baseConfig = require('../../core/utils/baseConfig');
 
 
@@ -231,7 +233,7 @@ class Core extends Module {
                         return;
                 }
 
-                const args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
+                let args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
 
                 if (!args.length) return;
 
@@ -252,7 +254,23 @@ class Core extends Module {
 
                 if (isDM && !command.dmEnabled) return;
 
-                return new Context(this.bot, {
+                const parseArg = name => {
+                        const str = args.find(str => str.startsWith(name));
+
+                        if (!str) return false;
+
+                        if (str.indexOf('=') !== -1) {
+                                const idx = str.indexOf('=');
+
+                                args.shift();
+
+                                return [str.slice(0, idx), str.slice(idx + 1)];
+                        }
+
+                        return [args.shift(), args.shift()];
+                }
+
+                const ctx = new Context(this.bot, {
                         args,
                         prefix: prefix || '?',
                         message,
@@ -262,6 +280,65 @@ class Core extends Module {
                         isAdmin,
                         guildConfig,
                 });
+
+                if (command.options) {
+                        const parsedArgs = {};
+
+                        for (const opt of command.options) {
+                                const names = [opt.name];
+                                if (opt.alias) {
+                                        if (opt.alias instanceof Array) {
+                                                names.push(...opt.alias);
+                                        } else {
+                                                names.push(opt.alias);
+                                        }
+                                }
+
+                                let key;
+                                let value = false;
+
+
+                                while (value === false && names.length) {
+                                        const ret = parseArg(names.shift());
+
+                                        if (ret === false) {
+                                                continue;
+                                        }
+
+                                        [key, value] = ret;
+                                }
+
+                                if (value === false && opt.default) {
+                                        if (typeof opt.default === 'function') {
+                                                value = opt.default(ctx);
+                                        } else {
+                                                value = opt.default;
+                                        }
+                                }
+
+                                if (value === false && opt.required) {
+                                        ctx.error(`Missing required argument \`${opt.name}\``);
+
+                                        return;
+                                }
+
+                                if (opt.type) {
+                                        value = opt.type(value);
+
+                                        if (value?.constructor !== opt.type) {
+                                                ctx.error(`Type for \`${key}\`is invalid, a \`${opt.type.constructor.name.toLowerCase()}\` is expected.`);
+
+                                                return;
+                                        }
+                                }
+
+                                parsedArgs[opt.name.replace('--', '')] = value;
+                        }
+
+                        ctx.args = parsedArgs;
+                }
+
+                return ctx;
         }
 
         deleteCommand(ctx) {

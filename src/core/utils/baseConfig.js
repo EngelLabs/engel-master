@@ -9,6 +9,7 @@ if (!parsed && error) {
         throw error;
 }
 
+const path = require('path');
 const getenv = require('getenv');
 const package = require('../../../package.json');
 
@@ -42,6 +43,11 @@ const baseConfig = {
         redis: {
                 host: getenv.string('REDIS_HOST', '127.0.0.1'),
                 port: getenv.string('REDIS_PORT', '6379'),
+        },
+        paths: {
+                helpers: path.resolve('src/helpers'),
+                models: path.resolve('src/models'),
+                modules: path.resolve('src/modules'),
         },
         globalDefaults: {
                 author: {

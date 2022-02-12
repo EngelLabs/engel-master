@@ -1,4 +1,4 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 
 
 module.exports = new Command({
@@ -52,7 +52,7 @@ module.exports = new Command({
                                 eris.deleteMessage(channel.id, id)
                                         .catch(() => false);
                         }
-                        
+
                         await eris.deleteMessage(channel.id, lastMsg).catch(() => false);
                 }
 

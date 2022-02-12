@@ -1,4 +1,4 @@
-const Module = require('../../core/structures/Module');
+const { Module } = require('@timbot/core');
 
 
 class Info extends Module {

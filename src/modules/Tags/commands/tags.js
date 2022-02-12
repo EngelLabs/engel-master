@@ -1,4 +1,4 @@
-const Command = require('../../../core/structures/Command');
+const { Command } = require('@timbot/core');
 const moment = require('moment');
 
 
@@ -47,7 +47,7 @@ tags.command({
                                 text: `Author ID: ${tag.author}`,
                         }
                 };
-                
+
                 if (author) {
                         embed.author = {
                                 name: author.username + '#' + author.discriminator,

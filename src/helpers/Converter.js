@@ -1,4 +1,4 @@
-const Base = require('../core/structures/Base');
+const { Base } = require('@timbot/core');
 const { ChannelTypes } = require('eris').Constants;
 
 const idRegex = /([0-9]{15,20})$/;

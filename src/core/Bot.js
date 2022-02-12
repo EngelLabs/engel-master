@@ -1,13 +1,15 @@
 const logger = require('./utils/logger');
 const baseConfig = require('./utils/baseConfig');
-const Eris = require('./clients/Eris');
-const Redis = require('./clients/Redis');
-const Mongoose = require('./clients/Mongoose');
-const CommandCollection = require('./collections/CommandCollection');
-const ModuleCollection = require('./collections/ModuleCollection');
-const GuildCollection = require('./collections/GuildCollection');
 const StateManager = require('./managers/StateManager');
 const EventManager = require('./managers/EventManager');
+const {
+        Eris,
+        Redis,
+        Mongoose,
+        CommandCollection,
+        GuildCollection,
+        ModuleCollection,
+} = require('@timbot/core');
 
 let EventEmitter;
 
@@ -23,12 +25,6 @@ try {
  * @class Bot
  */
 class Bot extends EventEmitter {
-        constructor() {
-                super();
-
-                Bot.instance = this;
-        }
-
         /**
          * Logger instance
          */
@@ -136,7 +132,7 @@ class Bot extends EventEmitter {
                 } catch (err) {
                         logger.error(`[Bot] Something went wrong.`);
                         console.error(err);
-                        
+
                         process.exit(1);
                 }
         }
