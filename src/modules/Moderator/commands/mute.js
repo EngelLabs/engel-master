@@ -53,16 +53,9 @@ const mute = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        user: user,
-                        type: 'mute',
-                        duration: duration,
-                        reason: reason,
-                });
-
-                return ctx.success(`User **${user.username}#${user.discriminator}** muted.`);
+                ctx.module.createModlog(ctx, 'mute', duration, null, reason, ctx.author, user, null);
+                
+                ctx.module.customResponse(ctx, 'mute', user, null);
         }
 });
 

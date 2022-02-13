@@ -87,15 +87,8 @@ module.exports = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        type: 'lock',
-                        channel: channel,
-                        duration: duration,
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'lock', duration, null, reason, ctx.author, null, channel)
 
-                return ctx.success(`Channel ${channel.mention} locked.`);
+                ctx.module.customResponse(ctx, 'lock', null, channel);
         }
 });

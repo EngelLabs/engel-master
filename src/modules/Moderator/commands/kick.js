@@ -35,15 +35,9 @@ const kick = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        user: user,
-                        type: 'kick',
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'kick', null, null, reason, ctx.author, user, null);
 
-                return ctx.success(`User **${user.username}#${user.discriminator}** kicked.`);
+                ctx.module.customResponse(ctx, 'kick', user, null);
         }
 });
 

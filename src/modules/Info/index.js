@@ -99,7 +99,7 @@ class Info extends Module {
                 };
 
                 if (module.info) {
-                        embed.description += `**Info:** ${module.info}\n`;
+                        embed.description += `**Info:** ${module.info}\n `;
                 }
 
                 if (module.commands) {
@@ -110,7 +110,7 @@ class Info extends Module {
                                 .join('\n');
 
                         if (msg?.length) {
-                                embed.description = `**Commands [${commands.length}]:**\n${msg}`;
+                                embed.description += `\n**Commands [${commands.length}]:**\n${msg}`;
                         }
                 }
 

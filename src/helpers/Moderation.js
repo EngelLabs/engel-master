@@ -8,7 +8,7 @@ const prettyMS = require('pretty-ms');
  * @extends Base
  */
 class Moderation extends Base {
-        canModerate(guildConfig, guild, member, author, action, commandName, moduleName, resolve) {
+        canModerate(guildConfig, guild, member, author, action, moduleName, commandName, resolve) {
                 resolve = resolve || (o => o);
 
                 action = action || 'moderate';
@@ -260,7 +260,7 @@ class Moderation extends Base {
                 msg += `**Type:** ${m.type}\n`;
 
                 if (includeUser && m.user) {
-                        msg += `**User:** ${modlog.user.name} (${modlog.user.id})\n`;
+                        msg += `**User:** ${m.user.name} (${m.user.id})\n`;
                 }
 
                 if (includeChannel && m.channel) {
@@ -268,10 +268,9 @@ class Moderation extends Base {
                 }
 
                 if (m.duration) {
-                        const isActive = m.expiry > Date.now() ? 'true' : 'false';
-                        msg += `**Duration:** ${prettyMS(m.duration)} (active: ${isActive})\n`;
+                        msg += `**Duration:** ${prettyMS(m.duration)}\n`;
+                        msg += `**Active:** ${m.expiry > Date.now() ? 'true' : 'false'}\n`;
                 }
-
 
                 if (m.count) {
                         msg += `**Count:** ${m.count}\n`;
@@ -281,11 +280,6 @@ class Moderation extends Base {
 
                 if (m.reason?.length) {
                         msg += `**Reason:** ${m.reason}\n`;
-                }
-
-                if (m.duration) {
-                        msg += `**Duration:** ${prettyMS(m.duration)}\n`;
-                        msg += `**Active:** ${m.expiry > Date.now() ? 'true' : 'false'})\n`;
                 }
 
                 return msg;
@@ -342,14 +336,16 @@ class Moderation extends Base {
                                                 .then(() => {
                                                         this.log(`Purged "${count}" messages C${channel.id} G${guildConfig.id}.`);
 
-                                                        this.createModeration({
-                                                                guildConfig: guildConfig,
-                                                                mod: mod,
-                                                                channel: channel,
-                                                                type: type,
-                                                                count: limit,
-                                                                reason: reason
-                                                        });
+                                                        this.createModlog(
+                                                                guildConfig,
+                                                                type,
+                                                                null,
+                                                                limit,
+                                                                reason,
+                                                                user,
+                                                                mod,
+                                                                channel
+                                                        );
 
                                                         resolve();
                                                 })

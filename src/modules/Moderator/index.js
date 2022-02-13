@@ -2,9 +2,18 @@ const { Module } = require('@timbot/core');
 const ModTimer = require('require-reload')('./helpers/ModTimer', require);
 const prettyMS = require('pretty-ms');
 
+
 const defaultResponses = {
         ban: 'User **{user}** banned.',
+        block: 'User **{user}** blocked from **{channel}**',
         kick: 'User **{user}** kicked.',
+        lock: 'Channel **{channel}** locked',
+        mute: 'User **{user}** muted.',
+        unban: 'User **{user}** unbanned',
+        unblock: 'User **{user}** unblocked from **{channel}**',
+        unlock: 'Channel **{channel}** unlocked',
+        unmute: 'User **{user}** unmuted',
+        warn: 'User **{user}** warned',
 };
 
 
@@ -34,7 +43,7 @@ class Moderator extends Module {
                 const moduleName = this.dbName;
 
                 return this.helpers.moderation.canModerate(
-                        guildConfig, guild, member, author, action, commandName, moduleName, resolve
+                        guildConfig, guild, member, author, action, moduleName, commandName, resolve
                 );
         }
 
@@ -62,7 +71,7 @@ class Moderator extends Module {
         }
 
         expireModlog(ctx, type, user, channel) {
-                return this.helpers.moderation.expireModeration(
+                return this.helpers.moderation.expireModlog(
                         ctx.guild, user, channel, type
                 );
         }

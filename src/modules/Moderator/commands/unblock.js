@@ -72,22 +72,10 @@ module.exports = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        type: 'unblock',
-                        user: user,
-                        channel: channel,
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'unblock', null, null, reason, ctx.author, user, channel);
 
-                ctx.module.expireModeration({
-                        guild: ctx.guild.id,
-                        user: user,
-                        channel: channel,
-                        type: 'block'
-                });
+                ctx.module.expireModlog(ctx, 'unblock', user, channel);
 
-                return ctx.success(`${user.username}#${user.discriminator} unblocked from ${channel.mention}.`);
+                ctx.module.customResponse(ctx, 'unblock', user, channel);
         }
 });

@@ -74,20 +74,10 @@ module.exports = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        type: 'unlock',
-                        channel: channel,
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'unlock', null, null, reason, ctx.author, null, channel);
 
-                ctx.module.expireModeration({
-                        guild: ctx.guild.id,
-                        channel: channel,
-                        type: 'lock',
-                });
+                ctx.module.expireModlog(ctx, 'unlock', null, channel);
 
-                return ctx.success(`Channel ${channel.mention} unlocked.`);
+                ctx.module.customResponse(ctx, 'unlock', null, channel);
         }
 });

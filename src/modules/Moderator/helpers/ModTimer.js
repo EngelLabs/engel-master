@@ -1,4 +1,5 @@
 const { Base } = require('@timbot/core');
+const { Permissions } = require('eris').Constants;
 
 
 /**
@@ -71,12 +72,16 @@ class ModTimer extends Base {
                 if (member.roles.includes(muteRole)) {
                         this.eris.removeGuildMemberRole(guild.id, member.id, muteRole, 'module: Moderator. Auto unmute')
                                 .then(() => {
-                                        this.helpers.moderation.createModeration({
-                                                guildConfig: guildConfig,
-                                                mod: this.eris.user,
-                                                user: member,
-                                                type: 'unmute [Auto]',
-                                        });
+                                        this.helpers.moderation.createModlog(
+                                                guildConfig,
+                                                'unmute [Auto]',
+                                                null,
+                                                null,
+                                                null,
+                                                member,
+                                                this.eris.user,
+                                                null,
+                                        );
                                 })
                                 .catch(() => false);
                 }
@@ -95,12 +100,16 @@ class ModTimer extends Base {
 
                 this.eris.unbanGuildMember(guild.id, user.id, 'module: Moderator. Auto unban')
                         .then(() => {
-                                this.helpers.moderation.createModeration({
-                                        guildConfig: guildConfig,
-                                        mod: this.eris.user,
-                                        user: user,
-                                        type: 'unban [Auto]',
-                                });
+                                this.helpers.moderation.createModlog(
+                                        guildConfig,
+                                        'unban [Auto]',
+                                        null,
+                                        null,
+                                        null,
+                                        user,
+                                        this.eris.user,
+                                        null,
+                                );
                         })
                         .catch(() => false);
         }
@@ -143,12 +152,16 @@ class ModTimer extends Base {
 
                 this.eris.editChannelPermission(channel.id, guild.id, allow, deny, 0, 'module: Moderator. Automatic unlock')
                         .then(() => {
-                                this.helpers.moderation.createModeration({
-                                        guildConfig: guildConfig,
-                                        mod: this.eris.user,
-                                        channel: channel,
-                                        type: 'unlock [Auto]',
-                                });
+                                this.helpers.moderation.createModlog(
+                                        guildConfig,
+                                        'unlock [Auto]',
+                                        null,
+                                        null,
+                                        null,
+                                        null,
+                                        this.eris.user,
+                                        channel,
+                                );
                         })
                         .catch(() => false);
         }
@@ -180,13 +193,16 @@ class ModTimer extends Base {
 
                 this.eris.editChannelPermission(channel.id, user.id, allow, deny, 1, 'module: Moderator. Automatic unblock')
                         .then(() => {
-                                this.helpers.moderation.createModeration({
-                                        guildConfig: guildConfig,
-                                        mod: this.eris.user,
-                                        user: user,
-                                        channel: channel,
-                                        type: 'unblock [Auto]',
-                                });
+                                this.helpers.moderation.createModlog(
+                                        guildConfig,
+                                        'unblock [Auto]',
+                                        null,
+                                        null,
+                                        null,
+                                        user,
+                                        this.eris.user,
+                                        channel,
+                                );
                         })
                         .catch(() => false);
         }
@@ -196,7 +212,7 @@ class ModTimer extends Base {
                         return true;
                 }
 
-                return !guildConfig.mod.disabled;                
+                return !guildConfig.mod.disabled;
         }
 }
 

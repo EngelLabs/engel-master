@@ -28,14 +28,8 @@ module.exports = new Command({
 
                 ctx.module.sendDM(ctx, user, `You were warned in ${ctx.guild.name} for ${reason}.`, null, null);
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        user: user,
-                        type: 'warn',
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'warn', null, null, reason, ctx.author, user, null);
 
-                return ctx.success(`User **${user.username}#${user.discriminator}** has been warned.`);
+                ctx.module.customResponse(ctx, 'warn', user, null);
         }
 });

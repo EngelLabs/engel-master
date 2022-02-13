@@ -32,21 +32,11 @@ const unban = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        user: user,
-                        type: 'unban',
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'unban', null, null, reason, ctx.author, user, null);
 
-                ctx.module.expireModeration({
-                        guild: ctx.guild.id,
-                        user: user,
-                        type: 'ban',
-                });
+                ctx.module.expireModlog(ctx, 'unban', user, null);
 
-                return ctx.success(`User **${user.username}#${user.discriminator}** unbanned.`);
+                ctx.module.customResponse(ctx, 'unban', user, null);
         }
 });
 

@@ -47,21 +47,11 @@ const unmute = new Command({
                         return ctx.error(err.toString());
                 }
 
-                ctx.module.createModeration({
-                        guildConfig: ctx.guildConfig,
-                        mod: ctx.author,
-                        user: user,
-                        type: 'unmute',
-                        reason: reason,
-                });
+                ctx.module.createModlog(ctx, 'unmute', null, null, reason, ctx.author, user, null);
 
-                ctx.module.expireModeration({
-                        guild: ctx.guild.id,
-                        user: user,
-                        type: 'mute',
-                });
-
-                return ctx.success(`User **${user.username}#${user.discriminator}** unmuted.`);
+                ctx.module.expireModlog(ctx, 'unmute', user, null);
+                
+                ctx.module.customResponse(ctx, 'unmute', user, null);
         }
 });
 
