@@ -9,7 +9,7 @@ module.exports = async function (server, req, res) {
                 if (!condition) return;
 
                 update = update || {};
-                update[`${module.name}.${k}`] = v;
+                update[`${module.dbName}.${k}`] = v;
         }
 
         set(typeof req.body.delCommands === 'boolean', 'delCommands', req.body.delCommands);
@@ -23,6 +23,43 @@ module.exports = async function (server, req, res) {
         set(req.body.allowedChannels instanceof Array, 'allowedChannels', req.body.allowedChannels);
 
         set(req.body.ignoredChannels instanceof Array, 'ignoredChannels', req.body.ignoredChannels);
+
+        switch (module.dbName) {
+                case 'mod':
+                        if (typeof req.body.responses === 'object') {
+                                const guildConfig = await server.collection('guilds').findOne({ id: req.params.id });
+
+                                if (!guildConfig || !guildConfig.isPremium) {
+                                        break;
+                                }
+
+                                const customResponseKeys = [
+                                        'ban',
+                                        'block',
+                                        'kick',
+                                        'lock',
+                                        'mute',
+                                        'unban',
+                                        'unblock',
+                                        'unlock',
+                                        'unmute',
+                                        'warn',
+                                ];
+
+                                for (const key in req.body.responses) {
+                                        const val = req.body.responses[key];
+
+                                        if (customResponseKeys.includes(key) && typeof val === 'string') {
+                                                update = update || {};
+                                                update.mod = update.mod || {};
+                                                update.mod.responses = update.mod.responses || {};
+                                                update.mod.responses[key] = val;
+                                        }
+                                }
+                        }
+        }
+
+        console.log(update);
 
         if (!update) {
                 return server.response(400, res, 30001, 'Invalid response body');
@@ -45,5 +82,5 @@ module.exports = async function (server, req, res) {
                 return server.response(403, res, 10001, 'Unknown guild');
         }
 
-        return server.response(200, res, result.value?.[module.name]);
+        return server.response(200, res, result.value?.[module.dbName]);
 }
