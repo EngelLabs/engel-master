@@ -26,6 +26,8 @@ module.exports = new Command({
                                 .catch(err => { return { s: err?.response?.status, d: err?.response?.body } });
                 }
 
+                const hasNewLine = ctx.args.find(s => s.includes('\n')) !== undefined;
+
                 let body = __ctx.args.join(' ').replace('\n', '') || 'undefined';
 
                 if (body.startsWith('```') && body.endsWith('```')) {
@@ -36,7 +38,7 @@ module.exports = new Command({
                         }
                 }
 
-                if (!body.includes('return')) {
+                if (!body.includes('return') && !hasNewLine) {
                         body = `return ${body}`;
                 }
 
