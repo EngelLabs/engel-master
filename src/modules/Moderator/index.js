@@ -35,6 +35,9 @@ class Moderator extends Module {
         }
 
         canModerate(ctx, member, action) {
+                // wrap function in curly braces to avoid returning the promise from ctx.error()
+                // commands use "!ctx.module.canModerate" to decide whether to stop executing
+                // and that would cause issues if a Promise was returned, which is truthy of course
                 const resolve = msg => { ctx.error(msg); }
 
                 const { author, guild, guildConfig, command } = ctx;
