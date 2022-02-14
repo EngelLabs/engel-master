@@ -18,11 +18,11 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
         }
 
         try {
-                result = await ctx.module.purgeMessages(ctx, type, check, count, ctx.message.id, reason);
+                result = await ctx.module.purgeMessages(ctx, type || `purge [${ctx.command.name}]`, check, count, ctx.message.id, reason);
         } catch (err) {
                 if (!delCommand) ctx.removeLoadingReaction().catch(() => false);
 
-                throw err;
+                return ctx.error(err);
         }
 
         if (!delCommand) {
@@ -53,7 +53,7 @@ const purge = new Command({
                         ctx.args.shift(),
                         () => true,
                         ctx.args.join(' '),
-                        'normal',
+                        'purge',
                 );
         }
 });
