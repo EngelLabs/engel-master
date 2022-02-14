@@ -338,8 +338,6 @@ class Moderation extends Base {
                                                 return resolve();
                                         }
 
-                                        type = type ? `purge [${type}]` : 'purge';
-
                                         const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${mod.id}`;
 
                                         this.eris.deleteMessages(channel.id, messages, auditReason)
@@ -352,9 +350,8 @@ class Moderation extends Base {
                                                                 null,
                                                                 limit,
                                                                 reason,
-                                                                user,
                                                                 mod,
-                                                                channel
+                                                                channel,
                                                         );
 
                                                         resolve();
