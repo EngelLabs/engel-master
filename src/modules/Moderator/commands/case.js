@@ -34,10 +34,8 @@ module.exports = new Command({
                 if (!modlog) return ctx.error(`Case \`${ctx.args[0]}\` not found.`);
 
                 const embed = {
-                        title: `**Case:** ${modlog.case}`,
                         description: ctx.helpers.moderation.formatModlog(modlog),
                         color: ctx.config.colours.success,
-                        timestamp: modlog.created.toISOString(),
                 };
 
                 return ctx.send({ embed });

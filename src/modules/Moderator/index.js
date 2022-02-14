@@ -5,15 +5,15 @@ const prettyMS = require('pretty-ms');
 
 const defaultResponses = {
         ban: 'User **{user}** banned.',
-        block: 'User **{user}** blocked from **{channel}**',
+        block: 'User **{user}** blocked from **{channel}**.',
         kick: 'User **{user}** kicked.',
-        lock: 'Channel **{channel}** locked',
+        lock: 'Channel **{channel}** locked.',
         mute: 'User **{user}** muted.',
-        unban: 'User **{user}** unbanned',
-        unblock: 'User **{user}** unblocked from **{channel}**',
-        unlock: 'Channel **{channel}** unlocked',
-        unmute: 'User **{user}** unmuted',
-        warn: 'User **{user}** warned',
+        unban: 'User **{user}** unbanned.',
+        unblock: 'User **{user}** unblocked from **{channel}**.',
+        unlock: 'Channel **{channel}** unlocked.',
+        unmute: 'User **{user}** unmuted.',
+        warn: 'User **{user}** warned.',
 };
 
 
@@ -27,11 +27,26 @@ class Moderator extends Module {
         }
 
         injectHook() {
+                this.tasks = [];
+                this.listeners = [];
+
                 const timerHandler = new ModTimer(this.bot);
 
-                this.tasks = [
-                        [timerHandler, 15000],
-                ];
+                this.tasks.push([ timerHandler, 15000 ]);
+
+                this.listeners.push(this.guildMemberAdd.bind(this));
+        }
+
+        async guildMemberAdd({ guildConfig, guild, member }) {
+                if (guildConfig.mod?.disabled) {
+                        return;
+                }
+
+                if (!await this.helpers.moderation.isMuted(guildConfig, member)) {
+                        return;
+                }
+
+                return this.eris.addGuildMemberRole(guild.id, member.id, guildConfig.muteRole, 'module: Moderator');
         }
 
         canModerate(ctx, member, action) {
@@ -52,12 +67,12 @@ class Moderator extends Module {
 
 
         sendDM(ctx, user, msg, duration, reason) {
-                if (!ctx.moduleConfig || !ctx.moduleConfig.dmUser) {
+                if (ctx.moduleConfig && !ctx.moduleConfig.dmUser) {
                         return Promise.resolve();
                 }
 
                 if (duration) {
-                        msg += `\nDuration: ${prettyMS(duration * 1000, { verbose: true })}.`;
+                        msg += `\nDuration: ${prettyMS(duration * 1000, { verbose: true })}`;
                 }
 
                 if (ctx.moduleConfig.includeReason && reason !== null) {
@@ -75,7 +90,7 @@ class Moderator extends Module {
 
         expireModlog(ctx, type, user, channel) {
                 return this.helpers.moderation.expireModlog(
-                        ctx.guild, user, channel, type
+                        ctx.guild.id, user, channel, type
                 );
         }
 
@@ -103,8 +118,8 @@ class Moderator extends Module {
                 return ctx.success(text);
         }
 
-        isMuted(ctx, member) {
-                return this.helpers.moderation.isMuted(ctx.guildConfig, member);
+        isMuted(ctx, user) {
+                return this.helpers.moderation.isMuted(ctx.guildConfig, user);
         }
 
         purgeMessages(ctx, type, check, count, before, reason) {

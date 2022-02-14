@@ -1,5 +1,6 @@
 const { Base } = require('@timbot/core');
 const prettyMS = require('pretty-ms');
+const moment = require('moment');
 
 
 /**
@@ -141,7 +142,7 @@ class Moderation extends Base {
 
         createMuteRole(guild, guildConfig) {
                 return new Promise((resolve, reject) => {
-                        this.eris.createRole(guild.id, { name: '' })
+                        this.eris.createRole(guild.id, { name: 'Muted' })
                                 .then(role => {
                                         for (const channel of guild.channels.values()) {
                                                 this.eris
@@ -257,15 +258,7 @@ class Moderation extends Base {
                 let msg = '';
 
                 msg += `**Case:** ${m.case}\n`;
-                msg += `**Type:** ${m.type}\n`;
-
-                if (includeUser && m.user) {
-                        msg += `**User:** ${m.user.name} (${m.user.id})\n`;
-                }
-
-                if (includeChannel && m.channel) {
-                        msg += `**Channel:** ${m.channel.name} (${m.channel.id})\n`;
-                }
+                msg += `**Type:** ${m.type}\n`
 
                 if (m.duration) {
                         msg += `**Duration:** ${prettyMS(m.duration)}\n`;
@@ -274,6 +267,16 @@ class Moderation extends Base {
 
                 if (m.count) {
                         msg += `**Count:** ${m.count}\n`;
+                }
+
+                msg += `**Created:** ${moment(m.created).format('LLLL')}\n`;
+
+                if (includeUser && m.user) {
+                        msg += `**User:** ${m.user.name} (${m.user.id})\n`;
+                }
+
+                if (includeChannel && m.channel) {
+                        msg += `**Channel:** ${m.channel.name} (${m.channel.id})\n`;
                 }
 
                 msg += `**Moderator:** ${m.mod.name} (${m.mod.id})\n`;
@@ -285,16 +288,23 @@ class Moderation extends Base {
                 return msg;
         }
 
-        isMuted(guildConfig, member) {
+        async isMuted(guildConfig, user) {
                 if (!guildConfig.muteRole) {
                         return false;
                 }
 
-                if (!member || !member.roles || !member.roles.length) {
-                        return false;
+                if (user.roles?.includes?.(guildConfig.muteRole)) {
+                        return true;
                 }
 
-                return member.roles.includes(guildConfig.muteRole);
+                const currentMute = await this.models.ModLog
+                        .findOne({ guild: guildConfig.id, 'user.id': user.id, type: 'mute', expiry: { $gt: Date.now() } });
+
+                if (currentMute) {
+                        return true;
+                }
+
+                return false;
         }
 
         purgeMessages(guildConfig, channel, mod, type, check, count, before, reason) {

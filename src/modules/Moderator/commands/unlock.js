@@ -76,7 +76,7 @@ module.exports = new Command({
 
                 ctx.module.createModlog(ctx, 'unlock', null, null, reason, ctx.author, null, channel);
 
-                ctx.module.expireModlog(ctx, 'unlock', null, channel);
+                ctx.module.expireModlog(ctx, 'lock', null, channel);
 
                 ctx.module.customResponse(ctx, 'unlock', null, channel);
         }

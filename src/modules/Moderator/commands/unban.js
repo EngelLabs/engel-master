@@ -34,7 +34,7 @@ const unban = new Command({
 
                 ctx.module.createModlog(ctx, 'unban', null, null, reason, ctx.author, user, null);
 
-                ctx.module.expireModlog(ctx, 'unban', user, null);
+                ctx.module.expireModlog(ctx, 'ban', user, null);
 
                 ctx.module.customResponse(ctx, 'unban', user, null);
         }

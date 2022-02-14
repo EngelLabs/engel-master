@@ -74,7 +74,7 @@ module.exports = new Command({
 
                 ctx.module.createModlog(ctx, 'unblock', null, null, reason, ctx.author, user, channel);
 
-                ctx.module.expireModlog(ctx, 'unblock', user, channel);
+                ctx.module.expireModlog(ctx, 'block', user, channel);
 
                 ctx.module.customResponse(ctx, 'unblock', user, channel);
         }

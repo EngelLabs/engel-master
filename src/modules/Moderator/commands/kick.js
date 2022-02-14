@@ -30,7 +30,7 @@ const kick = new Command({
                 const auditReason = (reason?.length ? reason : 'No reason provided') + ' | ' + `Moderator: ${ctx.author.id}`;
 
                 try {
-                        await user.kickGuildMember(ctx.guild.id, user.id, auditReason);
+                        await ctx.eris.kickGuildMember(ctx.guild.id, user.id, auditReason);
                 } catch (err) {
                         return ctx.error(err.toString());
                 }

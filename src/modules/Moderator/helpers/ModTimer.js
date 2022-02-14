@@ -67,22 +67,20 @@ class ModTimer extends Base {
                 if (!muteRole) return;
 
                 const member = guild.members.get(user.id);
-                if (!member) return;
 
-                if (member.roles.includes(muteRole)) {
+                this.helpers.moderation.createModlog(
+                        guildConfig,
+                        'unmute [Auto]',
+                        null,
+                        null,
+                        null,
+                        member,
+                        this.eris.user,
+                        null,
+                );
+
+                if (member?.roles?.includes?.(muteRole)) {
                         this.eris.removeGuildMemberRole(guild.id, member.id, muteRole, 'module: Moderator. Auto unmute')
-                                .then(() => {
-                                        this.helpers.moderation.createModlog(
-                                                guildConfig,
-                                                'unmute [Auto]',
-                                                null,
-                                                null,
-                                                null,
-                                                member,
-                                                this.eris.user,
-                                                null,
-                                        );
-                                })
                                 .catch(() => false);
                 }
         }
