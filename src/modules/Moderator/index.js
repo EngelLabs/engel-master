@@ -71,11 +71,11 @@ class Moderator extends Module {
                         return Promise.resolve();
                 }
 
-                if (duration) {
+                if (ctx.moduleConfig?.includeDuration && duration) {
                         msg += `\nDuration: ${prettyMS(duration * 1000, { verbose: true })}`;
                 }
 
-                if (ctx.moduleConfig.includeReason && reason !== null) {
+                if (ctx.moduleConfig?.includeReason && reason?.length) {
                         msg += `\nReason: ${reason?.length ? reason : 'N/A'}`;
                 }
 
