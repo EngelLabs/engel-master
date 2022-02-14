@@ -77,7 +77,7 @@ module.exports = new Command({
 
                 const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
-                ctx.module.sendDM(ctx.guildConfig, user, `You were blocked from #${channel.name}`, duration, reason);
+                ctx.module.sendDM(ctx.guildConfig, user, `You were blocked from #${channel.name} in ${ctx.guild.name}`, duration, reason);
 
                 try {
                         await ctx.eris.editChannelPermission(channel.id, user.id, allow, deny, 1, auditReason);
