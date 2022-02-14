@@ -43,7 +43,15 @@ module.exports = new Command({
                 const moderation = ctx.helpers.moderation;
 
                 modlogs = modlogs
-                        .map(m => moderation.formatModlog(m, false))
+                        .map(m => {
+                                // Don't include user ID
+                                if (m.user?.id === id) {
+                                        return moderation.formatModlog(m, false, true);
+                                }
+
+                                // Don't include channel ID
+                                return moderation.formatModlog(m, true, false);
+                        })
                         .join('\n');
 
                 // TODO: implement pagination for this command
