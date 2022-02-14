@@ -350,6 +350,7 @@ class Moderation extends Base {
                                                                 null,
                                                                 limit,
                                                                 reason,
+                                                                null,
                                                                 mod,
                                                                 channel,
                                                         );
