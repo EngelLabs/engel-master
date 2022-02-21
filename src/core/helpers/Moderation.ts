@@ -1,6 +1,8 @@
-const { Base } = require('@timbot/core');
-const prettyMS = require('pretty-ms');
-const moment = require('moment');
+import * as eris from 'eris';
+import * as prettyMS from 'pretty-ms';
+import * as moment from 'moment';
+import { types, helpers } from '@timbot/core';
+import Base from '../structures/Base';
 
 
 /**
@@ -9,7 +11,16 @@ const moment = require('moment');
  * @extends Base
  */
 class Moderation extends Base {
-        canModerate(guildConfig, guild, member, author, action, moduleName, commandName, resolve) {
+        canModerate(
+                guildConfig: types.GuildConfig,
+                guild: eris.Guild,
+                member: eris.Member,
+                author: eris.User,
+                action: string | undefined,
+                moduleName: string,
+                commandName: string,
+                resolve?: (arg: any) => any,
+        ) {
                 resolve = resolve || (o => o);
 
                 action = action || 'moderate';
@@ -38,7 +49,7 @@ class Moderation extends Base {
 
                 if (member.roles?.length) {
                         const roles = member.guild.roles;
-                        const topRole = this.getTopRole(guild);
+                        const topRole = helpers.getTopRole(this.eris, guild);
 
                         if (topRole) {
                                 if (member.roles.find(id => {
@@ -50,10 +61,10 @@ class Moderation extends Base {
                                 }
                         }
 
-                        const commandConfig = guildConfig.commands?.[commandName];
-                        const moduleConfig = guildConfig[moduleName];
+                        const commandConfig: types.CommandConfig<'Moderator' | 'Manager'> | boolean = guildConfig.commands?.[commandName];
+                        const moduleConfig: types.Moderation = guildConfig[moduleName];
 
-                        if (commandConfig?.protectedRoles?.length) {
+                        if (typeof commandConfig !== 'boolean' && commandConfig?.protectedRoles?.length) {
                                 const protectedRoles = commandConfig.protectedRoles;
                                 if (member.roles.find(id => protectedRoles.includes(id))) {
                                         return resolve('That user is protected.');

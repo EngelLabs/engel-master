@@ -17,7 +17,7 @@ const defaultResponses = {
 };
 
 
-class Moderator extends Module {
+export default class Moderator extends Module {
         constructor() {
                 super();
 
@@ -129,6 +129,3 @@ class Moderator extends Module {
                 );
         }
 }
-
-
-module.exports = Moderator;

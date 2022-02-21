@@ -1,40 +1,56 @@
-const { Base } = require('@timbot/core');
 
-let EventEmitter;
+// TODO: Type this module
+import * as EventEmitter from 'eventemitter3';
+import Base from '../structures/Base';
+import Bot from '../Bot';
+import Permission from '../helpers/Permission';
 
-try {
-        EventEmitter = require('eventemitter3');
-} catch {
-        EventEmitter = require('events');
+
+interface AnyFunc {
+        (...args: any): void;
 }
 
 
 /**
  * Event dispatch manager
- * @class EventManager
  */
-class EventManager extends Base {
-        constructor(bot) {
+export default class EventManager extends Base {
+        public addListener        = EventEmitter.prototype.addListener;
+        public emit               = EventEmitter.prototype.emit;
+        public eventNames         = EventEmitter.prototype.eventNames;
+        public listenerCount      = EventEmitter.prototype.listenerCount;
+        public listeners          = EventEmitter.prototype.listeners;
+        public off                = EventEmitter.prototype.off;
+        public on                 = EventEmitter.prototype.on;
+        public once               = EventEmitter.prototype.once;
+        public removeAllListeners = EventEmitter.prototype.removeAllListeners;
+        public removeListener     = EventEmitter.prototype.removeListener;
+        private _permissions: Permission;
+        private _registeredEvents: Record<string, { handler: AnyFunc, listeners: Array<AnyFunc> }> = {};
+
+        public constructor(bot: Bot) {
                 super(bot);
+
                 EventEmitter.call(this);
 
-                this._registeredEvents = {};
+                this._permissions = new Permission(bot);
         }
 
-        registerListener(event, execute) {
+        public registerListener(event: string, execute: AnyFunc): this {
                 if (!this[event]) {
-                        return this.eris.addListener(event, execute);
+                        this.eris.addListener(event, execute);
+
+                        return this;
                 }
 
                 if (!this._registeredEvents[event]) {
-                        const wrapped = async (...args) => {
+                        const wrapped = async (...args: any) => {
                                 try {
-                                        // pause the entire event dispatch system when all core components aren't ready.
-                                        if (!this.bot.isReady) return;
+                                        const payload: any = await this[event](...args);
 
-                                        const payload = await this[event](...args);
-
-                                        if (!payload) return;
+                                        if (!payload) {
+                                                return;
+                                        }
 
                                         this.emit(event, payload);
                                 } catch (err) {
@@ -55,13 +71,15 @@ class EventManager extends Base {
                 return this;
         }
 
-        unregisterListener(event, execute) {
+        unregisterListener(event: string, execute: AnyFunc): this {
                 if (!this[event]) {
-                        return this.eris.removeListener(event, execute);
+                        this.eris.removeListener(event, execute);
+
+                        return this;
                 }
 
                 if (this._registeredEvents[event]) {
-                        let listeners = this._registeredEvents[event].listeners.filter(l => l.execute = execute);
+                        let listeners = this._registeredEvents[event].listeners.filter(l => l = execute);
 
                         if (!listeners.length) {
                                 this.eris.removeListener(event, this._registeredEvents[event].handler);
@@ -78,7 +96,7 @@ class EventManager extends Base {
                 return this;
         }
 
-        async _guildPayload(payload, guildID, createIfNotFound = false) {
+        async _guildPayload(payload: any, guildID: string, createIfNotFound: boolean = false): Promise<any> {
                 payload.isTesting = this.bot.config.guilds.testing.includes(guildID);
                 payload.guildConfig = await this.bot.guilds.getOrFetch(guildID, { createIfNotFound });
 
@@ -257,8 +275,8 @@ class EventManager extends Base {
                 if (message.author.bot) return Promise.resolve();
 
                 const payload = {
-                        isAdmin: this.helpers.permissions.isAdmin(message.author.id),
-                        isTester: this.helpers.permissions.isTester(message.author.id),
+                        isAdmin: this._permissions.isAdmin(message.author.id),
+                        isTester: this._permissions.isTester(message.author.id),
                         isDM: !message.guildID,
                         message: message,
                 };
@@ -325,8 +343,3 @@ class EventManager extends Base {
                 return this._guildPayload({ message, emoji }, message.guildID);
         }
 }
-
-Object.assign(EventManager.prototype, EventEmitter.prototype);
-
-
-module.exports = EventManager;

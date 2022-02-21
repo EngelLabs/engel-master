@@ -2,7 +2,9 @@
 
 global.Promise = require('bluebird');
 
-const Bot = require('./core/Bot');
+
+import Bot from './core/Bot';
+
 
 const bot = new Bot();
 

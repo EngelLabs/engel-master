@@ -1,43 +1,64 @@
-const { Base } = require('@timbot/core');
+import * as eris from 'eris';
+import { types } from '@timbot/core';
+import Bot from '../Bot';
+import Base from '../structures/Base';
+
+
+interface Message {
+        id: string;
+        content: string;
+        author: eris.User;
+        channel: eris.GuildChannel;
+        createdAt: number;
+}
+
 
 /**
  * Manages cache of Discord objects
- * @class CacheManager
  */
-class CacheManager extends Base {
-        constructor(bot) {
+export default class CacheManager extends Base {
+        private _messages: Record<string, Message> = {};
+        private _uncacheInterval?: NodeJS.Timer;
+
+        public constructor(bot: Bot) {
                 super(bot);
 
-                this._messages = {};
-
-                this.bot.events
+                bot.events
                         .registerListener('messageCreate', this.messageCreate.bind(this))
                         .registerListener('messageUpdate', this.messageUpdate.bind(this))
                         .registerListener('messageDelete', this.messageDelete.bind(this))
                         .registerListener('guildDelete', this.guildDelete.bind(this))
                         .registerListener('guildChannelDelete', this.guildChannelDelete.bind(this));
 
-                setTimeout(() => {
-                        for (const id in this._messageCache) {
-                                const message = this._messageCache[id];
+                bot.on('config', this._configure.bind(this));
+        }
 
-                                if (message.createdAt < (Date.now() - this.config.messageMaxAge)) {
-                                        delete this._messageCache[id];
-                                }
+        private _configure(config: types.Config): void {
+                if (config.messageCache && config.messageUncacheInterval !== this.config?.messageUncacheInterval) {
+                        clearInterval(this._uncacheInterval);
+
+                        this._uncacheInterval = setInterval(this._uncacheMessages.bind(this), config.messageUncacheInterval);
+                }
+        }
+
+        private _uncacheMessages(): void {
+                for (const id in this._messages) {
+                        const message = this._messages[id];
+
+                        if (message.createdAt < (Date.now() - this.config.messageMaxAge)) {
+                                delete this._messages[id];
                         }
-                }, 120000);
+                }
         }
 
         /**
          * Get a message from cache
-         * @param {String} id The message's ID
-         * @returns {Object|undefined}
          */
-        getMessage(id) {
+        public getMessage(id: string): Message | undefined {
                 return this._messages[id];
         }
 
-        messageCreate({ message }) {
+        private messageCreate({ message }: { message: eris.Message }): void {
                 if (!this.config.messageCache) return;
 
                 const copied = {
@@ -48,10 +69,11 @@ class CacheManager extends Base {
                         createdAt: message.createdAt,
                 };
 
+                // @ts-ignore
                 this._messages[copied.id] = copied;
         }
 
-        messageUpdate({ message }) {
+        private messageUpdate({ message }: { message: eris.Message }): void {
                 const oldMessage = this._messages[message.id];
 
                 if (message.content !== oldMessage.content) {
@@ -59,11 +81,11 @@ class CacheManager extends Base {
                 }
         }
 
-        messageDelete({ message }) {
+        private messageDelete({ message }: { message: eris.Message }): void {
                 delete this._messages[message.id];
         }
 
-        guildDelete({ guild }) {
+        private guildDelete({ guild }: { guild: eris.Guild }): void {
                 for (const id in this._messages) {
                         const message = this._messages[id];
 
@@ -73,7 +95,7 @@ class CacheManager extends Base {
                 }
         }
 
-        guildChannelDelete({ channel }) {
+        private guildChannelDelete({ channel }: { channel: eris.GuildChannel }): void {
                 for (const id in this._messages) {
                         const message = this._messages[id];
 
@@ -83,6 +105,3 @@ class CacheManager extends Base {
                 }
         }
 }
-
-
-module.exports = CacheManager;

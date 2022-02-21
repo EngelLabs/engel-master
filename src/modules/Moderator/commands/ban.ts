@@ -1,7 +1,7 @@
-const { Command } = require('@timbot/core');
+import * as eris from 'eris';
+import Command from "../../../core/structures/Command";
 
-
-const ban = new Command({
+export = new Command({
         name: 'ban',
         usage: '<user> [delete message days=2] [duration=inf] [*reason]',
         info: 'Ban a server member',
@@ -13,7 +13,7 @@ const ban = new Command({
         requiredArgs: 1,
         requiredPermissions: ['banMembers'],
         execute: async function (ctx) {
-                let user;
+                let user: eris.User | undefined;
 
                 try {
                         user = await ctx.helpers.converter.user(ctx.args[0], true);
@@ -56,6 +56,3 @@ const ban = new Command({
                 ctx.module.customResponse(ctx, 'ban', user, null);
         }
 });
-
-
-module.exports = ban;
