@@ -1,0 +1,34 @@
+{
+    "name": "@timbot/core",
+    "version": "0.2.0",
+    "private": true,
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "description": "Core module for timbot",
+    "main": "build/index.js",
+    "typings": "build/index",
+    "scripts": {
+        "dev": "npx tsc -w"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/timbot-labs/timbot-core.git"
+    },
+    "bugs": {
+        "url": "https://github.com/timbot-labs/timbot-core/issues"
+    },
+    "homepage": "https://github.com/timbot-labs/timbot-core#readme",
+    "dependencies": {
+        "dotenv": "^16.0.0",
+        "eris": "github:abalabahaha/eris#dev",
+        "eventemitter3": "^4.0.7",
+        "getenv": "^1.0.0",
+        "ioredis": "^4.28.5",
+        "mongoose": "^6.2.2",
+        "typescript": "^4.5.5",
+        "winston": "^3.6.0"
+    },
+    "devDependencies": {
+        "@types/getenv": "^1.0.0",
+        "@types/ioredis": "^4.28.8"
+    }
+}
