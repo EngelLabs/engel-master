@@ -7,7 +7,12 @@ export default function Eris (core: Core): eris.Client {
                 core.log(message, level, prefix);
         }
 
-        const options = {
+        // I have to type it as such because intents,
+        // which is seen as a string[] is incompatible
+        // with ClientOptions.intents
+        // and I want to keep "options" as a variable
+        // for better readabilty
+        const options: typeof eris.Client.prototype.options = {
                 intents: [
                         'directMessages',
                         'guilds',
@@ -32,8 +37,6 @@ export default function Eris (core: Core): eris.Client {
         };
 
         const client = new eris.Client(
-                // @ts-ignore
-                // Client.options.intents is not typed properly I think.
                 'Bot ' + core.baseConfig.client.token, options
         );
 
