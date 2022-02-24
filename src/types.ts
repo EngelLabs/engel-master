@@ -27,7 +27,7 @@ export interface GuildConfig extends BaseCommandConfig {
         modules?: Record<string, ModuleConfig>;
 }
 
-export interface CommandConfig<M> extends BaseCommandConfig {
+export interface CommandConfig extends BaseCommandConfig {
         del?: boolean;
         disabled?: boolean;
 }

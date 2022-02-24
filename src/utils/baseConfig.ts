@@ -1,14 +1,13 @@
-const { parsed, error } = require('dotenv').config();
-if (!parsed && error) {
-        if (error.code === 'ENOENT') {
-                console.error('.env file not found!');
 
-                process.exit(1);
+let _error: any;
+
+if (_error = require('dotenv').config().error) {
+        if (_error.code === 'ENOENT') {
+                console.log('.env file not found!');
+        } else {
+                throw _error;
         }
-
-        throw error;
 }
-
 
 import * as getenv from 'getenv';
 
