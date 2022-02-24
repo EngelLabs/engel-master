@@ -13,6 +13,7 @@ interface CommandOptions {
         aliases?: string[];
         disabled?: boolean;
         examples?: string[];
+        namespace?: boolean;
         dmEnabled?: boolean;
         requiredArgs?: number;
         alwaysEnabled?: boolean;
@@ -36,6 +37,7 @@ export default class Command {
         public aliases?: string[];
         public disabled?: boolean;
         public examples?: string[];
+        public namespace?: boolean;
         public dmEnabled?: boolean;
         public requiredArgs?: number;
         public alwaysEnabled?: boolean;
