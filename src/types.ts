@@ -19,6 +19,7 @@ export interface GuildConfig extends BaseCommandConfig {
         id: string;
         client: string;
         prefixes: string[];
+        muteRole?: string;
         isIgnored?: boolean;
         isPremium?: boolean;
         hasPremium?: boolean;
