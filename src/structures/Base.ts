@@ -43,7 +43,9 @@ export default class Base {
         public logPrefix?: string;
 
         public constructor(core?: Core) {
-                this.core = core || Core.instance;
+                if (!(this.core = core || Core.instance)) {
+                        throw new Error('Missing core instance.');
+                }
         }
 
         public get eris() {
