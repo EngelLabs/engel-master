@@ -38,7 +38,7 @@ const muterole = new Command({
                 }
 
                 ctx.guildConfig.muteRole = role.id;
-                ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { muteRole: role.id } });
+                ctx.core.guilds.update(ctx.guildConfig.id, { $set: { muteRole: role.id } });
 
                 return ctx.success('Mute role updated.');
         }
@@ -62,7 +62,7 @@ muterole.command({
         requiredPermissions: ['manageRoles', 'manageChannels'],
         execute: async function (ctx) {
                 const roles = new Roles(ctx.core);
-                
+
                 try {
                         var role = await roles.createMuteRole(ctx.guild, ctx.guildConfig);
                 } catch (err) {
@@ -79,7 +79,7 @@ muterole.command({
         cooldown: 4000,
         execute: function (ctx) {
                 delete ctx.guildConfig.muteRole;
-                ctx.bot.guilds.update(ctx.guildConfig.id, { $unset: { 'muteRole': null } });
+                ctx.core.guilds.update(ctx.guildConfig.id, { $unset: { 'muteRole': null } });
 
                 return ctx.success('Mute role cleared.');
         }

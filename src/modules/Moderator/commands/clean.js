@@ -4,7 +4,7 @@ const { Command } = require('@engel/core');
 module.exports = new Command({
         name: 'clean',
         usage: '[count=100]',
-        info: 'Clean up messages sent by the bot',
+        info: 'Clean up messages sent by the core',
         aliases: [
                 'cleanup',
         ],

@@ -9,7 +9,7 @@ module.exports = new Command({
         cooldown: 0,
         dmEnabled: true,
         execute: async function (ctx) {
-                let { message, guild, author, bot, member, channel,
+                let { message, guild, author, core, member, channel,
                         args, eris, guildConfig, baseConfig, config, logger,
                         models, mongoose, redis, me, permissions, helpers } = ctx,
                         __ctx = ctx, __res;

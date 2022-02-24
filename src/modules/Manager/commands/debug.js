@@ -11,10 +11,10 @@ module.exports = new Command({
                 const args = ctx.args.filter(({ length }) => length);
                 const str = args.join(' ');
 
-                const module = ctx.bot.modules.get(str.charAt(0).toUpperCase() + str.slice(1));
+                const module = ctx.core.modules.get(str.charAt(0).toUpperCase() + str.slice(1));
 
                 if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
-                        let command = ctx.bot.commands.get(args[0]);
+                        let command = ctx.core.commands.get(args[0]);
 
                         if (!command) return ctx.error('No command or module exists by that name');
 

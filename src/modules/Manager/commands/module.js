@@ -13,7 +13,7 @@ module.exports = new Command({
         requiredArgs: 1,
         alwaysEnabled: true,
         execute: function (ctx) {
-                const module = ctx.bot.modules.get(ctx.args[0].slice(0, 1).toUpperCase() + ctx.args[0].slice(1));
+                const module = ctx.core.modules.get(ctx.args[0].slice(0, 1).toUpperCase() + ctx.args[0].slice(1));
 
                 if (!module || module.private || module.internal || module.disabled) {
                         return ctx.error(`Module \`${ctx.args[0]}\` not found.`);
@@ -26,7 +26,7 @@ module.exports = new Command({
 
                 const queryString = moduleName + '.disabled';
 
-                ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
+                ctx.core.guilds.update(ctx.guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
 
                 return ctx.success(moduleConfig.disabled
                         ? `Module \`${module.name}\` disabled.`

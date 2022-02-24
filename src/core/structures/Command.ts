@@ -25,7 +25,7 @@ interface CommandOptions {
 }
 
 /**
- * Represents a bot command
+ * Represents a core command
  */
 export default class Command {
         public name: string;

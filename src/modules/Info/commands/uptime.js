@@ -4,7 +4,7 @@ const prettyMS = require('pretty-ms');
 
 module.exports = new Command({
         name: 'uptime',
-        info: 'Get the bot\'s uptime',
+        info: 'Get the core\'s uptime',
         dmEnabled: true,
         alwaysEnabled: true,
         cooldown: 10000,

@@ -6,18 +6,18 @@ class Info extends Module {
                 super();
 
                 this.aliases = ['information'];
-                this.info = 'Commands to provide information about the bot';
+                this.info = 'Commands to provide information about the core';
                 this.allowedByDefault = true;
         }
 
         injectHook() {
-                this.bot.commands.getHelp = this.getCommandHelp.bind(this);
-                this.bot.modules.getHelp = this.getModuleHelp.bind(this);
+                this.core.commands.getHelp = this.getCommandHelp.bind(this);
+                this.core.modules.getHelp = this.getModuleHelp.bind(this);
         }
 
         ejectHook() {
-                delete this.bot.commands.getHelp;
-                delete this.bot.modules.getHelp;
+                delete this.core.commands.getHelp;
+                delete this.core.modules.getHelp;
         }
 
         /**
@@ -79,7 +79,7 @@ class Info extends Module {
                 if (verbose) {
                         embed.footer = embed.footer || { text: '' };
 
-                        embed.footer.text += `\nConfused? Check out "${prefix}help bot"`;
+                        embed.footer.text += `\nConfused? Check out "${prefix}help core"`;
                 }
 
                 return embed;
@@ -117,7 +117,7 @@ class Info extends Module {
                 if (verbose) {
                         embed.footer = embed.footer || { text: '' };
 
-                        embed.footer.text += `\nConfused? Check out "${prefix}help bot"`;
+                        embed.footer.text += `\nConfused? Check out "${prefix}help core"`;
                 }
 
                 return embed;

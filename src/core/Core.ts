@@ -8,9 +8,9 @@ import ModuleCollection from './collections/ModuleCollection';
 
 
 /**
- * Represents a Discord bot
+ * Represents a Discord core
  */
-export default class Bot extends core.Core {
+export default class Core extends core.Core {
         public baseConfig = baseConfig;
         public events: EventManager;
         public state: StateManager;
@@ -19,9 +19,10 @@ export default class Bot extends core.Core {
         public modules: ModuleCollection;
 
         /**
-         * Set the bot instance up
+         * Set the core instance up
          */
         public setup(): Promise<void> {
+
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
 

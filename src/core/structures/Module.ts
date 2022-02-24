@@ -4,7 +4,7 @@ import { types } from '@engel/core';
 const reload = require('require-reload')(require);
 import Base from './Base';
 import Command from './Command';
-import Bot from '../Bot';
+import Core from '../Core';
 
 
 /**
@@ -142,7 +142,7 @@ export default class Module extends Base {
         /**
          * Inject the module
          */
-        inject(bot: Bot) {
+        inject(core: Core) {
                 if (this.injectHook) {
                         try {
                                 this.injectHook()
@@ -155,11 +155,11 @@ export default class Module extends Base {
                         for (const command of this.commands) {
                                 command.module = this;
 
-                                bot.commands.add(command);
+                                core.commands.add(command);
                         }
                 }
 
-                if (this.listeners && this.eris && this.bot.events) {
+                if (this.listeners && this.eris && this.core.events) {
                         for (const listener of this.listeners) {
                                 this._boundListeners = this._boundListeners || [];
 
@@ -171,7 +171,7 @@ export default class Module extends Base {
                                 copied.execute = copied.execute.bind(this);
 
                                 this._boundListeners.push(copied);
-                                bot.events.registerListener(copied.name, copied.execute);
+                                core.events.registerListener(copied.name, copied.execute);
                         }
                 }
 
@@ -185,7 +185,7 @@ export default class Module extends Base {
         /**
          * Eject the module
          */
-        public eject(bot: Bot) {
+        public eject(core: Core) {
                 if (this.ejectHook) {
                         try {
                                 this.ejectHook();
@@ -196,13 +196,13 @@ export default class Module extends Base {
 
                 if (this.commands) {
                         for (const command of this.commands) {
-                                bot.commands.remove(command);
+                                core.commands.remove(command);
                         }
                 }
 
                 if (this._boundListeners) {
                         for (const listener of this._boundListeners) {
-                                bot.events.unregisterListener(listener.name, listener.execute);
+                                core.events.unregisterListener(listener.name, listener.execute);
                         }
                 }
 

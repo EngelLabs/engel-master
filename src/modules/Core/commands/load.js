@@ -11,7 +11,7 @@ module.exports = new Command({
                 if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 try {
-                        var res = ctx.bot.modules.load(ctx.args.length ? ctx.args : false);
+                        var res = ctx.core.modules.load(ctx.args.length ? ctx.args : false);
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }

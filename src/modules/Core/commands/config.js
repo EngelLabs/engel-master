@@ -34,7 +34,7 @@ const beforeGuild = ctx => {
 const config = new Command({
         name: 'config',
         aliases: ['c'],
-        info: "Manage the bot's configuration",
+        info: "Manage the core's configuration",
         namespace: true
 });
 
@@ -112,13 +112,13 @@ const guild = config.command({
         before: beforeGuild,
         dmEnabled: true,
         execute: async function (ctx) {
-                const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
+                const guildConfig = await ctx.core.guilds.fetch(ctx.guildId);
 
                 if (guildConfig) {
                         return ctx.success(`Guild \`${ctx.guildId}\`'s configuration refreshed.`);
                 }
 
-                await ctx.bot.guilds.create(ctx.guildId);
+                await ctx.core.guilds.create(ctx.guildId);
 
                 return ctx.success(`Guild \`${ctx.guildId}\`'s configuration created.`);
         }
@@ -131,15 +131,15 @@ guild.command({
         before: beforeGuild,
         dmEnabled: true,
         execute: async function (ctx) {
-                let guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
+                let guildConfig = await ctx.core.guilds.fetch(ctx.guildId);
 
-                const result = await ctx.bot.guilds.update(guildConfig, { $set: { isPremium: !guildConfig.isPremium } });
+                const result = await ctx.core.guilds.update(guildConfig, { $set: { isPremium: !guildConfig.isPremium } });
 
                 if (!result.modifiedCount) {
                         return ctx.error('Could not update that guild.');
                 }
 
-                guildConfig = await ctx.bot.guilds.fetch(guildConfig.id);
+                guildConfig = await ctx.core.guilds.fetch(guildConfig.id);
 
                 return ctx.success(`Guild \`${guildConfig.id}\`'s premium set to: ${guildConfig.isPremium}`);
         }
@@ -153,13 +153,13 @@ guild.command({
         dmEnabled: true,
         requiredArgs: 2,
         execute: async function (ctx) {
-                const result = await ctx.bot.guilds.update(ctx.guildId, { $set: { client: ctx.args[1] } });
+                const result = await ctx.core.guilds.update(ctx.guildId, { $set: { client: ctx.args[1] } });
 
                 if (!result.modifiedCount) {
                         return ctx.error('Could not update that guild.');
                 }
 
-                const guildConfig = await ctx.bot.guilds.fetch(ctx.guildId);
+                const guildConfig = await ctx.core.guilds.fetch(ctx.guildId);
 
                 return ctx.success(`Guild \`${guildConfig.id}\`'s client set to: ${guildConfig.client}`);
         }
@@ -174,7 +174,7 @@ guild.command({
         execute: async function (ctx) {
                 const result = await ctx.models.Guild.deleteOne({ id: ctx.guildId });
 
-                ctx.bot.guilds.delete(ctx.guildId);
+                ctx.core.guilds.delete(ctx.guildId);
 
                 return result.deletedCount
                         ? ctx.success(`Guild \`${ctx.guildId}\`'s configuration deleted.`)

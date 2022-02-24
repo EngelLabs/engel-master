@@ -14,7 +14,7 @@ tags.command({
         info: 'Find a server tag',
         requiredArgs: 1,
         execute: function (ctx) {
-                return ctx.bot.commands.get('tag').execute(ctx);
+                return ctx.core.commands.get('tag').execute(ctx);
         }
 });
 

@@ -3,7 +3,7 @@ import { types, helpers } from '@engel/core';
 import Command from './Command';
 import Module from './Module';
 import Base from './Base';
-import Bot from '../Bot';
+import Core from '../Core';
 
 
 interface ContextOptions {
@@ -76,8 +76,8 @@ export default class Context extends Base {
         public removeLoadingReaction: ReactionFunction;
         public removePremiumReaction: ReactionFunction;
 
-        public constructor(bot: Bot, options: ContextOptions) {
-                super(bot);
+        public constructor(core: Core, options: ContextOptions) {
+                super(core);
 
                 Object.assign(this, options);
         }

@@ -1,19 +1,11 @@
 import * as core from '@engel/core';
-import Bot from '../Bot';
+import Core from '../Core';
 
 
 export default class Base extends core.Base {
-        core: Bot;
+        core: Core;
 
-        public constructor(bot?: Bot) {
-                super(bot);
-        }
-
-        public get bot() {
-                return this.core;
-        }
-
-        public set bot(value: Bot) {
-                this.core = value;
+        public constructor(core?: Core) {
+                super(core);
         }
 }

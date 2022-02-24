@@ -115,9 +115,9 @@ purge.command({
 });
 
 purge.command({
-        name: 'bots',
+        name: 'cores',
         usage: '[count=100] [*reason]',
-        info: 'Purge messages from a channel sent by bots',
+        info: 'Purge messages from a channel sent by cores',
         cooldown: 5000,
         requiredPermissions: [
                 'readMessageHistory',
@@ -127,7 +127,7 @@ purge.command({
                 return purgeMessages(
                         ctx,
                         ctx.args.shift(),
-                        msg => msg.author.bot,
+                        msg => msg.author.core,
                         ctx.args.join(' '),
                 );
         }
@@ -146,7 +146,7 @@ purge.command({
                 return purgeMessages(
                         ctx,
                         ctx.args.shift(),
-                        msg => !msg.author.bot,
+                        msg => !msg.author.core,
                         ctx.args.join(' '),
                 );
         }

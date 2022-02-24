@@ -14,7 +14,7 @@ module.exports = new Command({
         requiredArgs: 1,
         cooldown: 1500,
         execute: async function (ctx) {
-                let command = ctx.bot.commands.get(ctx.args[0]);
+                let command = ctx.core.commands.get(ctx.args[0]);
 
                 if (!command) return ctx.error('No command or exists by that name');
 

@@ -13,7 +13,7 @@ module.exports = new Command({
         requiredArgs: 1,
         alwaysEnabled: true,
         execute: function (ctx) {
-                let command = ctx.bot.commands.get(ctx.args[0]);
+                let command = ctx.core.commands.get(ctx.args[0]);
 
                 ctx.args.shift();
 
@@ -59,7 +59,7 @@ module.exports = new Command({
                         update = { ['commands.' + name + '.disabled']: commandConfig.disabled };
                 }
 
-                ctx.bot.guilds.update(ctx.guildConfig, { $set: update });
+                ctx.core.guilds.update(ctx.guildConfig, { $set: update });
 
                 return ctx.success(enabled
                         ? `Command \`${command.qualName}\` enabled.`

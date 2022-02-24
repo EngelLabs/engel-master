@@ -2,7 +2,7 @@
 // TODO: Type this module
 import * as EventEmitter from 'eventemitter3';
 import Base from '../structures/Base';
-import Bot from '../Bot';
+import Core from '../Core';
 import Permission from '../helpers/Permission';
 
 
@@ -15,25 +15,25 @@ interface AnyFunc {
  * Event dispatch manager
  */
 export default class EventManager extends Base {
-        public addListener        = EventEmitter.prototype.addListener;
-        public emit               = EventEmitter.prototype.emit;
-        public eventNames         = EventEmitter.prototype.eventNames;
-        public listenerCount      = EventEmitter.prototype.listenerCount;
-        public listeners          = EventEmitter.prototype.listeners;
-        public off                = EventEmitter.prototype.off;
-        public on                 = EventEmitter.prototype.on;
-        public once               = EventEmitter.prototype.once;
+        public addListener = EventEmitter.prototype.addListener;
+        public emit = EventEmitter.prototype.emit;
+        public eventNames = EventEmitter.prototype.eventNames;
+        public listenerCount = EventEmitter.prototype.listenerCount;
+        public listeners = EventEmitter.prototype.listeners;
+        public off = EventEmitter.prototype.off;
+        public on = EventEmitter.prototype.on;
+        public once = EventEmitter.prototype.once;
         public removeAllListeners = EventEmitter.prototype.removeAllListeners;
-        public removeListener     = EventEmitter.prototype.removeListener;
+        public removeListener = EventEmitter.prototype.removeListener;
         private _permissions: Permission;
         private _registeredEvents: Record<string, { handler: AnyFunc, listeners: Array<AnyFunc> }> = {};
 
-        public constructor(bot: Bot) {
-                super(bot);
+        public constructor(core: Core) {
+                super(core);
 
                 EventEmitter.call(this);
 
-                this._permissions = new Permission(bot);
+                this._permissions = new Permission(core);
         }
 
         public registerListener(event: string, execute: AnyFunc): this {
@@ -97,8 +97,8 @@ export default class EventManager extends Base {
         }
 
         async _guildPayload(payload: any, guildID: string, createIfNotFound: boolean = false): Promise<any> {
-                payload.isTesting = this.bot.config.guilds.testing.includes(guildID);
-                payload.guildConfig = await this.bot.guilds.getOrFetch(guildID, { createIfNotFound });
+                payload.isTesting = this.core.config.guilds.testing.includes(guildID);
+                payload.guildConfig = await this.core.guilds.getOrFetch(guildID, { createIfNotFound });
 
                 return payload;
         }
@@ -272,7 +272,7 @@ export default class EventManager extends Base {
         }
 
         messageCreate(message) {
-                if (message.author.bot) return Promise.resolve();
+                if (message.author.core) return Promise.resolve();
 
                 const payload = {
                         isAdmin: this._permissions.isAdmin(message.author.id),
@@ -289,7 +289,7 @@ export default class EventManager extends Base {
         }
 
         messageDelete(message) {
-                message = this.bot.state.getMessage[message.id];
+                message = this.core.state.getMessage[message.id];
 
                 if (!message) return Promise.resolve();
 
@@ -297,7 +297,7 @@ export default class EventManager extends Base {
         }
 
         messageDeleteBulk(messages) {
-                const state = this.bot.state;
+                const state = this.core.state;
 
                 messages = messages.map(m => state.getMessage(m.id)).filter(m => m);
 
@@ -307,7 +307,7 @@ export default class EventManager extends Base {
         }
 
         messageUpdate(message) {
-                const oldMessage = this.bot.state.getMessage(message.id);
+                const oldMessage = this.core.state.getMessage(message.id);
 
                 if (!oldMessage) return Promise.resolve();
 

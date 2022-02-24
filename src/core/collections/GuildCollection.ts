@@ -1,7 +1,7 @@
 import * as mongodb from 'mongodb';
 import * as mongoose from 'mongoose';
 import { types } from '@engel/core';
-import Bot from '../Bot';
+import Core from '../Core';
 
 
 interface FetchOptions {
@@ -10,25 +10,25 @@ interface FetchOptions {
 
 
 export default class GuildCollection extends Map<string, types.GuildConfig> {
-        private _bot: Bot;
+        private _core: Core;
         private _uncacheInterval?: NodeJS.Timer;
         private _creating: Record<string, Promise<types.GuildConfig>> = {};
 
-        public constructor(bot: Bot) {
+        public constructor(core: Core) {
                 super();
 
-                this._bot = bot;
+                this._core = core;
 
-                bot.redis.subscribe('guildUpdate');
-                bot.redis.on('message', this.guildUpdate.bind(this));
-                bot.eris.on('guildCreate', this.guildCreate.bind(this));
-                bot.eris.on('guildDelete', this.guildDelete.bind(this));
+                core.redis.subscribe('guildUpdate');
+                core.redis.on('message', this.guildUpdate.bind(this));
+                core.eris.on('guildCreate', this.guildCreate.bind(this));
+                core.eris.on('guildDelete', this.guildDelete.bind(this));
 
-                bot.on('config', this._configure.bind(this));
+                core.on('config', this._configure.bind(this));
         }
 
         private _configure(config: types.Config): void {
-                if (config.guildCache && config.guildUncacheInterval !== this._bot.config.guildUncacheInterval) {
+                if (config.guildCache && config.guildUncacheInterval !== this._core.config.guildUncacheInterval) {
                         clearInterval(this._uncacheInterval);
 
                         this._uncacheInterval = setInterval(this.uncache.bind(this), config.guildUncacheInterval);
@@ -39,7 +39,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 const now = Date.now();
 
                 for (const guild of this.values()) {
-                        if (now - guild._cachedAt > this._bot.config.guildMaxAge) {
+                        if (now - guild._cachedAt > this._core.config.guildMaxAge) {
                                 this.delete(guild.id);
                         }
                 }
@@ -57,7 +57,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
         private guildUpdate(chnl: string, id: string): void {
                 if (chnl !== 'guildUpdate') return;
 
-                if (this._bot.eris.guilds.has(id)) {
+                if (this._core.eris.guilds.has(id)) {
                         this.fetch(id);
                 }
         }
@@ -66,7 +66,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
-                        if (this._bot.config.guildCache) {
+                        if (this._core.config.guildCache) {
                                 const ret = this.get(guildID);
 
                                 if (ret) {
@@ -84,11 +84,11 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
-                        this._bot.models.Guild.findOne({ id: guildID })
+                        this._core.models.Guild.findOne({ id: guildID })
                                 .lean()
                                 .exec()
                                 .then((guild: types.GuildConfig | undefined) => {
-                                        if (guild && this._bot.config.guildCache) {
+                                        if (guild && this._core.config.guildCache) {
                                                 this.set(guildID, guild);
                                         }
 
@@ -115,14 +115,14 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
 
                 const doc: types.GuildConfig = {
                         id: guildID,
-                        prefixes: this._bot.config.prefixes.default,
-                        client: this._bot.baseConfig.client.name,
+                        prefixes: this._core.config.prefixes.default,
+                        client: this._core.baseConfig.client.name,
                 };
 
                 const p: Promise<types.GuildConfig> = new Promise((resolve, reject) => {
-                        this._bot.models.Guild.create(doc)
+                        this._core.models.Guild.create(doc)
                                 .then((guild: types.GuildConfig) => {
-                                        if (this._bot.config.guildCache) {
+                                        if (this._core.config.guildCache) {
                                                 this.set(guildID, guild);
                                         }
 
@@ -147,7 +147,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
-                        this._bot.models.Guild.updateOne({ id: guildID }, update)
+                        this._core.models.Guild.updateOne({ id: guildID }, update)
                                 .exec()
                                 .then(resolve)
                                 .catch(reject);

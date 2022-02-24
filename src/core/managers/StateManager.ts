@@ -1,6 +1,6 @@
 import * as eris from 'eris';
 import { types } from '@engel/core';
-import Bot from '../Bot';
+import Core from '../Core';
 import Base from '../structures/Base';
 
 
@@ -20,17 +20,17 @@ export default class CacheManager extends Base {
         private _messages: Record<string, Message> = {};
         private _uncacheInterval?: NodeJS.Timer;
 
-        public constructor(bot: Bot) {
-                super(bot);
+        public constructor(core: Core) {
+                super(core);
 
-                bot.events
+                core.events
                         .registerListener('messageCreate', this.messageCreate.bind(this))
                         .registerListener('messageUpdate', this.messageUpdate.bind(this))
                         .registerListener('messageDelete', this.messageDelete.bind(this))
                         .registerListener('guildDelete', this.guildDelete.bind(this))
                         .registerListener('guildChannelDelete', this.guildChannelDelete.bind(this));
 
-                bot.on('config', this._configure.bind(this));
+                core.on('config', this._configure.bind(this));
         }
 
         private _configure(config: types.Config): void {

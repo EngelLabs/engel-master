@@ -50,8 +50,8 @@ module.exports = new Command({
                 embed.fields.push({
                         name: `Members [${guild.memberCount}]`,
                         value: [
-                                `Humans: ${guild.members.filter(m => !m.bot).length}`,
-                                `Bots: ${guild.members.filter(m => m.bot).length}`
+                                `Humans: ${guild.members.filter(m => !m.core).length}`,
+                                `Bots: ${guild.members.filter(m => m.core).length}`
                         ].join('\n'),
                         inline: true,
                 });

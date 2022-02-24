@@ -237,7 +237,7 @@ class Core extends Module {
 
                 if (!args.length) return;
 
-                let command = this.bot.commands.get(args.shift());
+                let command = this.core.commands.get(args.shift());
 
                 if (!command) return;
 
@@ -270,7 +270,7 @@ class Core extends Module {
                         return [args.shift(), args.shift()];
                 }
 
-                const ctx = new Context(this.bot, {
+                const ctx = new Context(this.core, {
                         args,
                         prefix: prefix || '?',
                         message,
@@ -354,7 +354,7 @@ class Core extends Module {
                 const { command, prefix, isDM, isAdmin, args } = ctx;
 
                 if (args.length < command?.requiredArgs) {
-                        const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
+                        const embed = this.core.commands.getHelp(command, prefix, isAdmin);
 
                         return ctx.send({ embed });
                 }
@@ -382,7 +382,7 @@ class Core extends Module {
 
                         if (command.namespace) {
                                 execute = () => {
-                                        const embed = this.bot.commands.getHelp(command, prefix, isAdmin);
+                                        const embed = this.core.commands.getHelp(command, prefix, isAdmin);
 
                                         return ctx.send({ embed });
                                 }

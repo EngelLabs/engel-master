@@ -53,7 +53,7 @@ prefix.command({
                 }
 
                 ctx.guildConfig.prefixes = [prefix];
-                ctx.bot.guilds.update(ctx.guildConfig.id, { $set: { prefixes: [prefix] } });
+                ctx.core.guilds.update(ctx.guildConfig.id, { $set: { prefixes: [prefix] } });
 
                 return ctx.success(`Replaced prefixes with \`${prefix}\`.`);
         }
@@ -87,7 +87,7 @@ prefix.command({
                 }
 
                 ctx.guildConfig.prefixes.push(prefix);
-                ctx.bot.guilds.update(ctx.guildConfig, { $addToSet: { prefixes: prefix } });
+                ctx.core.guilds.update(ctx.guildConfig, { $addToSet: { prefixes: prefix } });
 
                 return ctx.success(`Added prefix \`${prefix}\`.`);
         }
@@ -121,7 +121,7 @@ prefix.command({
                         ctx.guildConfig.prefixes = ctx.config.prefixes.default.concat();
                 }
 
-                ctx.bot.guilds.update(ctx.guildConfig, update);
+                ctx.core.guilds.update(ctx.guildConfig, update);
 
                 return ctx.success(`Removed prefix \`${prefix}\`.`);
         }

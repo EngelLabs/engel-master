@@ -21,13 +21,13 @@ module.exports = new Command({
 
                 const str = ctx.args.join(' ');
 
-                if (str.toLowerCase() === 'bot') {
+                if (str.toLowerCase() === 'core') {
                         const msgArray = [
                                 'Not implemented yet, sorry!',
                         ];
                         const me = ctx.me;
                         const embed = {
-                                title: 'Bot Help',
+                                title: 'Core Help',
                                 description: msgArray.join('\n'),
                                 author: {
                                         name: `${me.username}#${me.discriminator}`,
@@ -39,7 +39,7 @@ module.exports = new Command({
                         return ctx.send({ embed });
                 }
 
-                let command = ctx.bot.commands.get(ctx.args.shift());
+                let command = ctx.core.commands.get(ctx.args.shift());
 
                 while (command?.commands && ctx.args.length) {
                         const subcommand = command.commands.get(ctx.args[0]);
@@ -55,7 +55,7 @@ module.exports = new Command({
                 }
 
                 if (!command || ((command.module.private || command.module.internal || command.module.disabled) && !ctx.isAdmin)) {
-                        const module = ctx.bot.modules.get(str);
+                        const module = ctx.core.modules.get(str);
 
                         if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
                                 return ctx.error('No command or module exists by that name.');

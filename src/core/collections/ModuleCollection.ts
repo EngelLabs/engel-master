@@ -4,40 +4,40 @@ import * as core from '@engel/core';
 const reload = require('require-reload')(require);
 import CommandCollection from './CommandCollection';
 import Module from '../structures/Module';
-import Bot from '../Bot';
+import Core from '../Core';
 
 
 const modulesPath = path.resolve('../../modules');
 
 
 export default class ModuleCollection extends core.Collection<Module> {
-        private _bot: Bot;
+        private _core: Core;
         private _commands: CommandCollection;
 
-        public constructor(bot: Bot) {
+        public constructor(core: Core) {
                 super();
 
-                this._bot = bot;
-                this._commands = bot.commands;
+                this._core = core;
+                this._commands = core.commands;
         }
 
         private _log(message?: string, level?: string, prefix: string = 'Modules'): void {
-                this._bot.log(message, level, prefix);
+                this._core.log(message, level, prefix);
         }
 
         public register(): Promise<void> {
-                this._bot.config.modules = {};
+                this._core.config.modules = {};
 
                 [...this.unique()]
                         .map(m => m.globalConfig)
                         .forEach(m => {
                                 if (!m) return;
 
-                                this._bot.config.modules[m.dbName] = m;
+                                this._core.config.modules[m.dbName] = m;
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._bot.models.Config.updateOne({ state: this._bot.baseConfig.client.state }, { $set: { modules: this._bot.config.modules } })
+                        this._core.models.Config.updateOne({ state: this._core.baseConfig.client.state }, { $set: { modules: this._core.config.modules } })
                                 .exec()
                                 .then(() => resolve())
                                 .catch(reject);
@@ -58,7 +58,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                                 return false;
                         }
 
-                        module.inject(this._bot);
+                        module.inject(this._core);
 
                         this.add(module);
 
@@ -68,7 +68,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
                 } catch (err: any) {
                         if (module) {
-                                module.eject(this._bot);
+                                module.eject(this._core);
                         }
 
                         throw err;
@@ -80,7 +80,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
                 if (!module) return false;
 
-                module.eject(this._bot);
+                module.eject(this._core);
 
                 this.remove(module);
 

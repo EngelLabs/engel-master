@@ -11,7 +11,7 @@ const reload = new Command({
                 if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 try {
-                        var res = ctx.bot.modules.reload(ctx.args.length ? ctx.args : false);
+                        var res = ctx.core.modules.reload(ctx.args.length ? ctx.args : false);
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }
@@ -26,7 +26,7 @@ reload.command({
         dmEnabled: true,
         execute: async function (ctx) {
                 try {
-                        await ctx.bot.configure();
+                        await ctx.core.configure();
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }

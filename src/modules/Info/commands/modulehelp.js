@@ -14,7 +14,7 @@ module.exports = new Command({
         requiredArgs: 1,
         cooldown: 1500,
         execute: async function (ctx) {
-                const module = ctx.bot.modules.get(ctx.args.join(' '));
+                const module = ctx.core.modules.get(ctx.args.join(' '));
 
                 if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
                         return ctx.error('No module exists by that name.');

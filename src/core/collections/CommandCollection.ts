@@ -1,32 +1,32 @@
 import * as core from '@engel/core';
 import Command from '../structures/Command';
-import Bot from '../Bot';
+import Core from '../Core';
 
 
 export default class CommandCollection extends core.Collection<Command> {
-        private _bot?: Bot;
+        private _core?: Core;
 
-        public constructor(bot?: Bot) {
+        public constructor(core?: Core) {
                 super();
 
-                if (bot) {
-                        this._bot = bot;
+                if (core) {
+                        this._core = core;
                 }
         }
 
         public register(): Promise<void> {
-                this._bot.config.commands = {};
+                this._core.config.commands = {};
 
                 this.all()
                         .map(command => command.globalConfig)
                         .forEach(c => {
                                 if (!c) return;
 
-                                this._bot.config.commands[c.name] = c;
+                                this._core.config.commands[c.name] = c;
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._bot.models.Config.updateOne({ state: this._bot.baseConfig.client.state }, { $set: { commands: this._bot.config.commands } })
+                        this._core.models.Config.updateOne({ state: this._core.baseConfig.client.state }, { $set: { commands: this._core.config.commands } })
                                 .exec()
                                 .then(() => resolve())
                                 .catch(reject);

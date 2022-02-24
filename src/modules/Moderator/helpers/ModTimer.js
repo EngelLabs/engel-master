@@ -8,8 +8,8 @@ const { Permissions } = require('eris').Constants;
  * Moderation timer handler
  */
 class ModTimer extends Base {
-        constructor(bot) {
-                super(bot);
+        constructor(core) {
+                super(core);
 
                 return this._handle.bind(this);
         }
@@ -19,7 +19,7 @@ class ModTimer extends Base {
          * @returns {Promise<void>}
          */
         async _handle() {
-                if (!this.bot.isReady) return;
+                if (!this.core.isReady) return;
 
                 let modlogs;
 
@@ -60,7 +60,7 @@ class ModTimer extends Base {
 
                 if (!this.helpers.permissions.hasGuildPermissions(guild, 'manageRoles')) return;
 
-                const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
                 const muteRole = guildConfig.muteRole;
@@ -92,7 +92,7 @@ class ModTimer extends Base {
 
                 if (!this.helpers.permissions.hasGuildPermissions(guild, 'banMembers')) return;
 
-                const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
@@ -123,7 +123,7 @@ class ModTimer extends Base {
 
                 if (!this.helpers.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
-                const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
@@ -175,7 +175,7 @@ class ModTimer extends Base {
 
                 if (!this.helpers.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
-                const guildConfig = await this.bot.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 

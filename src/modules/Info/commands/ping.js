@@ -3,7 +3,7 @@ const { Command } = require('@engel/core');
 
 const ping = new Command({
         name: 'ping',
-        info: 'Calculate the time taken for the bot to send a message',
+        info: 'Calculate the time taken for the core to send a message',
         aliases: [
                 'latency',
         ],
@@ -30,7 +30,7 @@ const ping = new Command({
 ping.command({
         name: 'ws',
         hidden: true,
-        info: 'Calculate the time taken for the bot to receive a message',
+        info: 'Calculate the time taken for the core to receive a message',
         dmEnabled: true,
         execute: function (ctx) {
                 return ctx.send(`Pong! ${Date.now() - ctx.message.timestamp}ms`);

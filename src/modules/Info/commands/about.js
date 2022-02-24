@@ -6,7 +6,7 @@ module.exports = new Command({
         name: 'about',
         alwaysEnabled: true,
         dmEnabled: true,
-        info: 'Get information about the bot',
+        info: 'Get information about the core',
         cooldown: 20000,
         execute: function (ctx) {
                 const owner = ctx.eris.users.get(ctx.config.author.id);

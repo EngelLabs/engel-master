@@ -61,7 +61,7 @@ class Moderation extends Base {
                                 }
                         }
 
-                        const commandConfig: types.CommandConfig<'Moderator' | 'Manager'> | boolean = guildConfig.commands?.[commandName];
+                        const commandConfig: types.CommandConfig | boolean = guildConfig.commands?.[commandName];
                         const moduleConfig: types.Moderation = guildConfig[moduleName];
 
                         if (typeof commandConfig !== 'boolean' && commandConfig?.protectedRoles?.length) {
@@ -133,49 +133,6 @@ class Moderation extends Base {
                 });
         }
 
-        resolveMuteRole(guild, guildConfig) {
-                return new Promise((resolve, reject) => {
-                        let role;
-
-                        if (guildConfig.muteRole) {
-                                role = guild.roles.get(guildConfig.muteRole);
-
-                                if (role) {
-                                        return resolve(role);
-                                }
-                        }
-
-                        this.createMuteRole(guild, guildConfig)
-                                .then(resolve)
-                                .catch(reject);
-                });
-        }
-
-        createMuteRole(guild, guildConfig) {
-                return new Promise((resolve, reject) => {
-                        this.eris.createRole(guild.id, { name: 'Muted' })
-                                .then(role => {
-                                        for (const channel of guild.channels.values()) {
-                                                this.eris
-                                                        .editChannelPermission(channel.id, role.id, 0, 3147840, 0, 'Automatic muterole creation')
-                                                        .catch(() => false);
-                                        }
-
-                                        guildConfig.muteRole = role.id;
-
-                                        this.bot.guilds.update(guild.id, { $set: { 'muteRole': role.id } });
-
-                                        this.log(`Created mute role R${role.id} G${guild.id}.`);
-
-                                        resolve(role);
-
-                                })
-                                .catch(() => {
-                                        reject("I can't create a mute role.\nUse the `muterole set` command to set one.");
-                                });
-                });
-        }
-
         createModlog(guildConfig, type, duration, count, reason, user, mod, channel) {
                 return new Promise((resolve, reject) => {
                         guildConfig.caseCount = guildConfig.caseCount || 0;
@@ -184,7 +141,7 @@ class Moderation extends Base {
 
                         guildConfig.caseCount++;
 
-                        this.bot.guilds.update(guildConfig, { $inc: { caseCount: 1 } });
+                        this.core.guilds.update(guildConfig, { $inc: { caseCount: 1 } });
 
                         mod = {
                                 id: mod.id,
