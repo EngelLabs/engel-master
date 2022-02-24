@@ -1,4 +1,4 @@
-const { Command } = require('@timbot/core');
+const { Command } = require('@engel/core');
 
 
 module.exports = new Command({
@@ -30,7 +30,7 @@ module.exports = new Command({
 
                 try {
                         modlogs = await ctx.models.ModLog
-                                .find({ guild: ctx.guild.id, $or: [ { 'user.id': id }, { 'channel.id': id }] })
+                                .find({ guild: ctx.guild.id, $or: [{ 'user.id': id }, { 'channel.id': id }] })
                                 .lean();
                 } catch (err) {
                         return ctx.error(err);

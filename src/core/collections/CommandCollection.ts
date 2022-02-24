@@ -1,4 +1,4 @@
-import * as core from '@timbot/core';
+import * as core from '@engel/core';
 import Command from '../structures/Command';
 import Bot from '../Bot';
 

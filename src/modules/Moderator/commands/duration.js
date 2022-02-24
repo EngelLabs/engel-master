@@ -1,4 +1,4 @@
-const { Command } = require('@timbot/core');
+const { Command } = require('@engel/core');
 const prettyMS = require('pretty-ms');
 
 
@@ -28,7 +28,7 @@ module.exports = new Command({
                         guild: ctx.guild.id,
                         case: caseNum
                 };
-                
+
                 const update = duration
                         ? { $set: { duration: duration * 1000, expiry: Date.now() + duration * 1000 } }
                         : { $unset: { duration: null, expiry: null } };

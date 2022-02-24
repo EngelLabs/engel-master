@@ -1,4 +1,4 @@
-const { Base } = require('@timbot/core');
+const { Base } = require('@engel/core');
 const { Permissions } = require('eris').Constants;
 
 

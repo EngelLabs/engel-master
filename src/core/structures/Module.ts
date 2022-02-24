@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import { types } from '@timbot/core';
+import { types } from '@engel/core';
 const reload = require('require-reload')(require);
 import Base from './Base';
 import Command from './Command';
@@ -24,7 +24,7 @@ export default class Module extends Base {
         private _boundListeners?: Array<types.Listener>;
         public injectHook?(): void;
         public ejectHook?(): void;
-        
+
         public constructor() {
                 super();
 

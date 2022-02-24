@@ -1,4 +1,4 @@
-const { Base } = require('@timbot/core');
+const { Base } = require('@engel/core');
 
 
 /**
@@ -8,7 +8,7 @@ const { Base } = require('@timbot/core');
  */
 class Permission extends Base {
         _name = 'permissions';
-        
+
         isOwner(ctx) {
                 return ctx.author.id === ctx.guild.ownerID;
         }

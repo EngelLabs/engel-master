@@ -1,4 +1,4 @@
-const { Module } = require('@timbot/core');
+const { Module } = require('@engel/core');
 
 
 class Events extends Module {

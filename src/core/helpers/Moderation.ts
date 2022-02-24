@@ -1,7 +1,7 @@
 import * as eris from 'eris';
 import * as prettyMS from 'pretty-ms';
 import * as moment from 'moment';
-import { types, helpers } from '@timbot/core';
+import { types, helpers } from '@engel/core';
 import Base from '../structures/Base';
 
 

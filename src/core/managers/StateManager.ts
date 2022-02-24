@@ -1,5 +1,5 @@
 import * as eris from 'eris';
-import { types } from '@timbot/core';
+import { types } from '@engel/core';
 import Bot from '../Bot';
 import Base from '../structures/Base';
 

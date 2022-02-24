@@ -1,6 +1,6 @@
 // GOOD LUCK with reading this code lol
 const bot = new (require('../build/core/Bot'));
-const mongoose = bot.mongoose = (require('@timbot/core').Mongoose)(bot);
+const mongoose = bot.mongoose = (require('@engel/core').Mongoose)(bot);
 const { logger } = bot;
 const state = process.argv[3] || bot.baseConfig.client.state
 const opt = process.argv[2];

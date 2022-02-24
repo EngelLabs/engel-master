@@ -2,7 +2,7 @@ const {
         Module,
         Command,
         Context
-} = require('@timbot/core');
+} = require('@engel/core');
 const baseConfig = require('../../core/utils/baseConfig');
 
 

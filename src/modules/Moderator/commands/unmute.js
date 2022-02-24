@@ -1,4 +1,4 @@
-const { Command } = require('@timbot/core');
+const { Command } = require('@engel/core');
 
 
 const unmute = new Command({
@@ -48,7 +48,7 @@ const unmute = new Command({
                 ctx.module.createModlog(ctx, 'unmute', null, null, reason, ctx.author, user, null);
 
                 ctx.module.expireModlog(ctx, 'mute', user, null);
-                
+
                 ctx.module.customResponse(ctx, 'unmute', user, null);
         }
 });

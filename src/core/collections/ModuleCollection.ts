@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as core from '@timbot/core';
+import * as core from '@engel/core';
 const reload = require('require-reload')(require);
 import CommandCollection from './CommandCollection';
 import Module from '../structures/Module';

@@ -1,4 +1,4 @@
-const { Module } = require('@timbot/core');
+const { Module } = require('@engel/core');
 const ModTimer = require('require-reload')('./helpers/ModTimer', require);
 const prettyMS = require('pretty-ms');
 
@@ -32,7 +32,7 @@ export default class Moderator extends Module {
 
                 const timerHandler = new ModTimer(this.bot);
 
-                this.tasks.push([ timerHandler, 15000 ]);
+                this.tasks.push([timerHandler, 15000]);
 
                 this.listeners.push(this.guildMemberAdd.bind(this));
         }

@@ -1,4 +1,4 @@
-import * as core from '@timbot/core';
+import * as core from '@engel/core';
 import baseConfig from './utils/baseConfig';
 import StateManager from './managers/StateManager';
 import EventManager from './managers/EventManager';

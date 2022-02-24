@@ -1,4 +1,4 @@
-import { types } from '@timbot/core';
+import { types } from '@engel/core';
 import CommandCollection from '../collections/CommandCollection';
 import Context from './Context';
 import Module from './Module';

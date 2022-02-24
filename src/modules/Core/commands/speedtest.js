@@ -1,5 +1,5 @@
 const { exec } = require('child_process');
-const { Command } = require('@timbot/core');
+const { Command } = require('@engel/core');
 
 
 module.exports = new Command({

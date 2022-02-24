@@ -1,4 +1,4 @@
-const { Command } = require('@timbot/core');
+const { Command } = require('@engel/core');
 
 
 const purgeMessages = async (ctx, count, check, reason, type) => {

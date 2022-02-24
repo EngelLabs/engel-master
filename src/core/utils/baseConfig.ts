@@ -1,4 +1,4 @@
-import { baseConfig } from '@timbot/core';
+import { baseConfig } from '@engel/core';
 const pkg = require('../../../package.json');
 
 

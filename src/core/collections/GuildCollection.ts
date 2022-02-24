@@ -1,6 +1,6 @@
 import * as mongodb from 'mongodb';
 import * as mongoose from 'mongoose';
-import { types } from '@timbot/core';
+import { types } from '@engel/core';
 import Bot from '../Bot';
 
 

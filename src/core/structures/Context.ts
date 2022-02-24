@@ -1,5 +1,5 @@
 import * as eris from 'eris';
-import { types, helpers } from '@timbot/core';
+import { types, helpers } from '@engel/core';
 import Command from './Command';
 import Module from './Module';
 import Base from './Base';

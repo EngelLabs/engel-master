@@ -1,4 +1,4 @@
-const { Module } = require('@timbot/core');
+const { Module } = require('@engel/core');
 
 
 class Info extends Module {

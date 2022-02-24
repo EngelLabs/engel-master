@@ -1,4 +1,4 @@
-const { Command } = require('@timbot/core');
+const { Command } = require('@engel/core');
 
 
 module.exports = new Command({
@@ -8,7 +8,7 @@ module.exports = new Command({
         execute: function (ctx) {
                 let msg = '';
 
-                msg += 'Premium enables an improved timbot experience by giving you access to an improved and extended feature set.\n';
+                msg += 'Premium enables an improved engel experience by giving you access to an improved and extended feature set.\n';
                 msg += 'It also helps the development and uptime of the bot. No, it\'s not available yet (still under development!).\n';
 
                 if (ctx.helpers.permissions.isServerOwner(ctx.author.id) && ctx.guildConfig.isPremium && !ctx.guildConfig.hasPremium) {
