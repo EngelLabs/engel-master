@@ -1,1 +1,1 @@
-declare module '@timbot/core';
+declare module '@engel/core';
