@@ -1,16 +1,24 @@
-const {
-        Module,
-        Command,
-        Context
-} = require('@engel/core');
-const baseConfig = require('../../core/utils/baseConfig');
+import Module from '../../core/structures/Module';
+import Command from '../../core/structures/Command';
+import Context from '../../core/structures/Context';
+import Permission from '../../core/helpers/Permission';
+import baseConfig from '../../core/utils/baseConfig';
 
 
 const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
 
+interface Cooldown {
+        time: number;
+        cooldown: number;
+        warned?: boolean;
+}
 
-class Core extends Module {
-        constructor() {
+export default class Core extends Module {
+        private cooldowns: Map<string, Cooldown>;
+        private globalCooldowns: Map<string, number>;
+        private permissions: Permission;
+
+        public constructor() {
                 super();
 
                 this.private = true;
@@ -21,7 +29,7 @@ class Core extends Module {
         injectHook() {
                 this.cooldowns = new Map();
                 this.globalCooldowns = new Map();
-                this.permissions = this.helpers.permissions;
+                this.permissions = new Permission(this.core);
 
                 this.tasks = [];
                 this.listeners = [];
@@ -556,6 +564,3 @@ class Core extends Module {
                 }
         }
 }
-
-
-module.exports = Core;

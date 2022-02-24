@@ -22,7 +22,7 @@ interface CommandOptions {
         check?: (ctx: Context) => boolean | Promise<boolean>;
         before?: (ctx: Context) => void | Promise<void>;
         after?: (ctx: Context) => void | Promise<void>;
-        execute: (ctx: Context) => any | Promise<any>;
+        execute?: (ctx: Context) => any | Promise<any>;
 }
 
 /**

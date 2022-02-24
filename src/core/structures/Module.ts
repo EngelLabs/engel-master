@@ -19,6 +19,7 @@ export default class Module extends Base {
         public internal?: boolean;
         public disabled?: boolean;
         public allowedByDefault?: boolean;
+        public tasks?: Array<[Function, number]>;
         public commands?: Array<Command>;
         public listeners?: Array<types.Listener>;
         private _boundListeners?: Array<types.Listener>;
