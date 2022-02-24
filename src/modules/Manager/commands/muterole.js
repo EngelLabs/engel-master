@@ -1,4 +1,5 @@
 const { Command } = require('@engel/core');
+const Roles = require('../../../core/helpers/Roles');
 
 
 const muterole = new Command({
@@ -60,8 +61,10 @@ muterole.command({
         cooldown: 30000,
         requiredPermissions: ['manageRoles', 'manageChannels'],
         execute: async function (ctx) {
+                const roles = new Roles(ctx.core);
+                
                 try {
-                        var role = await ctx.helpers.moderation.createMuteRole(ctx.guild, ctx.guildConfig);
+                        var role = await roles.createMuteRole(ctx.guild, ctx.guildConfig);
                 } catch (err) {
                         return ctx.error(err.toString());
                 }

@@ -1,4 +1,5 @@
 const { Command } = require('@engel/core');
+const Roles = require('../../../core/helpers/Roles');
 
 
 const mute = new Command({
@@ -10,9 +11,10 @@ const mute = new Command({
         requiredPermissions: ['manageRoles', 'manageChannels'],
         execute: async function (ctx) {
                 let role;
+                const roles = new Roles(ctx.core);
 
                 try {
-                        role = await ctx.helpers.moderation.resolveMuteRole(ctx.guild, ctx.guildConfig);
+                        role = await roles.resolveMuteRole(ctx.guild, ctx.guildConfig);
                 } catch (err) {
                         return ctx.error(err);
                 }
