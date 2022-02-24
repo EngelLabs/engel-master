@@ -13,7 +13,6 @@
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "dependencies": {
         "@engel/core": "github:engel-labs/engel-core",
-        "@engel/logger": "github:engel-labs/engel-logger",
         "bluebird": "^3.7.2",
         "bufferutil": "^4.0.5",
         "cluster": "^0.7.7",
