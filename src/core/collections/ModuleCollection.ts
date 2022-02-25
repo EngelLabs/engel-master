@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as path from 'path';
+import * as eris from 'eris';
 import * as core from '@engel/core';
 const reload = require('require-reload')(require);
 import CommandCollection from './CommandCollection';
@@ -42,6 +43,48 @@ export default class ModuleCollection extends core.Collection<Module> {
                                 .then(() => resolve())
                                 .catch(reject);
                 });
+        }
+
+        /**
+         * Get help for a module in the form of an embed object.
+         * @param module Module object
+         * @param includeHidden Whether to include hidden values
+         * @param verbose Whether to add verbose footer
+         */
+        public help(moduleName: string, prefix: string = '?', includeHidden: boolean = false, verbose: boolean = true): eris.EmbedOptions {
+                const module = this.get(moduleName);
+
+                if (!module || ((module.private || module.internal || module.disabled) && !includeHidden)) return;
+
+                const embed: eris.EmbedOptions = {
+                        title: `Module "${module.name}" info`,
+                        description: '',
+                        color: this._core.config.colours.info,
+                };
+
+                if (module.info) {
+                        embed.description += `**Info:** ${module.info}\n `;
+                }
+
+                if (module.commands) {
+                        const commands = module.commands
+                                .filter(cmd => cmd.hidden && !includeHidden ? false : true);
+                        const msg = commands
+                                .map(cmd => `\t**${cmd.name}**: ${cmd.info || 'No info provided'}`)
+                                .join('\n');
+
+                        if (msg?.length) {
+                                embed.description += `\n**Commands [${commands.length}]:**\n${msg}`;
+                        }
+                }
+
+                if (verbose) {
+                        embed.footer = embed.footer || { text: '' };
+
+                        embed.footer.text += `\nConfused? Check out "${prefix}help core"`;
+                }
+
+                return embed;
         }
 
         public loadSingle(moduleName: string): boolean {

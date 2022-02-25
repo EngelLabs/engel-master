@@ -39,38 +39,16 @@ module.exports = new Command({
                         return ctx.send({ embed });
                 }
 
-                let command = ctx.core.commands.get(ctx.args.shift());
-
-                while (command?.commands && ctx.args.length) {
-                        const subcommand = command.commands.get(ctx.args[0]);
-
-                        /*
-                        if (!subcommand) return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
-                        */
-
-                        if (!subcommand) break;
-
-                        command = subcommand;
-                        ctx.args.shift();
-                }
-
-                if (!command || ((command.module.private || command.module.internal || command.module.disabled) && !ctx.isAdmin)) {
-                        const module = ctx.core.modules.get(str);
-
-                        if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
-                                return ctx.error('No command or module exists by that name.');
-                        }
-
-                        const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
-
-                        const embed = ctx.module.getModuleHelp(module, ctx.prefix, ctx.isAdmin, verbose);
-
-                        return ctx.send({ embed });
-                }
-
                 const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
 
-                const embed = ctx.module.getCommandHelp(command, ctx.prefix, ctx.isAdmin, verbose);
+                const embed = (
+                        ctx.core.commands.help(str, ctx.prefix, ctx.isAdmin, verbose) ||
+                        ctx.core.modules.help(str, ctx.prefix, ctx.isAdmin, verbose)
+                );
+
+                if (!embed) {
+                        return ctx.error('No command or module exists by that name.');
+                }
 
                 return ctx.send({ embed });
         }

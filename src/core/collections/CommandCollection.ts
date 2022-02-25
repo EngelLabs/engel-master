@@ -1,3 +1,4 @@
+import * as eris from 'eris';
 import * as core from '@engel/core';
 import Command from '../structures/Command';
 import Core from '../Core';
@@ -31,6 +32,75 @@ export default class CommandCollection extends core.Collection<Command> {
                                 .then(() => resolve())
                                 .catch(reject);
                 });
+        }
+
+        /**
+        * Get help for a command in the form of an embed object.
+        * @param command Command object
+        * @param param Prefix to use in return value
+        * @param includeHidden Whether to include hidden values
+        * @param verbose Whether to add verbose footer
+        */
+        public help(commandName: string, prefix: string = '?', includeHidden: boolean = false, verbose: boolean = true): eris.EmbedOptions {
+                const command = this.get(commandName, true);
+
+                if (!command || ((command.module.private || command.module.internal || command.module.disabled) && !includeHidden)) return;
+
+                const qualName = command.qualName;
+
+                const embed: eris.EmbedOptions = {
+                        title: `Command "${qualName}" info`,
+                        description: `**Module:** ${command.module.name}`,
+                        color: this._core.config.colours.info,
+                };
+
+                if (command.usage?.length) {
+                        embed.description += `\n**Usage:** ${prefix}${qualName} ${command.usage}`;
+                } else {
+                        embed.description += `\n**Usage:** ${prefix}${qualName}`
+                }
+
+                if (command.cooldown) {
+                        embed.description += `\n**Cooldown:** ${command.cooldown / 1000} seconds`;
+                }
+
+                if (command.info?.length) {
+                        embed.description += `\n**Info:** ${command.info}`;
+                }
+
+                if (command.aliases?.length) {
+                        embed.description += `\n**Aliases:** ${command.aliases.join(', ')}`;
+                }
+
+                if (command.commands) {
+                        const commands = [...command.commands.unique()]
+                                .filter(cmd => cmd.hidden && !includeHidden ? false : true);
+                        const msg = commands
+                                .map(cmd => cmd.name)
+                                .join(', ');
+
+                        if (msg?.length) {
+                                embed.description += `\n**Subcommands [${commands.length}]:** ${msg}`;
+
+                                if (verbose) {
+                                        embed.footer = {
+                                                text: `Use "${prefix}help ${qualName} <subcommand>" for more info`
+                                        };
+                                }
+                        }
+                }
+
+                if (command.examples?.length) {
+                        embed.description += `\n**Examples:**\n${command.examples.map(e => prefix + e).join('\n')}`;
+                }
+
+                if (verbose) {
+                        embed.footer = embed.footer || { text: '' };
+
+                        embed.footer.text += `\nConfused? Check out "${prefix}help core"`;
+                }
+
+                return embed;
         }
 
         public all(): Command[] {

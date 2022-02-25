@@ -13,16 +13,14 @@ module.exports = new Command({
         ],
         requiredArgs: 1,
         cooldown: 1500,
-        execute: async function (ctx) {
-                const module = ctx.core.modules.get(ctx.args.join(' '));
-
-                if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
-                        return ctx.error('No module exists by that name.');
-                }
-
+        execute: function (ctx) {
                 const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
 
-                const embed = ctx.module.getModuleHelp(module, ctx.prefix, ctx.isAdmin, verbose);
+                const embed = ctx.core.modules.help(ctx.args.join(' '), ctx.prefix, ctx.isAdmin, verbose);
+
+                if (!embed) {
+                        return ctx.error('No module exists by that name.');
+                }
 
                 return ctx.send({ embed });
         }
