@@ -39,6 +39,7 @@ export interface GuildConfig extends BaseCommandConfig {
         delCommands?: boolean;
         commands?: Record<string, CommandConfig | boolean>;
         modules?: Record<string, ModuleConfig>;
+        noDisableWarning?: boolean;
 }
 
 export interface CommandConfig extends BaseCommandConfig {
