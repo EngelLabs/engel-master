@@ -8,7 +8,7 @@ import ModuleCollection from './collections/ModuleCollection';
 
 
 /**
- * Represents a Discord core
+ * Represents a Discord bot
  */
 export default class Core extends core.Core {
         public baseConfig = baseConfig;
@@ -19,7 +19,7 @@ export default class Core extends core.Core {
         public modules: ModuleCollection;
 
         /**
-         * Set the core instance up
+         * Set the bot instance up
          */
         public setup(): Promise<void> {
 
