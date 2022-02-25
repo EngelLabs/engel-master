@@ -180,7 +180,7 @@ export default class Command {
                 return resolve(true);
         }
 
-        public async execute() {
+        public async execute(ctx: Context): Promise<any> {
                 throw new Error(`Unreachable code.`);
         }
 }
