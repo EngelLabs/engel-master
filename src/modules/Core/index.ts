@@ -1,11 +1,23 @@
+import * as eris from 'eris';
+import { types } from '@engel/core';
 import Module from '../../core/structures/Module';
 import Command from '../../core/structures/Command';
 import Context from '../../core/structures/Context';
+import Moderation from '../../core/helpers/Moderation';
 import Permission from '../../core/helpers/Permission';
 import baseConfig from '../../core/utils/baseConfig';
 
 
 const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
+
+interface Payload {
+        isDM: boolean;
+        isAdmin: boolean;
+        isTester: boolean;
+        isTesting: boolean;
+        message: eris.Message;
+        guildConfig: types.GuildConfig;
+}
 
 interface Cooldown {
         time: number;
@@ -16,7 +28,9 @@ interface Cooldown {
 export default class Core extends Module {
         private cooldowns: Map<string, Cooldown>;
         private globalCooldowns: Map<string, number>;
+        private moderation: Moderation;
         private permissions: Permission;
+        private events?: number;
 
         public constructor() {
                 super();
@@ -26,9 +40,10 @@ export default class Core extends Module {
                 this.info = 'Core module';
         }
 
-        injectHook() {
+        public injectHook(): void {
                 this.cooldowns = new Map();
                 this.globalCooldowns = new Map();
+                this.moderation = new Moderation(this.core);
                 this.permissions = new Permission(this.core);
 
                 this.tasks = [];
@@ -36,8 +51,8 @@ export default class Core extends Module {
 
                 this.tasks.push([this.clearCooldowns.bind(this), 5000])
                 this.listeners.push(this.messageCreate.bind(this));
-                this.listeners.push(this.guildCreate.bind(this));
-                this.listeners.push(this.guildDelete.bind(this));
+                // this.listeners.push(this.guildCreate.bind(this));
+                // this.listeners.push(this.guildDelete.bind(this));
                 this.listeners.push(this.rawWS.bind(this));
 
                 const admin = new Command({
@@ -55,13 +70,13 @@ export default class Core extends Module {
                 this.commands = [admin];
         }
 
-        commandCheck(ctx) {
+        public commandCheck(ctx: Context): boolean {
                 return ctx.author.id === ctx.config.author.id;
         }
 
-        clearCooldowns() {
+        public clearCooldowns(): void {
                 if (this.cooldowns.size) {
-                        for (const [key, cooldown] of this.cooldowns.values()) {
+                        for (const [key, cooldown] of this.cooldowns.entries()) {
                                 if ((Date.now() - cooldown.time) >= cooldown.cooldown) {
                                         this.cooldowns.delete(key);
                                 }
@@ -71,7 +86,7 @@ export default class Core extends Module {
                 if (this.globalCooldowns.size) {
                         const config = this.config;
 
-                        for (const [key, time] of this.globalCooldowns.values()) {
+                        for (const [key, time] of this.globalCooldowns.entries()) {
                                 if ((Date.now() - time) >= config.globalCooldown) {
                                         this.globalCooldowns.delete(key);
                                 }
@@ -79,24 +94,11 @@ export default class Core extends Module {
                 }
         }
 
-        async postEmbed(embed) {
-                let webhook = this.config.webhooks.guildLog;
-
-                // if (!webhook) {
-                //     webhook = await this.createWebhook();
-                // }
-
-                try {
-                        await superagent
-                                .post(getWebhookUrl(webhook))
-                                .set('Content-Type', 'application/json')
-                                .send({ embeds: [embed] });
-                } catch (err) {
-                        // this.logger.error(err, { at: 'Core.postEmbed' });
-                }
+        private async postEmbed(embed: eris.EmbedOptions): Promise<void> {
+                // TODO
         }
 
-        messageCreate(payload) {
+        private messageCreate(payload: Payload): Promise<void> {
                 if (payload.isAdmin) {
                         return this.handleAdmin(payload);
                 }
@@ -104,15 +106,17 @@ export default class Core extends Module {
                 return this.handleCommand(payload);
         }
 
-        handleAdmin(p) {
+        private handleAdmin(p: Payload): Promise<void> {
                 const ctx = this.resolveContext(p);
 
-                if (!ctx) return Promise.resolve();
+                if (!ctx) {
+                        return Promise.resolve();
+                }
 
                 return this.executeCommand(ctx);
         }
 
-        async handleCommand(p) {
+        private async handleCommand(p: Payload): Promise<void> {
                 const { isTester, isTesting, isDM, message } = p;
                 let { guildConfig } = p;
 
@@ -206,20 +210,31 @@ export default class Core extends Module {
                 }
 
                 if (config.modules?.[moduleName]?.disabled) {
-                        return ctx.error('Sorry, this module has been disabled globally. Try again later.');
+                        ctx.error('Sorry, this module has been disabled globally. Try again later.');
+
+                        return;
                 }
 
                 if (config.commands?.[commandName]?.disabled) {
-                        return ctx.error('Sorry, this command has been disabled globally. Try again later.');
+                        ctx.error('Sorry, this command has been disabled globally. Try again later.');
+
+                        return;
                 }
 
                 return this.executeCommand(ctx);
         }
 
-        resolveContext({ guildConfig, message, isAdmin, isTesting, isDM }) {
-                if (isDM) guildConfig = Object.assign({}, this.config.dmConfig);
+        private resolveContext({ guildConfig, message, isAdmin, isTesting, isDM }: Payload): Context {
+                let prefixes: string[];
 
-                let prefixes = basePrefixes.concat(guildConfig.prefixes);
+                if (isDM) {
+                        prefixes = this.config.prefixes.dm;
+                } else {
+                        prefixes = guildConfig.prefixes;
+                }
+
+                prefixes = basePrefixes.concat(prefixes);
+
                 const adminPrefix = baseConfig.client.name + '?';
 
                 if (isAdmin) {
@@ -234,7 +249,7 @@ export default class Core extends Module {
                 if (typeof prefix !== 'string') return;
 
                 if (!isDM && guildConfig.client !== baseConfig.client.name && prefix !== adminPrefix) {
-                        if (!isTesting && message.channel.guild.ownerID !== this.eris.user.id) {
+                        if (!isTesting && (<eris.TextChannel>message.channel).guild.ownerID !== this.eris.user.id) {
                                 this.eris.leaveGuild(guildConfig.id).catch(() => false);
                         }
 
@@ -262,21 +277,21 @@ export default class Core extends Module {
 
                 if (isDM && !command.dmEnabled) return;
 
-                const parseArg = name => {
-                        const str = args.find(str => str.startsWith(name));
+                // const parseArg = name => {
+                //         const str = args.find(str => str.startsWith(name));
 
-                        if (!str) return false;
+                //         if (!str) return false;
 
-                        if (str.indexOf('=') !== -1) {
-                                const idx = str.indexOf('=');
+                //         if (str.indexOf('=') !== -1) {
+                //                 const idx = str.indexOf('=');
 
-                                args.shift();
+                //                 args.shift();
 
-                                return [str.slice(0, idx), str.slice(idx + 1)];
-                        }
+                //                 return [str.slice(0, idx), str.slice(idx + 1)];
+                //         }
 
-                        return [args.shift(), args.shift()];
-                }
+                //         return [args.shift(), args.shift()];
+                // }
 
                 const ctx = new Context(this.core, {
                         args,
@@ -289,82 +304,88 @@ export default class Core extends Module {
                         guildConfig,
                 });
 
-                if (command.options) {
-                        const parsedArgs = {};
+                // if (command.options) {
+                //         const parsedArgs = {};
 
-                        for (const opt of command.options) {
-                                const names = [opt.name];
-                                if (opt.alias) {
-                                        if (opt.alias instanceof Array) {
-                                                names.push(...opt.alias);
-                                        } else {
-                                                names.push(opt.alias);
-                                        }
-                                }
+                //         for (const opt of command.options) {
+                //                 const names = [opt.name];
+                //                 if (opt.alias) {
+                //                         if (opt.alias instanceof Array) {
+                //                                 names.push(...opt.alias);
+                //                         } else {
+                //                                 names.push(opt.alias);
+                //                         }
+                //                 }
 
-                                let key;
-                                let value = false;
+                //                 let key;
+                //                 let value = false;
 
 
-                                while (value === false && names.length) {
-                                        const ret = parseArg(names.shift());
+                //                 while (value === false && names.length) {
+                //                         const ret = parseArg(names.shift());
 
-                                        if (ret === false) {
-                                                continue;
-                                        }
+                //                         if (ret === false) {
+                //                                 continue;
+                //                         }
 
-                                        [key, value] = ret;
-                                }
+                //                         [key, value] = ret;
+                //                 }
 
-                                if (value === false && opt.default) {
-                                        if (typeof opt.default === 'function') {
-                                                value = opt.default(ctx);
-                                        } else {
-                                                value = opt.default;
-                                        }
-                                }
+                //                 if (value === false && opt.default) {
+                //                         if (typeof opt.default === 'function') {
+                //                                 value = opt.default(ctx);
+                //                         } else {
+                //                                 value = opt.default;
+                //                         }
+                //                 }
 
-                                if (value === false && opt.required) {
-                                        ctx.error(`Missing required argument \`${opt.name}\``);
+                //                 if (value === false && opt.required) {
+                //                         ctx.error(`Missing required argument \`${opt.name}\``);
 
-                                        return;
-                                }
+                //                         return;
+                //                 }
 
-                                if (opt.type) {
-                                        value = opt.type(value);
+                //                 if (opt.type) {
+                //                         value = opt.type(value);
 
-                                        if (value?.constructor !== opt.type) {
-                                                ctx.error(`Type for \`${key}\`is invalid, a \`${opt.type.constructor.name.toLowerCase()}\` is expected.`);
+                //                         if (value?.constructor !== opt.type) {
+                //                                 ctx.error(`Type for \`${key}\`is invalid, a \`${opt.type.constructor.name.toLowerCase()}\` is expected.`);
 
-                                                return;
-                                        }
-                                }
+                //                                 return;
+                //                         }
+                //                 }
 
-                                parsedArgs[opt.name.replace('--', '')] = value;
-                        }
+                //                 parsedArgs[opt.name.replace('--', '')] = value;
+                //         }
 
-                        ctx.args = parsedArgs;
-                }
+                //         ctx.args = parsedArgs;
+                // }
 
                 return ctx;
         }
 
-        deleteCommand(ctx) {
+        private deleteCommand(ctx: Context): Promise<void> {
                 const moduleName = ctx.module.dbName;
                 const commandName = ctx.command.rootName;
 
-                return this.helpers.moderation.deleteCommand(
+                return this.moderation.deleteCommand(
                         ctx.guildConfig, ctx.message, moduleName, commandName,
                 );
         }
 
-        async executeCommand(ctx) {
+        private async executeCommand(ctx: Context): Promise<any> {
                 const { command, prefix, isDM, isAdmin, args } = ctx;
 
                 if (args.length < command?.requiredArgs) {
-                        const embed = this.core.commands.getHelp(command, prefix, isAdmin);
+                        const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
 
-                        return ctx.send({ embed });
+                        if (!embed) {
+                                this.log(new Error('Unreachable code'), 'error');
+                        }
+
+                        ctx.send({ embed });
+
+                        return;
                 }
 
                 if (!isDM && command.requiredPermissions) {
@@ -379,18 +400,18 @@ export default class Core extends Module {
 
                         if (missingPermissions.length) {
                                 const msg = missingPermissions.map(p => `\`${p}\``).join(', ');
-                                return ctx.error(`I\'m missing the following permission(s): ${msg}`);
+                                ctx.error(`I\'m missing the following permission(s): ${msg}`);
                         }
                 }
 
                 try {
-                        let execute;
+                        let execute: () => Promise<any>;
 
                         if (!isDM) this.deleteCommand(ctx);
 
                         if (command.namespace) {
                                 execute = () => {
-                                        const embed = this.core.commands.getHelp(command, prefix, isAdmin);
+                                        const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
 
                                         return ctx.send({ embed });
                                 }
@@ -419,7 +440,7 @@ export default class Core extends Module {
                 this.commandSuccess(ctx);
         }
 
-        guildCreate({ guild }) {
+        private guildCreate({ guild }): void {
                 const eris = this.eris;
 
                 let allMembers = 0;
@@ -443,7 +464,7 @@ export default class Core extends Module {
                         ]
                 };
 
-                const embed = {
+                const embed: eris.EmbedOptions = {
                         description: msg.description.join('\n'),
                         timestamp: new Date().toISOString(),
                         color: this.config.colours.success,
@@ -463,7 +484,7 @@ export default class Core extends Module {
                 this.postEmbed(embed);
         }
 
-        guildDelete({ guild }) {
+        private guildDelete({ guild }): void {
                 const eris = this.eris;
 
                 let allMembers = 0;
@@ -487,7 +508,7 @@ export default class Core extends Module {
                         ]
                 };
 
-                const embed = {
+                const embed: eris.EmbedOptions = {
                         description: msgs.description.join('\n'),
                         timestamp: new Date().toISOString(),
                         color: this.config.colours.error,
@@ -507,12 +528,15 @@ export default class Core extends Module {
                 this.postEmbed(embed);
         }
 
-        rawWS() {
-                if (!this.events) this.events = 0;
+        private rawWS(): void {
+                if (!this.events) {
+                        this.events = 0;
+                }
+
                 this.events++;
         }
 
-        commandSuccess({ isAdmin, command, author, message, guild }) {
+        private commandSuccess({ isAdmin, command, author, message, guild }): void {
                 let text = `Command "${command.qualName}" U${author.id}`;
 
                 if (guild) {
@@ -537,7 +561,7 @@ export default class Core extends Module {
                 }
         }
 
-        commandError({ isAdmin, command, author, guild, message, err }) {
+        private commandError({ isAdmin, command, author, guild, message, err }: Context): void {
                 let text = `Command "${command.qualName}" U${author.id}`;
 
                 if (guild) {
