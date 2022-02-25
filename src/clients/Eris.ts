@@ -1,9 +1,10 @@
 import * as eris from 'eris';
+import * as types from '../types';
 import Core from '../structures/Core';
 
 
 export default function Eris (core: Core): eris.Client {
-        const log = (message?: string | Error, level?: string, prefix: string = 'Eris') => {
+        const log = (message?: any, level?: types.LogLevels, prefix: string = 'Eris') => {
                 core.log(message, level, prefix);
         }
 

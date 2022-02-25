@@ -1,11 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 import * as mongoose from 'mongoose';
+import * as types from '../types';
 import Core from '../structures/Core';
 
 
 export default function Mongoose (core: Core): mongoose.Mongoose {
-        const log = (message?: string | Error, level?: string, prefix: string = 'Mongoose') => {
+        const log = (message?: any, level?: types.LogLevels, prefix: string = 'Mongoose') => {
                 core.log(message, level, prefix);
         }
 
