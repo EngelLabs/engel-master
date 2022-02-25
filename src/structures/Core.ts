@@ -33,7 +33,7 @@ export default class Core extends EventEmitter {
                 return coreInstance;
         }
 
-        public log(message?: any, level: string = 'debug', prefix?: string): void {
+        public log(message?: any, level: types.LogLevels = 'debug', prefix?: string): void {
                 if (!message) {
                         return;
                 }
