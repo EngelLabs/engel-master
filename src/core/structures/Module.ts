@@ -4,6 +4,7 @@ import { types } from '@engel/core';
 const reload = require('require-reload')(require);
 import Base from './Base';
 import Command from './Command';
+import Context from './Context';
 import Core from '../Core';
 
 
@@ -25,6 +26,7 @@ export default class Module extends Base {
         private _boundListeners?: Array<types.Listener>;
         public injectHook?(): void;
         public ejectHook?(): void;
+        public commandCheck?(ctx: Context): boolean | Promise<boolean>;
 
         public constructor() {
                 super();
