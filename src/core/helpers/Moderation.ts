@@ -12,13 +12,10 @@ import Base from '../structures/Base';
  */
 class Moderation extends Base {
         canModerate(
-                guildConfig: types.GuildConfig,
                 guild: eris.Guild,
                 member: eris.Member,
                 author: eris.User,
                 action: string | undefined,
-                moduleName: string,
-                commandName: string,
                 resolve?: (arg: any) => any,
         ) {
                 resolve = resolve || (o => o);
@@ -58,23 +55,6 @@ class Moderation extends Base {
                                         return r?.position >= topRole.position;
                                 })) {
                                         return resolve(`My highest role's position isn't high enough to ${action} this user.`);
-                                }
-                        }
-
-                        const commandConfig: types.CommandConfig | boolean = guildConfig.commands?.[commandName];
-                        const moduleConfig: types.Moderation = guildConfig[moduleName];
-
-                        if (typeof commandConfig !== 'boolean' && commandConfig?.protectedRoles?.length) {
-                                const protectedRoles = commandConfig.protectedRoles;
-                                if (member.roles.find(id => protectedRoles.includes(id))) {
-                                        return resolve('That user is protected.');
-                                }
-                        } else {
-                                if (moduleConfig?.protectedRoles?.length) {
-                                        const protectedRoles = moduleConfig.protectedRoles;
-                                        if (member.roles.find(id => protectedRoles.includes(id))) {
-                                                return resolve('That user is protected.');
-                                        }
                                 }
                         }
                 }

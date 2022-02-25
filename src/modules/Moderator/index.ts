@@ -60,9 +60,32 @@ export default class Moderator extends Module {
                 const commandName = command.rootName;
                 const moduleName = this.dbName;
 
-                return this.helpers.moderation.canModerate(
-                        guildConfig, guild, member, author, action, moduleName, commandName, resolve
-                );
+                if (!this.helpers.moderation.canModerate(guild, member, author, action, resolve)) {
+                        return false;
+                }
+
+                const commandConfig = guildConfig.commands?.[commandName];
+                const moduleConfig = guildConfig[moduleName];
+
+                if (typeof commandConfig !== 'boolean' && commandConfig?.protectedRoles?.length) {
+                        const protectedRoles = commandConfig.protectedRoles;
+                        if (member.roles.find(id => protectedRoles.includes(id))) {
+                                resolve('That user is protected.');
+
+                                return false;
+                        }
+                } else {
+                        if (moduleConfig?.protectedRoles?.length) {
+                                const protectedRoles = moduleConfig.protectedRoles;
+                                if (member.roles.find(id => protectedRoles.includes(id))) {
+                                        resolve('That user is protected.');
+
+                                        return false;
+                                }
+                        }
+                }
+
+                return true;
         }
 
 
