@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as eris from 'eris';
 import * as core from '@engel/core';
+import { types } from '@engel/core';
 const reload = require('require-reload')(require);
 import CommandCollection from './CommandCollection';
 import Module from '../structures/Module';
@@ -22,7 +23,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 this._commands = core.commands;
         }
 
-        private _log(message?: string, level?: string, prefix: string = 'Modules'): void {
+        private _log(message?: string, level?: types.LogLevels, prefix: string = 'Modules'): void {
                 this._core.log(message, level, prefix);
         }
 
