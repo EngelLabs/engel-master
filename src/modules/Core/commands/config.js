@@ -1,4 +1,5 @@
-const { Command } = require('@engel/core');
+const Command = require('../../../core/structures/Command');
+const Context = require('../../../core/structures/Context');
 
 
 const getNested = (value, key) => {
@@ -9,7 +10,7 @@ const getNested = (value, key) => {
         return value;
 }
 
-const afterConfig = async ctx => {
+const afterConfig = async (ctx) => {
         if (!ctx._config) {
                 return ctx.error(`Config does not exist for state \`${ctx.args.state}\``);
         }
