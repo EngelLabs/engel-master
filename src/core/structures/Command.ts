@@ -1,3 +1,4 @@
+import * as eris from 'eris';
 import { types } from '@engel/core';
 import CommandCollection from '../collections/CommandCollection';
 import Context from './Context';
@@ -18,7 +19,7 @@ interface CommandOptions {
         requiredArgs?: number;
         alwaysEnabled?: boolean;
         disableModuleCheck?: boolean;
-        requiredPermissions?: string[];
+        requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
         check?: (ctx: Context) => boolean | Promise<boolean>;
         before?: (ctx: Context) => void | Promise<void>;
         after?: (ctx: Context) => void | Promise<void>;
@@ -42,7 +43,7 @@ export default class Command {
         public requiredArgs?: number;
         public alwaysEnabled?: boolean;
         public disableModuleCheck?: boolean;
-        public requiredPermissions?: string[];
+        public requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
         public check?(ctx: Context): boolean | Promise<boolean>;
         public before?(ctx: Context): void | Promise<void>;
         public after?(ctx: Context): void | Promise<void>;
