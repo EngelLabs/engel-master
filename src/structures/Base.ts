@@ -1,4 +1,3 @@
-import * as types from '../types';
 import Core from './Core';
 
 
@@ -41,15 +40,12 @@ const permissionsMapping: Record<string, string> = {
 export default class Base {
         public core: Core;
         public permissionsMapping = permissionsMapping;
+        public logPrefix?: string;
 
         public constructor(core?: Core) {
                 if (!(this.core = core || Core.instance)) {
                         throw new Error('Missing core instance.');
                 }
-        }
-
-        public get logPrefix(): string {
-                return this.constructor.name;
         }
 
         public get eris() {
@@ -84,7 +80,7 @@ export default class Base {
                 return this.core.redis;
         }
 
-        public log(message?: any, level?: types.LogLevels, prefix?: string): void {
+        public log(message?: string, level?: string, prefix?: string): void {
                 prefix = prefix || this.logPrefix || this.constructor.name;
 
                 this.core.log(message, level, prefix);
