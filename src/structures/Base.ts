@@ -1,3 +1,4 @@
+import * as types from '../types';
 import Core from './Core';
 
 
@@ -83,7 +84,7 @@ export default class Base {
                 return this.core.redis;
         }
 
-        public log(message?: string, level?: string, prefix?: string): void {
+        public log(message?: any, level?: types.LogLevels, prefix?: string): void {
                 prefix = prefix || this.logPrefix || this.constructor.name;
 
                 this.core.log(message, level, prefix);
