@@ -82,30 +82,6 @@ class Moderation extends Base {
                 return true;
         }
 
-        deleteCommand(guildConfig, message, moduleName, commandName) {
-                return new Promise(resolve => {
-                        const commandConfig = guildConfig.commands?.[commandName];
-                        const moduleConfig = guildConfig[moduleName];
-
-                        const del = () => {
-                                message
-                                        .delete()
-                                        .then(resolve)
-                                        .catch(resolve);
-                        }
-
-                        if (commandConfig?.del !== undefined) {
-                                return commandConfig.del ? del() : resolve();
-                        } else if (moduleConfig?.delCommands !== undefined) {
-                                return moduleConfig.del ? del() : resolve();
-                        } else if (guildConfig.delCommands) {
-                                return del();
-                        }
-
-                        resolve();
-                });
-        }
-
         sendDM(guildConfig, user, text) {
                 return new Promise(resolve => {
                         user = user.user || user;

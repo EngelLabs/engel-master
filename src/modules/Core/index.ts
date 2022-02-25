@@ -3,7 +3,6 @@ import { types } from '@engel/core';
 import Module from '../../core/structures/Module';
 import Command from '../../core/structures/Command';
 import Context from '../../core/structures/Context';
-import Moderation from '../../core/helpers/Moderation';
 import Permission from '../../core/helpers/Permission';
 import baseConfig from '../../core/utils/baseConfig';
 
@@ -28,7 +27,6 @@ interface Cooldown {
 export default class Core extends Module {
         private cooldowns: Map<string, Cooldown>;
         private globalCooldowns: Map<string, number>;
-        private moderation: Moderation;
         private permissions: Permission;
         private events?: number;
 
@@ -43,7 +41,6 @@ export default class Core extends Module {
         public injectHook(): void {
                 this.cooldowns = new Map();
                 this.globalCooldowns = new Map();
-                this.moderation = new Moderation(this.core);
                 this.permissions = new Permission(this.core);
 
                 this.tasks = [];
@@ -365,12 +362,27 @@ export default class Core extends Module {
         }
 
         private deleteCommand(ctx: Context): Promise<void> {
-                const moduleName = ctx.module.dbName;
-                const commandName = ctx.command.rootName;
+                return new Promise(resolve => {
+                        const del = () => {
+                                ctx.message
+                                        .delete()
+                                        .then(resolve)
+                                        .catch(resolve);
+                        }
 
-                return this.moderation.deleteCommand(
-                        ctx.guildConfig, ctx.message, moduleName, commandName,
-                );
+                        const commandConfig = ctx.guildConfig.commands?.[ctx.command.rootName];
+                        const moduleConfig = ctx.moduleConfig;
+
+                        if (typeof commandConfig !== 'boolean' && commandConfig?.del !== undefined) {
+                                return commandConfig.del ? del() : resolve();
+                        } else if (moduleConfig?.delCommands !== undefined) {
+                                return moduleConfig.delCommands ? del() : resolve();
+                        } else if (ctx.guildConfig.delCommands) {
+                                return del();
+                        }
+
+                        resolve();
+                });
         }
 
         private async executeCommand(ctx: Context): Promise<any> {
