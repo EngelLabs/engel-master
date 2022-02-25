@@ -44,4 +44,25 @@ export default class CommandCollection extends core.Collection<Command> {
 
                 return ret.flat();
         }
+
+        public get(key: string, recursive: boolean = false): Command {
+                if (!recursive) {
+                        return super.get(key);
+                }
+
+                const keys = key.split(' ');
+                let command: Command = super.get(keys.shift());
+
+                while (command?.commands && keys.length) {
+                        const subcommand = command.commands.get(keys.shift());
+
+                        if (!subcommand) {
+                                break;
+                        }
+
+                        command = subcommand;
+                }
+
+                return command;
+        }
 }
