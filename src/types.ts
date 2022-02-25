@@ -19,6 +19,8 @@ export interface Task {
         actual?: NodeJS.Timer;
 }
 
+export type LogLevels = 'debug' | 'info' | 'warn' | 'error';
+
 interface BaseCommandConfig {
         allowedRoles?: string[];
         ignoredRoles?: string[];
