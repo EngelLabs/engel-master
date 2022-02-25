@@ -1,66 +1,64 @@
-const { Base } = require('@engel/core');
+import * as eris from 'eris';
+import Base from '../structures/Base';
+import Context from '../structures/Context';
 
 
 /**
  * Permissions helper
- * @class Permission
- * @extends Base
  */
-class Permission extends Base {
-        _name = 'permissions';
-
-        isOwner(ctx) {
+export default class Permission extends Base {
+        public isOwner(ctx: Context): boolean {
                 return ctx.author.id === ctx.guild.ownerID;
         }
 
-        isServerAdmin(ctx) {
+        public isServerAdmin(ctx: Context): boolean {
                 const perms = ctx.member.permissions;
 
                 return perms.has('manageGuild') || perms.has('administrator');
         }
 
-        isAdmin(userID) {
+        public isAdmin(userID: string): boolean {
                 const config = this.config;
 
                 return userID === config.author.id || config.users.developers.includes(userID);
         }
 
-        isTester(userID) {
+        public isTester(userID: string): boolean {
                 return this.config.users.testers.includes(userID);
         }
 
-        canInvoke(ctx) {
+        public canInvoke(ctx: Context): boolean {
                 const roles = ctx.member?.roles,
                         channel = ctx.channel;
 
                 let canInvoke = false,
                         overrideExists = false;
 
-                const checkPerms = c => {
+                const checkPerms = (c: any): boolean => {
                         if (!c) return false;
 
                         if (c.allowedRoles?.length) {
                                 if (!overrideExists) overrideExists = true;
 
-                                if (!c.allowedRoles.find(id => roles.includes(id))) return false;
+                                if (!c.allowedRoles.find((id: string) => roles.includes(id))) return false;
                         }
 
                         if (c.allowedChannels?.length) {
                                 if (!overrideExists) overrideExists = true;
 
-                                if (!c.allowedChannels.find(id => id === channel.id)) return false;
+                                if (!c.allowedChannels.find((id: string) => id === channel.id)) return false;
                         }
 
                         if (c.ignoredRoles?.length) {
                                 if (!overrideExists) overrideExists = true;
 
-                                if (c.ignoredRoles.find(id => roles.includes(id))) return false;
+                                if (c.ignoredRoles.find((id: string) => roles.includes(id))) return false;
                         }
 
                         if (c.ignoredChannels?.length) {
                                 if (!overrideExists) overrideExists = true;
 
-                                if (c.ignoredChannels.find(id => id === channel.id)) return false;
+                                if (c.ignoredChannels.find((id: string) => id === channel.id)) return false;
                         }
 
                         if (overrideExists) return true;
@@ -85,7 +83,7 @@ class Permission extends Base {
                 return canInvoke;
         }
 
-        hasGuildPermissions(guild, ...requiredPerms) {
+        public hasGuildPermissions(guild: eris.Guild, ...requiredPerms: Array<keyof eris.Constants['Permissions']>) {
                 const permissions = guild.permissionsOf(this.eris.user.id);
 
                 for (const perm of requiredPerms) {
@@ -95,6 +93,3 @@ class Permission extends Base {
                 return true;
         }
 }
-
-
-module.exports = Permission;
