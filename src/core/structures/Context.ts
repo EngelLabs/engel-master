@@ -47,6 +47,7 @@ interface ContextSendOptions extends eris.AdvancedMessageContent {
  * @class Context
  */
 export default class Context extends Base {
+        public locals?: any;
         public done?: boolean;
         public err?: any;
         public args: string[];
