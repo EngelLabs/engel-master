@@ -39,10 +39,8 @@ export default class Module extends Base {
                 this.loadListeners();
         }
 
-        public log(message?: string, level?: string, prefix?: string): void {
-                prefix = prefix || this.name;
-
-                super.log(message, level, `Modules.${prefix}`);
+        public get logPrefix(): string {
+                return `Modules.${this.name}`;
         }
 
         public get globalConfig(): types.GlobalModuleConfig | undefined {
