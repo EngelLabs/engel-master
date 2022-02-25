@@ -85,4 +85,5 @@ export default {
         guildMaxAge: 10000,
         paused: false,
         apiToken: '',
+        dmCommands: true,
 };
