@@ -14,6 +14,11 @@ export interface ListenerObject {
 
 export type Listener = VoidFunc | ListenerObject;
 
+export interface Task {
+        (): void;
+        actual?: NodeJS.Timer;
+}
+
 interface BaseCommandConfig {
         allowedRoles?: string[];
         ignoredRoles?: string[];
