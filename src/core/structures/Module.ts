@@ -20,10 +20,10 @@ export default class Module extends Base {
         public internal?: boolean;
         public disabled?: boolean;
         public allowedByDefault?: boolean;
-        public tasks?: Array<[Function, number]>;
+        public tasks?: Array<[types.Task, number]>;
         public commands?: Array<Command>;
         public listeners?: Array<types.Listener>;
-        private _boundListeners?: Array<types.Listener>;
+        private _boundListeners?: Array<types.ListenerObject>;
         public injectHook?(): void;
         public ejectHook?(): void;
         public commandCheck?(ctx: Context): boolean | Promise<boolean>;
@@ -167,8 +167,8 @@ export default class Module extends Base {
                                 this._boundListeners = this._boundListeners || [];
 
                                 const copied = {
-                                        name: (listener.event || listener.name).replace('bound', '').trim(),
-                                        execute: listener.execute || listener
+                                        name: (<string>(listener.event || listener.name)).replace('bound', '').trim(),
+                                        execute: <(...args: any) => any>(listener.execute || listener)
                                 };
 
                                 copied.execute = copied.execute.bind(this);
