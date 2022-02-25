@@ -1,10 +1,18 @@
 import globalDefaults from './utils/globalDefaults';
 
 
-export interface Listener {
-        name: string;
+interface VoidFunc {
+        (...args: any): void;
+        [s: string]: unknown;
+}
+
+export interface ListenerObject {
+        name?: string;
+        event?: string;
         execute: (...args: any) => void;
 }
+
+export type Listener = VoidFunc | ListenerObject;
 
 interface BaseCommandConfig {
         allowedRoles?: string[];
