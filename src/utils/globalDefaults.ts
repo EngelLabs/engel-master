@@ -1,4 +1,8 @@
-export default {
+
+import * as types from '../types';
+
+
+const globalDefaults: types.Config = {
         author: {
                 id: '329768023869358081',
                 name: 'timtoy#1336',
@@ -87,3 +91,6 @@ export default {
         apiToken: '',
         dmCommands: true,
 };
+
+
+export default globalDefaults;

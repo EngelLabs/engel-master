@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
+import * as types from '../types';
 
 
-const commandLogSchema = new mongoose.Schema({
+const commandLogSchema = new mongoose.Schema<types.CommandLog>({
         name: { type: String, index: true },
         message: { type: Object },
         failed: { type: Boolean, required: false, index: true },

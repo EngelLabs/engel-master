@@ -1,7 +1,13 @@
 import * as mongoose from 'mongoose';
+import * as types from '../types';
 
 
-const tagSchema = new mongoose.Schema({
+// https://stackoverflow.com/questions/45614172/mongoose-static-model-definitions-in-typescript
+interface TagModel extends mongoose.Model<types.Tag> {
+        incrementUses(guild: string, name: string): void;
+}
+
+const tagSchema = new mongoose.Schema<types.Tag>({
         name: { type: String, required: true },
         content: { type: String, required: true },
         guild: { type: String, required: true, index: true },
@@ -18,7 +24,6 @@ tagSchema.static('findOneAndIncrement', (...args) => {
                         .lean()
                         .exec()
                         .then(res => {
-                                // @ts-ignore
                                 res && Tag.incrementUses(res.guild, res.name);
 
                                 resolve(res);
@@ -44,7 +49,7 @@ tagSchema.index(
 );
 
 
-const Tag = mongoose.model('Tag', tagSchema);
+const Tag = mongoose.model<types.Tag, TagModel>('Tag', tagSchema);
 
 
 export default Tag;

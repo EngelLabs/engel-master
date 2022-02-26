@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
+import * as types from '../types';
 
 
-const giveawaySchema = new mongoose.Schema({
+const giveawaySchema = new mongoose.Schema<types.Giveaway>({
         guild: { type: String },
         author: { type: String },
         message: { type: String },

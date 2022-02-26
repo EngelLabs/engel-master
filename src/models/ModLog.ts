@@ -1,7 +1,8 @@
 import * as mongoose from 'mongoose';
+import * as types from '../types';
 
 
-const modLogSchema = new mongoose.Schema({
+const modLogSchema = new mongoose.Schema<types.ModLog>({
         case: { type: Number, required: true },
         type: { type: String, required: true },
         created: { type: Date, default: () => new Date() },

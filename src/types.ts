@@ -1,6 +1,3 @@
-import globalDefaults from './utils/globalDefaults';
-
-
 interface VoidFunc {
         (...args: any): void;
         [s: string]: unknown;
@@ -54,13 +51,6 @@ export interface ModuleConfig extends BaseCommandConfig {
         disabled?: boolean;
 }
 
-type _Config = typeof globalDefaults;
-
-export interface Config extends _Config {
-        commands: Record<string, GlobalCommandConfig>;
-        modules: Record<string, GlobalModuleConfig>;
-}
-
 export interface GlobalCommandConfig {
         name: string;
         info?: string;
@@ -82,4 +72,91 @@ export interface GlobalModuleConfig {
         alises?: string[];
         disabled?: boolean;
         allowedByDefault?: boolean;
+}
+
+export interface CommandLog {
+        name: string;
+        message: any; // TODO: Type this
+        failed?: boolean;
+        created: Date;
+}
+
+export interface Config {
+        state: string;
+        author: { id: string; name: string };
+        prefixes: { private: string[]; default: string[]; dm: string[] };
+        guilds: { official: { id: string; invite: string }; protected: string[]; testing: string[] };
+        users: { developers: string[]; protected: string[]; testers: string[]; blacklisted: string[] };
+        webhooks: { errorLog: { id: string; token: string }; guildLog: { id: string; token: string } };
+        colours: { info: number; error: number; success: number; loading: number; premium: number };
+        emojis: { info: string; error: string; success: string; loading: string; premium: string, staff: string };
+        commands: Record<string, CommandConfig>;
+        modules: Record<string, ModuleConfig>;
+        disableEmojis: boolean;
+        globalCooldown: number;
+        commandCooldown: number;
+        cooldownWarn: boolean;
+        cooldownWarnDelete: boolean;
+        cooldownWarnDeleteAfter: number;
+        adminOnly: boolean;
+        configRefreshInterval: number;
+        messageCache: boolean;
+        messageUncacheInterval: number;
+        messageMaxAge: number;
+        guildCache: boolean;
+        guildUncacheInterval: number;
+        guildMaxAge: number;
+        paused: boolean;
+        apiToken: string;
+        dmCommands: boolean;
+}
+
+export interface Giveaway {
+        guild: string;
+        author: string;
+        message: string;
+        title: string;
+        info: string;
+        item: string;
+        expiry: number;
+}
+
+export interface ModLog {
+        case: number;
+        type: string;
+        created: Date;
+        expiry?: Date;
+        duration?: number;
+        guild: string;
+        channel?: ModLogChannel;
+        count?: number;
+        user?: ModLogUser;
+        mod: ModLogUser;
+        reason?: string;
+}
+
+export interface ModLogChannel {
+        id: string;
+        name: string;
+}
+
+export interface ModLogUser {
+        id: string;
+        name: string;
+}
+
+export interface Tag {
+        name: string;
+        content: string;
+        guild: string;
+        author: string;
+        createdAt: Date;
+        editedAt?: Date;
+}
+
+export interface WebLog {
+        guild: string;
+        user: string;
+        info: string;
+        date: Date;
 }
