@@ -3,6 +3,7 @@ import * as mongoose from 'mongoose';
 import * as ioredis from 'ioredis';
 import * as winston from 'winston';
 import * as types from '../types';
+import * as models from '../models';
 import { EventEmitter } from 'eventemitter3';
 import baseConfig from '../utils/baseConfig';
 import Eris from '../clients/Eris';
@@ -15,6 +16,7 @@ let coreInstance: Core;
 
 export default class Core extends EventEmitter {
         public baseConfig = baseConfig;
+        public models = models;
         public eris: eris.Client;
         public logger: winston.Logger;
         public mongoose: mongoose.Mongoose;
@@ -47,10 +49,6 @@ export default class Core extends EventEmitter {
                 } else {
                         this.logger[level](`[${prefix}] ${message}`);
                 }
-        }
-
-        public get models(): mongoose.Models {
-                return this.mongoose.models;
         }
 
         public get config(): types.Config {
