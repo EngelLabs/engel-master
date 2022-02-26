@@ -1,3 +1,4 @@
+export * as models from './models';
 export * as types from './types';
 export * as helpers from './utils/helpers';
 export { default as Eris } from './clients/Eris';
