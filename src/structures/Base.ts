@@ -40,12 +40,15 @@ const permissionsMapping: Record<string, string> = {
 
 export default class Base {
         public core: Core;
-        public permissionsMapping = permissionsMapping;
 
         public constructor(core?: Core) {
                 if (!(this.core = core || Core.instance)) {
                         throw new Error('Missing core instance.');
                 }
+        }
+
+        public get permissionsMapping() {
+                return permissionsMapping;
         }
 
         public get logPrefix(): string {
