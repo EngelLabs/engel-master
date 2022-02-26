@@ -3,6 +3,7 @@ import * as types from '../types';
 
 
 const globalDefaults: types.Config = {
+        state: '',
         author: {
                 id: '329768023869358081',
                 name: 'timtoy#1336',
