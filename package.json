@@ -8,7 +8,8 @@
         "dev": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,TS\" \"npm run watch\" \"npm run watch:ts\"",
         "watch": "npx nodemon --delay 3 -i build/modules/",
         "watch:ts": "npx tsc -w",
-        "config": "node scripts/config.js"
+        "config": "node scripts/config.js",
+        "build": "npx tsc"
     },
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "dependencies": {
