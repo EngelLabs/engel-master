@@ -11,21 +11,21 @@ import Base from '../structures/Base';
 export default class Moderation extends Base {
         public canModerate<T>(
                 guild: eris.Guild,
-                member: eris.Member,
+                member: eris.User | eris.Member,
                 author: eris.User,
                 action: string | undefined,
                 resolve: (o: string) => T
         ): T | boolean;
         public canModerate(
                 guild: eris.Guild,
-                member: eris.Member,
+                member: eris.User | eris.Member,
                 author: eris.User,
                 action?: string,
                 resolve?: undefined,
         ): boolean
         public canModerate(
                 guild: eris.Guild,
-                member: eris.Member,
+                member: eris.User | eris.Member,
                 author: eris.User,
                 action?: string,
                 resolve?: (...args: any) => any,
@@ -44,9 +44,9 @@ export default class Moderation extends Base {
                         return resolve('That user is protected.');
                 }
 
-                const perms = member.permissions;
+                if (member instanceof eris.Member) {
+                        const perms = member.permissions;
 
-                if (perms) {
                         if (perms.has('manageGuild') || perms.has('administrator')) {
                                 return resolve('That user is a server admin.');
                         }
@@ -54,19 +54,19 @@ export default class Moderation extends Base {
                         if (perms.has('banMembers') || perms.has('kickMembers')) {
                                 return resolve('That user is a server moderator.');
                         }
-                }
 
-                if (member.roles?.length) {
-                        const roles = member.guild.roles;
-                        const topRole = helpers.getTopRole(this.eris, guild);
+                        if (member.roles.length) {
+                                const roles = member.guild.roles;
+                                const topRole = helpers.getTopRole(this.eris, guild);
 
-                        if (topRole) {
-                                if (member.roles.find(id => {
-                                        const r = roles.get(id);
+                                if (topRole) {
+                                        if (member.roles.find(id => {
+                                                const r = roles.get(id);
 
-                                        return r?.position >= topRole.position;
-                                })) {
-                                        return resolve(`My highest role's position isn't high enough to ${action} this user.`);
+                                                return r?.position >= topRole.position;
+                                        })) {
+                                                return resolve(`My highest role's position isn't high enough to ${action} this user.`);
+                                        }
                                 }
                         }
                 }
@@ -107,8 +107,8 @@ export default class Moderation extends Base {
                 duration: number,
                 count: number,
                 reason: string | null,
-                user: eris.User | eris.Member | types.ModLogUser | null,
                 mod: eris.User | eris.Member | types.ModLogUser,
+                user: eris.User | eris.Member | types.ModLogUser | null,
                 channel: eris.GuildChannel | types.ModLogChannel | null,
         ): Promise<void> {
                 return new Promise((resolve, reject) => {
@@ -181,8 +181,8 @@ export default class Moderation extends Base {
         }
 
         public expireModlog(
-                guild: eris.Guild,
-                user: eris.User,
+                guild: string,
+                user: eris.Member | eris.User,
                 channel: eris.GuildChannel,
                 type: string
         ): Promise<void> {
@@ -256,7 +256,8 @@ export default class Moderation extends Base {
                 }
 
                 const currentMute = await this.models.ModLog
-                        .findOne({ guild: guildConfig.id, 'user.id': user.id, type: 'mute', expiry: { $gt: Date.now() } });
+                        .findOne({ guild: guildConfig.id, 'user.id': user.id, type: 'mute', expiry: { $gt: Date.now() } })
+                        .lean();
 
                 if (currentMute) {
                         return true;
@@ -270,10 +271,10 @@ export default class Moderation extends Base {
                 channel: eris.TextChannel,
                 mod: eris.User,
                 type: string,
-                check: (m: eris.Message<eris.TextChannel>) => boolean,
-                count: string | number | null,
-                before: string,
-                reason: string
+                check?: (m: eris.Message<eris.TextChannel>) => boolean,
+                count?: string | number,
+                before?: string,
+                reason?: string,
         ): Promise<void> {
                 return new Promise((resolve, reject) => {
                         const limit = typeof count !== 'number'
