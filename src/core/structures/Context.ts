@@ -46,15 +46,15 @@ interface ContextSendOptions extends eris.AdvancedMessageContent {
  * Represents a command's execution context.
  * @class Context
  */
-export default class Context extends Base {
+export default class Context<M extends Module = Module, C extends Command = Command> extends Base {
         public locals?: any;
         public done?: boolean;
         public err?: any;
         public args: string[];
         public prefix: string;
         public message: eris.Message;
-        public command: Command;
-        public module: Module;
+        public command: C;
+        public module: M;
         public isDM: boolean;
         public isAdmin: boolean;
         public guildConfig: types.GuildConfig;
