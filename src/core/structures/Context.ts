@@ -133,7 +133,7 @@ export default class Context extends Base {
                 this.guildConfig.commands[this.command.rootName] = config;
         }
 
-        public log(message?: string, level?: string, prefix?: string): void {
+        public log(message?: string, level?: types.LogLevels, prefix?: string): void {
                 prefix = prefix || this.command.dbName;
 
                 super.log(message, level, `Commands.${prefix}`);
