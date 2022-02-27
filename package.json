@@ -4,6 +4,7 @@
     "private": true,
     "description": "A Discord bot to provide some nice utilities.",
     "scripts": {
+        "prestart": "npm run build && npm run config",
         "start": "node build/index.js",
         "dev": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,TS\" \"npm run watch\" \"npm run watch:ts\"",
         "watch": "npx nodemon --delay 3 -i build/modules/",
