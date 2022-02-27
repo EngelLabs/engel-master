@@ -14,6 +14,7 @@ const guildSchema = new mongoose.Schema<types.GuildConfig>({
         commands: { type: Object, required: false },
         modules: { type: Object, required: false },
         noDisableWarning: { type: Boolean, required: false },
+        caseCount: { type: Number, required: false },
 },
         { collection: 'guilds', minimize: false },
 );
