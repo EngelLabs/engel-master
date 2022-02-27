@@ -12,8 +12,8 @@ const tagSchema = new mongoose.Schema<types.Tag>({
         content: { type: String, required: true },
         guild: { type: String, required: true, index: true },
         author: { type: String, required: true },
-        createdAt: { type: Date, required: true, default: Date.now },
-        editedAt: { type: Date, required: false },
+        createdAt: { type: Number, required: true, default: Date.now },
+        editedAt: { type: Number, required: false },
 },
         { collection: 'tags' },
 );

@@ -5,8 +5,8 @@ import * as types from '../types';
 const modLogSchema = new mongoose.Schema<types.ModLog>({
         case: { type: Number, required: true },
         type: { type: String, required: true },
-        created: { type: Date, default: () => new Date() },
-        expiry: { type: Date, required: false, index: true },
+        created: { type: Number, default: Date.now },
+        expiry: { type: Number, required: false, index: true },
         duration: { type: Number, required: false },
         guild: { type: String, index: true },
         channel: { type: Object, required: false },

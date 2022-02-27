@@ -6,7 +6,7 @@ const commandLogSchema = new mongoose.Schema<types.CommandLog>({
         name: { type: String, index: true },
         message: { type: Object },
         failed: { type: Boolean, required: false, index: true },
-        created: { type: Date, default: () => new Date },
+        created: { type: Number, default: Date.now },
 },
         { collection: 'commandlogs', strict: false },
 );
