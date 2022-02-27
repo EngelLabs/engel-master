@@ -7,18 +7,30 @@ import Base from '../structures/Base';
 
 /**
  * Moderation helper
- * @class Moderation
- * @extends Base
  */
-class Moderation extends Base {
-        canModerate(
+export default class Moderation extends Base {
+        public canModerate<T>(
                 guild: eris.Guild,
                 member: eris.Member,
                 author: eris.User,
                 action: string | undefined,
-                resolve?: (arg: any) => any,
-        ) {
-                resolve = resolve || (o => o);
+                resolve: (o: string) => T
+        ): T | boolean;
+        public canModerate(
+                guild: eris.Guild,
+                member: eris.Member,
+                author: eris.User,
+                action?: string,
+                resolve?: undefined,
+        ): boolean
+        public canModerate(
+                guild: eris.Guild,
+                member: eris.Member,
+                author: eris.User,
+                action?: string,
+                resolve?: (...args: any) => any,
+        ): any {
+                resolve = resolve || ((..._: any) => false);
 
                 action = action || 'moderate';
 
@@ -62,11 +74,11 @@ class Moderation extends Base {
                 return true;
         }
 
-        sendDM(guildConfig, user, text) {
+        public sendDM(guildConfig: types.GuildConfig, user: eris.Member | eris.User, text: string): Promise<void> {
                 return new Promise(resolve => {
-                        user = user.user || user;
+                        user = user instanceof eris.Member ? user.user : user;
 
-                        user.getDMChannel()
+                        (<eris.User>user).getDMChannel()
                                 .then(channel => {
                                         if (!channel) {
                                                 return resolve();
@@ -89,7 +101,16 @@ class Moderation extends Base {
                 });
         }
 
-        createModlog(guildConfig, type, duration, count, reason, user, mod, channel) {
+        public createModlog(
+                guildConfig: types.GuildConfig,
+                type: string,
+                duration: number,
+                count: number,
+                reason: string | null,
+                user: eris.User | eris.Member | types.ModLogUser | null,
+                mod: eris.User | eris.Member | types.ModLogUser,
+                channel: eris.GuildChannel | types.ModLogChannel | null,
+        ): Promise<void> {
                 return new Promise((resolve, reject) => {
                         guildConfig.caseCount = guildConfig.caseCount || 0;
 
@@ -101,13 +122,17 @@ class Moderation extends Base {
 
                         mod = {
                                 id: mod.id,
-                                name: mod.name || (mod.username + '#' + mod.discriminator)
+                                name: (mod instanceof eris.User || mod instanceof eris.Member)
+                                        ? (mod.username + '#' + mod.discriminator)
+                                        : mod.name,
                         };
 
                         if (user) {
                                 user = {
                                         id: user.id,
-                                        name: user.name || (user.username + '#' + user.discriminator)
+                                        name: (user instanceof eris.User || user instanceof eris.Member)
+                                                ? (user.username + '#' + user.discriminator)
+                                                : user.name,
                                 };
                         }
 
@@ -118,7 +143,7 @@ class Moderation extends Base {
                                 };
                         }
 
-                        const data = {
+                        const data: Omit<types.ModLog, 'created'> = {
                                 case: caseCount,
                                 type: type,
                                 guild: guildConfig.id,
@@ -126,7 +151,7 @@ class Moderation extends Base {
                         };
 
                         if (user) {
-                                data.user = user;
+                                data.user = user as types.ModLogUser;
                         }
 
                         if (channel) {
@@ -150,12 +175,17 @@ class Moderation extends Base {
 
                         this.models.ModLog
                                 .create(data)
-                                .then(resolve)
+                                .then(() => resolve())
                                 .catch(reject);
                 });
         }
 
-        expireModlog(guild, user, channel, type) {
+        public expireModlog(
+                guild: eris.Guild,
+                user: eris.User,
+                channel: eris.GuildChannel,
+                type: string
+        ): Promise<void> {
                 return new Promise((resolve, reject) => {
                         const filter = {
                                 guild: guild,
@@ -173,12 +203,16 @@ class Moderation extends Base {
                         this.models.ModLog
                                 .updateMany(filter, { $unset: { expiry: null } })
                                 .exec()
-                                .then(resolve)
+                                .then(() => resolve())
                                 .catch(reject);
                 });
         }
 
-        formatModlog(m, includeUser = true, includeChannel = true) {
+        public formatModlog(
+                m: types.ModLog,
+                includeUser: boolean = true,
+                includeChannel: boolean = true,
+        ): string {
                 let msg = '';
 
                 msg += `**Case:** ${m.case}\n`;
@@ -212,12 +246,12 @@ class Moderation extends Base {
                 return msg;
         }
 
-        async isMuted(guildConfig, user) {
+        public async isMuted(guildConfig: types.GuildConfig, user: eris.User | eris.Member): Promise<boolean> {
                 if (!guildConfig.muteRole) {
                         return false;
                 }
 
-                if (user.roles?.includes?.(guildConfig.muteRole)) {
+                if (user instanceof eris.Member && user.roles.includes(guildConfig.muteRole)) {
                         return true;
                 }
 
@@ -231,9 +265,20 @@ class Moderation extends Base {
                 return false;
         }
 
-        purgeMessages(guildConfig, channel, mod, type, check, count, before, reason) {
+        public purgeMessages(
+                guildConfig: types.GuildConfig,
+                channel: eris.TextChannel,
+                mod: eris.User,
+                type: string,
+                check: (m: eris.Message<eris.TextChannel>) => boolean,
+                count: string | number | null,
+                before: string,
+                reason: string
+        ): Promise<void> {
                 return new Promise((resolve, reject) => {
-                        const limit = parseInt(count || 100, 10);
+                        const limit = typeof count !== 'number'
+                                ? parseInt(count || '100', 10)
+                                : count;
 
                         if (isNaN(limit) || limit < 1 || limit > 1000) {
                                 return reject(`Count \`${count}\` is invalid. It must be a number between 1-1000`);
@@ -241,7 +286,7 @@ class Moderation extends Base {
 
                         check = check || (() => true);
 
-                        const opts = { limit };
+                        const opts: eris.GetMessagesOptions = { limit };
 
                         if (before) {
                                 opts.before = before;
@@ -249,8 +294,8 @@ class Moderation extends Base {
 
                         this.eris.getMessages(channel.id, opts)
                                 .then(messages => {
-                                        messages = messages
-                                                .filter(msg => {
+                                        const toDelete = messages
+                                                .filter((msg: eris.Message<eris.TextChannel>) => {
                                                         if (msg.pinned) return false;
                                                         if ((Date.now() - msg.timestamp) > (14 * 24 * 60 * 60 * 1000)) return false;
 
@@ -258,13 +303,13 @@ class Moderation extends Base {
                                                 })
                                                 .map(m => m.id);
 
-                                        if (!messages.length) {
+                                        if (!toDelete.length) {
                                                 return resolve();
                                         }
 
                                         const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${mod.id}`;
 
-                                        this.eris.deleteMessages(channel.id, messages, auditReason)
+                                        this.eris.deleteMessages(channel.id, toDelete, auditReason)
                                                 .then(() => {
                                                         this.log(`Purged "${count}" messages C${channel.id} G${guildConfig.id}.`);
 
@@ -287,6 +332,3 @@ class Moderation extends Base {
                 });
         }
 }
-
-
-module.exports = Moderation;
