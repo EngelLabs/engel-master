@@ -1,5 +1,5 @@
 import { baseConfig } from '@engel/core';
-const pkg = require('../../../package.json');
+import pkg = require('../../../package.json');
 
 
 baseConfig.name = pkg.name;
