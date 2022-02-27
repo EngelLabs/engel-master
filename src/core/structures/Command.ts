@@ -26,10 +26,11 @@ interface CommandOptions {
         execute?: (ctx: Context) => any | Promise<any>;
 }
 
+
 /**
  * Represents a core command
  */
-export default class Command {
+export default class Command<M extends Module = Module> {
         public name: string;
         public info?: string;
         public usage?: string;
@@ -47,8 +48,8 @@ export default class Command {
         public check?(ctx: Context): boolean | Promise<boolean>;
         public before?(ctx: Context): void | Promise<void>;
         public after?(ctx: Context): void | Promise<void>;
-        private _module?: Module;
-        private _parent?: Command;
+        private _module?: M;
+        private _parent?: Command<M>;
         private _commands?: CommandCollection;
 
         public constructor(options: CommandOptions) {
@@ -61,7 +62,7 @@ export default class Command {
 
         public get qualName(): string {
                 let qualName = this.name;
-                let command: Command = this;
+                let command: Command<M> = this;
 
                 while (command.parent) {
                         qualName = command.parent.name + ' ' + qualName;
@@ -75,11 +76,11 @@ export default class Command {
                 return this.qualName.replace(' ', '_');
         }
 
-        public get module(): Module {
+        public get module(): M {
                 return this._module || this.parent.module;
         }
 
-        public set module(value: Module) {
+        public set module(value: M) {
                 this._module = value;
         }
 
@@ -91,11 +92,11 @@ export default class Command {
                 this._commands = value;
         }
 
-        public get parent(): Command | undefined {
+        public get parent(): Command<M> | undefined {
                 return this._parent;
         }
 
-        public set parent(command: Command) {
+        public set parent(command: Command<M>) {
                 if (this._parent) {
                         throw new Error(`Subcommand is already registered to ${this._parent.qualName}`)
                 }
@@ -146,8 +147,8 @@ export default class Command {
                 return ret;
         }
 
-        public command(options: CommandOptions): Command {
-                let subcommand = new Command(options);
+        public command(options: CommandOptions): Command<M> {
+                let subcommand = new Command<M>(options);
 
                 subcommand.parent = this;
 
