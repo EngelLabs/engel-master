@@ -12,7 +12,7 @@
     },
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "dependencies": {
-        "@engel/core": "github:engel-labs/engel-core",
+        "@engel/core": "github:engel-labs/engel-core#master",
         "bluebird": "^3.7.2",
         "bufferutil": "^4.0.5",
         "eris": "github:abalabahaha/eris#dev",
