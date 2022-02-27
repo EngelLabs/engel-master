@@ -79,7 +79,7 @@ export interface CommandLog {
         name: string;
         message: any; // TODO: Type this
         failed?: boolean;
-        created: Number;
+        created: number;
 }
 
 export interface Config {
@@ -125,8 +125,8 @@ export interface Giveaway {
 export interface ModLog {
         case: number;
         type: string;
-        created: Number;
-        expiry?: Number;
+        created: number;
+        expiry?: number;
         duration?: number;
         guild: string;
         channel?: ModLogChannel;
@@ -151,13 +151,13 @@ export interface Tag {
         content: string;
         guild: string;
         author: string;
-        createdAt: Number;
-        editedAt?: Number;
+        createdAt: number;
+        editedAt?: number;
 }
 
 export interface WebLog {
         guild: string;
         user: string;
         info: string;
-        date: Number;
+        date: number;
 }
