@@ -1,26 +1,28 @@
-const { Command } = require('@engel/core');
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-const unmute = new Command({
+export default new Command<Moderator>({
         name: 'unmute',
         usage: '<member> [*reason]',
         info: 'Unmute a server member',
         examples: [
-                'unmute 338082875394097153 Not a meany anymore',
+                'unmute 338082875394097153 Not a meany anymore'
         ],
         cooldown: 3000,
         requiredArgs: 1,
         requiredPermissions: ['manageRoles'],
         execute: async function (ctx) {
                 if (!ctx.guildConfig.muteRole || !ctx.guild.roles.get(ctx.guildConfig.muteRole)) {
-                        return ctx.error(`This server doesn\'t have a mute role. See \`${ctx.prefix}help muterole\` to set one up.`);
+                        return ctx.error(`This server doesn't have a mute role. See \`${ctx.prefix}help muterole\` to set one up.`);
                 }
 
-                let user;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true) ||
-                                await ctx.helpers.converter.user(ctx.args[0], true);
+                        var user = await converter.member(ctx.guild, ctx.args[0], true) ||
+                                await converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -37,7 +39,7 @@ const unmute = new Command({
 
                 const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
-                if (user.user) {
+                if (user instanceof eris.User) {
                         try {
                                 await ctx.eris.removeGuildMemberRole(ctx.guild.id, user.id, ctx.guildConfig.muteRole, auditReason);
                         } catch (err) {
@@ -52,6 +54,3 @@ const unmute = new Command({
                 ctx.module.customResponse(ctx, 'unmute', user, null);
         }
 });
-
-
-module.exports = unmute;

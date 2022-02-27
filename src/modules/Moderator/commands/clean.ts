@@ -1,20 +1,20 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'clean',
         usage: '[count=100]',
         info: 'Clean up messages sent by the core',
         aliases: [
-                'cleanup',
+                'cleanup'
         ],
         examples: [
-                'clean 200',
+                'clean 200'
         ],
         cooldown: 4000,
         requiredPermissions: ['readMessageHistory'],
         execute: async function (ctx) {
-                let count = parseInt(ctx.args[0] || 100, 10);
+                const count = parseInt(ctx.args[0] || '100', 10);
 
                 if (isNaN(count) || count <= 0 || count > 500) {
                         return ctx.error(`Count \`${ctx.args[0]}\` is invalid.`);
@@ -24,9 +24,9 @@ module.exports = new Command({
 
                 const { eris, channel } = ctx;
 
-                let messages = await ctx.eris.getMessages(channel.id, { limit: count, before: ctx.message.id });
+                const messages = await ctx.eris.getMessages(channel.id, { limit: count, before: ctx.message.id });
 
-                messages = messages
+                let toDelete = messages
                         .filter(msg => {
                                 if (msg.author.id !== eris.user.id) return false;
                                 if (msg.pinned) return false;
@@ -37,18 +37,19 @@ module.exports = new Command({
                         })
                         .map(m => m.id);
 
-                if (!messages || !messages.length) {
+                if (!toDelete || !toDelete.length) {
                         return ctx.removeLoadingReaction().catch(() => false);
                 }
 
                 if (ctx.permissions.has('manageMessages')) {
-                        eris.deleteMessages(channel.id, messages)
+                        eris.deleteMessages(channel.id, toDelete)
                                 .catch(() => false);
                 } else {
-                        lastMsg = messages.at(-1);
-                        messages = messages.slice(0, -1);
+                        const lastMsg = toDelete.at(-1);
 
-                        for (const id of messages) {
+                        toDelete = toDelete.slice(0, -1);
+
+                        for (const id of toDelete) {
                                 eris.deleteMessage(channel.id, id)
                                         .catch(() => false);
                         }

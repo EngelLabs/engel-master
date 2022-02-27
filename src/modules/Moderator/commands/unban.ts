@@ -1,26 +1,29 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-const unban = new Command({
+export default new Command<Moderator>({
         name: 'unban',
         usage: '<user> [*reason]',
         info: 'Unban a server member',
         examples: [
-                'unban 769350257430626325 You are forgiven',
+                'unban 769350257430626325 You are forgiven'
         ],
         cooldown: 3000,
         requiredArgs: 1,
         requiredPermissions: ['banMembers'],
         execute: async function (ctx) {
+                const converter = new Converter(ctx.core);
+
                 try {
-                        var user = await ctx.helpers.converter.user(ctx.args[0], true);
+                        var user = await converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
 
                 if (!user) return ctx.error(`User \`${ctx.args[0]}\` not found.`);
 
-                ctx.args.shift()
+                ctx.args.shift();
 
                 const reason = ctx.args.join(' ');
 
@@ -39,6 +42,3 @@ const unban = new Command({
                 ctx.module.customResponse(ctx, 'unban', user, null);
         }
 });
-
-
-module.exports = unban;

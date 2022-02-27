@@ -1,19 +1,22 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Moderator from '..';
+import Converter from '../../../core/helpers/Converter';
 
-
-const kick = new Command({
+export default new Command<Moderator>({
         name: 'kick',
         usage: '<member> [*reason]',
         info: 'Kick a server member',
         examples: [
-                'kick @Bob very bob',
+                'kick @Bob very bob'
         ],
         cooldown: 3000,
         requiredArgs: 1,
         requiredPermissions: ['kickMembers'],
         execute: async function (ctx) {
+                const converter = new Converter(ctx.core);
+
                 try {
-                        var user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
+                        var user = await converter.member(ctx.guild, ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -40,6 +43,3 @@ const kick = new Command({
                 ctx.module.customResponse(ctx, 'kick', user, null);
         }
 });
-
-
-module.exports = kick;

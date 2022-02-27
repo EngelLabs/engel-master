@@ -1,30 +1,34 @@
-const { Base } = require('@engel/core');
-const { Permissions } = require('eris').Constants;
-
+import * as eris from 'eris';
+import { types } from '@engel/core';
+import Permission from '../../../core/helpers/Permission';
+import Moderation from '../../../core/helpers/Moderation';
+import Base from '../../../core/structures/Base';
+import Core from '../../../core/Core';
 
 /**
- * @class ModTimer
- * @extends Base
  * Moderation timer handler
  */
-class ModTimer extends Base {
-        constructor(core) {
+export default class ModTimer extends Base {
+        private _permissions: Permission;
+        private _moderation: Moderation;
+
+        public constructor(core: Core) {
                 super(core);
 
+                this._permissions = new Permission(core);
+                this._moderation = new Moderation(core);
+        }
+
+        public get handler(): () => Promise<void> {
                 return this._handle.bind(this);
         }
 
         /**
          * Find and handle expired timers
-         * @returns {Promise<void>}
          */
-        async _handle() {
-                if (!this.core.isReady) return;
-
-                let modlogs;
-
+        private async _handle(): Promise<void> {
                 try {
-                        modlogs = await this.models.ModLog.find({ expiry: { $lte: Date.now() } });
+                        var modlogs = await this.models.ModLog.find({ expiry: { $lte: Date.now() } });
                 } catch (err) {
                         this.log(err, 'error');
 
@@ -53,12 +57,12 @@ class ModTimer extends Base {
                 }
         }
 
-        async mute({ guild, user }) {
-                guild = this.eris.guilds.get(guild);
+        public async mute({ guild: guildID, user }: types.ModLog): Promise<void> {
+                const guild = this.eris.guilds.get(guildID);
 
                 if (!guild) return;
 
-                if (!this.helpers.permissions.hasGuildPermissions(guild, 'manageRoles')) return;
+                if (!this._permissions.hasGuildPermissions(guild, 'manageRoles')) return;
 
                 const guildConfig = await this.core.guilds.getOrFetch(guild.id);
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
@@ -68,7 +72,7 @@ class ModTimer extends Base {
 
                 const member = guild.members.get(user.id);
 
-                this.helpers.moderation.createModlog(
+                this._moderation.createModlog(
                         guildConfig,
                         'unmute [Auto]',
                         null,
@@ -76,7 +80,7 @@ class ModTimer extends Base {
                         null,
                         member,
                         this.eris.user,
-                        null,
+                        null
                 );
 
                 if (member?.roles?.includes?.(muteRole)) {
@@ -85,12 +89,12 @@ class ModTimer extends Base {
                 }
         }
 
-        async ban({ guild, user }) {
-                guild = this.eris.guilds.get(guild);
+        public async ban({ guild: guildID, user }: types.ModLog): Promise<void> {
+                const guild = this.eris.guilds.get(guildID);
 
                 if (!guild) return;
 
-                if (!this.helpers.permissions.hasGuildPermissions(guild, 'banMembers')) return;
+                if (!this._permissions.hasGuildPermissions(guild, 'banMembers')) return;
 
                 const guildConfig = await this.core.guilds.getOrFetch(guild.id);
 
@@ -98,7 +102,7 @@ class ModTimer extends Base {
 
                 this.eris.unbanGuildMember(guild.id, user.id, 'module: Moderator. Auto unban')
                         .then(() => {
-                                this.helpers.moderation.createModlog(
+                                this._moderation.createModlog(
                                         guildConfig,
                                         'unban [Auto]',
                                         null,
@@ -106,14 +110,14 @@ class ModTimer extends Base {
                                         null,
                                         user,
                                         this.eris.user,
-                                        null,
+                                        null
                                 );
                         })
                         .catch(() => false);
         }
 
-        async lock({ guild, channel }) {
-                guild = this.eris.guilds.get(guild);
+        public async lock({ guild: guildID, channel }): Promise<void> {
+                const guild = this.eris.guilds.get(guildID);
 
                 if (!guild) return;
 
@@ -121,36 +125,38 @@ class ModTimer extends Base {
 
                 if (!channel) return;
 
-                if (!this.helpers.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
+                if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
                 const guildConfig = await this.core.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
-                let overwrite = channel.permissionOverwrites.get(guild.id);
-                let allow = overwrite.allow || BigInt(0),
-                        deny = overwrite.deny || BigInt(0);
+                const overwrite = channel.permissionOverwrites.get(guild.id);
+
+                const allow = overwrite.allow || BigInt(0);
+
+                let deny = overwrite.deny || BigInt(0);
 
                 if (overwrite) {
                         const perms = overwrite.json;
 
                         if (perms.sendMessages === false) {
-                                deny ^= Permissions.sendMessages;
+                                deny ^= eris.Constants.Permissions.sendMessages;
                         }
                         if (perms.addReactions === false) {
-                                deny ^= Permissions.addReactions;
+                                deny ^= eris.Constants.Permissions.addReactions;
                         }
                         if (perms.voiceConnect === false) {
-                                deny ^= Permissions.voiceConnect;
+                                deny ^= eris.Constants.Permissions.voiceConnect;
                         }
                         if (perms.voiceSpeak === false) {
-                                deny ^= Permissions.voiceSpeak;
+                                deny ^= eris.Constants.Permissions.voiceSpeak;
                         }
                 }
 
                 this.eris.editChannelPermission(channel.id, guild.id, allow, deny, 0, 'module: Moderator. Automatic unlock')
                         .then(() => {
-                                this.helpers.moderation.createModlog(
+                                this._moderation.createModlog(
                                         guildConfig,
                                         'unlock [Auto]',
                                         null,
@@ -158,40 +164,42 @@ class ModTimer extends Base {
                                         null,
                                         null,
                                         this.eris.user,
-                                        channel,
+                                        channel
                                 );
                         })
                         .catch(() => false);
         }
 
-        async block({ guild, channel, user }) {
-                guild = this.eris.guilds.get(guild);
+        public async block({ guild: guildID, channel, user }: types.ModLog): Promise<void> {
+                const guild = this.eris.guilds.get(guildID);
 
                 if (!guild) return;
 
-                channel = guild.channels.get(channel.id);
+                const actualChannel = guild.channels.get(channel.id);
 
                 if (!channel) return;
 
-                if (!this.helpers.permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
+                if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
                 const guildConfig = await this.core.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
-                let overwrite = channel.permissionOverwrites.get(user.id);
-                let allow = overwrite?.allow || BigInt(0),
-                        deny = overwrite?.deny || BigInt(0);
+                const overwrite = actualChannel.permissionOverwrites.get(user.id);
+
+                const allow = overwrite?.allow || BigInt(0);
+
+                let deny = overwrite?.deny || BigInt(0);
 
                 if (overwrite?.json?.viewChannel === false) {
-                        deny ^= Permissions.viewChannel;
+                        deny ^= eris.Constants.Permissions.viewChannel;
                 } else {
                         return;
                 }
 
                 this.eris.editChannelPermission(channel.id, user.id, allow, deny, 1, 'module: Moderator. Automatic unblock')
                         .then(() => {
-                                this.helpers.moderation.createModlog(
+                                this._moderation.createModlog(
                                         guildConfig,
                                         'unblock [Auto]',
                                         null,
@@ -199,20 +207,17 @@ class ModTimer extends Base {
                                         null,
                                         user,
                                         this.eris.user,
-                                        channel,
+                                        channel
                                 );
                         })
                         .catch(() => false);
         }
 
-        _isEnabled(guildConfig) {
-                if (!guildConfig.mod) {
+        private _isEnabled(guildConfig: types.GuildConfig): boolean {
+                if (!guildConfig || !guildConfig.modules || guildConfig.modules.mod) {
                         return true;
                 }
 
-                return !guildConfig.mod.disabled;
+                return !guildConfig.modules.mod.disabled;
         }
 }
-
-
-module.exports = ModTimer;

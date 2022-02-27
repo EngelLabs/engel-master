@@ -1,8 +1,10 @@
-const { Command } = require('@engel/core');
-const Roles = require('../../../core/helpers/Roles');
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Roles from '../../../core/helpers/Roles';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-const mute = new Command({
+export default new Command<Moderator>({
         name: 'mute',
         usage: '<member> [duration=inf] [*reason]',
         info: 'Mute a server member',
@@ -10,20 +12,19 @@ const mute = new Command({
         requiredArgs: 1,
         requiredPermissions: ['manageRoles', 'manageChannels'],
         execute: async function (ctx) {
-                let role;
                 const roles = new Roles(ctx.core);
 
                 try {
-                        role = await roles.resolveMuteRole(ctx.guild, ctx.guildConfig);
+                        var role = await roles.resolveMuteRole(ctx.guild, ctx.guildConfig);
                 } catch (err) {
                         return ctx.error(err);
                 }
 
-                let user;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true) ||
-                                await ctx.helpers.converter.user(ctx.args[0], true);
+                        var user = await converter.member(ctx.guild, ctx.args[0], true) ||
+                                await converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -34,11 +35,11 @@ const mute = new Command({
                         return ctx.error('That user is already muted.');
                 }
 
-                if (!ctx.module.canModerate(ctx, user, 'mute'));
+                if (!ctx.module.canModerate(ctx, user, 'mute')) return;
 
                 ctx.args.shift();
 
-                const duration = ctx.helpers.converter.duration(ctx.args[0]);
+                const duration = converter.duration(ctx.args[0]);
 
                 if (duration) ctx.args.shift();
 
@@ -48,9 +49,9 @@ const mute = new Command({
 
                 const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
-                if (user.user) {
+                if (user instanceof eris.User) {
                         try {
-                                await ctx.eris.addGuildMemberRole(ctx.guild.id, user.id, ctx.guildConfig.muteRole, auditReason);
+                                await ctx.eris.addGuildMemberRole(ctx.guild.id, user.id, role.id, auditReason);
                         } catch (err) {
                                 return ctx.error(err.toString());
                         }
@@ -61,6 +62,3 @@ const mute = new Command({
                 ctx.module.customResponse(ctx, 'mute', user, null);
         }
 });
-
-
-module.exports = mute;

@@ -1,19 +1,22 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'warn',
         usage: '<user> <*reason>',
         info: 'Warn a server member',
         examples: [
                 'warn @timtoy stop being mean >:(',
-                'warn 338082875394097153 annoying',
+                'warn 338082875394097153 annoying'
         ],
         cooldown: 3000,
         requiredArgs: 2,
         execute: async function (ctx) {
+                const converter = new Converter(ctx.core);
+
                 try {
-                        var user = await ctx.helpers.converter.user(ctx.args[0], true);
+                        var user = await converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }

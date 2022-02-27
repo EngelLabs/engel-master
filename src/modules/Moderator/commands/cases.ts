@@ -1,35 +1,37 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderation from '../../../core/helpers/Moderation';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'cases',
         usage: '<user>',
         info: 'View moderation cases for a user or channel',
         aliases: [
-                'modlogs',
+                'modlogs'
         ],
         examples: [
                 'cases @timtoy',
                 'cases 932117428496904283',
-                'modlogs 338082875394097153',
+                'modlogs 338082875394097153'
         ],
         cooldown: 10000,
         requiredArgs: 1,
         execute: async function (ctx) {
-                let id = ctx.helpers.converter.userID(ctx.args[0]);
+                const converter = new Converter(ctx.core);
 
-                if (isNaN(id)) {
-                        id = ctx.helpers.converter.channelID(ctx.args[0]);
+                let id = converter.userID(ctx.args[0]);
 
-                        if (isNaN(id)) {
+                if (isNaN(parseInt(id))) {
+                        id = converter.channelID(ctx.args[0]);
+
+                        if (isNaN(parseInt(id))) {
                                 return ctx.error(`Channel/User \`${ctx.args[0]}\` is invalid.`);
                         }
                 }
 
-                let modlogs;
-
                 try {
-                        modlogs = await ctx.models.ModLog
+                        var modlogs = await ctx.models.ModLog
                                 .find({ guild: ctx.guild.id, $or: [{ 'user.id': id }, { 'channel.id': id }] })
                                 .lean();
                 } catch (err) {
@@ -40,9 +42,9 @@ module.exports = new Command({
                         return ctx.error('No cases found for that channel/user.');
                 }
 
-                const moderation = ctx.helpers.moderation;
+                const moderation = new Moderation(ctx.core);
 
-                modlogs = modlogs
+                const msg = modlogs
                         .map(m => {
                                 // Don't include user ID
                                 if (m.user?.id === id) {
@@ -58,10 +60,10 @@ module.exports = new Command({
 
                 const embed = {
                         title: `**Cases for ${id}**`,
-                        description: modlogs,
-                        color: ctx.config.colours.success,
+                        description: msg,
+                        color: ctx.config.colours.success
                 };
 
                 return ctx.send({ embed });
         }
-})
+});

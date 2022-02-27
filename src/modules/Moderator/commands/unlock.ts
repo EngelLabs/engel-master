@@ -1,37 +1,40 @@
-const { Command } = require('@engel/core');
-const { Permissions } = require('eris').Constants;
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'unlock',
         usage: '<channel> [*reason]',
         info: 'Unlock a server channel',
         examples: [
                 'unlock #general',
-                'unlock 828196138942857218 Welcome back!',
+                'unlock 828196138942857218 Welcome back!'
         ],
         cooldown: 8000,
         requiredArgs: 1,
         requiredPermissions: [
                 'manageRoles',
-                'manageChannels',
+                'manageChannels'
         ],
         execute: async function (ctx) {
-                let channel;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        channel = await ctx.helpers.converter.textChannel(ctx.guild, ctx.args[0]);
+                        var channel = await converter.textChannel(ctx.guild, ctx.args[0]);
                 } catch (err) {
                         return ctx.error(err);
                 }
 
                 if (!channel) {
-                        return ctx.error(`Channel \`${ctx.args[0]}\` not found.`)
+                        return ctx.error(`Channel \`${ctx.args[0]}\` not found.`);
                 }
 
                 const overwrite = channel.permissionOverwrites.get(ctx.guild.id);
-                let allow = overwrite?.allow || BigInt(0),
-                        deny = overwrite?.deny || BigInt(0);
+
+                const allow = overwrite?.allow || BigInt(0);
+
+                let deny = overwrite?.deny || BigInt(0);
 
                 if (overwrite) {
                         const perms = overwrite.json;
@@ -47,16 +50,16 @@ module.exports = new Command({
                         deny = BigInt(overwrite.deny || 0);
 
                         if (perms.sendMessages === false) {
-                                deny ^= Permissions.sendMessages;
+                                deny ^= eris.Constants.Permissions.sendMessages;
                         }
                         if (perms.addReactions === false) {
-                                deny ^= Permissions.addReactions;
+                                deny ^= eris.Constants.Permissions.addReactions;
                         }
                         if (perms.voiceConnect === false) {
-                                deny ^= Permissions.voiceConnect;
+                                deny ^= eris.Constants.Permissions.voiceConnect;
                         }
                         if (perms.voiceSpeak === false) {
-                                deny ^= Permissions.voiceSpeak;
+                                deny ^= eris.Constants.Permissions.voiceSpeak;
                         }
                 } else {
                         return ctx.error('That channel is already unlocked.');

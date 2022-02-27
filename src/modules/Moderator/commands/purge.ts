@@ -1,10 +1,19 @@
-const { Command } = require('@engel/core');
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Context from '../../../core/structures/Context';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
+const purgeMessages = async (
+        ctx: Context<Moderator>,
+        count: string,
+        check: (m: eris.Message<eris.TextChannel>) => boolean,
+        reason?: string,
+        type?: string
+): Promise<void> => {
+        let delCommand: boolean;
 
-const purgeMessages = async (ctx, count, check, reason, type) => {
-        let result, delCommand;
-
-        if (ctx.commandConfig?.del !== undefined) {
+        if (typeof ctx.commandConfig !== 'boolean' && ctx.commandConfig?.del !== undefined) {
                 delCommand = ctx.commandConfig.del;
         } else if (ctx.moduleConfig?.delCommands !== undefined) {
                 delCommand = ctx.moduleConfig.delCommands;
@@ -18,34 +27,33 @@ const purgeMessages = async (ctx, count, check, reason, type) => {
         }
 
         try {
-                result = await ctx.module.purgeMessages(ctx, type || `purge [${ctx.command.name}]`, check, count, ctx.message.id, reason);
+                await ctx.module.purgeMessages(ctx, type || `purge [${ctx.command.name}]`, check, count, ctx.message.id, reason);
         } catch (err) {
                 if (!delCommand) ctx.removeLoadingReaction().catch(() => false);
 
-                return ctx.error(err);
+                ctx.error(err);
+
+                return;
         }
 
         if (!delCommand) {
                 ctx.removeLoadingReaction()
                         .catch(() => false);
         }
+};
 
-        return Promise.resolve();
-}
-
-
-const purge = new Command({
+const purge = new Command<Moderator>({
         name: 'purge',
         usage: '[count=100] [*reason]',
         info: 'Purge messages from a channel',
         examples: [
                 'purge 50',
-                'purge 100 Removing spam messages',
+                'purge 100 Removing spam messages'
         ],
         cooldown: 5000,
         requiredPermissions: [
                 'readMessageHistory',
-                'manageMessages',
+                'manageMessages'
         ],
         execute: function (ctx) {
                 return purgeMessages(
@@ -53,7 +61,7 @@ const purge = new Command({
                         ctx.args.shift(),
                         () => true,
                         ctx.args.join(' '),
-                        'purge',
+                        'purge'
                 );
         }
 });
@@ -63,19 +71,19 @@ purge.command({
         usage: '<user> [count=100] [*reason]',
         info: 'Purge a user\'s messages from a channel',
         examples: [
-                'purge @timtoy 200 Spam',
+                'purge @timtoy 200 Spam'
         ],
         cooldown: 5000,
         requiredArgs: 1,
         requiredPermissions: [
                 'readMessageHistory',
-                'manageMessages',
+                'manageMessages'
         ],
         execute: async function (ctx) {
-                let user;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        user = await ctx.helpers.converter.user(ctx.args[0], true);
+                        var user = await converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -90,7 +98,7 @@ purge.command({
                         ctx,
                         ctx.args.shift(),
                         msg => msg.author.id === user.id,
-                        ctx.args.join(' '),
+                        ctx.args.join(' ')
                 );
         }
 });
@@ -102,14 +110,14 @@ purge.command({
         cooldown: 5000,
         requiredPermissions: [
                 'readMessageHistory',
-                'manageMessages',
+                'manageMessages'
         ],
         execute: function (ctx) {
                 return purgeMessages(
                         ctx,
                         ctx.args.shift(),
-                        msg => msg.embeds?.length,
-                        ctx.args.join(' '),
+                        msg => !!msg.embeds.length,
+                        ctx.args.join(' ')
                 );
         }
 });
@@ -121,14 +129,14 @@ purge.command({
         cooldown: 5000,
         requiredPermissions: [
                 'readMessageHistory',
-                'manageMessages',
+                'manageMessages'
         ],
         execute: function (ctx) {
                 return purgeMessages(
                         ctx,
                         ctx.args.shift(),
-                        msg => msg.author.core,
-                        ctx.args.join(' '),
+                        msg => msg.author.bot,
+                        ctx.args.join(' ')
                 );
         }
 });
@@ -140,14 +148,14 @@ purge.command({
         cooldown: 5000,
         requiredPermissions: [
                 'readMessageHistory',
-                'manageMessages',
+                'manageMessages'
         ],
         execute: function (ctx) {
                 return purgeMessages(
                         ctx,
                         ctx.args.shift(),
-                        msg => !msg.author.core,
-                        ctx.args.join(' '),
+                        msg => !msg.author.bot,
+                        ctx.args.join(' ')
                 );
         }
 });
@@ -160,11 +168,11 @@ purge.command({
         requiredArgs: 1,
         requiredPermissions: [
                 'readMessageHistory',
-                'manageMessages',
+                'manageMessages'
         ],
         execute: function (ctx) {
                 let args = ctx.args.join(' ');
-                let text;
+                let text: string;
 
                 if (args.startsWith('"') && args.lastIndexOf('"') !== -1) {
                         text = args.slice(1).slice(0, args.lastIndexOf('"') - 1);
@@ -176,16 +184,15 @@ purge.command({
 
                 args = args.slice(text.length);
 
-                args = args.length ? args : [];
+                const reason = args.length ? args : null;
 
                 return purgeMessages(
                         ctx,
-                        args.shift(),
-                        msg => msg.content?.includes?.(text),
-                        args.join(' '),
+                        args.split(' ').shift(),
+                        msg => msg.content && msg.content.includes(text),
+                        reason
                 );
         }
 });
 
-
-module.exports = purge;
+export default purge;

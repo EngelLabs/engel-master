@@ -1,22 +1,23 @@
-import * as eris from 'eris';
-import Command from "../../../core/structures/Command";
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-export = new Command({
+export default new Command<Moderator>({
         name: 'ban',
         usage: '<user> [delete message days=2] [duration=inf] [*reason]',
         info: 'Ban a server member',
         examples: [
                 'ban @aerro 1d Overly toxic',
-                'ban 338082875394097153 7 Spamming in chat',
+                'ban 338082875394097153 7 Spamming in chat'
         ],
         cooldown: 3000,
         requiredArgs: 1,
         requiredPermissions: ['banMembers'],
         execute: async function (ctx) {
-                let user: eris.User | undefined;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        user = await ctx.helpers.converter.user(ctx.args[0], true);
+                        var user = await converter.user(ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -35,7 +36,7 @@ export = new Command({
                         return ctx.error(`\`delete message days\` must be a value between 0 and 7, not \`${deleteMessageDays}\``);
                 }
 
-                const duration = ctx.helpers.converter.duration(ctx.args[0]);
+                const duration = converter.duration(ctx.args[0]);
 
                 if (duration) ctx.args.shift();
 
@@ -43,7 +44,7 @@ export = new Command({
 
                 const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
-                ctx.module.sendDM(ctx.guildConfig, user, `You were banned from ${ctx.guild.name}`, duration, reason);
+                ctx.module.sendDM(ctx, user, `You were banned from ${ctx.guild.name}`, duration, reason);
 
                 try {
                         await ctx.eris.banGuildMember(ctx.guild.id, user.id, deleteMessageDays, auditReason);

@@ -1,14 +1,15 @@
-const { Command } = require('@engel/core');
-const prettyMS = require('pretty-ms');
+import * as prettyMS from 'pretty-ms';
+import Command from '../../../core/structures/Command';
+import Moderator from '..';
+import Converter from '../../../core/helpers/Converter';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'duration',
         usage: '<case> [*new duration]',
         info: 'Update or remove a moderation case\'s duration',
         examples: [
                 'duration 69',
-                'duration 120 10m',
+                'duration 120 10m'
         ],
         cooldown: 8500,
         requiredArgs: 1,
@@ -19,9 +20,11 @@ module.exports = new Command({
                         return ctx.error(`\`${ctx.args[0]}\` is not a valid case number.`);
                 }
 
-                const duration = ctx.helpers.converter.duration(ctx.args[1]);
+                const converter = new Converter(ctx.core);
 
-                if (duration && duration < 300) return ctx.error(`Duration must be at least 5 minutes`);
+                const duration = converter.duration(ctx.args[1]);
+
+                if (duration && duration < 300) return ctx.error('Duration must be at least 5 minutes');
 
                 const filter = {
                         expiry: { $gte: Date.now() },
@@ -32,7 +35,6 @@ module.exports = new Command({
                 const update = duration
                         ? { $set: { duration: duration * 1000, expiry: Date.now() + duration * 1000 } }
                         : { $unset: { duration: null, expiry: null } };
-
 
                 const result = await ctx.models.ModLog
                         .updateOne(filter, update)

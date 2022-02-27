@@ -1,26 +1,27 @@
-const { Command } = require('@engel/core');
-const { Permissions } = require('eris').Constants;
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'block',
         usage: '<member> [channel] [duration=inf] [*reason]',
         info: 'Block a server member from viewing a channel',
         examples: [
                 'block 329768023869358081 828010464133775392 2h Being disruptive to chat',
-                'block @timtoy #core-commands 10m Going too fast!',
+                'block @timtoy #core-commands 10m Going too fast!'
         ],
         cooldown: 3000,
         requiredArgs: 1,
         requiredPermissions: [
                 'manageRoles',
-                'manageChannels',
+                'manageChannels'
         ],
         execute: async function (ctx) {
-                let user;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
+                        var user = await converter.member(ctx.guild, ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -31,22 +32,23 @@ module.exports = new Command({
 
                 ctx.args.shift();
 
-                let channel;
+                let channel: eris.GuildChannel;
 
                 if (ctx.args.length) {
                         let errOccured = false;
 
                         try {
-                                channel = await ctx.helpers.converter.channel(ctx.guild, ctx.args[0]);
+                                channel = await converter.channel(ctx.guild, ctx.args[0]);
                         } catch (err) {
                                 errOccured = true;
                         }
 
                         if (!errOccured && !channel) return ctx.error(`Channel \`${ctx.args[0]}\` not found.`);
+
                         if (channel) ctx.args.shift();
                 }
 
-                channel = channel || ctx.channel;
+                channel = channel || (<eris.GuildChannel>ctx.channel);
 
                 const overwrite = channel.permissionOverwrites.get(user.id);
 
@@ -61,15 +63,15 @@ module.exports = new Command({
                         }
 
                         if (perms.viewChannel === true) {
-                                allow ^= Permissions.viewChannel;
+                                allow ^= eris.Constants.Permissions.viewChannel;
                         } else {
-                                deny |= Permissions.viewChannel;
+                                deny |= eris.Constants.Permissions.viewChannel;
                         }
                 } else {
-                        deny = Permissions.viewChannel;
+                        deny = eris.Constants.Permissions.viewChannel;
                 }
 
-                const duration = ctx.helpers.converter.duration(ctx.args[0]);
+                const duration = converter.duration(ctx.args[0]);
 
                 if (duration) ctx.args.shift();
 
@@ -77,7 +79,7 @@ module.exports = new Command({
 
                 const auditReason = (reason?.length ? reason : 'No reason provided') + ` | Moderator: ${ctx.author.id}`;
 
-                ctx.module.sendDM(ctx.guildConfig, user, `You were blocked from #${channel.name} in ${ctx.guild.name}`, duration, reason);
+                ctx.module.sendDM(ctx, user, `You were blocked from #${channel.name} in ${ctx.guild.name}`, duration, reason);
 
                 try {
                         await ctx.eris.editChannelPermission(channel.id, user.id, allow, deny, 1, auditReason);
@@ -89,4 +91,4 @@ module.exports = new Command({
 
                 ctx.module.customResponse(ctx, 'block', user, channel);
         }
-})
+});

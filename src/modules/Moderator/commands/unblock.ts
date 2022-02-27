@@ -1,26 +1,27 @@
-const { Command } = require('@engel/core');
-const { Permissions } = require('eris').Constants;
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'unblock',
         usage: '<member> [channel] [*reason]',
         info: 'Unblock a server member from a channel',
         examples: [
                 'unblock @A1pha #music-cmds',
-                'unblock 329768023869358081 #general He said sorry lol.',
+                'unblock 329768023869358081 #general He said sorry lol.'
         ],
         cooldown: 3000,
         requiredArgs: 1,
         requiredPermissions: [
                 'manageRoles',
-                'manageChannels',
+                'manageChannels'
         ],
         execute: async function (ctx) {
-                let user;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
+                        var user = await converter.member(ctx.guild, ctx.args[0], true);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -29,13 +30,11 @@ module.exports = new Command({
 
                 ctx.args.shift();
 
-                let channel;
-
                 if (ctx.args.length) {
                         let errored = false;
 
                         try {
-                                channel = await ctx.helpers.converter.channel(ctx.guild, ctx.args[0]);
+                                var channel = await converter.channel(ctx.guild, ctx.args[0]);
                         } catch (err) {
                                 errored = true;
                         }
@@ -44,11 +43,13 @@ module.exports = new Command({
                         if (channel) ctx.args.shift();
                 }
 
-                channel = channel || ctx.channel;
+                channel = channel || (<eris.TextChannel>ctx.channel);
 
                 const overwrite = channel.permissionOverwrites.get(user.id);
-                let allow = overwrite?.allow || BigInt(0),
-                        deny = overwrite?.deny || BigInt(0);
+
+                const allow = overwrite?.allow || BigInt(0);
+
+                let deny = overwrite?.deny || BigInt(0);
 
                 if (overwrite) {
                         const perms = overwrite.json;
@@ -57,7 +58,7 @@ module.exports = new Command({
                                 return ctx.error(`That user is already unblocked from ${channel.mention}`);
                         }
 
-                        deny ^= Permissions.viewChannel;
+                        deny ^= eris.Constants.Permissions.viewChannel;
                 } else {
                         return ctx.error(`That user is already unblocked from ${channel.mention}`);
                 }

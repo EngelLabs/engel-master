@@ -1,13 +1,13 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Moderator from '..';
 
-
-module.exports = new Command({
+export default new Command<Moderator>({
         name: 'reason',
         usage: '<case> [*new reason]',
         info: 'Update or remove a moderation case\'s reason.',
         examples: [
                 'reason 90',
-                'reason 23 potato',
+                'reason 23 potato'
         ],
         cooldown: 8500,
         requiredArgs: 1,
