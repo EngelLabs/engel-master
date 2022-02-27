@@ -28,6 +28,8 @@
             "never"
         ],
         "no-var": 0,
-        "one-var": 0
+        "one-var": 0,
+        "space-before-function-paren": 0,
+        "no-use-before-define": 0
     }
 }

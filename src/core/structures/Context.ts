@@ -33,7 +33,7 @@ interface ReactionFunction {
         (): Promise<void>;
 }
 
-interface Embed extends eris.Embed {
+interface Embed extends eris.EmbedOptions {
         colour?: number;
 }
 
