@@ -5,7 +5,7 @@ import Context from './Context';
 import Module from './Module';
 
 
-interface CommandOptions {
+interface CommandOptions<M extends Module> {
         name: string;
         info?: string;
         usage?: string;
@@ -20,10 +20,10 @@ interface CommandOptions {
         alwaysEnabled?: boolean;
         disableModuleCheck?: boolean;
         requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
-        check?: (ctx: Context) => boolean | Promise<boolean>;
-        before?: (ctx: Context) => void | Promise<void>;
-        after?: (ctx: Context) => void | Promise<void>;
-        execute?: (ctx: Context) => any | Promise<any>;
+        check?: (ctx: Context<M, Command<M>>) => boolean | Promise<boolean>;
+        before?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
+        after?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
+        execute?: (ctx: Context<M, Command<M>>) => any | Promise<any>;
 }
 
 
@@ -52,7 +52,7 @@ export default class Command<M extends Module = Module> {
         private _parent?: Command<M>;
         private _commands?: CommandCollection;
 
-        public constructor(options: CommandOptions) {
+        public constructor(options: CommandOptions<M>) {
                 Object.assign(this, options);
         }
 
@@ -147,7 +147,7 @@ export default class Command<M extends Module = Module> {
                 return ret;
         }
 
-        public command(options: CommandOptions): Command<M> {
+        public command(options: CommandOptions<M>): Command<M> {
                 let subcommand = new Command<M>(options);
 
                 subcommand.parent = this;
@@ -181,7 +181,7 @@ export default class Command<M extends Module = Module> {
                 return resolve(true);
         }
 
-        public async execute(ctx: Context): Promise<any> {
+        public async execute(ctx: Context<M, Command<M>>): Promise<any> {
                 throw new Error(`Unreachable code.`);
         }
 }
