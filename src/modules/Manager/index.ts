@@ -1,41 +1,51 @@
-const { Module } = require('@engel/core');
+import * as eris from 'eris';
+import { types } from '@engel/core';
+import Module from '../../core/structures/Module';
+import Command from '../../core/structures/Command';
 
-
-class Manager extends Module {
-        constructor() {
+export default class Manager extends Module {
+        public constructor() {
                 super();
 
                 this.aliases = ['management'];
                 this.info = 'Commands to manage and configure your server';
         }
 
-        _debug(channel, guildConfig) {
+        private _debug(channel: eris.TextChannel, guildConfig: types.GuildConfig): [string[], string[]] {
                 const msgArray = [];
                 const infoArray = [];
 
                 // const perms = channel.permissionsOf(this.eris.user.id);
 
-                infoArray.push(`The prefix${guildConfig.prefixes.length > 1 ? 'es' : ''} for this server: ${guildConfig.prefixes.map(p => `\`${p}\``).join(', ')}`);
+                const fmt = guildConfig.prefixes.map(p => `\`${p}\``).join(', ');
+
+                infoArray.push(`The prefix${guildConfig.prefixes.length > 1 ? 'es' : ''} for this server: ${fmt}`);
 
                 return [msgArray, infoArray];
         }
 
-        debugCommand(command, channel, guildConfig) {
+        public debugCommand(
+                command: Command,
+                channel: eris.TextChannel,
+                guildConfig: types.GuildConfig
+        ): eris.EmbedOptions {
                 const config = this.config;
+
                 const [msgArray, infoArray] = this._debug(channel, guildConfig);
-                const embed = {
+
+                const embed: eris.EmbedOptions = {
                         title: `Command "${command.qualName}" debug`,
-                        color: config.colours.info,
+                        color: config.colours.info
                 };
 
                 if (command.dmEnabled) {
-                        infoArray.push(`This command can be used in DMs`);
+                        infoArray.push('This command can be used in DMs');
                 }
                 if (command.alwaysEnabled) {
-                        infoArray.push(`This command can not be disabled`);
+                        infoArray.push('This command can not be disabled');
                 }
 
-                const checkPerms = config => {
+                const checkPerms = (config: types.BaseConfig) => {
                         if (config.allowedRoles?.length) {
                                 const allowedRoles = config.allowedRoles.filter(id => channel.guild.roles.has(id));
                                 infoArray.push(`This command is allowed for the following roles: ${allowedRoles.map(id => `<@&${id}>`).join('\n')}`);
@@ -50,7 +60,7 @@ class Manager extends Module {
                                 const allowedChannels = config.allowedChannels.filter(id => channel.guild.channels.has(id));
                                 infoArray.push(`This command is allowed in the following channels: ${allowedChannels.map(id => `<#${id}>`).join('\n')}`);
                                 if (!allowedChannels.find(id => id === channel.id)) {
-                                        msgArray.push(`This command is not allowed in the current channel`);
+                                        msgArray.push('This command is not allowed in the current channel');
                                 }
                         }
 
@@ -58,15 +68,18 @@ class Manager extends Module {
                                 const ignoredChannels = config.ignoredChannels.filter(id => channel.guild.channels.has(id));
                                 infoArray.push(`This command is not allowed in the following channels: ${ignoredChannels.map(id => `<#${id}>`).join('\n')}`);
                                 if (!ignoredChannels.find(id => id === channel.id)) {
-                                        msgArray.push(`This command is allowed in the current channel`);
+                                        msgArray.push('This command is allowed in the current channel');
                                 }
                         }
-                }
+                };
 
                 if (guildConfig.commands?.[command.rootName]) {
+                        // @ts-ignore
+                        // We are dealing with rootName, here. Command config can not be a boolean.
+                        // TODO?: Possibly something to work on.
                         checkPerms(guildConfig.commands[command.rootName]);
                 } else if (guildConfig[command.module.dbName]) {
-                        checkPerms(guildConfig[command.module.dbname]);
+                        checkPerms(guildConfig[command.module.dbName]);
                 } else {
                         checkPerms(guildConfig);
                 }
@@ -83,6 +96,8 @@ class Manager extends Module {
                         const commands = guildConfig.commands;
 
                         if (command.parent) {
+                                // @ts-ignore
+                                // TODO?: Same thing as mentioned above
                                 if (commands[command.rootName]?.disabled) {
                                         msgArray.push("This command's parent is disabled in this server");
                                 }
@@ -91,6 +106,8 @@ class Manager extends Module {
                                         msgArray.push('This command is disabled in this server');
                                 }
                         } else {
+                                // @ts-ignore
+                                // TODO?: And so the trend from above continues...
                                 if (commands[command.name]?.disabled) {
                                         msgArray.push('This command is disabled in this server');
                                 }
@@ -98,10 +115,7 @@ class Manager extends Module {
                 }
 
                 if (command.debug) {
-                        const debug = command.debug(command, channel, guildConfig);
-
-                        msgArray.push(...debug.shift());
-                        infoArray.push(...debug.shift());
+                        command.debug(command, channel, guildConfig, msgArray, infoArray);
                 }
 
                 embed.description = `**Info:**\n${infoArray.join('\n')}\n`;
@@ -110,12 +124,16 @@ class Manager extends Module {
                 return embed;
         }
 
-        debugModule(module, channel, guildConfig) {
+        public debugModule(
+                module: Module,
+                channel: eris.TextChannel,
+                guildConfig: types.GuildConfig
+        ): eris.EmbedOptions {
                 const config = this.config;
                 const [msgArray, infoArray] = this._debug(channel, guildConfig);
                 const embed = {
                         title: `Module "${module.name}" debug`,
-                        color: config.colours.info,
+                        color: config.colours.info
                 };
 
                 if (config.modules[module.dbName].disabled) {
@@ -131,10 +149,7 @@ class Manager extends Module {
                 }
 
                 if (module.debug) {
-                        const debug = module.debug(module, channel, guildConfig);
-
-                        msgArray.push(...debug.shift());
-                        infoArray.push(...debug.shift());
+                        module.debug(channel, guildConfig, msgArray, infoArray);
                 }
 
                 embed.description = `**Info:**\n${infoArray.join('\n')}\n`;
@@ -143,6 +158,3 @@ class Manager extends Module {
                 return embed;
         }
 }
-
-
-module.exports = Manager;
