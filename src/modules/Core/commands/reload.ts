@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Core from '..';
 
-
-const reload = new Command({
+const reload = new Command<Core>({
         name: 'reload',
         info: 'Reload modules',
         usage: '[...modules]',
@@ -11,13 +11,13 @@ const reload = new Command({
                 if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 try {
-                        var res = ctx.core.modules.reload(ctx.args.length ? ctx.args : false);
+                        var res = ctx.core.modules.reload(ctx.args.length ? ctx.args : null);
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }
 
                 return ctx.success(`Reloaded ${res} modules`);
-        },
+        }
 });
 
 reload.command({
@@ -35,5 +35,4 @@ reload.command({
         }
 });
 
-
-module.exports = reload;
+export default reload;

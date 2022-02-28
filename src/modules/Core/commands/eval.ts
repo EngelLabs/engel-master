@@ -1,7 +1,13 @@
-const { Command } = require('@engel/core');
 
+/* eslint-disable indent */
+/* eslint-disable prefer-const */
+/* eslint-disable no-unused-vars */
+/* eslint-disable object-curly-newline */
+import * as superagent from 'superagent';
+import Command from '../../../core/structures/Command';
+import Core from '..';
 
-module.exports = new Command({
+export default new Command<Core>({
         name: 'eval',
         info: 'Evaluate some js',
         usage: '<*code>',
@@ -11,20 +17,18 @@ module.exports = new Command({
         execute: async function (ctx) {
                 let { message, guild, author, core, member, channel,
                         args, eris, guildConfig, baseConfig, config, logger,
-                        models, mongoose, redis, me, permissions, helpers } = ctx,
-                        __ctx = ctx, __res;
+                        models, mongoose, redis, me, permissions } = ctx,
+                        __ctx = ctx, __res: any;
 
-                let api = (method, uri, data = {}) => {
-                        const superagent = require('superagent');
-
+                let api = (method: string, uri: string, data = {}) => {
                         return superagent[method]('http://localhost:8080/api' + uri)
                                 .set('Accept', 'application/json')
                                 .set('User-Agent', __ctx.baseConfig.name)
                                 .set('Authorization', __ctx.config.apiToken)
                                 .send(data)
-                                .then(resp => { return { s: resp?.status, d: resp?.body?.data } })
-                                .catch(err => { return { s: err?.response?.status, d: err?.response?.body } });
-                }
+                                .then((resp: superagent.Response) => { return { s: resp?.status, d: resp?.body?.data }; })
+                                .catch((err: superagent.ResponseError) => { return { s: err?.response?.status, d: err?.response?.body }; });
+                };
 
                 const hasNewLine = ctx.args.find(s => s.includes('\n')) !== undefined;
 
@@ -43,6 +47,7 @@ module.exports = new Command({
                 }
 
                 try {
+                        /* eslint-disable no-eval */
                         __res = await eval(`(async () => { ${body} })()`);
 
                         if (typeof __res === 'object') {
@@ -64,5 +69,5 @@ module.exports = new Command({
 
                 return __ctx.codeblock(__res, 'js')
                         .catch(err => ctx.error(err?.toString?.()));
-        },
+        }
 });

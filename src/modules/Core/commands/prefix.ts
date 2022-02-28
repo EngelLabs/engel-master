@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Core from '..';
 
-
-const prefix = new Command({
+const prefix = new Command<Core>({
         name: 'prefix',
         aliases: ['prefixes', 'p'],
         info: 'View and manage admin prefixes',
@@ -84,7 +84,6 @@ prefix.command({
 
                 return ctx.success(`Replaced prefixes with \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }
-})
+});
 
-
-module.exports = prefix;
+export default prefix;

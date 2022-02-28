@@ -1,16 +1,16 @@
-const { exec } = require('child_process');
-const { Command } = require('@engel/core');
+import * as childProcess from 'child_process';
+import Command from '../../../core/structures/Command';
+import Core from '..';
 
-
-module.exports = new Command({
+export default new Command<Core>({
         name: 'speedtest',
         info: 'Run a speedtest',
         dmEnabled: true,
         execute: function (ctx) {
-                return new Promise((resolve, reject) => {
+                return new Promise<void>((resolve, reject) => {
                         ctx.addLoadingReaction().catch(() => false);
 
-                        exec('speedtest --json --share', (err, stdout, stderr) => {
+                        childProcess.exec('speedtest --json --share', (err, stdout, stderr) => {
                                 ctx.removeLoadingReaction().catch(() => false);
 
                                 if (err) return reject(err);
@@ -37,4 +37,4 @@ module.exports = new Command({
                         });
                 });
         }
-})
+});

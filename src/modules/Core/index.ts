@@ -6,7 +6,6 @@ import Context from '../../core/structures/Context';
 import Permission from '../../core/helpers/Permission';
 import baseConfig from '../../core/utils/baseConfig';
 
-
 const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
 
 interface Payload {
@@ -46,18 +45,18 @@ export default class Core extends Module {
                 this.tasks = [];
                 this.listeners = [];
 
-                this.tasks.push([this.clearCooldowns.bind(this), 5000])
+                this.tasks.push([this.clearCooldowns.bind(this), 5000]);
                 this.listeners.push(this.messageCreate.bind(this));
                 // this.listeners.push(this.guildCreate.bind(this));
                 // this.listeners.push(this.guildDelete.bind(this));
                 this.listeners.push(this.rawWS.bind(this));
 
-                const admin = new Command({
+                const admin = new Command<Core>({
                         name: 'admin',
                         aliases: ['a'],
                         namespace: true,
                         hidden: true,
-                        info: 'Namespace for admin commands',
+                        info: 'Namespace for admin commands'
                 });
 
                 for (const command of this.commands) {
@@ -114,8 +113,7 @@ export default class Core extends Module {
         }
 
         private async handleCommand(p: Payload): Promise<void> {
-                const { isTester, isTesting, isDM, message } = p;
-                let { guildConfig } = p;
+                const { isTester, isTesting, isDM, message, guildConfig } = p;
 
                 if (baseConfig.dev && (!isTester || (!isDM && !isTesting))) return;
 
@@ -253,7 +251,7 @@ export default class Core extends Module {
                         return;
                 }
 
-                let args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
+                const args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
 
                 if (!args.length) return;
 
@@ -298,7 +296,7 @@ export default class Core extends Module {
                         module,
                         isDM,
                         isAdmin,
-                        guildConfig,
+                        guildConfig
                 });
 
                 // if (command.options) {
@@ -316,7 +314,6 @@ export default class Core extends Module {
 
                 //                 let key;
                 //                 let value = false;
-
 
                 //                 while (value === false && names.length) {
                 //                         const ret = parseArg(names.shift());
@@ -368,7 +365,7 @@ export default class Core extends Module {
                                         .delete()
                                         .then(resolve)
                                         .catch(resolve);
-                        }
+                        };
 
                         const commandConfig = ctx.guildConfig.commands?.[ctx.command.rootName];
                         const moduleConfig = ctx.moduleConfig;
@@ -412,7 +409,7 @@ export default class Core extends Module {
 
                         if (missingPermissions.length) {
                                 const msg = missingPermissions.map(p => `\`${p}\``).join(', ');
-                                ctx.error(`I\'m missing the following permission(s): ${msg}`);
+                                ctx.error(`I'm missing the following permission(s): ${msg}`);
                         }
                 }
 
@@ -426,7 +423,7 @@ export default class Core extends Module {
                                         const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
 
                                         return ctx.send({ embed });
-                                }
+                                };
                         } else {
                                 execute = () => command.execute(ctx);
                         }
@@ -467,12 +464,12 @@ export default class Core extends Module {
                         description: [
                                 `Added to guild ${guild.name || 'UNKNOWN'} (${guild.id})`,
                                 `Owner: ${guild.ownerID || 'UNKNOWN'}`,
-                                `Members: ${guild.memberCount || 'UNKNOWN'}`,
+                                `Members: ${guild.memberCount || 'UNKNOWN'}`
                         ],
                         footer: [
                                 `Total guild count: ${eris.guilds.size}`,
                                 `Total member count: ${allMembers}`,
-                                `Total user count: ${eris.users.size}`,
+                                `Total user count: ${eris.users.size}`
                         ]
                 };
 
@@ -480,14 +477,14 @@ export default class Core extends Module {
                         description: msg.description.join('\n'),
                         timestamp: new Date().toISOString(),
                         color: this.config.colours.success,
-                        footer: { text: msg.footer.join('\n') },
+                        footer: { text: msg.footer.join('\n') }
                 };
 
                 if (guildOwner) {
                         embed.author = {
                                 name: guildOwner.username + '#' + guildOwner.discriminator,
                                 url: guildOwner.avatarURL,
-                                icon_url: guildOwner.avatarURL,
+                                icon_url: guildOwner.avatarURL
                         };
 
                         embed.thumbnail = { url: guildOwner.avatarURL };
@@ -511,12 +508,12 @@ export default class Core extends Module {
                         description: [
                                 `Removed from guild ${guild.name || 'UNKNOWN'} (${guild.id})`,
                                 `Owner: ${guild.ownerID || 'UNKNOWN'}`,
-                                `Members: ${guild.memberCount || 'UNKNOWN'}`,
+                                `Members: ${guild.memberCount || 'UNKNOWN'}`
                         ],
                         footer: [
                                 `Total guild count: ${eris.guilds.size}`,
                                 `Total member count: ${allMembers}`,
-                                `Total user count: ${eris.users.size}`,
+                                `Total user count: ${eris.users.size}`
                         ]
                 };
 
@@ -524,14 +521,14 @@ export default class Core extends Module {
                         description: msgs.description.join('\n'),
                         timestamp: new Date().toISOString(),
                         color: this.config.colours.error,
-                        footer: { text: msgs.footer.join('\n') },
+                        footer: { text: msgs.footer.join('\n') }
                 };
 
                 if (guildOwner) {
                         embed.author = {
                                 name: guildOwner.username + '#' + guildOwner.discriminator,
                                 url: guildOwner.avatarURL,
-                                icon_url: guildOwner.avatarURL,
+                                icon_url: guildOwner.avatarURL
                         };
 
                         embed.thumbnail = { url: guildOwner.avatarURL };
@@ -564,8 +561,8 @@ export default class Core extends Module {
                                         id: message.id,
                                         content: message.content,
                                         author: author.id,
-                                        guild: guild.id,
-                                },
+                                        guild: guild.id
+                                }
                         };
 
                         this.models.CommandLog.create(doc)
@@ -590,9 +587,9 @@ export default class Core extends Module {
                                         id: message.id,
                                         content: message.content,
                                         author: author.id,
-                                        guild: guild.id,
+                                        guild: guild.id
                                 },
-                                failed: true,
+                                failed: true
                         };
 
                         this.models.CommandLog.create(doc)
