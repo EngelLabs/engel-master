@@ -1,11 +1,12 @@
-const { Command } = require('@engel/core');
-const moment = require('moment');
+import * as eris from 'eris';
+import * as moment from 'moment';
+import Command from '../../../core/structures/Command';
+import Tags from '..';
 
-
-const tags = new Command({
+const tags = new Command<Tags>({
         name: 'tags',
         info: 'Commands to manage tags',
-        namespace: true,
+        namespace: true
 });
 
 tags.command({
@@ -34,24 +35,24 @@ tags.command({
 
                 const author = ctx.eris.users.get(tag.author);
 
-                const embed = {
+                const embed: eris.EmbedOptions = {
                         title: `Tag "${tag.name}" info`,
                         color: ctx.config.colours.info,
                         timestamp: new Date().toISOString(),
                         fields: [
                                 { name: 'Content', value: tag.content },
-                                { name: 'Uses', value: tag.uses || 0 },
-                                { name: 'Created at', value: moment(tag.createdAt).utc().format('LLLL') },
+                                { name: 'Uses', value: (tag.uses || 0).toString() },
+                                { name: 'Created at', value: moment(tag.createdAt).utc().format('LLLL') }
                         ],
                         footer: {
-                                text: `Author ID: ${tag.author}`,
+                                text: `Author ID: ${tag.author}`
                         }
                 };
 
                 if (author) {
                         embed.author = {
                                 name: author.username + '#' + author.discriminator,
-                                icon_url: author.avatarURL,
+                                icon_url: author.avatarURL
                         };
                 }
 
@@ -69,7 +70,7 @@ tags.command({
         info: 'Create a server tag',
         requiredArgs: 2,
         execute: async function (ctx) {
-                let name, content;
+                let name: string, content: string;
 
                 if (ctx.args[0].startsWith('"')) {
                         const text = ctx.args.join(' ').slice(1);
@@ -103,11 +104,9 @@ tags.command({
 
                 ctx.log(`Created "${name}" G${ctx.guild.id}.`);
 
-                return ctx.success(`Tag \`${name}\` created.`)
+                return ctx.success(`Tag \`${name}\` created.`);
         }
 });
-
-
 
 tags.command({
         name: 'edit',
@@ -115,12 +114,12 @@ tags.command({
         info: "Edit a tag's content",
         requiredArgs: 2,
         execute: async function (ctx) {
-                let name, content;
+                let name: string, content: string;
 
                 if (ctx.args[0].startsWith('"')) {
                         const args = ctx.args.join(' ').slice(1);
 
-                        idx = args.indexOf('"');
+                        const idx = args.indexOf('"');
                         if (idx !== -1) {
                                 name = args.substr(0, idx).trim();
                                 content = args.slice(idx + 1).trim();
@@ -160,9 +159,7 @@ tags.command({
                 return result.deletedCount
                         ? ctx.success(`Tag \`${name}\` deleted.`)
                         : ctx.error(`Tag \`${name}\` not found.`);
-
         }
 });
 
-
-module.exports = tags;
+export default tags;

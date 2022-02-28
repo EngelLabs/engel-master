@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Tags from '..';
 
-
-const tag = new Command({
+export default new Command<Tags>({
         name: 'tag',
         usage: '<*tag name>',
         info: 'Find a server tag.',
@@ -17,6 +17,3 @@ const tag = new Command({
                         : ctx.error(`Tag \`${name}\` not found.`);
         }
 });
-
-
-module.exports = tag;
