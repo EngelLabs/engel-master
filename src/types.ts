@@ -18,14 +18,14 @@ export interface Task {
 
 export type LogLevels = 'debug' | 'info' | 'warn' | 'error';
 
-interface BaseCommandConfig {
+export interface BaseConfig {
         allowedRoles?: string[];
         ignoredRoles?: string[];
         allowedChannels?: string[];
         ignoredChannels?: string[];
 }
 
-export interface GuildConfig extends BaseCommandConfig {
+export interface GuildConfig extends BaseConfig {
         // Used by GuildCollection
         _cachedAt?: number;
         id: string;
@@ -42,12 +42,12 @@ export interface GuildConfig extends BaseCommandConfig {
         caseCount?: number;
 }
 
-export interface CommandConfig extends BaseCommandConfig {
+export interface CommandConfig extends BaseConfig {
         del?: boolean;
         disabled?: boolean;
 }
 
-export interface ModuleConfig extends BaseCommandConfig {
+export interface ModuleConfig extends BaseConfig {
         delCommands?: boolean;
         disabled?: boolean;
 }
