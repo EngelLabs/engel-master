@@ -136,8 +136,8 @@ class Command<M extends Module = Module> {
         }
 
         public isEnabled(guildConfig: types.GuildConfig, returnName: true): [boolean, string];
-        public isEnabled(guildCOnfig: types.GuildConfig, returnName: false): boolean;
-        public isEnabled(guildConfig: types.GuildConfig, returnName: boolean = false) {
+        public isEnabled(guildConfig: types.GuildConfig, returnName: false): boolean;
+        public isEnabled(guildConfig: types.GuildConfig, returnName: boolean = false): any {
                 const resolve = returnName
                         ? (enabled: boolean, name?: string) => [enabled, name]
                         : (enabled: boolean) => enabled;
