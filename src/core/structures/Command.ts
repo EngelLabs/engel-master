@@ -36,9 +36,9 @@ interface Command<M extends Module> extends CommandOptions<M> {}
  */
 /* eslint-disable no-redeclare */
 class Command<M extends Module = Module> {
+        public commands?: CommandCollection;
         private _module?: M;
         private _parent?: Command<M>;
-        private _commands?: CommandCollection;
 
         public constructor(options: CommandOptions<M>) {
                 Object.assign(this, options);
@@ -70,14 +70,6 @@ class Command<M extends Module = Module> {
 
         public set module(value: M) {
                 this._module = value;
-        }
-
-        public get commands(): CommandCollection | undefined {
-                return this._commands;
-        }
-
-        public set commands(value: CommandCollection) {
-                this._commands = value;
         }
 
         public get parent(): Command<M> | undefined {
