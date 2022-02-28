@@ -1,6 +1,5 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as eris from 'eris';
 import { types } from '@engel/core';
 const reload = require('require-reload')(require);
 import Base from './Base';
@@ -25,7 +24,6 @@ export default class Module extends Base {
         public commands?: Array<Command>;
         public listeners?: Array<types.Listener>;
         private _boundListeners?: Array<types.ListenerObject>;
-        public debug?(channel: eris.TextChannel, guildConfig: types.GuildConfig): [string[], string[]];
         public injectHook?(): void;
         public ejectHook?(): void;
         public commandCheck?(ctx: Context): boolean | Promise<boolean>;
