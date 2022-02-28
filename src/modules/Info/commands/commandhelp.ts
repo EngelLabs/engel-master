@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Info from '..';
 
-
-module.exports = new Command({
+export default new Command<Info>({
         name: 'commandhelp',
         usage: '<*command>',
         aliases: ['chelp'],
@@ -9,12 +9,12 @@ module.exports = new Command({
         examples: [
                 'help cc',
                 'help ban',
-                'help muterole set',
+                'help muterole set'
         ],
         requiredArgs: 1,
         cooldown: 1500,
         execute: function (ctx) {
-                const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
+                const verbose = ctx.guildConfig.verboseHelp !== undefined ? ctx.guildConfig.verboseHelp : true;
 
                 const embed = ctx.core.commands.help(ctx.args.join(' '), ctx.prefix, ctx.isAdmin, verbose);
 
@@ -24,4 +24,4 @@ module.exports = new Command({
 
                 return ctx.send({ embed });
         }
-})
+});

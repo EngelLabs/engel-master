@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Info from '..';
 
-
-module.exports = new Command({
+export default new Command<Info>({
         name: 'source',
         hidden: true,
         cooldown: 60000,

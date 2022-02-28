@@ -1,8 +1,8 @@
-const { Command } = require('@engel/core');
-const prettyMS = require('pretty-ms');
+import Command from '../../../core/structures/Command';
+import Info from '..';
+import * as prettyMS from 'pretty-ms';
 
-
-module.exports = new Command({
+export default new Command<Info>({
         name: 'uptime',
         info: 'Get the core\'s uptime',
         dmEnabled: true,

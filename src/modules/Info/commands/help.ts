@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Info from '..';
 
-
-module.exports = new Command({
+export default new Command<Info>({
         name: 'help',
         usage: '[*command or module]',
         alwaysEnabled: true,
@@ -10,7 +10,7 @@ module.exports = new Command({
         examples: [
                 'help prefix',
                 'help ban',
-                'help utility',
+                'help utility'
         ],
         cooldown: 1500,
         execute: function (ctx) {
@@ -23,7 +23,7 @@ module.exports = new Command({
 
                 if (str.toLowerCase() === 'core') {
                         const msgArray = [
-                                'Not implemented yet, sorry!',
+                                'Not implemented yet, sorry!'
                         ];
                         const me = ctx.me;
                         const embed = {
@@ -32,14 +32,14 @@ module.exports = new Command({
                                 author: {
                                         name: `${me.username}#${me.discriminator}`,
                                         url: me.avatarURL,
-                                        icon_url: me.avatarURL,
-                                },
-                        }
+                                        icon_url: me.avatarURL
+                                }
+                        };
 
                         return ctx.send({ embed });
                 }
 
-                const verbose = ctx.moduleConfig ? !ctx.moduleConfig.noVerbose : true;
+                const verbose = ctx.guildConfig.verboseHelp !== undefined ? ctx.guildConfig.verboseHelp : true;
 
                 const embed = (
                         ctx.core.commands.help(str, ctx.prefix, ctx.isAdmin, verbose) ||
