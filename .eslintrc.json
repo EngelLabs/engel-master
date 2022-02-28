@@ -21,7 +21,10 @@
         ],
         "indent": [
             2,
-            8
+            8,
+            {
+                "SwitchCase": 1
+            }
         ],
         "comma-dangle": [
             2,
