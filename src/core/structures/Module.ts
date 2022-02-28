@@ -25,7 +25,7 @@ export default class Module extends Base {
         public commands?: Array<Command>;
         public listeners?: Array<types.Listener>;
         private _boundListeners?: Array<types.ListenerObject>;
-        public debug?(channel: eris.TextChannel, guildConfig: types.GuildConfig, msgArray: string, infoArray: string[]): void;
+        public debug?(channel: eris.TextChannel, guildConfig: types.GuildConfig, msgArray: string[], infoArray: string[]): void;
         public injectHook?(): void;
         public ejectHook?(): void;
         public commandCheck?(ctx: Context): boolean | Promise<boolean>;
