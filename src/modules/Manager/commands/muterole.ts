@@ -1,8 +1,9 @@
-const { Command } = require('@engel/core');
-const Roles = require('../../../core/helpers/Roles');
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Roles from '../../../core/helpers/Roles';
+import Manager from '..';
 
-
-const muterole = new Command({
+const muterole = new Command<Manager>({
         name: 'muterole',
         usage: '[role]',
         info: 'Manage the server\'s mute role',
@@ -15,18 +16,18 @@ const muterole = new Command({
                                 if (muteRole) {
                                         return ctx.success(
                                                 `Mute role for **${ctx.guild.name}**: ${muteRole.mention} (ID: ${muteRole.id})`,
-                                                { allowedMentions: { roles: false } },
+                                                { allowedMentions: { roles: false } }
                                         );
                                 }
                         }
 
-                        return ctx.error(`This server doesn\'t have a mute role configured.`);
+                        return ctx.error('This server doesn\'t have a mute role configured.');
                 }
 
-                let role;
+                const converter = new Converter(ctx.core);
 
                 try {
-                        role = await ctx.helpers.converter.role(ctx.guild, ctx.args[0]);
+                        var role = await converter.role(ctx.guild, ctx.args[0]);
                 } catch (err) {
                         return ctx.error(err);
                 }
@@ -53,7 +54,7 @@ muterole.command({
         execute: function (ctx) {
                 return muterole.execute(ctx);
         }
-})
+});
 
 muterole.command({
         name: 'create',
@@ -79,10 +80,10 @@ muterole.command({
         cooldown: 4000,
         execute: function (ctx) {
                 delete ctx.guildConfig.muteRole;
-                ctx.core.guilds.update(ctx.guildConfig.id, { $unset: { 'muteRole': null } });
+                ctx.core.guilds.update(ctx.guildConfig.id, { $unset: { muteRole: null } });
 
                 return ctx.success('Mute role cleared.');
         }
-})
+});
 
-module.exports = muterole;
+export default muterole;

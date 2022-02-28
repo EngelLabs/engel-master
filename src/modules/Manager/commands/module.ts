@@ -1,13 +1,13 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Manager from '..';
 
-
-module.exports = new Command({
+export default new Command<Manager>({
         name: 'module',
         usage: '<module>',
         info: 'Enable or disable a module',
         examples: [
                 'module moderator',
-                'module logging',
+                'module logging'
         ],
         cooldown: 3000,
         requiredArgs: 1,

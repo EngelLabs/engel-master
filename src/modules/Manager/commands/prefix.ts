@@ -1,7 +1,7 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Manager from '..';
 
-
-const prefix = new Command({
+const prefix = new Command<Manager>({
         name: 'prefix',
         aliases: ['prefixes'],
         info: 'View server prefixes',
@@ -9,10 +9,10 @@ const prefix = new Command({
         dmEnabled: true,
         disableModuleCheck: true,
         execute: function (ctx) {
-                let msg;
+                let msg: string;
 
                 if (!ctx.guild) {
-                        const prefixes = ctx.guildConfig.prefixes.filter(({ length }) => length);
+                        const prefixes = ctx.config.prefixes.dm.filter(({ length }) => length);
                         msg = `Hi! My prefix${prefixes.length > 1 ? 'es' : ''} in dms are: `;
                         msg += prefixes.map(p => `\`${p}\``).join(', ');
                         msg += '\nYou can also use commands by mentioning me';
@@ -25,12 +25,12 @@ const prefix = new Command({
                                 msg = `Prefixes for **${ctx.guild.name}**: `;
                                 msg += ctx.guildConfig.prefixes.map(p => `\`${p}\``).join(', ') + '.';
                         } else {
-                                msg = `Prefix for **${ctx.guild.name}**: \`${ctx.guildConfig.prefixes[0]}\`.`
+                                msg = `Prefix for **${ctx.guild.name}**: \`${ctx.guildConfig.prefixes[0]}\`.`;
                         }
                 }
 
                 return ctx.success(msg);
-        },
+        }
 });
 
 prefix.command({
@@ -111,7 +111,7 @@ prefix.command({
                         return ctx.error('That prefix doesn\'t exist.');
                 }
 
-                let update = { $pull: { prefixes: prefix } };
+                let update: any = { $pull: { prefixes: prefix } };
 
                 ctx.guildConfig.prefixes = ctx.guildConfig.prefixes.filter(p => p !== prefix);
 
@@ -127,5 +127,4 @@ prefix.command({
         }
 });
 
-
-module.exports = prefix;
+export default prefix;

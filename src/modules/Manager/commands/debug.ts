@@ -1,7 +1,8 @@
-const { Command } = require('@engel/core');
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Manager from '..';
 
-
-module.exports = new Command({
+export default new Command<Manager>({
         name: 'debug',
         usage: '<*command or module>',
         info: 'Debug a command or module',
@@ -35,12 +36,12 @@ module.exports = new Command({
                                 return ctx.error('No command or module exists by that name');
                         }
 
-                        const embed = ctx.module.debugCommand(command, ctx.channel, ctx.guildConfig);
+                        const embed = ctx.module.debugCommand(command, (<eris.TextChannel>ctx.channel), ctx.guildConfig);
 
                         return ctx.send({ embed });
                 }
 
-                const embed = ctx.module.debugModule(module, ctx.channel, ctx.guildConfig);
+                const embed = ctx.module.debugModule(module, (<eris.TextChannel>ctx.channel), ctx.guildConfig);
 
                 return ctx.send({ embed });
         }

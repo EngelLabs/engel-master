@@ -1,13 +1,14 @@
-const { Command } = require('@engel/core');
+import { types } from '@engel/core';
+import Command from '../../../core/structures/Command';
+import Manager from '..';
 
-
-module.exports = new Command({
+export default new Command<Manager>({
         name: 'command',
         usage: '<*command>',
         info: 'Enable or disable a command',
         examples: [
                 'command giveaway',
-                'command prefix set',
+                'command prefix set'
         ],
         cooldown: 3000,
         requiredArgs: 1,
@@ -36,21 +37,23 @@ module.exports = new Command({
                         return ctx.error("That command can't be disabled.");
                 }
 
-                let enabled;
-                let update;
+                let enabled: boolean;
+                let update: any;
 
                 const name = command.parent ? command.dbName : command.name;
 
                 const commands = ctx.guildConfig.commands = ctx.guildConfig.commands || {};
 
                 if (command.parent) {
-                        commands[name] = commands.hasOwnProperty(name) ? !commands[name] : false;
+                        commands[name] = commands[name] !== undefined ? !commands[name] : false;
 
-                        enabled = commands[name];
+                        enabled = (<boolean>commands[name]);
 
                         update = { ['commands.' + name]: commands[name] };
                 } else {
-                        const commandConfig = commands[name] = commands[name] || {};
+                        commands[name] = commands[name] || {};
+
+                        const commandConfig = (<types.CommandConfig>commands[name]);
 
                         commandConfig.disabled = !commandConfig.disabled;
 
