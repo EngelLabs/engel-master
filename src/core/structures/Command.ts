@@ -20,7 +20,11 @@ interface CommandOptions<M extends Module> {
         alwaysEnabled?: boolean;
         disableModuleCheck?: boolean;
         requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
-        debug?: (command: Command<M>, channel: eris.TextChannel, guildConfig: types.GuildConfig) => [string[], string[]];
+        debug?: (command: Command<M>,
+                channel: eris.TextChannel,
+                guildConfig: types.GuildConfig,
+                msgArray: string[],
+                infoArray: string[]) => [string[], string[]];
         check?: (ctx: Context<M, Command<M>>) => boolean | Promise<boolean>;
         before?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
         after?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
@@ -28,7 +32,7 @@ interface CommandOptions<M extends Module> {
 }
 
 
-interface Command<M extends Module> extends CommandOptions<M> {}
+interface Command<M extends Module> extends CommandOptions<M> { }
 
 
 /**
