@@ -4,6 +4,7 @@ import * as types from '../types';
 
 // https://stackoverflow.com/questions/45614172/mongoose-static-model-definitions-in-typescript
 interface TagModel extends mongoose.Model<types.Tag> {
+        findOneAndIncrement: typeof Tag.findOne;
         incrementUses(guild: string, name: string): void;
 }
 
