@@ -152,6 +152,7 @@ export interface Tag {
         content: string;
         guild: string;
         author: string;
+        uses?: number;
         createdAt: number;
         editedAt?: number;
 }

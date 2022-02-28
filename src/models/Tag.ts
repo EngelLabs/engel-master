@@ -13,6 +13,7 @@ const tagSchema = new mongoose.Schema<types.Tag>({
         content: { type: String, required: true },
         guild: { type: String, required: true, index: true },
         author: { type: String, required: true },
+        uses: { type: Number, required: false },
         createdAt: { type: Number, required: true, default: Date.now },
         editedAt: { type: Number, required: false },
 },
