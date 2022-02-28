@@ -1,12 +1,12 @@
-const { Command } = require('@engel/core');
-const { ChannelTypes } = require('eris').Constants;
+import * as eris from 'eris';
+import Command from '../../../core/structures/Command';
+import Utility from '..';
 
-
-module.exports = new Command({
+export default new Command<Utility>({
         name: 'serverinfo',
         aliases: [
                 'sinfo',
-                'guildinfo',
+                'guildinfo'
         ],
         info: 'View server related information',
         execute: function (ctx) {
@@ -18,59 +18,59 @@ module.exports = new Command({
                         color: ctx.config.colours.info,
                         timestamp: new Date().toISOString(),
                         fields: [
-                                { name: 'ID', value: guild.id, inline: true },
+                                { name: 'ID', value: guild.id, inline: true }
                         ],
                         footer: {
                                 text: `Requested by: ${ctx.author.username}#${ctx.author.discriminator}`,
-                                icon_url: ctx.author.avatarURL,
+                                icon_url: ctx.author.avatarURL
                         },
-                        thumbnail: { url: guild.iconURL },
+                        thumbnail: { url: guild.iconURL }
                 };
 
                 if (guildOwner) {
                         embed.fields.push({
                                 name: 'Owner',
                                 value: `${guildOwner.username}#${guildOwner.discriminator}`,
-                                inline: true,
+                                inline: true
                         });
                 }
 
                 embed.fields.push({
                         name: `Prefixes [${guildConfig.prefixes.length}]`,
                         value: guildConfig.prefixes.map(p => `\`${p}\``).join(', '),
-                        inline: true,
+                        inline: true
                 });
 
                 embed.fields.push({
                         name: 'Created at',
                         value: (new Date(guild.createdAt)).toString(),
-                        inline: true,
+                        inline: true
                 });
 
                 embed.fields.push({
                         name: `Members [${guild.memberCount}]`,
                         value: [
-                                `Humans: ${guild.members.filter(m => !m.core).length}`,
-                                `Bots: ${guild.members.filter(m => m.core).length}`
+                                `Humans: ${guild.members.filter(m => !m.bot).length}`,
+                                `Bots: ${guild.members.filter(m => m.bot).length}`
                         ].join('\n'),
-                        inline: true,
+                        inline: true
                 });
 
                 embed.fields.push({
                         name: `Channels: [${guild.channels.size}]`,
                         value: [
-                                `Text: ${guild.channels.filter(c => c.type === ChannelTypes.GUILD_TEXT).length}`,
-                                `Voice: ${guild.channels.filter(c => c.type === ChannelTypes.GUILD_VOICE).length}`,
-                                `Stage: ${guild.channels.filter(c => c.type === ChannelTypes.GUILD_STAGE).length}`,
-                                `Categories: ${guild.channels.filter(c => c.type === ChannelTypes.GUILD_CATEGORY).length}`,
+                                `Text: ${guild.channels.filter(c => c.type === eris.Constants.ChannelTypes.GUILD_TEXT).length}`,
+                                `Voice: ${guild.channels.filter(c => c.type === eris.Constants.ChannelTypes.GUILD_VOICE).length}`,
+                                `Stage: ${guild.channels.filter(c => c.type === eris.Constants.ChannelTypes.GUILD_STAGE_VOICE).length}`,
+                                `Categories: ${guild.channels.filter(c => c.type === eris.Constants.ChannelTypes.GUILD_CATEGORY).length}`
                         ].join('\n'),
-                        inline: true,
+                        inline: true
                 });
 
                 embed.fields.push({
                         name: `Roles [${guild.roles.size}]`,
                         value: roles.length <= 1024 ? roles : 'Too many to list.',
-                        inline: true,
+                        inline: true
                 });
 
                 return ctx.send({ embed });

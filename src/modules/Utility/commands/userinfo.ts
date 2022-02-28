@@ -1,8 +1,10 @@
-const { Command } = require('@engel/core');
-const moment = require('moment');
+import * as eris from 'eris';
+import * as moment from 'moment';
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Utility from '..';
 
-
-module.exports = new Command({
+export default new Command<Utility>({
         name: 'userinfo',
         usage: '[user]',
         aliases: [
@@ -11,23 +13,23 @@ module.exports = new Command({
         ],
         examples: [
                 'userinfo @timtoy',
-                'userinfo 329768023869358081',
+                'userinfo 329768023869358081'
         ],
         info: 'Get some useful information about a server member',
         execute: async function (ctx) {
-                let user;
-
                 if (ctx.args.length) {
+                        const converter = new Converter(ctx.core);
+
                         try {
-                                user = await ctx.helpers.converter.member(ctx.guild, ctx.args[0], true);
+                                var user = await converter.member(ctx.guild, ctx.args[0], true);
                         } catch (err) {
                                 return ctx.error(err);
                         }
                 } else {
                         if (ctx.message.messageReference?.channelID === ctx.channel.id) {
                                 try {
-                                        const msg = ctx.channel.messages.get(ctx.message.messageReference.messageID)
-                                                || await ctx.channel.getMessage(ctx.message.messageReference.messageID);
+                                        const msg = ctx.channel.messages.get(ctx.message.messageReference.messageID) ||
+                                                await ctx.channel.getMessage(ctx.message.messageReference.messageID);
 
                                         user = msg.member ? msg.member : ctx.member;
                                 } catch {
@@ -42,7 +44,7 @@ module.exports = new Command({
 
                 const roles = user.roles.map(r => `<@&${r}>`).join(', ') || 'None';
 
-                const embed = {
+                const embed: eris.EmbedOptions = {
                         color: ctx.config.colours.info,
                         timestamp: new Date().toISOString(),
                         fields: [
@@ -53,10 +55,11 @@ module.exports = new Command({
                         ],
                         author: { name: `${user.username}#${user.discriminator}`, url: user.avatarURL, icon_url: user.avatarURL },
                         footer: { text: `Requested by: ${ctx.author.username}#${ctx.author.discriminator}`, icon_url: ctx.author.avatarURL },
-                        thumbnail: { url: user.avatarURL },
+                        thumbnail: { url: user.avatarURL }
                 };
 
-                if (ctx.isAdmin || ctx.isStaff) {
+                // TODO: In the future vvvvvvvvvv
+                if (ctx.isAdmin /* || ctx.isStaff */) {
                         const role = ctx.isAdmin ? 'developer' : 'staff';
 
                         embed.description = `<${ctx.config.emojis.staff}> ${ctx.baseConfig.name} ${role}`;

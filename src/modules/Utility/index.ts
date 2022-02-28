@@ -1,7 +1,6 @@
-const { Module } = require('@engel/core');
+import Module from '../../core/structures/Module';
 
-
-class Utility extends Module {
+export default class Utility extends Module {
         constructor() {
                 super();
 
@@ -10,6 +9,3 @@ class Utility extends Module {
                 this.allowedByDefault = true;
         }
 }
-
-
-module.exports = Utility

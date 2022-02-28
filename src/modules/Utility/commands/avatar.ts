@@ -1,22 +1,23 @@
-const { Command } = require('@engel/core');
+import Command from '../../../core/structures/Command';
+import Converter from '../../../core/helpers/Converter';
+import Utility from '..';
 
-
-module.exports = new Command({
+export default new Command<Utility>({
         name: 'avatar',
         usage: '[member]',
         aliases: ['av'],
         examples: [
                 'avatar',
-                'avatar @timtoy',
+                'avatar @timtoy'
         ],
         info: 'View a server member\'s avatar',
         dmEnabled: true,
         execute: async function (ctx) {
-                let user;
-
                 if (ctx.args.length) {
+                        const converter = new Converter(ctx.core);
+
                         try {
-                                user = await ctx.helpers.converter.user(ctx.args[0], true);
+                                var user = await converter.user(ctx.args[0], true);
                         } catch (err) {
                                 return ctx.error(err);
                         }
@@ -50,8 +51,8 @@ module.exports = new Command({
                         image: { url: avURL },
                         footer: {
                                 text: `Requested by ${ctx.author.username}#${ctx.author.discriminator}`,
-                                icon_url: ctx.author.dynamicAvatarURL(null, 64),
-                        },
+                                icon_url: ctx.author.dynamicAvatarURL(null, 64)
+                        }
                 };
 
                 return ctx.send({ embed });
