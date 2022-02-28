@@ -17,7 +17,7 @@ interface ContextOptions {
         guildConfig: types.GuildConfig;
 }
 
-interface ContextResponseOptions {
+interface ContextResponseOptions extends Omit<eris.AdvancedMessageContent, 'content'> {
         force?: boolean;
 }
 
