@@ -20,6 +20,7 @@ interface CommandOptions<M extends Module> {
         alwaysEnabled?: boolean;
         disableModuleCheck?: boolean;
         requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
+        debug?: (command: Command<M>, channel: eris.TextChannel, guildConfig: types.GuildConfig) => [string[], string[]];
         check?: (ctx: Context<M, Command<M>>) => boolean | Promise<boolean>;
         before?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
         after?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
@@ -27,27 +28,14 @@ interface CommandOptions<M extends Module> {
 }
 
 
+interface Command<M extends Module> extends CommandOptions<M> {}
+
+
 /**
  * Represents a core command
  */
-export default class Command<M extends Module = Module> {
-        public name: string;
-        public info?: string;
-        public usage?: string;
-        public hidden?: boolean;
-        public cooldown?: number;
-        public aliases?: string[];
-        public disabled?: boolean;
-        public examples?: string[];
-        public namespace?: boolean;
-        public dmEnabled?: boolean;
-        public requiredArgs?: number;
-        public alwaysEnabled?: boolean;
-        public disableModuleCheck?: boolean;
-        public requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
-        public check?(ctx: Context): boolean | Promise<boolean>;
-        public before?(ctx: Context): void | Promise<void>;
-        public after?(ctx: Context): void | Promise<void>;
+/* eslint-disable no-redeclare */
+class Command<M extends Module = Module> {
         private _module?: M;
         private _parent?: Command<M>;
         private _commands?: CommandCollection;
@@ -185,3 +173,6 @@ export default class Command<M extends Module = Module> {
                 throw new Error(`Unreachable code.`);
         }
 }
+
+
+export default Command;
