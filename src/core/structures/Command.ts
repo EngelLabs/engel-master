@@ -24,7 +24,7 @@ interface CommandOptions<M extends Module> {
                 channel: eris.TextChannel,
                 guildConfig: types.GuildConfig,
                 msgArray: string[],
-                infoArray: string[]) => [string[], string[]];
+                infoArray: string[]) => void;
         check?: (ctx: Context<M, Command<M>>) => boolean | Promise<boolean>;
         before?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
         after?: (ctx: Context<M, Command<M>>) => void | Promise<void>;
