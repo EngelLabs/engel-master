@@ -40,6 +40,7 @@ export interface GuildConfig extends BaseConfig {
         modules?: Record<string, ModuleConfig>;
         noDisableWarning?: boolean;
         caseCount?: number;
+        verboseHelp?: boolean;
 }
 
 export interface CommandConfig extends BaseConfig {
