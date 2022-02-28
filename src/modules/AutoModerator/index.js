@@ -1,6 +1,5 @@
 const { Module } = require('@engel/core');
 
-
 class AutoModerator extends Module {
         constructor() {
                 super();
@@ -17,14 +16,13 @@ class AutoModerator extends Module {
                 this.listeners.push(this.messageCreate.bind(this));
         }
 
-        messageCreate({ guildConfig, message }) {
-                if (!this.core.isReady) return;
+        // messageCreate({ guildConfig, message }) {
+        //         if (!this.core.isReady) return;
 
-                const config = this.config;
+        //         const config = this.config;
 
-                if (config.shutup) return;
-        }
+        //         if (config.shutup) return;
+        // }
 }
-
 
 module.exports = AutoModerator;

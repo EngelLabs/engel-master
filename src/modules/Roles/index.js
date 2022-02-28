@@ -1,6 +1,5 @@
 const { Module } = require('@engel/core');
 
-
 class Roles extends Module {
         constructor() {
                 super();
@@ -8,6 +7,5 @@ class Roles extends Module {
                 this.info = 'Commands to manage server roles';
         }
 }
-
 
 module.exports = Roles;

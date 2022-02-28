@@ -1,6 +1,5 @@
 const { Module } = require('@engel/core');
 
-
 class ReactionRoles extends Module {
         constructor() {
                 super();
@@ -10,6 +9,5 @@ class ReactionRoles extends Module {
                 this.disabled = true;
         }
 }
-
 
 module.exports = ReactionRoles;

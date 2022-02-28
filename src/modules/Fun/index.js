@@ -1,6 +1,5 @@
 const { Module } = require('@engel/core');
 
-
 class Fun extends Module {
         constructor() {
                 super();
@@ -9,6 +8,5 @@ class Fun extends Module {
                 this.disabled = true;
         }
 }
-
 
 module.exports = Fun;

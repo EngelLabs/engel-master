@@ -1,6 +1,5 @@
 const { Command } = require('@engel/core');
 
-
 const logging = new Command({
         name: 'logging',
         aliases: ['log'],
@@ -9,6 +8,5 @@ const logging = new Command({
                 return ctx.error('Yet to be implemented');
         }
 });
-
 
 module.exports = logging;

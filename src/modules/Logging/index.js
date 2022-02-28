@@ -1,7 +1,6 @@
 const { Module } = require('@engel/core');
 const Events = require('require-reload')('./helpers/Events', require);
 
-
 class Logging extends Module {
         constructor() {
                 super();
@@ -26,7 +25,7 @@ class Logging extends Module {
                 this.listeners.push(wrap(this.guildRoleUpdate.bind(this)));
 
                 this.tasks.push(
-                        [this.dispatchWebhooks.bind(this), 6500],
+                        [this.dispatchWebhooks.bind(this), 6500]
                 );
         }
 
@@ -45,7 +44,7 @@ class Logging extends Module {
                         if (config.shutup && (guildConfig.id !== config.guilds.official.id)) return;
 
                         return fn(payload);
-                }
+                };
 
                 const listener = {
                         event: fn.name,
@@ -85,7 +84,7 @@ class Logging extends Module {
 
                                         const update = {
                                                 [`logging.${eventConfig.name}.webhook`]: null,
-                                                [`logging.${eventConfig.name}.channel`]: null,
+                                                [`logging.${eventConfig.name}.channel`]: null
                                         };
 
                                         this.core.guilds.update(guildConfig, { $unset: update });
@@ -139,6 +138,5 @@ class Logging extends Module {
                 return this._events.messageDelete(guildConfig, message);
         }
 }
-
 
 module.exports = Logging;

@@ -1,12 +1,10 @@
 const moment = require('moment');
 const { Base } = require('@engel/core');
 
-
 const colorMapping = {
         yellow: 14921762,
         red: 12202793
 };
-
 
 /**
  * Collection of event handlers
@@ -51,7 +49,7 @@ class Events extends Base {
                                 }
 
                                 module.scheduleEmbeds(guildConfig, eventConfig, webhook, fn.name, embeds);
-                        }
+                        };
 
                         this['_' + fn.name] = fn;
                         this[fn.name] = wrapped;
@@ -62,7 +60,7 @@ class Events extends Base {
         messageDelete = (_, message) => {
                 let msg = '';
 
-                msg += `**Message Deleted**\n`;
+                msg += '**Message Deleted**\n';
                 msg += `**Channel:** ${message.channel.mention} (${message.channel.id})\n`;
                 msg += `**Author:** ${message.author.mention} (${message.author.id})\n`;
                 msg += `**Created:** ${moment(message.createdAt).utc().format('LLLL')}\n`;
@@ -72,13 +70,13 @@ class Events extends Base {
                         color: 'red',
                         timestamp: new Date(message.createdAt).toISOString(),
                         footer: {
-                                text: `ID: ${message.id}, Message sent`,
+                                text: `ID: ${message.id}, Message sent`
                         },
                         author: {
                                 name: this.fullName(message.author),
                                 url: message.author.avatarURL,
-                                icon_url: message.author.avatarURL,
-                        },
+                                icon_url: message.author.avatarURL
+                        }
                 };
 
                 if (msg.length > 2048) {
@@ -100,9 +98,9 @@ class Events extends Base {
                                         description: msg.slice(0, 2048),
                                         timestamp: embed.timestamp,
                                         footer: {
-                                                text: `[Page ${page + 1}] ID: ${message.id}, Message sent`,
+                                                text: `[Page ${page + 1}] ID: ${message.id}, Message sent`
                                         },
-                                        author: embed.author,
+                                        author: embed.author
                                 };
 
                                 msg = msg.slice(2048);
@@ -111,7 +109,6 @@ class Events extends Base {
                         }
 
                         return embeds;
-
                 } else {
                         embed.description = msg;
 
@@ -122,7 +119,7 @@ class Events extends Base {
         messageContentUpdate = (_, message, oldMessage) => {
                 let msg = '';
 
-                msg += `**Message Edited**\n`;
+                msg += '**Message Edited**\n';
                 msg += `**Channel:** ${message.channel.mention} (${message.channel.id})\n`;
                 msg += `**Author:** ${message.author.mention} (${message.author.id})\n`;
                 msg += `**Created:** ${moment(message.createdAt).utc().format('LLLL')}\n`;
@@ -138,8 +135,8 @@ class Events extends Base {
                         author: {
                                 name: this.fullName(message.author),
                                 url: message.author.avatarURL,
-                                icon_url: message.author.avatarURL,
-                        },
+                                icon_url: message.author.avatarURL
+                        }
                 };
 
                 if (msg.length > 2048) {
@@ -161,9 +158,9 @@ class Events extends Base {
                                         description: msg.slice(0, 2048),
                                         timestamp: embed.timestamp,
                                         footer: {
-                                                text: `[Page ${page + 1}] ID: ${message.id}, Message sent`,
+                                                text: `[Page ${page + 1}] ID: ${message.id}, Message sent`
                                         },
-                                        author: embed.author,
+                                        author: embed.author
                                 };
 
                                 msg = msg.slice(2048);
@@ -181,9 +178,9 @@ class Events extends Base {
                                         description: msg.slice(0, 2048),
                                         timestamp: embed.timestamp,
                                         footer: {
-                                                text: `[Page ${page + pageCount + 1}] ID: ${message.id}, Message sent`,
+                                                text: `[Page ${page + pageCount + 1}] ID: ${message.id}, Message sent`
                                         },
-                                        author: embed.author,
+                                        author: embed.author
                                 };
 
                                 msg = msg.slice(2048);
@@ -192,7 +189,6 @@ class Events extends Base {
                         }
 
                         return embeds;
-
                 } else {
                         embed.description = msg;
 
@@ -207,7 +203,7 @@ class Events extends Base {
         guildRoleCreate = (_, guild, role) => {
                 let msg = '';
 
-                msg += `**Role Created**\n`;
+                msg += '**Role Created**\n';
                 msg += `**Name:** ${role.name}\n`;
                 msg += `**Colour:** ${'#' + role.color.toString(16)}\n`;
                 msg += `**Hoisted:** ${role.hoist}\n`;
@@ -218,15 +214,15 @@ class Events extends Base {
                         color: 'green',
                         timestamp: new Date(role.createdAt).toISOString(),
                         footer: {
-                                text: `ID: ${role.id}, Role created`,
-                        },
+                                text: `ID: ${role.id}, Role created`
+                        }
                 };
         }
 
         guildRoleDelete = (_, guild, role) => {
                 let msg = '';
 
-                msg += `**Role Deleted**\n`;
+                msg += '**Role Deleted**\n';
                 msg += `**Name:** ${role.name}\n`;
                 msg += `**Colour:** ${'#' + role.color.toString(16)}\n`;
                 msg += `**Hoisted:** ${role.hoist}\n`;
@@ -238,8 +234,8 @@ class Events extends Base {
                         color: 'red',
                         timestamp: new Date(role.createdAt).toISOString(),
                         footer: {
-                                text: `ID: ${role.id}, Role created`,
-                        },
+                                text: `ID: ${role.id}, Role created`
+                        }
                 };
         }
 
@@ -261,7 +257,7 @@ class Events extends Base {
 
                 if (!msg) return;
 
-                msg = `**Role Updated**\n` + msg;
+                msg = '**Role Updated**\n' + msg;
                 msg += `**Bearers:** ${guild.members.filter(m => m.roles.includes(role.id)).length}\n`;
                 msg += `**Created:** ${moment(role.createdAt).utc().format('LLLL')}`;
 
@@ -270,8 +266,8 @@ class Events extends Base {
                         color: 'red',
                         timestamp: new Date(role.createdAt).toISOString(),
                         footer: {
-                                text: `ID: ${role.id}, Role created`,
-                        },
+                                text: `ID: ${role.id}, Role created`
+                        }
                 };
         }
 
@@ -288,6 +284,5 @@ class Events extends Base {
                 return ret.length ? ret.join(', ') : 'None';
         }
 }
-
 
 module.exports = Events;

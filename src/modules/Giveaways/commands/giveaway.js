@@ -1,13 +1,12 @@
 const { Command } = require('@engel/core');
 const prettyMS = require('pretty-ms');
 
-
 const giveaway = new Command({
         name: 'giveaway',
         info: 'Commands to manage server giveaways',
         aliases: [
                 'gw',
-                'ga',
+                'ga'
         ],
         examples: [],
         requiredPermissions: ['embedLinks'],
@@ -19,7 +18,7 @@ const giveaway = new Command({
                                 msg.channel.id === ctx.channel.id &&
                                 msg.author.id === ctx.author.id
                         );
-                }
+                };
 
                 const exchange = async toSend => {
                         try {
@@ -43,17 +42,15 @@ const giveaway = new Command({
                         }
 
                         return msg;
-                }
+                };
 
                 let msg;
                 let text;
 
-                msg = await exchange(_('What is the giveaway\'s title? You can send \`~\` to not include one.'));
+                msg = await exchange(_('What is the giveaway\'s title? You can send `~` to not include one.'));
                 if (!msg) return;
 
                 const title = msg.content !== '~' ? msg.content : null;
-
-
 
                 if (title !== null) {
                         text = `Alright, the title is \`${title}\``;
@@ -69,7 +66,7 @@ const giveaway = new Command({
                 const info = msg.content !== '~' ? msg.content : null;
 
                 if (info !== null) {
-                        text = `Sweet, the description is \`${info}\``
+                        text = `Sweet, the description is \`${info}\``;
                 } else {
                         text = 'No description given.';
                 }
@@ -91,7 +88,7 @@ const giveaway = new Command({
                         winnerCount = parseInt(msg.content.split(' ')[0], 10);
 
                         if (isNaN(winnerCount) || winnerCount < 1 || winnerCount > 50) {
-                                msg = await exchange(_(`That is an invalid value. Try a number between 1-50`));
+                                msg = await exchange(_('That is an invalid value. Try a number between 1-50'));
                         }
                 }
 
@@ -144,13 +141,12 @@ const giveaway = new Command({
                         {
                                 content: `${ctx.author.mention}, Sweet, this giveaway will last for ${prettyMS(duration * 1000, { verbose: true })}
             Type \`confirm\` to initiate the giveaway. The embed will look like the one below.`,
-                                embed: embed,
+                                embed: embed
                         }
                 );
 
-                if (!msg) return;
+                /* ... */
         }
 });
-
 
 module.exports = giveaway;

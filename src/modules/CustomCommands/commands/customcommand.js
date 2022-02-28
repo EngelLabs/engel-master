@@ -1,11 +1,10 @@
 const { Command } = require('@engel/core');
 
-
-COMMAND_TYPES = {
-        '0': 'Text',
-        '1': 'Embed',
-        '2': 'Reaction',
-}
+// const COMMAND_TYPES = {
+//         0: 'Text',
+//         1: 'Embed',
+//         2: 'Reaction'
+// };
 
 const customcommand = new Command({
         name: 'customcommand',
@@ -13,9 +12,8 @@ const customcommand = new Command({
         info: 'Manage custom commands for your server',
         requiredArgs: 1,
         execute: function (ctx) {
-                return ctx.error('Not implemented yet, sorry.')
+                return ctx.error('Not implemented yet, sorry.');
         }
 });
-
 
 module.exports = customcommand;
