@@ -2,11 +2,10 @@ import * as eris from 'eris';
 import * as types from '../types';
 import Core from '../structures/Core';
 
-
 export default function Eris (core: Core): eris.Client {
         const log = (message?: any, level?: types.LogLevels, prefix: string = 'Eris') => {
                 core.log(message, level, prefix);
-        }
+        };
 
         // I have to type it as such because intents,
         // which is seen as a string[] is incompatible
@@ -21,18 +20,18 @@ export default function Eris (core: Core): eris.Client {
                         'guildMembers',
                         'guildMessages',
                         'guildPresences',
-                        'guildVoiceStates',
+                        'guildVoiceStates'
                 ],
                 allowedMentions: {
                         everyone: false,
                         roles: false,
                         users: true,
-                        repliedUser: true,
+                        repliedUser: true
                 },
                 autoreconnect: true,
                 compress: true,
                 restMode: true,
-                messageLimit: 0,
+                messageLimit: 0
         };
 
         const client = new eris.Client(

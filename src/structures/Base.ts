@@ -1,8 +1,7 @@
 import * as types from '../types';
 import Core from './Core';
 
-
-const permissionsMapping: Record<string, string> = {
+const permissionsMapping = {
         createInstantInvite: 'Create Instant Invite',
         kickMembers: 'Kick Members',
         banMembers: 'Ban Members',
@@ -35,7 +34,7 @@ const permissionsMapping: Record<string, string> = {
         manageWebhooks: 'Manage Webhooks',
         manageEmojis: 'Manage Emojis',
         useSlashCommands: 'Use Slash Commands',
-        voiceRequestToSpeak: 'Request To Speak',
+        voiceRequestToSpeak: 'Request To Speak'
 };
 
 export default class Base {

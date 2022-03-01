@@ -2,11 +2,10 @@ import * as mongoose from 'mongoose';
 import * as types from '../types';
 import Core from '../structures/Core';
 
-
 export default function Mongoose (core: Core): mongoose.Mongoose {
         const log = (message?: any, level?: types.LogLevels, prefix: string = 'Mongoose') => {
                 core.log(message, level, prefix);
-        }
+        };
 
         log(`${Object.values(mongoose.models).length} models registered.`, 'info');
 
@@ -28,7 +27,7 @@ export default function Mongoose (core: Core): mongoose.Mongoose {
         mongoose.connect(uri, {
                 connectTimeoutMS: 4500,
                 serverSelectionTimeoutMS: 2000,
-                keepAlive: true,
+                keepAlive: true
         });
 
         return mongoose;

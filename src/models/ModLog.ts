@@ -1,7 +1,6 @@
 import * as mongoose from 'mongoose';
 import * as types from '../types';
 
-
 const modLogSchema = new mongoose.Schema<types.ModLog>({
         case: { type: Number, required: true },
         type: { type: String, required: true },
@@ -13,10 +12,10 @@ const modLogSchema = new mongoose.Schema<types.ModLog>({
         count: { type: Number, required: false },
         user: { type: Object, required: false },
         mod: { type: Object, required: true },
-        reason: { type: String, required: false },
-},
-        { collection: 'modlogs', strict: false },
-);
+        reason: { type: String, required: false }
+}, {
+        collection: 'modlogs', strict: false
+});
 
 modLogSchema.index(
         { case: 1, guild: 1 },
@@ -33,14 +32,12 @@ modLogSchema.index(
 
 modLogSchema.index(
         { guild: 1, 'channel.id': 1 }
-)
+);
 
 modLogSchema.index(
         { guild: 1, 'mod.id': 1 }
 );
 
-
 const ModLog = mongoose.model('ModLog', modLogSchema);
-
 
 export default ModLog;

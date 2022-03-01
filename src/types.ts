@@ -1,3 +1,4 @@
+/* eslint-disable no-use-before-define */
 interface VoidFunc {
         (...args: any): void;
         [s: string]: unknown;

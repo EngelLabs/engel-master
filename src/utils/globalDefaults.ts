@@ -1,36 +1,35 @@
 
 import * as types from '../types';
 
-
 const globalDefaults: types.Config = {
         state: '',
         author: {
                 id: '329768023869358081',
-                name: 'timtoy#1336',
+                name: 'timtoy#1336'
         },
         prefixes: {
                 private: [],
                 default: [
-                        '?',
+                        '?'
                 ],
                 dm: [
                         't.',
                         '?',
                         '!',
-                        '',
-                ],
+                        ''
+                ]
         },
         guilds: {
                 official: {
                         id: '932441828073017354',
-                        invite: 'https://discord.gg/TJnMgKF5m6',
+                        invite: 'https://discord.gg/TJnMgKF5m6'
                 },
                 protected: ['932441828073017354'],
-                testing: ['928418564191424523'],
+                testing: ['928418564191424523']
         },
         users: {
                 developers: [
-                        '329768023869358081', // timtoy#1336
+                        '329768023869358081' // timtoy#1336
                 ],
                 protected: [
                         '329768023869358081', // timtoy#1336
@@ -39,13 +38,13 @@ const globalDefaults: types.Config = {
                         '940009875558256660', // Engel#1907
                         '940010513130225675', // Engel#6826
                         '828029312984285225', // Engel#5433
-                        '828377832950464572', // Engel#4156
+                        '828377832950464572' // Engel#4156
                 ],
                 testers: [
                         '329768023869358081', // timtoy#1336
-                        '403354067520323587', // catto#0924
+                        '403354067520323587' // catto#0924
                 ],
-                blacklisted: [],
+                blacklisted: []
         },
         webhooks: {
                 errorLog: {
@@ -55,7 +54,7 @@ const globalDefaults: types.Config = {
                 guildLog: {
                         id: '905852429478817842',
                         token: 'uLdaXdP3ZbFd4Uup8P9GKgkGyZcbZSlnOXSE2morR5I0_wJjpQeDcYehzF7uCiNgvacA'
-                },
+                }
         },
         colours: {
                 info: 8294381,
@@ -70,7 +69,7 @@ const globalDefaults: types.Config = {
                 success: ':success:932057397516709980',
                 loading: ':loading:932119984547713065',
                 premium: ':premium:932101813077934110n',
-                staff: '',
+                staff: ''
         },
         commands: {},
         modules: {},
@@ -90,8 +89,7 @@ const globalDefaults: types.Config = {
         guildMaxAge: 10000,
         paused: false,
         apiToken: '',
-        dmCommands: true,
+        dmCommands: true
 };
-
 
 export default globalDefaults;

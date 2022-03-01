@@ -4,11 +4,10 @@ import Core from '../structures/Core';
 
 const IORedis = ioredis;
 
-
 export default function Redis(core: Core): ioredis.Redis {
         const log = (message?: any, level?: types.LogLevels, prefix: string = 'Redis') => {
                 core.log(message, level, prefix);
-        }
+        };
 
         const client = new IORedis(
                 core.baseConfig.redis.port,

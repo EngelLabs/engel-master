@@ -1,6 +1,6 @@
+/* eslint-disable no-use-before-define */
 import * as mongoose from 'mongoose';
 import * as types from '../types';
-
 
 // https://stackoverflow.com/questions/45614172/mongoose-static-model-definitions-in-typescript
 interface TagModel extends mongoose.Model<types.Tag> {
@@ -15,10 +15,10 @@ const tagSchema = new mongoose.Schema<types.Tag>({
         author: { type: String, required: true },
         uses: { type: Number, required: false },
         createdAt: { type: Number, required: true, default: Date.now },
-        editedAt: { type: Number, required: false },
-},
-        { collection: 'tags' },
-);
+        editedAt: { type: Number, required: false }
+}, {
+        collection: 'tags'
+});
 
 tagSchema.static('findOneAndIncrement', (...args) => {
         return new Promise((resolve, reject) => {
@@ -43,15 +43,13 @@ tagSchema.static('incrementUses', (guild, name) => {
 
 tagSchema.index(
         { name: 1, guild: 1 },
-        { unique: true },
+        { unique: true }
 );
 
 tagSchema.index(
-        { guild: 1, author: 1 },
+        { guild: 1, author: 1 }
 );
 
-
 const Tag = mongoose.model<types.Tag, TagModel>('Tag', tagSchema);
-
 
 export default Tag;

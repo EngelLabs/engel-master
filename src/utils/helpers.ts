@@ -1,6 +1,5 @@
 import * as eris from 'eris';
 
-
 export function capitalize(str?: string): string {
         if (!str || !str.length) return '';
 

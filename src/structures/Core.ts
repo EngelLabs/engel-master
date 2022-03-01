@@ -11,6 +11,7 @@ import Logger from '../clients/Logger';
 import Mongoose from '../clients/Mongoose';
 import Redis from '../clients/Redis';
 
+/* eslint-disable no-use-before-define */
 let coreInstance: Core;
 
 global.Promise = require('bluebird');
@@ -110,7 +111,7 @@ export default class Core extends EventEmitter {
                         try {
                                 this.log(err, 'error');
                         } catch {
-                                console.log(err)
+                                console.log(err);
                         }
 
                         process.exit(1);
