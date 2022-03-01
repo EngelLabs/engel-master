@@ -92,7 +92,7 @@ export default class Core extends EventEmitter {
                 try {
                         this.logger = Logger(this);
 
-                        this.log(`Starting ${baseConfig.name}[${baseConfig.client.name}] (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
+                        this.log(`Starting ${baseConfig.name}[${baseConfig.client.name}] (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`, 'info');
 
                         this.eris = Eris(this);
                         this.mongoose = Mongoose(this);
@@ -103,8 +103,14 @@ export default class Core extends EventEmitter {
                         if (typeof this.setup === 'function') {
                                 await this.setup();
                         }
+
+                        await this.eris.connect();
                 } catch (err) {
-                        this.log(err, 'error');
+                        try {
+                                this.log(err, 'error');
+                        } catch {
+                                console.log(err)
+                        }
 
                         process.exit(1);
                 }
