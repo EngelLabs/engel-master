@@ -3,11 +3,9 @@ import * as mongoose from 'mongoose';
 import { types } from '@engel/core';
 import Core from '../Core';
 
-
 interface FetchOptions {
         createIfNotFound?: boolean;
 }
-
 
 export default class GuildCollection extends Map<string, types.GuildConfig> {
         private _core: Core;
@@ -116,7 +114,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 const doc: types.GuildConfig = {
                         id: guildID,
                         prefixes: this._core.config.prefixes.default,
-                        client: this._core.baseConfig.client.name,
+                        client: this._core.baseConfig.client.name
                 };
 
                 const p: Promise<types.GuildConfig> = new Promise((resolve, reject) => {

@@ -3,7 +3,6 @@ import * as core from '@engel/core';
 import Command from '../structures/Command';
 import Core from '../Core';
 
-
 export default class CommandCollection extends core.Collection<Command> {
         private _core?: Core;
 
@@ -51,13 +50,13 @@ export default class CommandCollection extends core.Collection<Command> {
                 const embed: eris.EmbedOptions = {
                         title: `Command "${qualName}" info`,
                         description: `**Module:** ${command.module.name}`,
-                        color: this._core.config.colours.info,
+                        color: this._core.config.colours.info
                 };
 
                 if (command.usage?.length) {
                         embed.description += `\n**Usage:** ${prefix}${qualName} ${command.usage}`;
                 } else {
-                        embed.description += `\n**Usage:** ${prefix}${qualName}`
+                        embed.description += `\n**Usage:** ${prefix}${qualName}`;
                 }
 
                 if (command.cooldown) {
@@ -74,7 +73,7 @@ export default class CommandCollection extends core.Collection<Command> {
 
                 if (command.commands) {
                         const commands = [...command.commands.unique()]
-                                .filter(cmd => cmd.hidden && !includeHidden ? false : true);
+                                .filter(cmd => !(cmd.hidden && !includeHidden));
                         const msg = commands
                                 .map(cmd => cmd.name)
                                 .join(', ');

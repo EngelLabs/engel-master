@@ -1,10 +1,8 @@
 'use strict';
 
-global.Promise = require('bluebird');
-
-
 import Core from './core/Core';
 
+global.Promise = require('bluebird');
 
 const core = new Core();
 

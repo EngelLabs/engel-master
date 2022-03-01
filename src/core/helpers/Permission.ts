@@ -2,7 +2,6 @@ import * as eris from 'eris';
 import Base from '../structures/Base';
 import Context from '../structures/Context';
 
-
 /**
  * Permissions helper
  */
@@ -64,7 +63,7 @@ export default class Permission extends Base {
                         if (overrideExists) return true;
 
                         return false;
-                }
+                };
 
                 canInvoke = checkPerms(ctx.commandConfig);
 

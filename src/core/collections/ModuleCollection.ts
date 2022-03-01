@@ -3,14 +3,12 @@ import * as path from 'path';
 import * as eris from 'eris';
 import * as core from '@engel/core';
 import { types } from '@engel/core';
-const reload = require('require-reload')(require);
 import CommandCollection from './CommandCollection';
 import Module from '../structures/Module';
 import Core from '../Core';
-
+const reload = require('require-reload')(require);
 
 const modulesPath = path.join(__dirname, '../../modules');
-
 
 export default class ModuleCollection extends core.Collection<Module> {
         private _core: Core;
@@ -60,7 +58,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 const embed: eris.EmbedOptions = {
                         title: `Module "${module.name}" info`,
                         description: '',
-                        color: this._core.config.colours.info,
+                        color: this._core.config.colours.info
                 };
 
                 if (module.info) {
@@ -69,7 +67,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
                 if (module.commands) {
                         const commands = module.commands
-                                .filter(cmd => cmd.hidden && !includeHidden ? false : true);
+                                .filter(cmd => !(cmd.hidden && !includeHidden));
                         const msg = commands
                                 .map(cmd => `\t**${cmd.name}**: ${cmd.info || 'No info provided'}`)
                                 .join('\n');
@@ -111,7 +109,6 @@ export default class ModuleCollection extends core.Collection<Module> {
                         this._log(`Loaded "${module.name}".`);
 
                         return true;
-
                 } catch (err: any) {
                         if (module) {
                                 module.eject(this._core);
@@ -148,7 +145,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 moduleNames = moduleNames?.length
                         ? moduleNames
                         : fs.readdirSync(modulesPath)
-                                .map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
+                                .map(m => m.endsWith('.js') ? m.slice(0, -3) : m);
 
                 let ret = 0;
                 const initial = this.size === 0;

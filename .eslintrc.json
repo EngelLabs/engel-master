@@ -34,7 +34,11 @@
         "one-var": 0,
         "space-before-function-paren": 0,
         "no-use-before-define": 0,
-        "no-dupe-class-members": 0
+        "no-dupe-class-members": 0,
+        "prefer-promise-reject-errors": 0
     },
-    "ignorePatterns": ["node_modules/**", "build/**"]
+    "ignorePatterns": ["node_modules/**", "build/**"],
+    "globals": {
+        "NodeJS": true
+    }
 }

@@ -6,7 +6,6 @@ import CommandCollection from './collections/CommandCollection';
 import GuildCollection from './collections/GuildCollection';
 import ModuleCollection from './collections/ModuleCollection';
 
-
 /**
  * Represents a Discord bot
  */
@@ -22,7 +21,6 @@ export default class Core extends core.Core {
          * Set the bot instance up
          */
         public setup(): Promise<void> {
-
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
 

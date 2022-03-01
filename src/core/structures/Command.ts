@@ -4,7 +4,6 @@ import CommandCollection from '../collections/CommandCollection';
 import Context from './Context';
 import Module from './Module';
 
-
 interface CommandOptions<M extends Module> {
         name: string;
         info?: string;
@@ -31,9 +30,7 @@ interface CommandOptions<M extends Module> {
         execute?: (ctx: Context<M, Command<M>>) => any | Promise<any>;
 }
 
-
 interface Command<M extends Module> extends CommandOptions<M> { }
-
 
 /**
  * Represents a core command
@@ -61,7 +58,7 @@ class Command<M extends Module = Module> {
                         command = command.parent;
                 }
 
-                return qualName
+                return qualName;
         }
 
         public get dbName(): string {
@@ -82,7 +79,7 @@ class Command<M extends Module = Module> {
 
         public set parent(command: Command<M>) {
                 if (this._parent) {
-                        throw new Error(`Subcommand is already registered to ${this._parent.qualName}`)
+                        throw new Error(`Subcommand is already registered to ${this._parent.qualName}`);
                 }
 
                 if (!command.commands) {
@@ -115,11 +112,10 @@ class Command<M extends Module = Module> {
                         'requiredPermissions',
                         'dmEnabled',
                         'alwaysEnabled',
-                        'requiredArgs',
+                        'requiredArgs'
                 ];
 
                 for (const key of fields) {
-
                         const value = this[key];
 
                         if (value === undefined) continue;
@@ -132,7 +128,7 @@ class Command<M extends Module = Module> {
         }
 
         public command(options: CommandOptions<M>): Command<M> {
-                let subcommand = new Command<M>(options);
+                const subcommand = new Command<M>(options);
 
                 subcommand.parent = this;
 
@@ -149,7 +145,7 @@ class Command<M extends Module = Module> {
                 if (guildConfig.commands) {
                         const commands = guildConfig.commands;
 
-                        let name = this.rootName;
+                        const name = this.rootName;
 
                         // @ts-ignore
                         // Typescript being fucking cancer and telling me that commands[name] can be a boolean
@@ -166,9 +162,8 @@ class Command<M extends Module = Module> {
         }
 
         public async execute(ctx: Context<M, Command<M>>): Promise<any> {
-                throw new Error(`Unreachable code.`);
+                throw new Error('Unreachable code.');
         }
 }
-
 
 export default Command;

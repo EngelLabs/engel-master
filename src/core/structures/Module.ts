@@ -2,12 +2,11 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as eris from 'eris';
 import { types } from '@engel/core';
-const reload = require('require-reload')(require);
 import Base from './Base';
 import Command from './Command';
 import Context from './Context';
 import Core from '../Core';
-
+const reload = require('require-reload')(require);
 
 /**
  * Base class for classes that represent a module
@@ -57,8 +56,8 @@ export default class Module extends Base {
                         'dbName',
                         'info',
                         'aliases',
-                        'allowedByDefault',
-                ]
+                        'allowedByDefault'
+                ];
 
                 for (const key of fields) {
                         const value = this[key];
@@ -76,8 +75,8 @@ export default class Module extends Base {
         /**
          * Load any commands that belong to this module
          */
-        public loadCommands(): void {
-                let dir = path.resolve(__dirname, '../../modules/' + this.name + '/commands');
+        private loadCommands(): void {
+                const dir = path.resolve(__dirname, '../../modules/' + this.name + '/commands');
 
                 try {
                         var files = fs.readdirSync(dir);
@@ -87,8 +86,8 @@ export default class Module extends Base {
 
                 const commands = [];
 
-                for (let file of files) {
-                        let command = reload(dir + '/' + file).default;
+                for (const file of files) {
+                        const command = reload(dir + '/' + file).default;
 
                         if (!command || !Object.keys(command).length) {
                                 this.log(`No command found for "${dir}"`, 'error');
@@ -106,8 +105,8 @@ export default class Module extends Base {
         /**
          * Load any event listeners that belong to this module
          */
-        loadListeners(): void {
-                let dir = path.resolve(__dirname, '../../modules/' + this.name + '/listeners');
+        private loadListeners(): void {
+                const dir = path.resolve(__dirname, '../../modules/' + this.name + '/listeners');
 
                 try {
                         var files = fs.readdirSync(dir);
@@ -117,7 +116,7 @@ export default class Module extends Base {
 
                 const listeners = [];
 
-                for (let file of files) {
+                for (const file of files) {
                         let listener = reload(dir + '/' + file).default;
 
                         if (!listener || !Object.keys(listener).length) {
@@ -145,10 +144,10 @@ export default class Module extends Base {
         /**
          * Inject the module
          */
-        inject(core: Core) {
+        public inject(core: Core) {
                 if (this.injectHook) {
                         try {
-                                this.injectHook()
+                                this.injectHook();
                         } catch (err) {
                                 this.log(err, 'error');
                         }
@@ -210,7 +209,7 @@ export default class Module extends Base {
                 }
 
                 if (this.tasks) {
-                        for (const [task, _] of this.tasks) {
+                        for (const [task] of this.tasks) {
                                 clearInterval(task.actual);
                         }
                 }

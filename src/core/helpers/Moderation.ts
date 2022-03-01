@@ -4,11 +4,11 @@ import * as moment from 'moment';
 import { types, helpers } from '@engel/core';
 import Base from '../structures/Base';
 
-
 /**
  * Moderation helper
  */
 export default class Moderation extends Base {
+        /* eslint-disable lines-between-class-members */
         public canModerate<T>(
                 guild: eris.Guild,
                 member: eris.User | eris.Member,
@@ -28,7 +28,7 @@ export default class Moderation extends Base {
                 member: eris.User | eris.Member,
                 author: eris.User,
                 action?: string,
-                resolve?: (...args: any) => any,
+                resolve?: (...args: any) => any
         ): any {
                 resolve = resolve || ((..._: any) => false);
 
@@ -86,7 +86,7 @@ export default class Moderation extends Base {
 
                                         const embed = {
                                                 description: text,
-                                                color: this.config.colours.error,
+                                                color: this.config.colours.error
                                         };
 
                                         channel.createMessage({ embeds: [embed] })
@@ -109,7 +109,7 @@ export default class Moderation extends Base {
                 reason: string | null,
                 mod: eris.User | eris.Member | types.ModLogUser,
                 user: eris.User | eris.Member | types.ModLogUser | null,
-                channel: eris.GuildChannel | types.ModLogChannel | null,
+                channel: eris.GuildChannel | types.ModLogChannel | null
         ): Promise<void> {
                 return new Promise((resolve, reject) => {
                         guildConfig.caseCount = guildConfig.caseCount || 0;
@@ -124,7 +124,7 @@ export default class Moderation extends Base {
                                 id: mod.id,
                                 name: (mod instanceof eris.User || mod instanceof eris.Member)
                                         ? (mod.username + '#' + mod.discriminator)
-                                        : mod.name,
+                                        : mod.name
                         };
 
                         if (user) {
@@ -132,14 +132,14 @@ export default class Moderation extends Base {
                                         id: user.id,
                                         name: (user instanceof eris.User || user instanceof eris.Member)
                                                 ? (user.username + '#' + user.discriminator)
-                                                : user.name,
+                                                : user.name
                                 };
                         }
 
                         if (channel) {
                                 channel = {
                                         id: channel.id,
-                                        name: channel.name,
+                                        name: channel.name
                                 };
                         }
 
@@ -147,7 +147,7 @@ export default class Moderation extends Base {
                                 case: caseCount,
                                 type: type,
                                 guild: guildConfig.id,
-                                mod: mod,
+                                mod: mod
                         };
 
                         if (user) {
@@ -189,7 +189,7 @@ export default class Moderation extends Base {
                 return new Promise((resolve, reject) => {
                         const filter = {
                                 guild: guild,
-                                type: type,
+                                type: type
                         };
 
                         if (user) {
@@ -211,12 +211,12 @@ export default class Moderation extends Base {
         public formatModlog(
                 m: types.ModLog,
                 includeUser: boolean = true,
-                includeChannel: boolean = true,
+                includeChannel: boolean = true
         ): string {
                 let msg = '';
 
                 msg += `**Case:** ${m.case}\n`;
-                msg += `**Type:** ${m.type}\n`
+                msg += `**Type:** ${m.type}\n`;
 
                 if (m.duration) {
                         msg += `**Duration:** ${prettyMS(m.duration)}\n`;
@@ -274,7 +274,7 @@ export default class Moderation extends Base {
                 check?: (m: eris.Message<eris.TextChannel>) => boolean,
                 count?: string | number,
                 before?: string,
-                reason?: string,
+                reason?: string
         ): Promise<void> {
                 return new Promise((resolve, reject) => {
                         const limit = typeof count !== 'number'
@@ -322,7 +322,7 @@ export default class Moderation extends Base {
                                                                 reason,
                                                                 null,
                                                                 mod,
-                                                                channel,
+                                                                channel
                                                         );
 
                                                         resolve();

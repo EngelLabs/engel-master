@@ -2,7 +2,6 @@ import * as eris from 'eris';
 import { Constants } from 'eris';
 import Base from '../structures/Base';
 
-
 const idRegex = /([0-9]{15,20})$/;
 const roleMentionRegex = /<@&([0-9]{15,20})>$/;
 const userMentionRegex = /<@!?([0-9]{15,20})>$/;
@@ -10,8 +9,7 @@ const channelMentionRegex = /<#([0-9]{15,20})>$/;
 const timeRegex = /[a-zA-Z]+|[0-9]+/g;
 
 const invalidArgument = 'Invalid argument.';
-const invalidArugment2 = `Invalid argument. Try again by providing an ID/@mention?`;
-
+const invalidArugment2 = 'Invalid argument. Try again by providing an ID/@mention?';
 
 /**
  * Conversion helper
@@ -70,8 +68,7 @@ export default class Converter extends Base {
                         if (channel || !fetch) return resolve(channel);
 
                         this.eris.getRESTChannel(match)
-                                // @ts-ignore
-                                .then(channel => resolve(channel))
+                                .then(channel => resolve(<eris.GuildChannel>channel))
                                 .catch(() => resolve(null));
                 });
         }
@@ -84,8 +81,7 @@ export default class Converter extends Base {
                                                 return reject(`${channel.mention} is not a text channel.`);
                                         }
 
-                                        // @ts-ignore
-                                        resolve(channel);
+                                        resolve(<eris.TextChannel>channel);
                                 })
                                 .catch(reject);
                 });
@@ -94,13 +90,13 @@ export default class Converter extends Base {
         public id(argument: string): string {
                 if (!argument || !argument.length) return invalidArgument;
 
-                let match = argument.match(idRegex);
+                const match = argument.match(idRegex);
 
                 if (!match || !match.length) return 'Invalid ID.';
 
                 return match[1];
         }
-        
+
         private _convertID(argument: string, altRegex: RegExp, errorMsg: string = invalidArugment2): string {
                 let match = this.id(argument);
 
