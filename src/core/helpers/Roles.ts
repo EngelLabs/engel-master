@@ -3,7 +3,6 @@ import * as eris from 'eris';
 import { types } from '@engel/core';
 import Base from '../structures/Base';
 
-
 export default class Roles extends Base {
         public resolveMuteRole(guild: eris.Guild, guildConfig: types.GuildConfig): Promise<eris.Role> {
                 return new Promise((resolve, reject) => {
@@ -35,12 +34,11 @@ export default class Roles extends Base {
 
                                         guildConfig.muteRole = role.id;
 
-                                        this.core.guilds.update(guild.id, { $set: { 'muteRole': role.id } });
+                                        this.core.guilds.update(guild.id, { $set: { muteRole: role.id } });
 
                                         this.log(`Created mute role R${role.id} G${guild.id}.`);
 
                                         resolve(role);
-
                                 })
                                 .catch(() => {
                                         reject("I can't create a mute role.\nUse the `muterole set` command to set one.");

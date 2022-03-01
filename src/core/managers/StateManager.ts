@@ -3,7 +3,6 @@ import { types } from '@engel/core';
 import Core from '../Core';
 import Base from '../structures/Base';
 
-
 interface Message {
         id: string;
         content: string;
@@ -11,7 +10,6 @@ interface Message {
         channel: eris.GuildChannel;
         createdAt: number;
 }
-
 
 /**
  * Manages cache of Discord objects
@@ -66,7 +64,7 @@ export default class CacheManager extends Base {
                         content: message.content,
                         author: message.author,
                         channel: message.channel,
-                        createdAt: message.createdAt,
+                        createdAt: message.createdAt
                 };
 
                 // @ts-ignore

@@ -5,11 +5,9 @@ import Base from '../structures/Base';
 import Core from '../Core';
 import Permission from '../helpers/Permission';
 
-
 interface AnyFunc {
         (...args: any): void;
 }
-
 
 /**
  * Event dispatch manager
@@ -56,7 +54,7 @@ export default class EventManager extends Base {
                                 } catch (err) {
                                         this.log(err, 'error');
                                 }
-                        }
+                        };
 
                         this.eris.addListener(event, wrapped);
                         this._registeredEvents[event] = { handler: wrapped, listeners: [execute] };
@@ -79,7 +77,7 @@ export default class EventManager extends Base {
                 }
 
                 if (this._registeredEvents[event]) {
-                        let listeners = this._registeredEvents[event].listeners.filter(l => l = execute);
+                        const listeners = this._registeredEvents[event].listeners.filter(l => l === execute);
 
                         if (!listeners.length) {
                                 this.eris.removeListener(event, this._registeredEvents[event].handler);
@@ -278,7 +276,7 @@ export default class EventManager extends Base {
                         isAdmin: this._permissions.isAdmin(message.author.id),
                         isTester: this._permissions.isTester(message.author.id),
                         isDM: !message.guildID,
-                        message: message,
+                        message: message
                 };
 
                 if (payload.isDM) {
@@ -313,7 +311,7 @@ export default class EventManager extends Base {
 
                 const payload = {
                         message: message,
-                        oldMessage: Object.assign({}, oldMessage),
+                        oldMessage: Object.assign({}, oldMessage)
                 };
 
                 return this._guildPayload(payload, oldMessage.channel.guild.id);
