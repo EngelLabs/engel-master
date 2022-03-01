@@ -5,13 +5,12 @@ import Module from './Module';
 import Base from './Base';
 import Core from '../Core';
 
-
-interface ContextOptions {
+interface ContextOptions<M extends Module, C extends Command> {
         args: string[];
         prefix: string;
         message: eris.Message;
-        command: Command;
-        module: Module;
+        command: C;
+        module: M;
         isDM: boolean;
         isAdmin: boolean;
         guildConfig: types.GuildConfig;
@@ -58,31 +57,38 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         public isDM: boolean;
         public isAdmin: boolean;
         public guildConfig: types.GuildConfig;
-        public info: ResponseFunction;
-        public error: ResponseFunction;
-        public success: ResponseFunction;
-        public loading: ResponseFunction;
-        public premium: ResponseFunction;
-        public infoEmoji: EmojiResponseFunction;
-        public errorEmoji: EmojiResponseFunction;
-        public successEmoji: EmojiResponseFunction;
-        public loadingEmoji: EmojiResponseFunction;
-        public premiumEmoji: EmojiResponseFunction;
-        public addInfoReaction: ReactionFunction;
-        public addErrorReaction: ReactionFunction;
-        public addSuccessReaction: ReactionFunction;
-        public addLoadingReaction: ReactionFunction;
-        public addPremiumReaction: ReactionFunction;
-        public removeInfoReaction: ReactionFunction;
-        public removeErrorReaction: ReactionFunction;
-        public removeSuccessReaction: ReactionFunction;
-        public removeLoadingReaction: ReactionFunction;
-        public removePremiumReaction: ReactionFunction;
+        public info = createResponseFunction('info');
+        public error = createResponseFunction('error');
+        public success = createResponseFunction('success');
+        public loading = createResponseFunction('loading');
+        public premium = createResponseFunction('premium');
+        public infoEmoji = createEmojiResponseFunction('info');
+        public errorEmoji = createEmojiResponseFunction('error');
+        public successEmoji = createEmojiResponseFunction('success');
+        public loadingEmoji = createEmojiResponseFunction('loading');
+        public premiumEmoji = createEmojiResponseFunction('premium');
+        public addInfoReaction = createAddReactionFunction('info');
+        public addErrorReaction = createAddReactionFunction('error');
+        public addSuccessReaction = createAddReactionFunction('success');
+        public addLoadingReaction = createAddReactionFunction('loading');
+        public addPremiumReaction = createAddReactionFunction('premium');
+        public removeInfoReaction = createRemoveReactionFunction('info');
+        public removeErrorReaction = createRemoveReactionFunction('error');
+        public removeSuccessReaction = createRemoveReactionFunction('success');
+        public removeLoadingReaction = createRemoveReactionFunction('loading');
+        public removePremiumReaction = createRemoveReactionFunction('premium');
 
-        public constructor(core: Core, options: ContextOptions) {
+        public constructor(core: Core, options: ContextOptions<M, C>) {
                 super(core);
 
-                Object.assign(this, options);
+                this.args = options.args;
+                this.prefix = options.prefix;
+                this.message = options.message;
+                this.command = options.command;
+                this.module = options.module;
+                this.isDM = options.isDM;
+                this.isAdmin = options.isAdmin;
+                this.guildConfig = options.guildConfig;
         }
 
         public get guild(): eris.Guild | undefined {
@@ -179,30 +185,6 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 }
 
-Context.prototype.info = createResponseFunction('info');
-Context.prototype.error = createResponseFunction('error');
-Context.prototype.success = createResponseFunction('success');
-Context.prototype.loading = createResponseFunction('loading');
-Context.prototype.premium = createResponseFunction('premium');
-
-Context.prototype.infoEmoji = createEmojiResponseFunction('info');
-Context.prototype.errorEmoji = createEmojiResponseFunction('error');
-Context.prototype.successEmoji = createEmojiResponseFunction('success');
-Context.prototype.loadingEmoji = createEmojiResponseFunction('loading');
-Context.prototype.premiumEmoji = createEmojiResponseFunction('premium');
-
-Context.prototype.addInfoReaction = createAddReactionFunction('info');
-Context.prototype.addErrorReaction = createAddReactionFunction('error');
-Context.prototype.addSuccessReaction = createAddReactionFunction('success');
-Context.prototype.addLoadingReaction = createAddReactionFunction('loading');
-Context.prototype.addPremiumReaction = createAddReactionFunction('premium');
-
-Context.prototype.removeInfoReaction = createRemoveReactionFunction('info');
-Context.prototype.removeErrorReaction = createRemoveReactionFunction('error');
-Context.prototype.removeSuccessReaction = createRemoveReactionFunction('success');
-Context.prototype.removeLoadingReaction = createRemoveReactionFunction('loading');
-Context.prototype.removePremiumReaction = createRemoveReactionFunction('premium');
-
 function createResponseFunction(name: string): ResponseFunction {
         return function (content?: string, options?: ContextResponseOptions) {
                 const colour = this.config.colours[name];
@@ -234,26 +216,26 @@ function createResponseFunction(name: string): ResponseFunction {
                         if (perms.has('embedLinks')) {
                                 toSend.embed = {
                                         description: content,
-                                        color: colour,
-                                }
+                                        color: colour
+                                };
                         } else {
                                 toSend.content = content;
                         }
                 } else {
                         toSend.embed = {
                                 description: content,
-                                color: colour,
-                        }
+                                color: colour
+                        };
                 }
 
                 return this.send(toSend);
-        }
+        };
 }
 
 function createEmojiResponseFunction(name: string): EmojiResponseFunction {
         return function () {
                 return this.send('<' + this.config.emojis[name] + '>');
-        }
+        };
 }
 
 function createAddReactionFunction(name: string): ReactionFunction {
@@ -267,7 +249,7 @@ function createAddReactionFunction(name: string): ReactionFunction {
                 return this.eris.addMessageReaction(
                         this.channel.id, this.message.id, this.config.emojis[name]
                 );
-        }
+        };
 }
 
 function createRemoveReactionFunction(name: string): ReactionFunction {
@@ -281,5 +263,5 @@ function createRemoveReactionFunction(name: string): ReactionFunction {
                 return this.eris.removeMessageReaction(
                         this.channel.id, this.message.id, this.config.emojis[name]
                 );
-        }
+        };
 }
