@@ -26,7 +26,7 @@ const globalDefaults: types.Config = {
                         invite: 'https://discord.gg/TJnMgKF5m6',
                 },
                 protected: ['932441828073017354'],
-                testing: ['928418564191424523'], // to be moved to dedicated guild soon
+                testing: ['928418564191424523'],
         },
         users: {
                 developers: [
