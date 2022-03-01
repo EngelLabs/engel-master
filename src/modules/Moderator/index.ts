@@ -5,7 +5,7 @@ import Context from '../../core/structures/Context';
 import Module from '../../core/structures/Module';
 import Moderation from '../../core/helpers/Moderation';
 import _ModTimer from './helpers/ModTimer';
-const ModTimer: typeof _ModTimer = require('require-reload')('./helpers/ModTimer', require);
+const ModTimer: typeof _ModTimer = require('require-reload')('./helpers/ModTimer', require).default;
 
 const defaultResponses = {
         ban: 'User **{user}** banned.',

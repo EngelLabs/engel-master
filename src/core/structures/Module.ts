@@ -88,7 +88,7 @@ export default class Module extends Base {
                 const commands = [];
 
                 for (let file of files) {
-                        let command = reload(dir + '/' + file);
+                        let command = reload(dir + '/' + file).default;
 
                         if (!command || !Object.keys(command).length) {
                                 this.log(`No command found for "${dir}"`, 'error');
@@ -118,7 +118,7 @@ export default class Module extends Base {
                 const listeners = [];
 
                 for (let file of files) {
-                        let listener = reload(dir + '/' + file);
+                        let listener = reload(dir + '/' + file).default;
 
                         if (!listener || !Object.keys(listener).length) {
                                 this.log(`No listener found for "${dir}"`, 'error');

@@ -94,9 +94,9 @@ export default class ModuleCollection extends core.Collection<Module> {
                 let module: Module | undefined;
 
                 try {
-                        const Module = (reload(modulesPath + '/' + moduleName))
+                        const Module = (reload(modulesPath + '/' + moduleName)).defualt;
 
-                        module = new (Module || Module.default);
+                        module = new Module();
 
                         if (module.disabled) {
                                 this._log(`Skipping disabled module "${module.name}".`);
