@@ -13,6 +13,7 @@ import Redis from '../clients/Redis';
 
 let coreInstance: Core;
 
+global.Promise = require('bluebird');
 
 export default class Core extends EventEmitter {
         public baseConfig = baseConfig;
