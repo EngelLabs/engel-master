@@ -77,7 +77,7 @@ export default class Module extends Base {
          * Load any commands that belong to this module
          */
         public loadCommands(): void {
-                let dir = path.resolve('src/modules/' + this.name + '/commands');
+                let dir = path.resolve(__dirname, '../../modules/' + this.name + '/commands');
 
                 try {
                         var files = fs.readdirSync(dir);
@@ -107,7 +107,7 @@ export default class Module extends Base {
          * Load any event listeners that belong to this module
          */
         loadListeners(): void {
-                let dir = path.resolve('src/modules/' + this.name + '/listeners');
+                let dir = path.resolve(__dirname, '../../modules/' + this.name + '/listeners');
 
                 try {
                         var files = fs.readdirSync(dir);

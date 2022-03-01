@@ -9,7 +9,7 @@ import Module from '../structures/Module';
 import Core from '../Core';
 
 
-const modulesPath = path.resolve('../../modules');
+const modulesPath = path.join(__dirname, '../../modules');
 
 
 export default class ModuleCollection extends core.Collection<Module> {

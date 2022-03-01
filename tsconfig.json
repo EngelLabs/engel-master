@@ -1,11 +1,13 @@
 {
     "compilerOptions": {
-        "outDir": "build",
+        "outDir": "./build",
         "module": "CommonJS",
-        "target": "ES6",
+        "target": "ESNext",
         "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "skipDefaultLibCheck": true,
     },
     "include": [
-        "src/**/*",
+        "./src/**/*",
     ],
 }

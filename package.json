@@ -5,12 +5,12 @@
     "description": "A Discord bot to provide some nice utilities.",
     "scripts": {
         "prestart": "npm run build && npm run config",
-        "start": "node build/index.js",
-        "dev": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,TS\" \"npm run watch\" \"npm run watch:ts\"",
-        "watch": "npx nodemon --delay 3 -i build/modules/",
-        "watch:ts": "npx tsc -w",
+        "start": "node build/src/index.js",
+        "dev": "concurrently -i -k -p \"[{pid}-{name}]\" -n \"APP,TS\" \"npm run watch\" \"npm run watch:ts\"",
+        "watch": "npx nodemon --delay 3 -i build/src/modules/",
+        "watch:ts": "npx tsc -w -p tsconfig.json",
         "config": "node scripts/config.js",
-        "build": "npx tsc"
+        "build": "npx tsc -p tsconfig.json"
     },
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "dependencies": {
