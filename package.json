@@ -10,7 +10,8 @@
         "watch": "npx nodemon --delay 3 -i build/src/modules/",
         "watch:ts": "npx tsc -w -p tsconfig.json",
         "config": "node scripts/config.js",
-        "build": "npx tsc -p tsconfig.json"
+        "build": "npx tsc -p tsconfig.json",
+        "lint": "npx eslint \"src/**/*\""
     },
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "dependencies": {
