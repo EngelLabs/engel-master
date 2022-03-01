@@ -7,8 +7,8 @@
     "main": "build/index.js",
     "typings": "build/index",
     "scripts": {
-        "dev": "npx tsc -w",
-        "build": "npx tsc",
+        "dev": "npx tsc -w -p tsconfig.json",
+        "build": "npx tsc -p tsconfig.json",
         "prepare": "npm run build"
     },
     "repository": {
