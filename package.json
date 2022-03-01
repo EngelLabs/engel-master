@@ -10,7 +10,7 @@
         "dev": "npx tsc -w -p tsconfig.json",
         "build": "npx tsc -p tsconfig.json",
         "prepare": "npm run build",
-        "lint": "npx eslint src"
+        "lint": "npx eslint \"src/**/*\""
     },
     "repository": {
         "type": "git",
