@@ -1,0 +1,23 @@
+@import './layouts/main';
+
+
+.homepage {
+    .title {
+        .icon {
+            width: 40px;
+            height: auto;
+        }
+    }
+
+    .desc {
+        color: white;
+        font-size: 20px;
+        text-align: center;
+        margin-top: 0px;
+
+        .button {
+            color: inherit;
+            text-decoration: inherit;
+        }
+    }
+}

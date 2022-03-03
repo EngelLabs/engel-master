@@ -1,0 +1,60 @@
+@import './core/common';
+
+
+.navbar {
+    overflow: hidden;
+
+    .button {
+        position: static;
+        display: block;
+        text-align: center;
+        text-decoration: none;
+        float: left;
+        color: white;
+        margin-top: 15px;
+
+        &.is-important {
+            padding-top: 10px;
+            float: right;
+            height: 30px;
+            width: 85px;
+            border-radius: 10px;
+            margin-right: 15px;
+            background: $pale-blue;
+            transition: background 0.2s ease-in;
+
+            &:hover {
+                background: $pale-red;
+            }
+        }
+
+        &.is-info {
+            margin-left: 20px;
+
+            &::after {
+                content: '';
+                width: 0px;
+                height: 1px;
+                display: block;
+                background: white;
+                transition: 100ms;
+            }
+    
+            &:hover::after {
+                width: 100%;
+            }
+        }
+
+        &.is-gold {
+            &::after {
+                background: $premium;
+            }
+
+            transition: 600ms;
+
+            &:hover {
+                color: $premium;
+            }
+        }
+    }
+}
