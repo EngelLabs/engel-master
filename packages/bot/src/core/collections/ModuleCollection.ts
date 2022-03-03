@@ -92,7 +92,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 let module: Module | undefined;
 
                 try {
-                        const Module = (reload(modulesPath + '/' + moduleName)).defualt;
+                        const Module = (reload(modulesPath + '/' + moduleName)).default;
 
                         module = new Module();
 
