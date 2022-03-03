@@ -1,5 +1,5 @@
 {
-    "name": "timbot-web",
+    "name": "@timbot/web",
     "version": "0.1.1",
     "description": "Web server for timbot",
     "private": true,
