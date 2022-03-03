@@ -105,8 +105,6 @@ export default class Core extends EventEmitter {
                         if (typeof this.setup === 'function') {
                                 await this.setup();
                         }
-
-                        await this.eris.connect();
                 } catch (err) {
                         try {
                                 this.log(err, 'error');
