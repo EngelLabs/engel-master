@@ -20,7 +20,7 @@ export default class Core extends core.Core {
         /**
          * Set the bot instance up
          */
-        public setup(): Promise<void> {
+        public async setup(): Promise<void> {
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
 
@@ -35,6 +35,6 @@ export default class Core extends core.Core {
                         this.commands.register();
                 }
 
-                return Promise.resolve();
+                await this.eris.connect();
         }
 }
