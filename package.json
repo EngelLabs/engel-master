@@ -1,7 +1,7 @@
 {
-    "name": "@timbot/web",
+    "name": "@engel/web",
     "version": "0.1.1",
-    "description": "Web server for timbot",
+    "description": "Web server for engel",
     "private": true,
     "scripts": {
         "start": "node src/index.js",
@@ -12,13 +12,13 @@
     },
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/timbot-labs/timbot-web.git"
+        "url": "git+https://github.com/EngelLabs/engel-web.git"
     },
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "bugs": {
-        "url": "https://github.com/timbot-labs/timbot-web/issues"
+        "url": "https://github.com/EngelLabs/engel-web/issues"
     },
-    "homepage": "https://github.com/timbot-labs/timbot-web#readme",
+    "homepage": "https://github.com/timbot-labs/engel-web#readme",
     "dependencies": {
         "@timbot/logger": "github:timbot-labs/timbot-logger",
         "bluebird": "^3.7.2",

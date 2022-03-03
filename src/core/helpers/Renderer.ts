@@ -1,7 +1,6 @@
-const Base = require('../structures/Base');
+import Base from '../structures/Base';
 
-
-class Renderer extends Base {
+export class Renderer extends Base {
         index(req, res) {
                 res.locals.scripts.push('/js/react/homepage.js');
                 res.locals.stylesheets.push('/css/index.css');
@@ -16,6 +15,3 @@ class Renderer extends Base {
                 return res.render('index');
         }
 }
-
-
-module.exports = Renderer;

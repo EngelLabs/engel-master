@@ -1,20 +1,27 @@
-const fs = require('fs');
-const path = require('path');
+import * as fs from 'fs';
+import * as path from 'path';
+import * as types from '@engel/types';
+import Core from '../Core';
 
-const controllersPath = path.resolve('src/controllers');
+const controllersPath = path.join(__dirname, '../../controllers');
 
 
-class ControllerCollection extends Map {
-        constructor(server) {
+export default class ControllerCollection extends Map {
+        private _core: Core;
+        // TODO: Type this
+        private _middlewares: any;
+        private _routes: any;
+
+        public constructor(core: Core) {
                 super();
 
-                this.server = server;
+                this._core = core;
+
                 this.load();
         }
 
-        load() {
-                const app = this.server.app;
-                const logger = this.server.logger;
+        public load() {
+                const app = this._core.app;
 
                 this._middlewares = [];
                 this._routes = [];
@@ -28,23 +35,25 @@ class ControllerCollection extends Map {
                 for (const { uri, handler } of this._middlewares) {
                         app.use(uri, handler);
 
-                        logger.debug(`[Controllers] middleware(${uri || '*'})`);
+                        this._log(`middleware(${uri || '*'})`);
                 }
 
                 for (const { method, uri, handler } of this._routes) {
                         app[method](uri, handler);
 
-                        logger.debug(`[Controllers] ${method}(${uri})`);
+                        this._log(`${method}(${uri})`);
                 }
 
-                logger.info(`[Controllers] ${this.size} registered.`);
+                this._log(`[Controllers] ${this.size} registered.`, 'info');
         }
 
-        _loadControllers(controllerPath) {
-                let controller;
+        private _log(message: any, level?: types.LogLevels) {
+                this._core.log(message, level, 'Controllers');
+        }
 
+        private _loadControllers(controllerPath) {
                 try {
-                        controller = require(controllerPath);
+                        var controller = require(controllerPath);
                 } catch (err) {
                         let skip = false;
 
@@ -91,7 +100,7 @@ class ControllerCollection extends Map {
                         delete route.uri;
 
                         for (let [method, handler] of Object.entries(route)) {
-                                handler = handler.bind(null, this.server);
+                                handler = handler.bind(null, this._core);
 
                                 for (const uri of uriArray) {
                                         if (method === 'use') {
@@ -107,6 +116,3 @@ class ControllerCollection extends Map {
 
         }
 }
-
-
-module.exports = ControllerCollection;
