@@ -1,45 +1,45 @@
 {
-  "name": "@engel/core",
-  "version": "0.2.0",
-  "private": true,
-  "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
-  "description": "Core module for engel",
-  "main": "build/index.js",
-  "typings": "build/index",
-  "scripts": {
-    "dev": "npx tsc -w -p tsconfig.json",
-    "build": "npx tsc -p tsconfig.json",
-    "prepare": "npm run build",
-    "lint": "npx eslint \"src/**/*\""
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/engel-labs/engel-core.git"
-  },
-  "bugs": {
-    "url": "https://github.com/engel-labs/engel-core/issues"
-  },
-  "homepage": "https://github.com/engel-labs/engel-core#readme",
-  "dependencies": {
-    "bluebird": "^3.7.2",
-    "dotenv": "^16.0.0",
-    "eris": "github:abalabahaha/eris#dev",
-    "eventemitter3": "^4.0.7",
-    "getenv": "^1.0.0",
-    "ioredis": "^4.28.5",
-    "mongoose": "^6.2.2",
-    "typescript": "^4.5.5",
-    "winston": "^3.6.0"
-  },
-  "devDependencies": {
-    "@types/getenv": "^1.0.0",
-    "@types/ioredis": "^4.28.8",
-    "@typescript-eslint/eslint-plugin": "^5.13.0",
-    "@typescript-eslint/parser": "^5.13.0",
-    "eslint": "^7.32.0",
-    "eslint-config-standard": "^16.0.3",
-    "eslint-plugin-import": "^2.25.4",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.2.0"
-  }
+    "name": "@engel/core",
+    "version": "0.2.0",
+    "private": true,
+    "description": "Core module for engel",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "main": "build/index.js",
+    "typings": "build/index",
+    "scripts": {
+        "dev": "npx tsc -w -p tsconfig.json",
+        "build": "npx tsc -p tsconfig.json",
+        "prepare": "npm run build",
+        "lint": "npx eslint \"src/**/*\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/engel-labs/engel-core.git"
+    },
+    "bugs": {
+        "url": "https://github.com/engel-labs/engel-core/issues"
+    },
+    "homepage": "https://github.com/engel-labs/engel-core#readme",
+    "dependencies": {
+        "bluebird": "^3.7.2",
+        "dotenv": "^16.0.0",
+        "eris": "github:abalabahaha/eris#dev",
+        "eventemitter3": "^4.0.7",
+        "getenv": "^1.0.0",
+        "ioredis": "^4.28.5",
+        "mongoose": "^6.2.2",
+        "typescript": "4.5",
+        "winston": "^3.6.0"
+    },
+    "devDependencies": {
+        "@types/getenv": "^1.0.0",
+        "@types/ioredis": "^4.28.8",
+        "@typescript-eslint/eslint-plugin": "^5.13.0",
+        "@typescript-eslint/parser": "^5.13.0",
+        "eslint": "^7.32.0",
+        "eslint-config-standard": "^16.0.3",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.2.0"
+    }
 }

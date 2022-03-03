@@ -4,15 +4,6 @@
     "private": true,
     "description": "A Discord bot to provide some nice utilities.",
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
-    "main": "build/src/index.js",
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/EngelLabs/engel-bot.git"
-    },
-    "bugs": {
-        "url": "https://github.com/EngelLabs/engel-bot/issues"
-    },
-    "homepage": "https://github.com/EngelLabs/engel-bot#readme",
     "scripts": {
         "prestart": "npm run build && npm run config",
         "start": "node build/src/index.js",
@@ -21,10 +12,20 @@
         "watch:ts": "npx tsc -w -p tsconfig.json",
         "config": "node scripts/config.js",
         "build": "npx tsc -p tsconfig.json",
-        "lint": "npx eslint \"src/**/*\""
+        "lint": "npx eslint \"src/**/*\"",
+        "pm2": "npx pm2 start npm --name engel-bot -- start",
+        "pm2:dev": "npx pm2 start npm --name engel-bot-dev -- run dev"
     },
-
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/EngelLabs/engel-bot.git"
+    },
+    "bugs": {
+        "url": "https://github.com/EngelLabs/engel-bot/issues"
+    },
+    "homepage": "https://github.com/EngelLabs/engel-bot#readme",
     "dependencies": {
+        "@engel/core": "0.2.0",
         "bufferutil": "^4.0.5",
         "eris": "github:abalabahaha/eris#dev",
         "erlpack": "github:abalabahaha/erlpack",
@@ -34,7 +35,7 @@
         "pretty-ms": "^7.0.1",
         "require-reload": "^0.2.2",
         "superagent": "^6.1.0",
-        "typescript": "^4.5.5",
+        "typescript": "4.5",
         "zlib-sync": "^0.1.7"
     },
     "devDependencies": {

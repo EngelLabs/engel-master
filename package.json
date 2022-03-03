@@ -1,0 +1,33 @@
+{
+    "name": "engel-master",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Master repository for engel",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "scripts": {
+        "postinstall": "npm run build",
+        "bot": "npm start -w packages/bot",
+        "web": "npm start -w packages/web",
+        "pm2": "npm run pm2:bot & npm run pm2:web",
+        "pm2:dev": "npm run pm2:bot:dev & pm2 run pm2:web:dev",
+        "lint": "npm run lint:core & npm run lint:bot",
+        "build": "npm run build:core & npm run build:bot",
+        "pm2:bot": "npm run pm2 -w packages/bot",
+        "pm2:web": "npm run pm2 -w packages/web",
+        "pm2:bot:dev": "npm run pm2:dev -w packages/bot",
+        "pm2:web:dev": "npm run pm2:dev -w packages/web",
+        "lint:bot": "npm run lint -w packages/bot",
+        "lint:web": "npm run lint -w packages/web",
+        "lint:core": "npm run lint -w packages/core",
+        "build:bot": "npm run build -w packages/bot",
+        "build:web": "npm run build -w packages/web",
+        "build:core": "npm run build -w packages/core",
+        "dev:bot": "npm run dev -w packages/bot",
+        "dev:web": "npm run dev -w packages/web",
+        "dev:core": "npm run dev -w packages/core",
+        "config": "npm run config -w packages/bot"
+    },
+    "workspaces": [
+        "packages/*"
+    ]
+}
