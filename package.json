@@ -11,7 +11,7 @@
         "pm2": "npm run pm2:bot & npm run pm2:web",
         "pm2:dev": "npm run pm2:bot:dev & npm run pm2:web:dev",
         "lint": "npm run lint:core & npm run lint:utils & npm run lint:bot & npm run lint:web",
-        "build": "npm run build:core & npm run build:utils",
+        "build": "npm run build:core && npm run build:utils",
         "postbuild": "npm run build:bot & npm run build:web",
         "dev": "npm run dev:core & npm run dev:bot & npm run dev:web",
         "pm2:bot": "npm run pm2 -w packages/bot",
