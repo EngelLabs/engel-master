@@ -9,7 +9,7 @@
         "start": "node build/src/index.js",
         "dev": "concurrently -i -k -p \"[{pid}-{name}]\" -n \"APP,TS\" \"npm run watch\" \"npm run watch:ts\"",
         "watch": "npx nodemon --delay 3 -i build/src/modules/",
-        "watch:ts": "npx tsc -w -p tsconfig.json",
+        "watch:ts": "npx tsc -w --noEmit -p tsconfig.json",
         "config": "node scripts/config.js",
         "build": "npx tsc -p tsconfig.json",
         "lint": "npx eslint \"src/**/*\"",
