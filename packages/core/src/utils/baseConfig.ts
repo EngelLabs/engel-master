@@ -10,7 +10,7 @@ if (_error = require('dotenv').config().error) {
         }
 }
 
-/* eslint-disable import/first */
+/* eslint-disable-next-line import/first */
 import * as getenv from 'getenv';
 
 const NAME = getenv.string('CLIENT_NAME').toUpperCase();
