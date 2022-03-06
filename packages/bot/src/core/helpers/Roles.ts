@@ -1,6 +1,6 @@
 
-import * as eris from 'eris';
-import { types } from '@engel/core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import Base from '../structures/Base';
 
 export default class Roles extends Base {

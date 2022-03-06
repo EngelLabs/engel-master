@@ -1,11 +1,9 @@
-import * as eris from 'eris';
 import * as http from 'http';
 import * as path from 'path';
 import * as express from 'express';
 import * as store from 'connect-redis';
 import * as hbs from 'express-handlebars';
 import * as session from 'express-session';
-import * as superagent from 'superagent';
 import * as core from '@engel/core';
 import baseConfig from './utils/baseConfig';
 import Renderer from './helpers/Renderer';
@@ -26,64 +24,9 @@ export default class Core extends core.Core {
         public commands: CommandCollection;
         public controllers: ControllerCollection;
         public app: express.Express;
-        private _server?: http.HTTPServer;
+        private _server?: http.Server;
 
-
-        apiRequest(token, path) {
-                return superagent
-                        .get('https://discord.com/api/v9' + path)
-                        .set('Accept', 'application/json')
-                        .set('Authorization', token)
-                        .set('User-Agent', baseConfig.name)
-                        .then(resp => resp.body);
-        }
-
-        async fetchUserData(req) {
-                const token = req.session.token,
-                        config = this.config;
-
-                if (config.apiToken && req.headers.authorization === config.apiToken) {
-                        req.session.user = await this.apiRequest(token, '/users/@me');
-
-                        return;
-                }
-
-                const [user, allGuilds] = await Promise.all([
-                        this.apiRequest(token, '/users/@me'),
-                        this.apiRequest(token, '/users/@me/guilds')
-                ]);
-
-                const guilds = allGuilds.filter(g => {
-                        return g.owner ||
-                                (!!(g.permissions & eris.Constants.Permissions.manageGuild.toString())) ||
-                                (!!(g.permissions & eris.Constants.Permissions.administrator.toString()));
-                });
-
-                const isAdmin = config.users.developers.includes(user.id);
-
-                Object.assign(req.session, { user, guilds, allGuilds, isAdmin });
-        }
-
-        syncLocals(req, res) {
-                if (!req.url.includes('api')) {
-                        Object.assign(res.locals, {
-                                user: JSON.stringify(req.session.user),
-                                guilds: JSON.stringify(req.session.guilds),
-                                allGuilds: JSON.stringify(req.session.allGuilds),
-                                isAdmin: JSON.stringify(req.session.isAdmin),
-                        });
-                }
-        }
-
-        public setup() {
-                this.renderer = new Renderer(this);
-                this.responses = new Responses(this);
-                this.requests = new Requests(this);
-
-                this.modules = new ModuleCollection(this);
-                this.commands = new CommandCollection(this);
-                this.controllers = new ControllerCollection(this);
-
+        public setup(): Promise<void> {
                 const app = this.app = express();
 
                 app.set('view engine', 'hbs');
@@ -91,7 +34,7 @@ export default class Core extends core.Core {
                         extname: 'hbs',
                         layoutsDir: path.resolve('views/layouts'),
                         partialsDir: path.resolve('views/partials'),
-                        defaultLayout: 'main',
+                        defaultLayout: 'main'
                 }));
 
                 app.use(express.static('public'));
@@ -103,12 +46,20 @@ export default class Core extends core.Core {
                         saveUninitialized: true,
                         store: new Store({
                                 client: this.redis,
-                                ttl: 7 * 24 * 60 * 60,
+                                ttl: 7 * 24 * 60 * 60
                         }),
                         cookie: {
-                                expires: 7 * 24 * 60 * 60 * 1000, // 7d, the time it takes for Discord access token to expire
-                        },
+                                maxAge: 7 * 24 * 60 * 60 * 1000 // 7d, the time it takes for Discord access token to expire
+                        }
                 }));
+
+                this.renderer = new Renderer(this);
+                this.responses = new Responses(this);
+                this.requests = new Requests(this);
+
+                this.modules = new ModuleCollection(this);
+                this.commands = new CommandCollection(this);
+                this.controllers = new ControllerCollection(this);
 
                 this._server = http
                         .createServer(app)
@@ -127,5 +78,7 @@ export default class Core extends core.Core {
                         .on('unhandledRejection', reason => {
                                 this.log(reason, 'error');
                         });
+
+                return Promise.resolve();
         }
 }

@@ -1,10 +1,9 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as types from '@engel/types';
-import Core from '../Core';
+import type * as types from '@engel/types';
+import type Core from '../Core';
 
 const controllersPath = path.join(__dirname, '../../controllers');
-
 
 export default class ControllerCollection extends Map {
         private _core: Core;
@@ -28,8 +27,8 @@ export default class ControllerCollection extends Map {
 
                 this._loadControllers(controllersPath);
 
-                this._middlewares.sort((a, b) => {
-                        return a.uri.length - b.uri.length
+                this._middlewares.sort((a: { uri: string }, b: { uri: string }) => {
+                        return a.uri.length - b.uri.length;
                 });
 
                 for (const { uri, handler } of this._middlewares) {
@@ -39,7 +38,7 @@ export default class ControllerCollection extends Map {
                 }
 
                 for (const { method, uri, handler } of this._routes) {
-                        app[method](uri, handler);
+                        app[<keyof typeof app>method](uri, handler);
 
                         this._log(`${method}(${uri})`);
                 }
@@ -51,7 +50,7 @@ export default class ControllerCollection extends Map {
                 this._core.log(message, level, 'Controllers');
         }
 
-        private _loadControllers(controllerPath) {
+        private _loadControllers(controllerPath: string) {
                 try {
                         var controller = require(controllerPath);
                 } catch (err) {
@@ -100,7 +99,7 @@ export default class ControllerCollection extends Map {
                         delete route.uri;
 
                         for (let [method, handler] of Object.entries(route)) {
-                                handler = handler.bind(null, this._core);
+                                handler = (<Function>handler).bind(null, this._core);
 
                                 for (const uri of uriArray) {
                                         if (method === 'use') {
@@ -113,6 +112,5 @@ export default class ControllerCollection extends Map {
 
                         this.set(uriArray, route);
                 }
-
         }
 }

@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 import * as mongoose from 'mongoose';
-import * as types from '../types';
+import type * as types from '@engel/types';
 
 // https://stackoverflow.com/questions/45614172/mongoose-static-model-definitions-in-typescript
 interface TagModel extends mongoose.Model<types.Tag> {

@@ -1,6 +1,6 @@
 import Command from '../../../core/structures/Command';
 import Converter from '../../../core/helpers/Converter';
-import Utility from '..';
+import type Utility from '..';
 
 export default new Command<Utility>({
         name: 'avatar',

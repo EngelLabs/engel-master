@@ -1,16 +1,16 @@
 import * as mongoose from 'mongoose';
-import * as types from '../types';
+import type * as types from '@engel/types';
 import baseConfig from '../utils/baseConfig';
 import globalDefaults from '../utils/globalDefaults';
 
-const configSchemaBase = { state: { type: String, default: baseConfig.client.state } };
+const configSchemaBase = <any>{ state: { type: String, default: baseConfig.client.state } };
 
 // Going this route because I simply don't want to type it all out -
 // every field is required and already has a default value -
 // and I'm simply not a fan of the more verbose syntax.
 // I also need the runtime type checking that mongoose implements.
 for (const key in globalDefaults) {
-        const value = globalDefaults[key];
+        const value = <any>globalDefaults[key];
 
         configSchemaBase[key] = { type: value.constructor, default: value };
 }

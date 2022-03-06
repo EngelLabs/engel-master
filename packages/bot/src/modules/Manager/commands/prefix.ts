@@ -1,5 +1,5 @@
 import Command from '../../../core/structures/Command';
-import Manager from '..';
+import type Manager from '..';
 
 const prefix = new Command<Manager>({
         name: 'prefix',

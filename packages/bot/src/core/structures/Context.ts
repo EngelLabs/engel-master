@@ -1,9 +1,10 @@
+import * as utils from '@engel/utils';
 import * as eris from 'eris';
-import { types, helpers } from '@engel/core';
-import Command from './Command';
-import Module from './Module';
+import type * as types from '@engel/types';
 import Base from './Base';
-import Core from '../Core';
+import type Command from './Command';
+import type Module from './Module';
+import type Core from '../Core';
 
 interface ContextOptions<M extends Module, C extends Command> {
         args: string[];
@@ -92,8 +93,9 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 
         public get guild(): eris.Guild | undefined {
-                // @ts-ignore
-                return this.message.channel.guild;
+                if (!(this.message.channel instanceof eris.PrivateChannel)) {
+                        return this.message.channel.guild;
+                }
         }
 
         public get channel(): eris.TextableChannel {
@@ -113,21 +115,22 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 
         public get permissions(): eris.Permission | undefined {
-                // @ts-ignore
-                // Multiple channel types exist and they all don't have permissionsOf(), and I'm too lazy to care.
-                return this.channel.permissionsOf?.(this.eris.user.id);
+                if (!(this.message.channel instanceof eris.PrivateChannel)) {
+                        return this.message.channel.permissionsOf?.(this.eris.user.id);
+                }
         }
 
         public get topRole(): eris.Role | undefined {
-                return helpers.getTopRole(this.eris, this.guild);
+                return utils.getTopRole(this.eris, this.guild);
         }
 
         public get moduleConfig(): types.ModuleConfig | undefined {
-                return this.guildConfig[this.module.dbName];
+                return this.guildConfig.modules[this.module.dbName];
         }
 
         public set moduleConfig(config: types.ModuleConfig) {
-                this.guildConfig[this.module.dbName] = config;
+                this.guildConfig.modules = this.guildConfig.modules || {};
+                this.guildConfig.modules[this.module.dbName] = config;
         }
 
         public get commandConfig(): types.CommandConfig | boolean | undefined {

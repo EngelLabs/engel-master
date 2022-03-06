@@ -1,4 +1,4 @@
-import * as express from 'express';
+import type * as express from 'express';
 import Base from '../structures/Base';
 
 interface SuccessResponse {
@@ -60,17 +60,17 @@ export default class Responses extends Base {
 }
 
 function createSuccessResponse(status: number, defaultData?: any): SuccessResponse {
-        return function(res, data) {
+        return function (res, data) {
                 data = data === undefined ? defaultData : data;
 
                 return this._successResponse(res, status, data);
-        }
+        };
 }
 
 function createErrorResponse(status: number, defaultMessage: string): ErrorResponse {
-        return function(res, code, message) {
+        return function (res, code, message) {
                 message = message === undefined ? `${status}: ${defaultMessage}` : message;
 
                 return this._errorResponse(res, status, code, message);
-        }
+        };
 }

@@ -1,7 +1,7 @@
-import * as mongodb from 'mongodb';
-import * as mongoose from 'mongoose';
-import { types } from '@engel/core';
-import Core from '../Core';
+import type * as mongodb from 'mongodb';
+import type * as mongoose from 'mongoose';
+import type * as types from '@engel/types';
+import type Core from '../Core';
 
 interface FetchOptions {
         createIfNotFound?: boolean;

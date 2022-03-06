@@ -1,6 +1,6 @@
-import { types } from '@engel/core';
+import type * as types from '@engel/types';
 import Command from '../../../core/structures/Command';
-import Manager from '..';
+import type Manager from '..';
 
 export default new Command<Manager>({
         name: 'command',

@@ -1,7 +1,7 @@
-import * as eris from 'eris';
 import * as core from '@engel/core';
-import Command from '../structures/Command';
-import Core from '../Core';
+import type * as eris from 'eris';
+import type Command from '../structures/Command';
+import type Core from '../Core';
 
 export default class CommandCollection extends core.Collection<Command> {
         private _core?: Core;

@@ -1,6 +1,6 @@
 import * as eris from 'eris';
 import Command from '../../../core/structures/Command';
-import Utility from '..';
+import type Utility from '..';
 
 export default new Command<Utility>({
         name: 'serverinfo',

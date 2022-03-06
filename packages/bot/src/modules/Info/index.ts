@@ -5,7 +5,7 @@ export default class Info extends Module {
                 super();
 
                 this.aliases = ['information'];
-                this.info = 'Commands to provide information about the core';
+                this.info = 'Commands to provide information about the bot';
                 this.allowedByDefault = true;
         }
 }

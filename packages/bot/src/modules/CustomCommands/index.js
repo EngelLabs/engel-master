@@ -6,7 +6,7 @@ class CustomCommands extends Module {
 
                 this.dbName = 'cc';
                 this.aliases = ['cc', 'customcommands'];
-                this.info = 'Create custom core commands for your server';
+                this.info = 'Create custom bot commands for your server';
                 this.disabled = true;
         }
 }

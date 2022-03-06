@@ -1,7 +1,6 @@
+import type * as types from '@engel/types';
 
-import * as types from '../types';
-
-const globalDefaults: types.Config = {
+export default <types.Config>{
         state: '',
         author: {
                 id: '329768023869358081',
@@ -91,5 +90,3 @@ const globalDefaults: types.Config = {
         apiToken: '',
         dmCommands: true
 };
-
-export default globalDefaults;

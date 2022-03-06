@@ -1,5 +1,5 @@
-import * as eris from 'eris';
-import { types } from '@engel/core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import Module from '../../core/structures/Module';
 import Command from '../../core/structures/Command';
 import Context from '../../core/structures/Context';
@@ -449,7 +449,7 @@ export default class Core extends Module {
                 this.commandSuccess(ctx);
         }
 
-        private guildCreate({ guild }): void {
+        private guildCreate({ guild }: { guild: eris.Guild }): void {
                 const eris = this.eris;
 
                 let allMembers = 0;
@@ -493,7 +493,7 @@ export default class Core extends Module {
                 this.postEmbed(embed);
         }
 
-        private guildDelete({ guild }): void {
+        private guildDelete({ guild }: { guild: eris.Guild }): void {
                 const eris = this.eris;
 
                 let allMembers = 0;
@@ -545,7 +545,7 @@ export default class Core extends Module {
                 this.events++;
         }
 
-        private commandSuccess({ isAdmin, command, author, message, guild }): void {
+        private commandSuccess({ isAdmin, command, author, message, guild }: Context): void {
                 let text = `Command "${command.qualName}" U${author.id}`;
 
                 if (guild) {

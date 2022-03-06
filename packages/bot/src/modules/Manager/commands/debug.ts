@@ -1,6 +1,6 @@
-import * as eris from 'eris';
+import type * as eris from 'eris';
 import Command from '../../../core/structures/Command';
-import Manager from '..';
+import type Manager from '..';
 
 export default new Command<Manager>({
         name: 'debug',

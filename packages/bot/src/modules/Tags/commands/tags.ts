@@ -1,7 +1,7 @@
-import * as eris from 'eris';
 import * as moment from 'moment';
+import type * as eris from 'eris';
 import Command from '../../../core/structures/Command';
-import Tags from '..';
+import type Tags from '..';
 
 const tags = new Command<Tags>({
         name: 'tags',

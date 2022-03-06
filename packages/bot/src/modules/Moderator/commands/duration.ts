@@ -1,7 +1,9 @@
 import * as prettyMS from 'pretty-ms';
+import type * as mongoose from 'mongoose';
+import type * as types from '@engel/types';
 import Command from '../../../core/structures/Command';
-import Moderator from '..';
 import Converter from '../../../core/helpers/Converter';
+import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'duration',
@@ -32,7 +34,7 @@ export default new Command<Moderator>({
                         case: caseNum
                 };
 
-                const update = duration
+                const update: mongoose.UpdateQuery<types.ModLog> = duration
                         ? { $set: { duration: duration * 1000, expiry: Date.now() + duration * 1000 } }
                         : { $unset: { duration: null, expiry: null } };
 

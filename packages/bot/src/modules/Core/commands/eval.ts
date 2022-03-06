@@ -5,7 +5,7 @@
 /* eslint-disable object-curly-newline */
 import * as superagent from 'superagent';
 import Command from '../../../core/structures/Command';
-import Core from '..';
+import type Core from '..';
 
 export default new Command<Core>({
         name: 'eval',
@@ -21,7 +21,7 @@ export default new Command<Core>({
                         __ctx = ctx, __res: any;
 
                 let api = (method: string, uri: string, data = {}) => {
-                        return superagent[method]('http://localhost:8080/api' + uri)
+                        return (superagent[<'get'>method])('http://localhost:8080/api' + uri)
                                 .set('Accept', 'application/json')
                                 .set('User-Agent', __ctx.baseConfig.name)
                                 .set('Authorization', __ctx.config.apiToken)

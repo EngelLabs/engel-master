@@ -1,9 +1,14 @@
 import * as core from '@engel/core';
-import * as types from '@engel/types';
-import Core from '../Core';
+import type * as types from '@engel/types';
+import type Core from '../Core';
 
+interface Command extends types.GlobalCommandConfig {
+        rootName: string;
+        isSubcommand: boolean;
 
-export default class CommandCollection extends core.Collection {
+}
+
+export default class CommandCollection extends core.Collection<Command> {
         private _core: Core;
 
         public constructor(core: Core) {
@@ -22,7 +27,8 @@ export default class CommandCollection extends core.Collection {
                 const commands = this._core.config.commands;
 
                 for (const key in commands) {
-                        const command = Object.assign({}, commands[key]);
+                        const command: any = Object.assign({}, commands[key]);
+
                         command.rootName = command.name.split('_')[0];
                         command.isSubcommand = command.name.includes('_');
 

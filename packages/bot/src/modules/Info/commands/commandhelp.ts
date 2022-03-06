@@ -1,5 +1,5 @@
 import Command from '../../../core/structures/Command';
-import Info from '..';
+import type Info from '..';
 
 export default new Command<Info>({
         name: 'commandhelp',

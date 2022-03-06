@@ -1,9 +1,11 @@
 import * as eris from 'eris';
-import { types } from '@engel/core';
+import type * as types from '@engel/types';
+import Base from '../../../core/structures/Base';
 import Permission from '../../../core/helpers/Permission';
 import Moderation from '../../../core/helpers/Moderation';
-import Base from '../../../core/structures/Base';
-import Core from '../../../core/Core';
+import type Core from '../../../core/Core';
+
+type TimerTypes = 'mute' | 'ban' | 'lock' | 'block';
 
 /**
  * Moderation timer handler
@@ -39,9 +41,9 @@ export default class ModTimer extends Base {
 
                 for (const modlog of modlogs) {
                         try {
-                                const key = modlog.type.split(' ')[0];
+                                const key = <TimerTypes>modlog.type.split(' ')[0];
 
-                                if (this[key]) {
+                                if (typeof this[key] === 'function') {
                                         this[key](modlog);
 
                                         this.log(`${key} timer handled G${modlog.guild}.`);
@@ -116,14 +118,14 @@ export default class ModTimer extends Base {
                         .catch(() => false);
         }
 
-        public async lock({ guild: guildID, channel }): Promise<void> {
+        public async lock({ guild: guildID, channel }: types.ModLog): Promise<void> {
                 const guild = this.eris.guilds.get(guildID);
 
                 if (!guild) return;
 
-                channel = guild.channels.get(channel.id);
+                const actualChannel = guild.channels.get(channel.id);
 
-                if (!channel) return;
+                if (!actualChannel) return;
 
                 if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
@@ -131,7 +133,7 @@ export default class ModTimer extends Base {
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
-                const overwrite = channel.permissionOverwrites.get(guild.id);
+                const overwrite = actualChannel.permissionOverwrites.get(guild.id);
 
                 const allow = overwrite.allow || BigInt(0);
 

@@ -1,12 +1,12 @@
 import * as prettyMS from 'pretty-ms';
 import Command from '../../../core/structures/Command';
-import Info from '..';
+import type Info from '..';
 
 export default new Command<Info>({
         name: 'about',
         alwaysEnabled: true,
         dmEnabled: true,
-        info: 'Get information about the core',
+        info: 'Get information about the bot',
         cooldown: 20000,
         execute: function (ctx) {
                 const owner = ctx.eris.users.get(ctx.config.author.id);

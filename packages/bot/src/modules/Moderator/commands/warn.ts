@@ -1,6 +1,6 @@
 import Command from '../../../core/structures/Command';
 import Converter from '../../../core/helpers/Converter';
-import Moderator from '..';
+import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'warn',

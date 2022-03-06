@@ -130,3 +130,6 @@ dist
 public/js/react/
 public/css/
 .DS_Store
+
+# Typescript output
+build/

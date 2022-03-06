@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import * as types from '../types';
+import type * as types from '@engel/types';
 
 const commandLogSchema = new mongoose.Schema<types.CommandLog>({
         name: { type: String, index: true },

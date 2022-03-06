@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as eris from 'eris';
-import { types } from '@engel/core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import Base from './Base';
-import Command from './Command';
-import Context from './Context';
-import Core from '../Core';
+import type Command from './Command';
+import type Context from './Context';
+import type Core from '../Core';
 const reload = require('require-reload')(require);
 
 /**
@@ -49,7 +49,7 @@ export default class Module extends Base {
                         return;
                 }
 
-                const ret = {};
+                const ret = <types.GlobalModuleConfig>{};
 
                 const fields = [
                         'name',
@@ -60,15 +60,15 @@ export default class Module extends Base {
                 ];
 
                 for (const key of fields) {
-                        const value = this[key];
+                        /* eslint-disable keyword-spacing */
+                        const value = (<any>this)[key];
 
                         if (value === undefined) continue;
                         if (value instanceof Array && !value.length) continue;
 
-                        ret[key] = value;
+                        (<any>ret)[key] = value;
                 }
 
-                // @ts-ignore
                 return ret;
         }
 
@@ -216,7 +216,7 @@ export default class Module extends Base {
         }
 
         public isEnabled(guildConfig: types.GuildConfig): boolean {
-                if (guildConfig[this.dbName]?.disabled) {
+                if (guildConfig.modules?.[this.dbName]?.disabled) {
                         return false;
                 }
 

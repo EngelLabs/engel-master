@@ -1,10 +1,10 @@
 import * as core from '@engel/core';
-import Core from '../Core';
+import type Core from '../Core';
 
 export default class Base extends core.Base {
-        declare core: Core;
+        declare public core: Core;
 
-        get app() {
+        public get app() {
                 return this.core.app;
         }
 }

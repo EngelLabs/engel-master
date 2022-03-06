@@ -1,8 +1,8 @@
 import * as mongoose from 'mongoose';
-import * as types from '../types';
-import Core from '../structures/Core';
+import type * as types from '@engel/types';
+import type Core from '../structures/Core';
 
-export default function Mongoose (core: Core): mongoose.Mongoose {
+export default function Mongoose(core: Core): mongoose.Mongoose {
         const log = (message?: any, level?: types.LogLevels, prefix: string = 'Mongoose') => {
                 core.log(message, level, prefix);
         };

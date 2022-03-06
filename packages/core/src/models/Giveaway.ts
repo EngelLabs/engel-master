@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import * as types from '../types';
+import type * as types from '@engel/types';
 
 const giveawaySchema = new mongoose.Schema<types.Giveaway>({
         guild: { type: String },

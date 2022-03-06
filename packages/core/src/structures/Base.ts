@@ -1,7 +1,8 @@
-import * as types from '../types';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import Core from './Core';
 
-const permissionsMapping = {
+const permissionsMapping: Record<keyof eris.Constants['Permissions'], string> = {
         createInstantInvite: 'Create Instant Invite',
         kickMembers: 'Kick Members',
         banMembers: 'Ban Members',
@@ -9,7 +10,7 @@ const permissionsMapping = {
         manageChannels: 'Manage Channels',
         manageGuild: 'Manage Server',
         addReactions: 'Add Reactions',
-        viewAuditLog: 'View Audit Logs',
+        viewAuditLogs: 'View Audit Logs',
         voicePrioritySpeaker: 'Priority Speaker',
         voiceStream: 'Stream',
         viewChannel: 'View Channel',
@@ -32,9 +33,26 @@ const permissionsMapping = {
         manageNicknames: 'Manage Nicknames',
         manageRoles: 'Manage Roles',
         manageWebhooks: 'Manage Webhooks',
+        viewAuditLog: 'View Audit Logs',
+        stream: 'Stream',
         manageEmojis: 'Manage Emojis',
         useSlashCommands: 'Use Slash Commands',
-        voiceRequestToSpeak: 'Request To Speak'
+        voiceRequestToSpeak: 'Request To Speak',
+        readMessages: 'View Channel',
+        externalEmojis: 'Use External Emojis',
+        manageEmojisAndStickers: 'Manage Emojis And Stickers',
+        useApplicationCommands: 'Use Application Commands',
+        manageEvents: 'Manage Events',
+        manageThreads: 'Manage Threads',
+        createPublicThreads: 'Create Public Threads',
+        createPrivateThreads: 'Create Private Threads',
+        useExternalStickers: 'Use External Stickers',
+        sendMessagesInThreads: 'Send Messages In Threads',
+        startEmbeddedActivities: 'Start Embedding Activities',
+        allGuild: 'All Guild',
+        allText: 'All Text',
+        allVoice: 'All Voice',
+        all: 'All'
 };
 
 export default class Base {

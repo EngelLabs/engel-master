@@ -1,6 +1,6 @@
 import Command from '../../../core/structures/Command';
 import Moderation from '../../../core/helpers/Moderation';
-import Moderator from '..';
+import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'case',

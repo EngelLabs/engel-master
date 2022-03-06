@@ -1,13 +1,12 @@
 {
     "name": "@engel/core",
-    "version": "0.2.0",
+    "version": "0.1.0",
     "private": true,
     "description": "Core module for engel",
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "main": "build/index.js",
-    "typings": "build/index",
     "scripts": {
-        "dev": "npx tsc -w --noEmit -p tsconfig.json",
+        "dev": "npx tsc -w -p tsconfig.json",
         "build": "npx tsc -p tsconfig.json",
         "prepare": "npm run build",
         "lint": "npx eslint \"src/**/*\""
@@ -23,7 +22,7 @@
     "dependencies": {
         "bluebird": "^3.7.2",
         "dotenv": "^16.0.0",
-        "eris": "github:abalabahaha/eris#dev",
+        "eris": "^0.16.1",
         "eventemitter3": "^4.0.7",
         "getenv": "^1.0.0",
         "ioredis": "^4.28.5",
@@ -32,6 +31,7 @@
         "winston": "^3.6.0"
     },
     "devDependencies": {
+        "@engel/types": "0.1.0",
         "@types/getenv": "^1.0.0",
         "@types/ioredis": "^4.28.8",
         "@typescript-eslint/eslint-plugin": "^5.13.0",

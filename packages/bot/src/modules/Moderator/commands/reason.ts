@@ -1,5 +1,7 @@
+import type * as mongoose from 'mongoose';
+import type * as types from '@engel/types';
 import Command from '../../../core/structures/Command';
-import Moderator from '..';
+import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'reason',
@@ -26,7 +28,7 @@ export default new Command<Moderator>({
                         case: caseNum
                 };
 
-                const update = reason?.length
+                const update: mongoose.UpdateQuery<types.ModLog> = reason?.length
                         ? { $set: { reason: reason } }
                         : { $unset: { reason: null } };
 

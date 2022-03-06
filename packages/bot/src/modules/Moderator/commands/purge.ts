@@ -1,8 +1,8 @@
-import * as eris from 'eris';
+import type * as eris from 'eris';
 import Command from '../../../core/structures/Command';
 import Context from '../../../core/structures/Context';
 import Converter from '../../../core/helpers/Converter';
-import Moderator from '..';
+import type Moderator from '..';
 
 const purgeMessages = async (
         ctx: Context<Moderator>,

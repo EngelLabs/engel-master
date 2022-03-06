@@ -1,5 +1,5 @@
 import Command from '../../../core/structures/Command';
-import Core from '..';
+import type Core from '..';
 
 export default new Command<Core>({
         name: 'load',

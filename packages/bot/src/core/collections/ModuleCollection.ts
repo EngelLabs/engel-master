@@ -1,11 +1,11 @@
 import * as fs from 'fs';
 import * as path from 'path';
-import * as eris from 'eris';
 import * as core from '@engel/core';
-import { types } from '@engel/core';
-import CommandCollection from './CommandCollection';
-import Module from '../structures/Module';
-import Core from '../Core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
+import type CommandCollection from './CommandCollection';
+import type Module from '../structures/Module';
+import type Core from '../Core';
 const reload = require('require-reload')(require);
 
 const modulesPath = path.join(__dirname, '../../modules');

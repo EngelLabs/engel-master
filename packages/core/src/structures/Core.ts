@@ -1,9 +1,9 @@
-import * as eris from 'eris';
-import * as mongoose from 'mongoose';
-import * as ioredis from 'ioredis';
-import * as winston from 'winston';
-import * as types from '../types';
 import * as models from '../models';
+import type * as eris from 'eris';
+import type * as mongoose from 'mongoose';
+import type * as ioredis from 'ioredis';
+import type * as winston from 'winston';
+import type * as types from '@engel/types';
 import { EventEmitter } from 'eventemitter3';
 import baseConfig from '../utils/baseConfig';
 import Eris from '../clients/Eris';

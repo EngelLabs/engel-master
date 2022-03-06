@@ -1,7 +1,7 @@
 import Command from '../../../core/structures/Command';
 import Converter from '../../../core/helpers/Converter';
 import Roles from '../../../core/helpers/Roles';
-import Manager from '..';
+import type Manager from '..';
 
 const muterole = new Command<Manager>({
         name: 'muterole',

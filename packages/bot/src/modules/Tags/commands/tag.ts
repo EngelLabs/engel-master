@@ -1,5 +1,5 @@
 import Command from '../../../core/structures/Command';
-import Tags from '..';
+import type Tags from '..';
 
 export default new Command<Tags>({
         name: 'tag',

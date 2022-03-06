@@ -1,7 +1,7 @@
-import * as eris from 'eris';
-import { types } from '@engel/core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import Module from '../../core/structures/Module';
-import Command from '../../core/structures/Command';
+import type Command from '../../core/structures/Command';
 
 export default class Manager extends Module {
         public constructor() {
@@ -12,7 +12,7 @@ export default class Manager extends Module {
         }
 
         private _debug(channel: eris.TextChannel, guildConfig: types.GuildConfig): [string[], string[]] {
-                const msgArray = [];
+                const msgArray = <string[]>[];
                 const infoArray = [];
 
                 // const perms = channel.permissionsOf(this.eris.user.id);
@@ -78,8 +78,8 @@ export default class Manager extends Module {
                         // We are dealing with rootName, here. Command config can not be a boolean.
                         // TODO?: Possibly something to work on.
                         checkPerms(guildConfig.commands[command.rootName]);
-                } else if (guildConfig[command.module.dbName]) {
-                        checkPerms(guildConfig[command.module.dbName]);
+                } else if (guildConfig.modules?.[command.module.dbName]) {
+                        checkPerms(guildConfig.modules[command.module.dbName]);
                 } else {
                         checkPerms(guildConfig);
                 }
@@ -142,7 +142,7 @@ export default class Manager extends Module {
                         msgArray.push('This module has been disabled globally');
                 }
 
-                if (!guildConfig[module.dbName]) {
+                if (!guildConfig.modules?.[module.dbName]) {
                         infoArray.push('This module hasn\'t been configured for this server yet');
                 }
 

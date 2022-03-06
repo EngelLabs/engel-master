@@ -1,13 +1,14 @@
 import * as eris from 'eris';
 import * as prettyMS from 'pretty-ms';
-import { types } from '@engel/core';
-import Context from '../../core/structures/Context';
+import type * as types from '@engel/types';
 import Module from '../../core/structures/Module';
 import Moderation from '../../core/helpers/Moderation';
-import _ModTimer from './helpers/ModTimer';
+import type _ModTimer from './helpers/ModTimer';
+import type Context from '../../core/structures/Context';
+
 const ModTimer: typeof _ModTimer = require('require-reload')('./helpers/ModTimer', require).default;
 
-const defaultResponses = {
+const defaultResponses: Record<string, string> = {
         ban: 'User **{user}** banned.',
         block: 'User **{user}** blocked from **{channel}**.',
         kick: 'User **{user}** kicked.',
@@ -84,7 +85,7 @@ export default class Moderator extends Module {
                 }
 
                 const commandConfig = guildConfig.commands?.[commandName];
-                const moduleConfig = guildConfig[moduleName];
+                const moduleConfig = guildConfig.modules?.[moduleName];
 
                 if (member instanceof eris.Member) {
                         // TODO: Type the stuff below
@@ -98,7 +99,9 @@ export default class Moderator extends Module {
                                         return false;
                                 }
                         } else {
+                                // @ts-ignore
                                 if (moduleConfig?.protectedRoles?.length) {
+                                        // @ts-ignore
                                         const protectedRoles = moduleConfig.protectedRoles;
                                         if (member.roles.find(id => protectedRoles.includes(id))) {
                                                 resolve('That user is protected.');

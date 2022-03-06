@@ -1,5 +1,4 @@
 import * as eris from 'eris';
-import { Constants } from 'eris';
 import Base from '../structures/Base';
 
 const idRegex = /([0-9]{15,20})$/;
@@ -77,7 +76,7 @@ export default class Converter extends Base {
                 return new Promise((resolve, reject) => {
                         this.channel(guild, argument, fetch)
                                 .then(channel => {
-                                        if (channel?.type !== Constants.ChannelTypes.GUILD_TEXT) {
+                                        if (channel?.type !== eris.Constants.ChannelTypes.GUILD_TEXT) {
                                                 return reject(`${channel.mention} is not a text channel.`);
                                         }
 

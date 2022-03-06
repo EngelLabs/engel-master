@@ -1,6 +1,6 @@
 import * as ioredis from 'ioredis';
-import * as types from '../types';
-import Core from '../structures/Core';
+import type * as types from '@engel/types';
+import type Core from '../structures/Core';
 
 const IORedis = ioredis;
 

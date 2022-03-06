@@ -1,5 +1,5 @@
 import Command from '../../../core/structures/Command';
-import Manager from '..';
+import type Manager from '..';
 
 export default new Command<Manager>({
         name: 'module',
@@ -21,7 +21,7 @@ export default new Command<Manager>({
 
                 const moduleName = module.dbName;
 
-                const moduleConfig = ctx.guildConfig[moduleName] = ctx.guildConfig[moduleName] || {};
+                const moduleConfig = ctx.moduleConfig = ctx.moduleConfig || {};
                 moduleConfig.disabled = !moduleConfig.disabled;
 
                 const queryString = moduleName + '.disabled';

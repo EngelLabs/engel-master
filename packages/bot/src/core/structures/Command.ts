@@ -1,8 +1,8 @@
-import * as eris from 'eris';
-import { types } from '@engel/core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import CommandCollection from '../collections/CommandCollection';
-import Context from './Context';
-import Module from './Module';
+import type Context from './Context';
+import type Module from './Module';
 
 interface CommandOptions<M extends Module> {
         name: string;
@@ -33,7 +33,7 @@ interface CommandOptions<M extends Module> {
 interface Command<M extends Module> extends CommandOptions<M> { }
 
 /**
- * Represents a core command
+ * Represents a bot command
  */
 /* eslint-disable no-redeclare */
 class Command<M extends Module = Module> {
@@ -101,9 +101,9 @@ class Command<M extends Module = Module> {
                         this.module.internal ||
                         this.module.disabled) return;
 
-                const ret = { name: this.dbName, module: this.module.dbName };
+                const ret = <types.GlobalCommandConfig>{ name: this.dbName, module: this.module.dbName };
 
-                const fields = [
+                const fields: (keyof types.GlobalCommandConfig)[] = [
                         'info',
                         'aliases',
                         'usage',
@@ -121,7 +121,7 @@ class Command<M extends Module = Module> {
                         if (value === undefined) continue;
                         if (value instanceof Array && !value.length) continue;
 
-                        ret[key] = value;
+                        (<any>ret[key]) = value;
                 }
 
                 return ret;

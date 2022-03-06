@@ -1,7 +1,7 @@
-import * as eris from 'eris';
-import { types } from '@engel/core';
-import Core from '../Core';
+import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import Base from '../structures/Base';
+import type Core from '../Core';
 
 interface Message {
         id: string;
@@ -63,11 +63,10 @@ export default class CacheManager extends Base {
                         id: message.id,
                         content: message.content,
                         author: message.author,
-                        channel: message.channel,
+                        channel: (<eris.TextChannel>message.channel),
                         createdAt: message.createdAt
                 };
 
-                // @ts-ignore
                 this._messages[copied.id] = copied;
         }
 

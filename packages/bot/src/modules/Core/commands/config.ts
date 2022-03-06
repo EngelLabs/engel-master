@@ -1,6 +1,6 @@
 import Command from '../../../core/structures/Command';
-import Context from '../../../core/structures/Context';
-import Core from '..';
+import type Context from '../../../core/structures/Context';
+import type Core from '..';
 
 const getNested = (value: any, key: string): any => {
         for (const k of key.split('.')) {
@@ -29,7 +29,8 @@ const afterConfig = async (ctx: Context) => {
 const beforeGuild = async (ctx: Context) => {
         if (!ctx.args.length && !ctx.guild) {
                 await ctx.error('Must provide a guild ID.');
-                return null;
+
+                return;
         }
 
         ctx.locals = { guildId: ctx.args[0] || ctx.guild.id };
@@ -38,7 +39,7 @@ const beforeGuild = async (ctx: Context) => {
 const config = new Command<Core>({
         name: 'config',
         aliases: ['c'],
-        info: "Manage the core's configuration",
+        info: "Manage the bot's configuration",
         namespace: true
 });
 

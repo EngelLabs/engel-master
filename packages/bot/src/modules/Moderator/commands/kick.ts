@@ -1,6 +1,6 @@
 import Command from '../../../core/structures/Command';
-import Moderator from '..';
 import Converter from '../../../core/helpers/Converter';
+import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'kick',

@@ -1,6 +1,6 @@
-import * as eris from 'eris';
 import Base from '../structures/Base';
-import Context from '../structures/Context';
+import type * as eris from 'eris';
+import type Context from '../structures/Context';
 
 /**
  * Permissions helper

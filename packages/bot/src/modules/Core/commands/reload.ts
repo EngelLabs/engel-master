@@ -1,5 +1,5 @@
 import Command from '../../../core/structures/Command';
-import Core from '..';
+import type Core from '..';
 
 const reload = new Command<Core>({
         name: 'reload',

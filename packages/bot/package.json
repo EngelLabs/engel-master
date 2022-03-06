@@ -1,6 +1,6 @@
 {
-    "name": "@engel/bot",
-    "version": "0.1.2",
+    "name": "engel-bot",
+    "version": "0.1.0",
     "private": true,
     "description": "A Discord bot to provide some nice utilities.",
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
@@ -9,7 +9,7 @@
         "start": "node build/src/index.js",
         "dev": "concurrently -i -k -p \"[{pid}-{name}]\" -n \"APP,TS\" \"npm run watch\" \"npm run watch:ts\"",
         "watch": "npx nodemon --delay 3 -i build/src/modules/",
-        "watch:ts": "npx tsc -w --noEmit -p tsconfig.json",
+        "watch:ts": "npx tsc -w -p tsconfig.json",
         "config": "node scripts/config.js",
         "build": "npx tsc -p tsconfig.json",
         "lint": "npx eslint \"src/**/*\"",
@@ -25,13 +25,13 @@
     },
     "homepage": "https://github.com/EngelLabs/engel-bot#readme",
     "dependencies": {
-        "@engel/core": "0.2.0",
+        "@engel/core": "0.1.0",
+        "@engel/utils": "0.1.0",
         "bufferutil": "^4.0.5",
-        "eris": "github:abalabahaha/eris#dev",
-        "erlpack": "github:abalabahaha/erlpack",
+        "eris": "^0.16.1",
+        "erlpack": "^0.1.4",
         "eventemitter3": "^4.0.7",
         "moment": "^2.29.1",
-        "pako": "^1.0.11",
         "pretty-ms": "^7.0.1",
         "require-reload": "^0.2.2",
         "superagent": "^6.1.0",
@@ -39,6 +39,7 @@
         "zlib-sync": "^0.1.7"
     },
     "devDependencies": {
+        "@engel/types": "0.1.0",
         "@types/superagent": "^4.1.15",
         "@typescript-eslint/eslint-plugin": "^5.12.1",
         "@typescript-eslint/parser": "^5.12.1",

@@ -1,7 +1,8 @@
 import * as eris from 'eris';
 import * as prettyMS from 'pretty-ms';
 import * as moment from 'moment';
-import { types, helpers } from '@engel/core';
+import * as utils from '@engel/utils';
+import type * as types from '@engel/types';
 import Base from '../structures/Base';
 
 /**
@@ -57,7 +58,7 @@ export default class Moderation extends Base {
 
                         if (member.roles.length) {
                                 const roles = member.guild.roles;
-                                const topRole = helpers.getTopRole(this.eris, guild);
+                                const topRole = utils.getTopRole(this.eris, guild);
 
                                 if (topRole) {
                                         if (member.roles.find(id => {
@@ -187,7 +188,7 @@ export default class Moderation extends Base {
                 type: string
         ): Promise<void> {
                 return new Promise((resolve, reject) => {
-                        const filter = {
+                        const filter: any = {
                                 guild: guild,
                                 type: type
                         };

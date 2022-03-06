@@ -1,9 +1,9 @@
 import Command from '../../../core/structures/Command';
-import Info from '..';
+import type Info from '..';
 
 const ping = new Command<Info>({
         name: 'ping',
-        info: 'Calculate the time taken for the core to send a message',
+        info: 'Calculate the time taken for the bot to send a message',
         aliases: [
                 'latency'
         ],
@@ -30,10 +30,12 @@ const ping = new Command<Info>({
 ping.command({
         name: 'ws',
         hidden: true,
-        info: 'Calculate the time taken for the core to receive a message',
+        info: 'Calculate the time taken for the bot to receive a message',
         dmEnabled: true,
         execute: function (ctx) {
-                return ctx.send(`Pong! ${Date.now() - ctx.message.timestamp}ms`);
+                const latency = Date.now() - ctx.message.timestamp;
+
+                return ctx.send(`Pong! ${latency < 0 ? -latency : latency}ms`);
         }
 });
 

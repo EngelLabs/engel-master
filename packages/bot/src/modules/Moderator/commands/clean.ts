@@ -1,10 +1,10 @@
 import Command from '../../../core/structures/Command';
-import Moderator from '..';
+import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'clean',
         usage: '[count=100]',
-        info: 'Clean up messages sent by the core',
+        info: 'Clean up messages sent by the bot',
         aliases: [
                 'cleanup'
         ],

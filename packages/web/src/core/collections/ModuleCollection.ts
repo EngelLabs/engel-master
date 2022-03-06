@@ -1,11 +1,11 @@
 import * as core from '@engel/core';
-import * as types from '@engel/types';
-import Core from '../Core';
+import type * as types from '@engel/types';
+import type Core from '../Core';
 
-export default class ModuleCollection extends core.Collection {
+export default class ModuleCollection extends core.Collection<types.GlobalModuleConfig> {
         private _core: Core;
 
-        constructor(core: Core) {
+        public constructor(core: Core) {
                 super();
 
                 this._core = core;
@@ -13,11 +13,11 @@ export default class ModuleCollection extends core.Collection {
                 this.load();
         }
 
-        load() {
+        public load() {
                 const modules = this._core.config.modules;
 
                 for (const key in modules) {
-                        const module = Object.assign({}, modules[key]);
+                        const module: any = Object.assign({}, modules[key]);
 
                         this.set(module.dbName, module);
 

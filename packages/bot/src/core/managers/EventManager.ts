@@ -1,9 +1,9 @@
-
+// @ts-nocheck
 // TODO: Type this module
 import * as EventEmitter from 'eventemitter3';
-import Base from '../structures/Base';
-import Core from '../Core';
 import Permission from '../helpers/Permission';
+import Base from '../structures/Base';
+import type Core from '../Core';
 
 interface AnyFunc {
         (...args: any): void;

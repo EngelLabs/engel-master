@@ -1,7 +1,7 @@
 import * as winston from 'winston';
-import Core from '../structures/Core';
+import type Core from '../structures/Core';
 
-export default function Logger (core: Core): winston.Logger {
+export default function Logger(core: Core): winston.Logger {
         const options = {
                 format: winston.format.combine(
                         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:SSS' }),
