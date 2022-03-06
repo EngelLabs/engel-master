@@ -47,7 +47,7 @@ export default new Command<Core>({
                 }
 
                 try {
-                        /* eslint-disable no-eval */
+                        /* eslint-disable-next-line no-eval */
                         __res = await eval(`(async () => { ${body} })()`);
 
                         if (typeof __res === 'object') {

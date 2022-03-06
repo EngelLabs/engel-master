@@ -1,3 +1,4 @@
+/* eslint-disable lines-between-class-members */
 import * as eris from 'eris';
 import * as prettyMS from 'pretty-ms';
 import * as moment from 'moment';
@@ -9,7 +10,6 @@ import Base from '../structures/Base';
  * Moderation helper
  */
 export default class Moderation extends Base {
-        /* eslint-disable lines-between-class-members */
         public canModerate<T>(
                 guild: eris.Guild,
                 member: eris.User | eris.Member,

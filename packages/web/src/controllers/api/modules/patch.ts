@@ -16,7 +16,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
                         update.$unset = update.$unset || {};
                         update.$unset[key] = null;
                 } else {
-                        /* eslint-disable valid-typeof */
+                        /* eslint-disable-next-line valid-typeof */
                         if (type !== undefined && typeof value !== type) {
                                 return;
                         }

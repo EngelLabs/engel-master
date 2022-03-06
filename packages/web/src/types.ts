@@ -3,15 +3,15 @@
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
 
-/* eslint-disable no-unused-vars */
 declare module 'express' {
+        /* eslint-disable-next-line no-unused-vars */
         interface Request {
                 body: { [key: string]: unknown };
         }
 }
 
-/* eslint-disable no-unused-vars */
 declare module 'express-session' {
+        /* eslint-disable-next-line no-unused-vars */
         interface SessionData {
                 lastSync: number;
                 isAdmin: boolean,

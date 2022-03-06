@@ -60,7 +60,7 @@ export default class Module extends Base {
                 ];
 
                 for (const key of fields) {
-                        /* eslint-disable keyword-spacing */
+                        /* eslint-disable-next-line keyword-spacing */
                         const value = (<any>this)[key];
 
                         if (value === undefined) continue;

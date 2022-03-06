@@ -72,7 +72,7 @@ config.command({
                                 break;
                         case 'bool':
                         case 'boolean':
-                                /* eslint-disable no-eval */
+                                /* eslint-disable-next-line no-eval */
                                 try { value = eval(value); } catch { }
 
                                 break;

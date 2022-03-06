@@ -35,7 +35,7 @@ interface Command<M extends Module> extends CommandOptions<M> { }
 /**
  * Represents a bot command
  */
-/* eslint-disable no-redeclare */
+/* eslint-disable-next-line no-redeclare */
 class Command<M extends Module = Module> {
         public commands?: CommandCollection;
         private _module?: M;

@@ -11,7 +11,7 @@ import Logger from '../clients/Logger';
 import Mongoose from '../clients/Mongoose';
 import Redis from '../clients/Redis';
 
-/* eslint-disable no-use-before-define */
+/* eslint-disable-next-line no-use-before-define */
 let coreInstance: Core;
 
 global.Promise = require('bluebird');
