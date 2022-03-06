@@ -23,7 +23,7 @@
     "bugs": {
         "url": "https://github.com/EngelLabs/engel-web/issues"
     },
-    "homepage": "https://github.com/timbot-labs/engel-web#readme",
+    "homepage": "https://github.com/EngelLabs/engel-web#readme",
     "dependencies": {
         "@engel/core": "0.1.0",
         "connect-redis": "^6.0.0",

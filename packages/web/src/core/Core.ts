@@ -40,7 +40,7 @@ export default class Core extends core.Core {
                 app.use(express.static('public'));
                 app.use(express.json());
                 app.use(session({
-                        name: 'timbot.sid',
+                        name: 'engel.sid',
                         secret: baseConfig.site.secret,
                         resave: false,
                         saveUninitialized: true,

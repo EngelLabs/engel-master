@@ -1,27 +1,27 @@
 {
-  "name": "timbot-web-react",
-  "version": "0.1.0",
-  "description": "React package for use in timbot-web",
-  "author": "Tinoy Thomas <tinoytpm1@gmail.com",
-  "private": true,
-  "scripts": {
-    "build": "webpack"
-  },
-  "dependencies": {
-    "axios": "^0.24.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
-    "react-router-dom": "^6.2.1"
-  },
-  "devDependencies": {
-    "@babel/core": "^7.16.0",
-    "@babel/plugin-transform-runtime": "^7.16.4",
-    "@babel/preset-env": "^7.16.4",
-    "@babel/preset-react": "^7.16.0",
-    "@babel/types": "^7.16.0",
-    "babel-loader": "^8.2.3",
-    "webpack": "^5.64.4",
-    "webpack-cli": "^4.9.1",
-    "webpack-dev-server": "^4.6.0"
-  }
+    "name": "engel-web-react",
+    "version": "0.1.0",
+    "private": true,
+    "description": "React package for use in engel-web",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com",
+    "scripts": {
+        "build": "webpack"
+    },
+    "dependencies": {
+        "axios": "^0.24.0",
+        "react": "^17.0.2",
+        "react-dom": "^17.0.2",
+        "react-router-dom": "^6.2.1"
+    },
+    "devDependencies": {
+        "@babel/core": "^7.16.0",
+        "@babel/plugin-transform-runtime": "^7.16.4",
+        "@babel/preset-env": "^7.16.4",
+        "@babel/preset-react": "^7.16.0",
+        "@babel/types": "^7.16.0",
+        "babel-loader": "^8.2.3",
+        "webpack": "^5.64.4",
+        "webpack-cli": "^4.9.1",
+        "webpack-dev-server": "^4.6.0"
+    }
 }
