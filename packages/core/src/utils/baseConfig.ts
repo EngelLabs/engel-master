@@ -1,17 +1,17 @@
+import * as dotenv from 'dotenv';
+import * as getenv from 'getenv';
+import * as path from 'path';
 
 let _error: any;
 
 /* eslint-disable-next-line no-cond-assign */
-if (_error = require('dotenv').config().error) {
+if (_error = dotenv.config({ path: path.join(process.cwd(), '../../.env') }).error) {
         if (_error.code === 'ENOENT') {
                 console.log('.env file not found!');
         } else {
                 throw _error;
         }
 }
-
-/* eslint-disable-next-line import/first */
-import * as getenv from 'getenv';
 
 const NAME = getenv.string('CLIENT_NAME').toUpperCase();
 
