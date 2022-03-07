@@ -1,0 +1,6 @@
+{
+    "delay": 3,
+    "ignore": [
+        "build/src/modules/*"
+    ]
+}

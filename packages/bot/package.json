@@ -8,7 +8,7 @@
         "prestart": "npm run config",
         "start": "node build/src/index.js",
         "dev": "npx tsc-watch --onFirstSuccess \"npm run watch\"",
-        "watch": "npx nodemon --delay 3 -i build/src/modules/",
+        "watch": "npx nodemon",
         "config": "node scripts/config.js",
         "build": "npx tsc -p tsconfig.json",
         "lint": "npx eslint \"src/**/*\"",
