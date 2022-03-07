@@ -6,11 +6,11 @@
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "scripts": {
         "start": "node build/src/index.js",
-        "dev": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS,REACT,TS\" \"npm run watch:server\" \"npm run watch:sass\" \"npm run watch:react\" \"npm run watch:ts\"",
+        "dev": "npx tsc-watch --onFirstSuccess \"npm run watch\"",
+        "watch": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS,REACT\" \"npm run watch:server\" \"npm run watch:sass\" \"npm run watch:react\"",
         "watch:server": "npx nodemon --delay 2 -i public -i react -i styles -i views",
         "watch:sass": "npx sass -w styles:public/css",
         "watch:react": "npm run build --prefix react",
-        "watch:ts": "npx tsc -w -p tsconfig.json",
         "pm2": "npx pm2 start npm --name engel-web -- start",
         "pm2:dev": "npx pm2 start npm --name engel-web-dev -- run dev",
         "build": "npx tsc -p tsconfig.json",
@@ -36,9 +36,9 @@
         "uuid": "^7.0.3"
     },
     "devDependencies": {
-        "@engel/types": "0.1.0",
         "@babel/core": "^7.16.0",
         "@babel/plugin-transform-runtime": "^7.16.4",
+        "@engel/types": "0.1.0",
         "@types/connect-redis": "^0.0.18",
         "@types/express-session": "^1.17.4",
         "@typescript-eslint/eslint-plugin": "^5.13.0",
@@ -52,6 +52,7 @@
         "eslint-plugin-promise": "^5.2.0",
         "nodemon": "^2.0.15",
         "sass": "^1.49.9",
+        "tsc-watch": "^4.6.0",
         "webpack": "^5.64.4",
         "webpack-cli": "^4.9.1",
         "webpack-dev-server": "^4.6.0"
