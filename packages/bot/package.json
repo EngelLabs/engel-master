@@ -7,13 +7,13 @@
     "scripts": {
         "prestart": "npm run config",
         "start": "node build/src/index.js",
-        "dev": "npx tsc-watch --onFirstSuccess \"npm run watch\"",
-        "watch": "npx nodemon",
+        "dev": "tsc-watch --onFirstSuccess \"npm run watch\"",
+        "watch": "nodemon",
         "config": "node scripts/config.js",
-        "build": "npx tsc -p tsconfig.json",
-        "lint": "npx eslint \"src/**/*\"",
-        "pm2": "npx pm2 start npm --name engel-bot -- start",
-        "pm2:dev": "npx pm2 start npm --name engel-bot-dev -- run dev"
+        "build": "tsc",
+        "lint": "eslint \"src/**/*\"",
+        "pm2": "pm2 start npm --name engel-bot -- start",
+        "pm2:dev": "pm2 start npm --name engel-bot-dev -- run dev"
     },
     "repository": {
         "type": "git",
