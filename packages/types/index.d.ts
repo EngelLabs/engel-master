@@ -29,7 +29,7 @@ declare module '@engel/types' {
                 ignoredChannels?: string[];
         }
 
-        export interface GuildConfig extends BaseConfig {
+        export interface Guild extends BaseConfig {
                 // Used by GuildCollection
                 _cachedAt?: number;
                 id: string;

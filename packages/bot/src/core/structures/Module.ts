@@ -24,7 +24,7 @@ export default class Module extends Base {
         public commands?: Array<Command>;
         public listeners?: Array<types.Listener>;
         private _boundListeners?: Array<types.ListenerObject>;
-        public debug?(channel: eris.TextChannel, guildConfig: types.GuildConfig, msgArray: string[], infoArray: string[]): void;
+        public debug?(channel: eris.TextChannel, guildConfig: types.Guild, msgArray: string[], infoArray: string[]): void;
         public injectHook?(): void;
         public ejectHook?(): void;
         public commandCheck?(ctx: Context): boolean | Promise<boolean>;
@@ -215,7 +215,7 @@ export default class Module extends Base {
                 }
         }
 
-        public isEnabled(guildConfig: types.GuildConfig): boolean {
+        public isEnabled(guildConfig: types.Guild): boolean {
                 if (guildConfig.modules?.[this.dbName]?.disabled) {
                         return false;
                 }

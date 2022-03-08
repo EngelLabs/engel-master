@@ -14,7 +14,7 @@ interface ContextOptions<M extends Module, C extends Command> {
         module: M;
         isDM: boolean;
         isAdmin: boolean;
-        guildConfig: types.GuildConfig;
+        guildConfig: types.Guild;
 }
 
 interface ContextResponseOptions extends Omit<eris.AdvancedMessageContent, 'content'> {
@@ -57,7 +57,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         public module: M;
         public isDM: boolean;
         public isAdmin: boolean;
-        public guildConfig: types.GuildConfig;
+        public guildConfig: types.Guild;
         public info = createResponseFunction('info');
         public error = createResponseFunction('error');
         public success = createResponseFunction('success');

@@ -7,10 +7,10 @@ interface FetchOptions {
         createIfNotFound?: boolean;
 }
 
-export default class GuildCollection extends Map<string, types.GuildConfig> {
+export default class GuildCollection extends Map<string, types.Guild> {
         private _core: Core;
         private _uncacheInterval?: NodeJS.Timer;
-        private _creating: Record<string, Promise<types.GuildConfig>> = {};
+        private _creating: Record<string, Promise<types.Guild>> = {};
 
         public constructor(core: Core) {
                 super();
@@ -60,7 +60,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 }
         }
 
-        public getOrFetch(id: string | { id: string }, options?: FetchOptions): Promise<types.GuildConfig | undefined> {
+        public getOrFetch(id: string | { id: string }, options?: FetchOptions): Promise<types.Guild | undefined> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
@@ -78,14 +78,14 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 });
         }
 
-        public fetch(id: string | { id: string }, options?: FetchOptions): Promise<types.GuildConfig | undefined> {
+        public fetch(id: string | { id: string }, options?: FetchOptions): Promise<types.Guild | undefined> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
                         this._core.models.Guild.findOne({ id: guildID })
                                 .lean()
                                 .exec()
-                                .then((guild: types.GuildConfig | undefined) => {
+                                .then((guild: types.Guild | undefined) => {
                                         if (guild && this._core.config.guildCache) {
                                                 this.set(guildID, guild);
                                         }
@@ -111,15 +111,15 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                         return this._creating[guildID];
                 }
 
-                const doc: types.GuildConfig = {
+                const doc: types.Guild = {
                         id: guildID,
                         prefixes: this._core.config.prefixes.default,
                         client: this._core.baseConfig.client.name
                 };
 
-                const p: Promise<types.GuildConfig> = new Promise((resolve, reject) => {
+                const p: Promise<types.Guild> = new Promise((resolve, reject) => {
                         this._core.models.Guild.create(doc)
-                                .then((guild: types.GuildConfig) => {
+                                .then((guild: types.Guild) => {
                                         if (this._core.config.guildCache) {
                                                 this.set(guildID, guild);
                                         }
@@ -141,7 +141,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 return p;
         }
 
-        public update(id: string | { id: string }, update: mongoose.UpdateQuery<types.GuildConfig>): Promise<mongodb.UpdateResult> {
+        public update(id: string | { id: string }, update: mongoose.UpdateQuery<types.Guild>): Promise<mongodb.UpdateResult> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
@@ -152,7 +152,7 @@ export default class GuildCollection extends Map<string, types.GuildConfig> {
                 });
         }
 
-        public set(key: string, value: types.GuildConfig): this {
+        public set(key: string, value: types.Guild): this {
                 value._cachedAt = value._cachedAt || Date.now();
 
                 return super.set(key, value);

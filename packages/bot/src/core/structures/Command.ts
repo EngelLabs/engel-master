@@ -21,7 +21,7 @@ interface CommandOptions<M extends Module> {
         requiredPermissions?: Array<keyof eris.Constants['Permissions']>;
         debug?: (command: Command<M>,
                 channel: eris.TextChannel,
-                guildConfig: types.GuildConfig,
+                guildConfig: types.Guild,
                 msgArray: string[],
                 infoArray: string[]) => void;
         check?: (ctx: Context<M, Command<M>>) => boolean | Promise<boolean>;
@@ -135,9 +135,9 @@ class Command<M extends Module = Module> {
                 return subcommand;
         }
 
-        public isEnabled(guildConfig: types.GuildConfig, returnName: true): [boolean, string];
-        public isEnabled(guildConfig: types.GuildConfig, returnName: false): boolean;
-        public isEnabled(guildConfig: types.GuildConfig, returnName: boolean = false): any {
+        public isEnabled(guildConfig: types.Guild, returnName: true): [boolean, string];
+        public isEnabled(guildConfig: types.Guild, returnName: false): boolean;
+        public isEnabled(guildConfig: types.Guild, returnName: boolean = false): any {
                 const resolve = returnName
                         ? (enabled: boolean, name?: string) => [enabled, name]
                         : (enabled: boolean) => enabled;

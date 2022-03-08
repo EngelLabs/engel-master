@@ -11,7 +11,7 @@ export default class Manager extends Module {
                 this.info = 'Commands to manage and configure your server';
         }
 
-        private _debug(channel: eris.TextChannel, guildConfig: types.GuildConfig): [string[], string[]] {
+        private _debug(channel: eris.TextChannel, guildConfig: types.Guild): [string[], string[]] {
                 const msgArray = <string[]>[];
                 const infoArray = [];
 
@@ -27,7 +27,7 @@ export default class Manager extends Module {
         public debugCommand(
                 command: Command,
                 channel: eris.TextChannel,
-                guildConfig: types.GuildConfig
+                guildConfig: types.Guild
         ): eris.EmbedOptions {
                 const config = this.config;
 
@@ -127,7 +127,7 @@ export default class Manager extends Module {
         public debugModule(
                 module: Module,
                 channel: eris.TextChannel,
-                guildConfig: types.GuildConfig
+                guildConfig: types.Guild
         ): eris.EmbedOptions {
                 const config = this.config;
 

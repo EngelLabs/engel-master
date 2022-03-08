@@ -14,7 +14,7 @@ interface Payload {
         isTester: boolean;
         isTesting: boolean;
         message: eris.Message;
-        guildConfig: types.GuildConfig;
+        guildConfig: types.Guild;
 }
 
 interface Cooldown {

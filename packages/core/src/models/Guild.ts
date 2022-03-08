@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import type * as types from '@engel/types';
 
-const guildSchema = new mongoose.Schema<types.GuildConfig>({
+const guildSchema = new mongoose.Schema<types.Guild>({
         id: { type: String, required: true },
         client: { type: String, required: true },
         prefixes: [{ type: String, required: true }],

@@ -4,9 +4,9 @@ import type * as types from '@engel/types';
 import type Core from '../../../core/Core';
 
 export = async function (core: Core, req: express.Request, res: express.Response) {
-        let update: mongoose.UpdateQuery<types.GuildConfig>;
+        let update: mongoose.UpdateQuery<types.Guild>;
 
-        function set(key: keyof types.GuildConfig, value: any, type?: types.Primitives) {
+        function set(key: keyof types.Guild, value: any, type?: types.Primitives) {
                 if (value === null) {
                         update = update || {};
                         update.$unset = update.$unset || {};
@@ -48,9 +48,9 @@ export = async function (core: Core, req: express.Request, res: express.Response
         for (const key of ['allowedRoles', 'ignoredRoles', 'allowedChannels', 'ignoredChannels']) {
                 if (Object.prototype.hasOwnProperty.call(req.body, key)) {
                         if (req.body[key] instanceof Array) {
-                                set(<keyof types.GuildConfig>key, (<any[]>req.body[key]).filter(o => typeof o === 'string' && o.length));
+                                set(<keyof types.Guild>key, (<any[]>req.body[key]).filter(o => typeof o === 'string' && o.length));
                         } else if (req.body[key] === null) {
-                                set(<keyof types.GuildConfig>key, null);
+                                set(<keyof types.Guild>key, null);
                         }
                 }
         }
@@ -66,7 +66,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
         if (req.session.isAdmin) {
                 for (const key of ['isIgnored', 'isPremium', 'hasPremium']) {
                         if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-                                set(<keyof types.GuildConfig>key, req.body[key], 'boolean');
+                                set(<keyof types.Guild>key, req.body[key], 'boolean');
                         }
                 }
                 if (req.body.client !== undefined) {

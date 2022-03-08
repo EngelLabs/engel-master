@@ -215,7 +215,7 @@ export default class ModTimer extends Base {
                         .catch(() => false);
         }
 
-        private _isEnabled(guildConfig: types.GuildConfig): boolean {
+        private _isEnabled(guildConfig: types.Guild): boolean {
                 if (!guildConfig || !guildConfig.modules || guildConfig.modules.mod) {
                         return true;
                 }

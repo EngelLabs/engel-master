@@ -75,7 +75,7 @@ export default class Moderation extends Base {
                 return true;
         }
 
-        public sendDM(guildConfig: types.GuildConfig, user: eris.Member | eris.User, text: string): Promise<void> {
+        public sendDM(guildConfig: types.Guild, user: eris.Member | eris.User, text: string): Promise<void> {
                 return new Promise(resolve => {
                         user = user instanceof eris.Member ? user.user : user;
 
@@ -103,7 +103,7 @@ export default class Moderation extends Base {
         }
 
         public createModlog(
-                guildConfig: types.GuildConfig,
+                guildConfig: types.Guild,
                 type: string,
                 duration: number,
                 count: number,
@@ -247,7 +247,7 @@ export default class Moderation extends Base {
                 return msg;
         }
 
-        public async isMuted(guildConfig: types.GuildConfig, user: eris.User | eris.Member): Promise<boolean> {
+        public async isMuted(guildConfig: types.Guild, user: eris.User | eris.Member): Promise<boolean> {
                 if (!guildConfig.muteRole) {
                         return false;
                 }
@@ -268,7 +268,7 @@ export default class Moderation extends Base {
         }
 
         public purgeMessages(
-                guildConfig: types.GuildConfig,
+                guildConfig: types.Guild,
                 channel: eris.TextChannel,
                 mod: eris.User,
                 type: string,

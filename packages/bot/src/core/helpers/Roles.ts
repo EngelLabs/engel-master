@@ -4,7 +4,7 @@ import type * as types from '@engel/types';
 import Base from '../structures/Base';
 
 export default class Roles extends Base {
-        public resolveMuteRole(guild: eris.Guild, guildConfig: types.GuildConfig): Promise<eris.Role> {
+        public resolveMuteRole(guild: eris.Guild, guildConfig: types.Guild): Promise<eris.Role> {
                 return new Promise((resolve, reject) => {
                         let role: eris.Role | undefined;
 
@@ -22,7 +22,7 @@ export default class Roles extends Base {
                 });
         }
 
-        public createMuteRole(guild: eris.Guild, guildConfig: types.GuildConfig): Promise<eris.Role> {
+        public createMuteRole(guild: eris.Guild, guildConfig: types.Guild): Promise<eris.Role> {
                 return new Promise((resolve, reject) => {
                         this.eris.createRole(guild.id, { name: 'Muted' })
                                 .then(role => {

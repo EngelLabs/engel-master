@@ -51,7 +51,7 @@ export default class Moderator extends Module {
                         guild,
                         member
                 }: {
-                        guildConfig: types.GuildConfig,
+                        guildConfig: types.Guild,
                         guild: eris.Guild,
                         member: eris.Member,
                 } = p;
