@@ -7,7 +7,7 @@
     "scripts": {
         "dev": "webpack -w",
         "build": "webpack",
-        "lint": "eslint \"** /*.jsx\""
+        "lint": "eslint \"**/*.jsx\""
     },
     "dependencies": {
         "axios": "^0.24.0",
