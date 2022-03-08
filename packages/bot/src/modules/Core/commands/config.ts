@@ -46,6 +46,7 @@ const config = new Command<Core>({
 config.command({
         name: 'set',
         aliases: ['write'],
+        usage: '<type> <key> <value> [state]',
         info: 'Set a value in configuration',
         requiredArgs: 3,
         after: afterConfig,
@@ -99,6 +100,7 @@ config.command({
 config.command({
         name: 'get',
         aliases: ['read'],
+        usage: '<key> [state]',
         info: 'Get a value from configuration',
         requiredArgs: 1,
         after: afterConfig,
