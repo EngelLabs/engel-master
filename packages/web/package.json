@@ -9,7 +9,7 @@
         "dev": "tsc-watch --onFirstSuccess \"npm run watch\"",
         "watch": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS\" \"npm run watch:app\" \"npm run watch:sass\"",
         "watch:app": "nodemon",
-        "watch:sass": "npm run build:sass -- -w",
+        "watch:sass": "sass styles:public/css -w",
         "pm2": "pm2 start npm --name engel-web -- start",
         "pm2:dev": "pm2 start npm --name engel-web-dev -- run dev",
         "build": "npm run build:app & npm run build:sass",
