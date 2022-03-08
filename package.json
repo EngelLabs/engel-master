@@ -22,13 +22,16 @@
         "lint:web": "npm run lint -w packages/web",
         "lint:core": "npm run lint -w packages/core",
         "lint:utils": "npm run lint -w packages/utils",
+        "lint:react": "npm run lint -w packages/react",
         "build:bot": "npm run build -w packages/bot",
         "build:web": "npm run build -w packages/web",
         "build:core": "npm run build -w packages/core",
         "build:utils": "npm run build -w packages/utils",
+        "build:react": "npm run build -w packages/react",
         "dev:bot": "npm run dev -w packages/bot",
         "dev:web": "npm run dev -w packages/web",
         "dev:core": "npm run dev -w packages/core",
+        "dev:react": "npm run dev -w packages/react",
         "config": "npm run config -w packages/bot"
     },
     "workspaces": [

@@ -7,15 +7,14 @@
     "scripts": {
         "start": "node build/src/index.js",
         "dev": "tsc-watch --onFirstSuccess \"npm run watch\"",
-        "watch": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS,REACT\" \"npm run watch:server\" \"npm run watch:sass\" \"npm run watch:react\"",
-        "watch:server": "nodemon",
+        "watch": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS\" \"npm run watch:app\" \"npm run watch:sass\"",
+        "watch:app": "nodemon",
         "watch:sass": "npm run build:sass -- -w",
-        "watch:react": "npm run build:react -- -- -w",
         "pm2": "pm2 start npm --name engel-web -- start",
         "pm2:dev": "pm2 start npm --name engel-web-dev -- run dev",
-        "build": "tsc",
+        "build": "npm run build:app & npm run build:sass",
+        "build:app": "tsc",
         "build:sass": "sass styles:public/css",
-        "build:react": "npm run build --prefix react",
         "lint": "eslint \"src/**/*\""
     },
     "repository": {
@@ -39,8 +38,6 @@
         "uuid": "^7.0.3"
     },
     "devDependencies": {
-        "@babel/core": "^7.16.0",
-        "@babel/plugin-transform-runtime": "^7.16.4",
         "@engel/types": "0.1.0",
         "@types/connect-redis": "^0.0.18",
         "@types/express-session": "^1.17.4",

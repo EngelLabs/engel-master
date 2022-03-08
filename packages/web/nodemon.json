@@ -1,6 +1,6 @@
 {
     "delay": 2,
     "ignore": [
-        "public/*", "react/*", "styles/*", "views/*"
+        "public/*", "styles/*", "views/*"
     ]
 }

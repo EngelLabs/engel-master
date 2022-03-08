@@ -12,7 +12,7 @@ module.exports = {
         mode: 'development',
         output: {
                 filename: '[name].js',
-                path: path.join(__dirname, '..', 'public/js/react'),
+                path: path.join(__dirname, '..', 'web/public/js/react'),
                 clean: true
         },
         module: {
