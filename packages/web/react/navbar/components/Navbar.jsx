@@ -4,7 +4,7 @@ export default class Navbar extends Component {
         render() {
                 const cornerButton = user
                         ? <a className="button is-important" href="/dashboard" title="Manage servers">Manage</a>
-                        : <a className="button is-important" href="/login" title="Login via Discord">Login</a>
+                        : <a className="button is-important" href="/login" title="Login via Discord">Login</a>;
 
                 return (
                         <div className="navbar">
@@ -17,6 +17,6 @@ export default class Navbar extends Component {
                                 <a className="button is-info" href="">Commands</a>
                                 <a className="button is-info is-gold" href="">Premium</a>
                         </div>
-                )
+                );
         }
 }

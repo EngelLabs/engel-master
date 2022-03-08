@@ -3,32 +3,31 @@ const path = require('path');
 // development config
 
 module.exports = {
-    entry: {
-        homepage: './homepage/index.jsx',
-        dashboard: './dashboard/index.jsx',
-        navbar: './navbar/index.jsx',
+        entry: {
+                homepage: './homepage/index.jsx',
+                dashboard: './dashboard/index.jsx',
+                navbar: './navbar/index.jsx'
 
-    },
-    watch: true,
-    mode: 'development',
-    output: {
-        filename: '[name].js',
-        path: path.join(__dirname, '..', 'public/js/react'),
-        clean: true
-    },
-    module: {
-        rules: [
-            {
-                test: /\.jsx?$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        plugins: ['@babel/plugin-transform-runtime'],
-                        presets: ['@babel/preset-env', '@babel/preset-react']
-                    }
-                }
-            },
-        ],
-    },
+        },
+        mode: 'development',
+        output: {
+                filename: '[name].js',
+                path: path.join(__dirname, '..', 'public/js/react'),
+                clean: true
+        },
+        module: {
+                rules: [
+                        {
+                                test: /\.jsx?$/,
+                                exclude: /node_modules/,
+                                use: {
+                                        loader: 'babel-loader',
+                                        options: {
+                                                plugins: ['@babel/plugin-transform-runtime'],
+                                                presets: ['@babel/preset-env', '@babel/preset-react']
+                                        }
+                                }
+                        }
+                ]
+        }
 };

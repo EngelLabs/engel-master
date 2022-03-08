@@ -1,11 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 export default class Dashboard extends Component {
         constructor(props) {
                 super(props);
 
                 this.state = {
-                        selectedGuild: null,
+                        selectedGuild: null
                 };
         }
 
@@ -15,18 +15,18 @@ export default class Dashboard extends Component {
                                 <div className="selector">
                                         <p className="title">Please select a guild.</p>
                                         {allGuilds.forEach(guild => {
-                                                <img src={`https://cdn.discord.gg`}/>
+                                                <img src={'https://cdn.discord.gg'} />;
                                         })}
                                 </div>
                         )
                         : (
                                 <div className=""></div>
-                        )
+                        );
 
                 return (
                         <div className="dashboard">
                                 {dash}
                         </div>
-                )
+                );
         }
 }
