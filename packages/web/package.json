@@ -14,6 +14,8 @@
         "pm2": "pm2 start npm --name engel-web -- start",
         "pm2:dev": "pm2 start npm --name engel-web-dev -- run dev",
         "build": "tsc",
+        "build:sass": "sass styles:public/css",
+        "build:react": "npm run build --prefix react",
         "lint": "eslint \"src/**/*\""
     },
     "repository": {
