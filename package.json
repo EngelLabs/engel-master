@@ -12,7 +12,7 @@
         "pm2:dev": "run-p pm2-dev:*",
         "lint": "run-p lint:*",
         "build": "run-s build:core build:utils",
-        "postbuild": "run-s build:bot build:web build:react",
+        "postbuild": "run-p build:bot build:web build:react",
         "dev": "run-p dev:*",
         "pm2:bot": "npm run pm2 -w packages/bot",
         "pm2:web": "npm run pm2 -w packages/web",
