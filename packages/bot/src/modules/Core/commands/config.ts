@@ -85,10 +85,6 @@ config.command({
                         .findOne({ state })
                         .lean();
 
-                if (getNested(config, key)?.constructor !== value.constructor) {
-                        return ctx.error(`Invalid key \`${key}\`.`);
-                }
-
                 config = await ctx.models.Config
                         .findOneAndUpdate({ state }, { $set: { [key]: value } }, { new: true })
                         .lean();
