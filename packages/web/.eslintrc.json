@@ -33,6 +33,6 @@
         "no-var": 0
     },
     "ignorePatterns": [
-        "node_modules/**", "build/*", "public/js/react/*"
+        "node_modules/**", "build/*", "public/js/react/*", "react/*"
     ]
 }
