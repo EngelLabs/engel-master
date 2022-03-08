@@ -89,7 +89,7 @@ config.command({
                         .findOneAndUpdate({ state }, { $set: { [key]: value } }, { new: true })
                         .lean();
 
-                ctx.locals = { key, value, config };
+                ctx.locals = { key, value, config, state };
         }
 });
 
