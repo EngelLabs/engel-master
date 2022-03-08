@@ -9,7 +9,7 @@ export default new Command<Moderator>({
         info: 'Block a server member from viewing a channel',
         examples: [
                 'block 329768023869358081 828010464133775392 2h Being disruptive to chat',
-                'block @timtoy #core-commands 10m Going too fast!'
+                'block @timtoy #bot-commands 10m Going too fast!'
         ],
         cooldown: 3000,
         requiredArgs: 1,

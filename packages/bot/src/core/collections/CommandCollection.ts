@@ -96,7 +96,7 @@ export default class CommandCollection extends core.Collection<Command> {
                 if (verbose) {
                         embed.footer = embed.footer || { text: '' };
 
-                        embed.footer.text += `\nConfused? Check out "${prefix}help core"`;
+                        embed.footer.text += `\nConfused? Check out "${prefix}help bot"`;
                 }
 
                 return embed;

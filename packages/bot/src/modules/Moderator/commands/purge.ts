@@ -123,9 +123,9 @@ purge.command({
 });
 
 purge.command({
-        name: 'cores',
+        name: 'bots',
         usage: '[count=100] [*reason]',
-        info: 'Purge messages from a channel sent by cores',
+        info: 'Purge messages from a channel sent by bots',
         cooldown: 5000,
         requiredPermissions: [
                 'readMessageHistory',

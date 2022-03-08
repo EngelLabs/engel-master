@@ -21,13 +21,13 @@ export default new Command<Info>({
 
                 const str = ctx.args.join(' ');
 
-                if (str.toLowerCase() === 'core') {
+                if (str.toLowerCase() === 'bot') {
                         const msgArray = [
                                 'Not implemented yet, sorry!'
                         ];
                         const me = ctx.me;
                         const embed = {
-                                title: 'Core Help',
+                                title: 'Bot Help',
                                 description: msgArray.join('\n'),
                                 author: {
                                         name: `${me.username}#${me.discriminator}`,
