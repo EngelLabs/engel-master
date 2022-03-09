@@ -9,6 +9,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
@@ -16,9 +18,6 @@ jobs:
         with:
           node-version: 17.6.0
       - uses: actions/setup-python@v2
-        with:
-          python-version: 3.9.10
-          architecture: x64
       - uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: install
