@@ -1,4 +1,3 @@
-import * as utils from '@engel/utils';
 import type * as eris from 'eris';
 import Command from '../../../core/structures/Command';
 import type Manager from '..';
@@ -10,25 +9,22 @@ export default new Command<Manager>({
         requiredArgs: 1,
         alwaysEnabled: true,
         execute: async function (ctx) {
-                const args = ctx.args.filter(({ length }) => length);
-                const str = args.join(' ');
-
-                const module = ctx.core.modules.get(utils.capitalize(str));
+                const module = ctx.core.modules.get(ctx.args.join(' '));
 
                 if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
-                        let command = ctx.core.commands.get(args[0]);
+                        let command = ctx.core.commands.get(ctx.args[0]);
 
                         if (!command) return ctx.error('No command or module exists by that name');
 
-                        args.shift();
+                        ctx.args.shift();
 
-                        while (command.commands && args.length) {
-                                const subcommand = command.commands.get(args[0]);
+                        while (command.commands && ctx.args.length) {
+                                const subcommand = command.commands.get(ctx.args[0]);
 
                                 // if (!subcommand) return ctx.error(`Command "${command.qualName}" has no subcommand "${args[0]}"`);
                                 if (!subcommand) break;
 
-                                args.shift();
+                                ctx.args.shift();
                                 command = subcommand;
                         }
 
