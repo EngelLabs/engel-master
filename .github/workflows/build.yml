@@ -17,8 +17,6 @@ jobs:
       - uses: actions/setup-node@v3.0.0
         with:
           node-version: 17.6.0
-      - run: sudo apt-get install python3 -y
       - uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: install
-      - run: sudo apt-get remove python3 -y
