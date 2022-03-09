@@ -4,7 +4,7 @@ import type Moderator from '..';
 
 export default new Command<Moderator>({
         name: 'ban',
-        usage: '<user> [delete message days=2] [duration=inf] [*reason]',
+        usage: '<member> [delete message days=2] [duration=inf] [*reason]',
         info: 'Ban a server member',
         examples: [
                 'ban @aerro 1d Overly toxic',
@@ -17,7 +17,10 @@ export default new Command<Moderator>({
                 const converter = new Converter(ctx.core);
 
                 try {
-                        var user = await converter.user(ctx.args[0], true);
+                        var user = (
+                                await converter.member(ctx.guild, ctx.args[0], false) ||
+                                await converter.user(ctx.args[0], true)
+                        );
                 } catch (err) {
                         return ctx.error(err);
                 }
