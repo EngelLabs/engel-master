@@ -47,7 +47,7 @@ export default new Command<Info>({
                 );
 
                 if (!embed) {
-                        return ctx.error('No command or module exists by that name.');
+                        return ctx.error(`Command or module \`${str}\` not found.`);
                 }
 
                 return ctx.send({ embed });

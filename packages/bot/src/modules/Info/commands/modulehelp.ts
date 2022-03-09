@@ -16,10 +16,12 @@ export default new Command<Info>({
         execute: function (ctx) {
                 const verbose = ctx.guildConfig.verboseHelp !== undefined ? ctx.guildConfig.verboseHelp : true;
 
-                const embed = ctx.core.modules.help(ctx.args.join(' '), ctx.prefix, ctx.isAdmin, verbose);
+                const text = ctx.args.join(' ');
+
+                const embed = ctx.core.modules.help(text, ctx.prefix, ctx.isAdmin, verbose);
 
                 if (!embed) {
-                        return ctx.error('No module exists by that name.');
+                        return ctx.error(`Module \`${text}\` not found.`);
                 }
 
                 return ctx.send({ embed });
