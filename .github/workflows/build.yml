@@ -20,5 +20,5 @@ jobs:
       - uses: Borales/actions-yarn@v2.3.0
         with:
           cmd: |
-          apt-get install python -y
-          install
+           apt-get install python -y
+           install
