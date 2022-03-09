@@ -1,3 +1,4 @@
+import * as utils from '@engel/utils';
 import type * as eris from 'eris';
 import Command from '../../../core/structures/Command';
 import type Manager from '..';
@@ -12,7 +13,7 @@ export default new Command<Manager>({
                 const args = ctx.args.filter(({ length }) => length);
                 const str = args.join(' ');
 
-                const module = ctx.core.modules.get(str.charAt(0).toUpperCase() + str.slice(1));
+                const module = ctx.core.modules.get(utils.capitalize(str));
 
                 if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
                         let command = ctx.core.commands.get(args[0]);
