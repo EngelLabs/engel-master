@@ -53,6 +53,8 @@ export default class Responses extends Base {
         public _errorResponse(res: express.Response, status: number, code?: number, message?: any) {
                 const data: any = { message };
 
+                data._debug = `https://http.cat/${status}`;
+
                 data._code = code !== undefined ? code : null;
 
                 return res.status(status).send(data);
