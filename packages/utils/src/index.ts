@@ -21,3 +21,7 @@ export function getTopRole(eris: eris.Client, guild: eris.Guild | undefined): er
                 .map(id => guild.roles.get(id))
                 .reduce((prev, curr) => curr?.position > prev.position ? curr : prev);
 }
+
+export function sleep(ms: number): Promise<void> {
+        return new Promise(resolve => setTimeout(resolve, ms));
+}
