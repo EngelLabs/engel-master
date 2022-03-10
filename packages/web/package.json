@@ -7,12 +7,12 @@
     "scripts": {
         "start": "node build/src/index.js",
         "dev": "tsc-watch --onFirstSuccess \"npm run watch\"",
-        "watch": "concurrently -k -p \"[{pid}-{name}]\" -n \"APP,SASS\" \"npm run watch:app\" \"npm run watch:sass\"",
+        "watch": "run-p -rl watch:*",
         "watch:app": "nodemon",
         "watch:sass": "sass styles:public/css -w",
         "pm2": "pm2 start npm --name engel-web -- start",
         "pm2:dev": "pm2 start npm --name engel-web-dev -- run dev",
-        "build": "npm run build:app & npm run build:sass",
+        "build": "run-p build:*",
         "build:app": "tsc",
         "build:sass": "sass styles:public/css",
         "lint": "eslint \"src/**/*\""
@@ -33,6 +33,7 @@
         "express-handlebars": "^6.0.2",
         "express-session": "^1.17.2",
         "getenv": "^1.0.0",
+        "npm-run-all": "^4.1.5",
         "sass": "^1.49.9",
         "superagent": "^7.1.1",
         "uuid": "^7.0.3"
@@ -44,7 +45,6 @@
         "@typescript-eslint/eslint-plugin": "^5.13.0",
         "@typescript-eslint/parser": "^5.13.0",
         "babel-loader": "^8.2.3",
-        "concurrently": "^6.4.0",
         "eslint": "^7.32.0",
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.25.4",
