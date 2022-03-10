@@ -31,6 +31,7 @@
         "dev:bot": "npm run dev -w packages/bot",
         "dev:web": "npm run dev -w packages/web",
         "dev:core": "npm run dev -w packages/core",
+        "dev:utils": "npm run dev -w packages/utils",
         "dev:react": "npm run dev -w packages/react",
         "config": "npm run config -w packages/bot"
     },

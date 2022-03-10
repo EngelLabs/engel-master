@@ -6,6 +6,7 @@
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "main": "build/index.js",
     "scripts": {
+        "dev": "tsc -w",
         "build": "tsc",
         "lint": "eslint \"src/**/*\""
     },
