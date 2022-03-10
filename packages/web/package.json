@@ -12,7 +12,7 @@
         "watch:sass": "sass styles:public/css -w",
         "pm2": "pm2 start npm --name engel-web -- start",
         "pm2:dev": "pm2 start npm --name engel-web-dev -- run dev",
-        "build": "run-p build:*",
+        "build": "run-p -l build:*",
         "build:app": "tsc",
         "build:sass": "sass styles:public/css",
         "lint": "eslint \"src/**/*\""
