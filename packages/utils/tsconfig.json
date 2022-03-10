@@ -3,7 +3,8 @@
         "outDir": "./build",
         "module": "CommonJS",
         "target": "ESNext",
-        "declaration": true
+        "declaration": true,
+        "preserveWatchOutput": true
     },
     "include": [
         "./src/**/*",
