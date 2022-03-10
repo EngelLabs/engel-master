@@ -7,17 +7,28 @@ on:
     branches: [ master ]
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+
+      - name: Set up NodeJS v17.6.0
+        uses: actions/setup-node@v3
         with:
           node-version: 17.6.0
-      - run: |
-          npm install -g yarn
-          yarn
-          npm uninstall -g yarn
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Install dependencies
+        run: yarn install
+      
+      - name: Build project
+        run: yarn build
+
+      - name: Uninstall Yarn
+        run: npm uninstall -g yarn
+        
