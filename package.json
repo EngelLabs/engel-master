@@ -8,7 +8,7 @@
         "bot": "npm start -w packages/bot",
         "web": "npm start -w packages/web",
         "pm2": "run-p -l pm2:*",
-        "pm2:dev": "run-p -l pm2-dev:*",
+        "pm2-dev": "run-p -l pm2-dev:*",
         "lint": "run-p -l lint:*",
         "build": "run-p -l build:core build:utils",
         "postbuild": "run-p -l build:bot build:web build:react",
