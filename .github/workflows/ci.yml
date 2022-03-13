@@ -1,4 +1,4 @@
-name: lint
+name: ci
 
 on:
   push:
@@ -11,7 +11,12 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
+      matrix:
+        name:
+          - build
+          - lint
 
+    name: ${{ matrix.name }}
     steps:
       - uses: actions/checkout@v2
 
@@ -20,15 +25,9 @@ jobs:
         with:
           node-version: 17.6.0
 
-      - name: Install Yarn
-        run: npm install -g yarn
-
       - name: Install dependencies
         run: yarn install
       
-      - name: Lint project
-        run: yarn lint
-
-      - name: Uninstall Yarn
-        run: npm uninstall -g yarn
+      - name: Run checks
+        run: yarn ${{ matrix.name }}
         
