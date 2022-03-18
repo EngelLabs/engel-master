@@ -1,21 +1,12 @@
-import type * as eris from 'eris';
 import type * as types from '@engel/types';
 import Base from '../structures/Base';
 import type Core from '../Core';
-
-interface Message {
-        id: string;
-        content: string;
-        author: eris.User;
-        channel: eris.GuildChannel;
-        createdAt: number;
-}
 
 /**
  * Manages cache of Discord objects
  */
 export default class CacheManager extends Base {
-        private _messages: Record<string, Message> = {};
+        private _messages: Record<string, types.PartialMessage> = {};
         private _uncacheInterval?: NodeJS.Timer;
 
         public constructor(core: Core) {
@@ -26,7 +17,7 @@ export default class CacheManager extends Base {
                         .registerListener('messageUpdate', this.messageUpdate.bind(this))
                         .registerListener('messageDelete', this.messageDelete.bind(this))
                         .registerListener('guildDelete', this.guildDelete.bind(this))
-                        .registerListener('guildChannelDelete', this.guildChannelDelete.bind(this));
+                        .registerListener('channelDelete', this.channelDelete.bind(this));
 
                 core.on('config', this._configure.bind(this));
         }
@@ -52,25 +43,25 @@ export default class CacheManager extends Base {
         /**
          * Get a message from cache
          */
-        public getMessage(id: string): Message | undefined {
+        public getMessage(id: string): types.PartialMessage | undefined {
                 return this._messages[id];
         }
 
-        private messageCreate({ message }: { message: eris.Message }): void {
+        private messageCreate({ message }: types.GuildEvents['messageCreate']): void {
                 if (!this.config.messageCache) return;
 
                 const copied = {
                         id: message.id,
                         content: message.content,
                         author: message.author,
-                        channel: (<eris.TextChannel>message.channel),
+                        channel: message.channel,
                         createdAt: message.createdAt
                 };
 
                 this._messages[copied.id] = copied;
         }
 
-        private messageUpdate({ message }: { message: eris.Message }): void {
+        private messageUpdate({ message }: types.GuildEvents['messageUpdate']): void {
                 const oldMessage = this._messages[message.id];
 
                 if (message.content !== oldMessage.content) {
@@ -78,11 +69,11 @@ export default class CacheManager extends Base {
                 }
         }
 
-        private messageDelete({ message }: { message: eris.Message }): void {
+        private messageDelete({ message }: types.GuildEvents['messageDelete']): void {
                 delete this._messages[message.id];
         }
 
-        private guildDelete({ guild }: { guild: eris.Guild }): void {
+        private guildDelete({ guild }: types.GuildEvents['guildDelete']): void {
                 for (const id in this._messages) {
                         const message = this._messages[id];
 
@@ -92,7 +83,7 @@ export default class CacheManager extends Base {
                 }
         }
 
-        private guildChannelDelete({ channel }: { channel: eris.GuildChannel }): void {
+        private channelDelete({ channel }: types.GuildEvents['channelDelete']): void {
                 for (const id in this._messages) {
                         const message = this._messages[id];
 

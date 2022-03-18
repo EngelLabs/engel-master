@@ -1,4 +1,4 @@
-import type * as eris from 'eris';
+import * as eris from 'eris';
 import type * as types from '@engel/types';
 import Module from '../../core/structures/Module';
 import Command from '../../core/structures/Command';
@@ -7,15 +7,6 @@ import Permission from '../../core/helpers/Permission';
 import baseConfig from '../../core/utils/baseConfig';
 
 const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
-
-interface Payload {
-        isDM: boolean;
-        isAdmin: boolean;
-        isTester: boolean;
-        isTesting: boolean;
-        message: eris.Message;
-        guildConfig: types.Guild;
-}
 
 interface Cooldown {
         time: number;
@@ -94,7 +85,7 @@ export default class Core extends Module {
                 // TODO
         }
 
-        private messageCreate(payload: Payload): Promise<void> {
+        private messageCreate(payload: types.Events['messageCreate']): Promise<void> {
                 if (payload.isAdmin) {
                         return this.handleAdmin(payload);
                 }
@@ -102,7 +93,7 @@ export default class Core extends Module {
                 return this.handleCommand(payload);
         }
 
-        private handleAdmin(p: Payload): Promise<void> {
+        private handleAdmin(p: types.Events['messageCreate']): Promise<void> {
                 const ctx = this.resolveContext(p);
 
                 if (!ctx) {
@@ -112,8 +103,11 @@ export default class Core extends Module {
                 return this.executeCommand(ctx);
         }
 
-        private async handleCommand(p: Payload): Promise<void> {
-                const { isTester, isTesting, isDM, message, guildConfig } = p;
+        private async handleCommand(p: types.Events['messageCreate']): Promise<void> {
+                const { isTester, isDM, message } = p;
+
+                const isTesting = <boolean>p.isTesting;
+                const guildConfig = <types.Guild>p.guildConfig;
 
                 if (baseConfig.dev && (!isTester || (!isDM && !isTesting))) return;
 
@@ -219,7 +213,12 @@ export default class Core extends Module {
                 return this.executeCommand(ctx);
         }
 
-        private resolveContext({ guildConfig, message, isAdmin, isTesting, isDM }: Payload): Context {
+        private resolveContext(payload: types.Events['messageCreate']): Context {
+                const { message, isAdmin, isDM } = payload;
+
+                const isTesting = <boolean>payload.isTesting;
+                const guildConfig = <types.Guild>payload.guildConfig;
+
                 let prefixes: string[];
 
                 if (isDM) {
@@ -449,7 +448,7 @@ export default class Core extends Module {
                 this.commandSuccess(ctx);
         }
 
-        private guildCreate({ guild }: { guild: eris.Guild }): void {
+        private guildCreate({ guild }: types.GuildEvents['guildCreate']): void {
                 const eris = this.eris;
 
                 let allMembers = 0;
@@ -493,12 +492,18 @@ export default class Core extends Module {
                 this.postEmbed(embed);
         }
 
-        private guildDelete({ guild }: { guild: eris.Guild }): void {
-                const eris = this.eris;
+        private guildDelete({ guild }: types.GuildEvents['guildDelete']): void {
+                if (!(guild instanceof eris.Guild)) {
+                        return;
+                }
+
+                // Eris client has to be referred to like this because of "eris" in global scope
+                // being used in local scope (right above)
+                const erisClient = this.eris;
 
                 let allMembers = 0;
 
-                for (const guild of eris.guilds.values()) {
+                for (const guild of erisClient.guilds.values()) {
                         allMembers += guild.members.size || 0;
                 }
 
@@ -511,9 +516,9 @@ export default class Core extends Module {
                                 `Members: ${guild.memberCount || 'UNKNOWN'}`
                         ],
                         footer: [
-                                `Total guild count: ${eris.guilds.size}`,
+                                `Total guild count: ${erisClient.guilds.size}`,
                                 `Total member count: ${allMembers}`,
-                                `Total user count: ${eris.users.size}`
+                                `Total user count: ${erisClient.users.size}`
                         ]
                 };
 

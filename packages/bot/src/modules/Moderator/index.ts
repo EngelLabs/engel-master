@@ -45,16 +45,8 @@ export default class Moderator extends Module {
                 this.listeners.push(this.guildMemberAdd.bind(this));
         }
 
-        private async guildMemberAdd(p: any) {
-                const {
-                        guildConfig,
-                        guild,
-                        member
-                }: {
-                        guildConfig: types.Guild,
-                        guild: eris.Guild,
-                        member: eris.Member,
-                } = p;
+        private async guildMemberAdd(p: types.GuildEvents['guildMemberAdd']) {
+                const { guildConfig, guild, member } = p;
 
                 if (!guildConfig) return;
 

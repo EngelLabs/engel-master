@@ -173,7 +173,7 @@ export default class Module extends Base {
                                 copied.execute = copied.execute.bind(this);
 
                                 this._boundListeners.push(copied);
-                                core.events.registerListener(copied.name, copied.execute);
+                                core.events.registerListener(<types.EventNames>copied.name, copied.execute);
                         }
                 }
 
@@ -204,7 +204,7 @@ export default class Module extends Base {
 
                 if (this._boundListeners) {
                         for (const listener of this._boundListeners) {
-                                core.events.unregisterListener(listener.name, listener.execute);
+                                core.events.unregisterListener(<types.EventNames>listener.name, listener.execute);
                         }
                 }
 
