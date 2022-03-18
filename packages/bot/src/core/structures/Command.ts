@@ -147,9 +147,8 @@ class Command<M extends Module = Module> {
 
                         const name = this.rootName;
 
-                        // @ts-ignore
                         // Typescript being fucking cancer and telling me that commands[name] can be a boolean
-                        if (typeof commands[name] === 'object' && commands[name].disabled) {
+                        if (typeof commands[name] === 'object' && (<types.CommandConfig>commands[name]).disabled) {
                                 return resolve(false, name);
                         }
 

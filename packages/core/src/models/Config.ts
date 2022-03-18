@@ -15,7 +15,6 @@ for (const key in globalDefaults) {
         configSchemaBase[key] = { type: value.constructor, default: value };
 }
 
-// @ts-ignore
 // configSchemaBase isn't compatible with types.Config, as expected.
 const configSchema = new mongoose.Schema<types.Config>(configSchemaBase,
         { collection: 'configurations', minimize: false }

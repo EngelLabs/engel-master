@@ -97,10 +97,9 @@ export default class Converter extends Base {
         }
 
         private _convertID(argument: string, altRegex: RegExp, errorMsg: string = invalidArugment2): string {
-                let match = this.id(argument);
+                let match: any = this.id(argument);
 
                 if (isNaN(parseInt(match))) {
-                        // @ts-ignore
                         match = argument.match(altRegex);
 
                         if (!match || !match.length) {

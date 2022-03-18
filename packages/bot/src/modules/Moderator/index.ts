@@ -21,6 +21,18 @@ const defaultResponses: Record<string, string> = {
         warn: 'User **{user}** warned.'
 };
 
+export interface ModuleConfig extends types.ModuleConfig {
+        protectedRoles?: string[];
+        includeDuration?: boolean;
+        includeReason?: boolean;
+        dmUser?: boolean;
+        responses?: typeof defaultResponses;
+}
+
+export interface CommandConfig extends types.CommandConfig {
+        protectedRoles?: string[];
+}
+
 export default class Moderator extends Module {
         private _moderation: Moderation;
 
@@ -76,14 +88,11 @@ export default class Moderator extends Module {
                         return false;
                 }
 
-                const commandConfig = guildConfig.commands?.[commandName];
-                const moduleConfig = guildConfig.modules?.[moduleName];
+                const commandConfig = <CommandConfig | boolean>guildConfig.commands?.[commandName];
+                const moduleConfig = <ModuleConfig>guildConfig.modules?.[moduleName];
 
                 if (member instanceof eris.Member) {
-                        // TODO: Type the stuff below
-                        // @ts-ignore
                         if (typeof commandConfig !== 'boolean' && commandConfig?.protectedRoles?.length) {
-                                // @ts-ignore
                                 const protectedRoles = commandConfig.protectedRoles;
                                 if (member.roles.find(id => protectedRoles.includes(id))) {
                                         resolve('That user is protected.');
@@ -91,9 +100,7 @@ export default class Moderator extends Module {
                                         return false;
                                 }
                         } else {
-                                // @ts-ignore
                                 if (moduleConfig?.protectedRoles?.length) {
-                                        // @ts-ignore
                                         const protectedRoles = moduleConfig.protectedRoles;
                                         if (member.roles.find(id => protectedRoles.includes(id))) {
                                                 resolve('That user is protected.');
@@ -108,20 +115,17 @@ export default class Moderator extends Module {
         }
 
         public sendDM(ctx: Context, user: eris.Member | eris.User, msg: string, duration?: number, reason?: string) {
-                // TODO: Type all the stuff below
+                const moduleConfig = <ModuleConfig>ctx.moduleConfig;
 
-                // @ts-ignore
-                if (ctx.moduleConfig && !ctx.moduleConfig.dmUser) {
+                if (moduleConfig && !moduleConfig.dmUser) {
                         return Promise.resolve();
                 }
 
-                // @ts-ignore
-                if (ctx.moduleConfig?.includeDuration && duration) {
+                if (moduleConfig?.includeDuration && duration) {
                         msg += `\nDuration: ${prettyMS(duration * 1000, { verbose: true })}`;
                 }
 
-                // @ts-ignore
-                if (ctx.moduleConfig?.includeReason && reason?.length) {
+                if (moduleConfig?.includeReason && reason?.length) {
                         msg += `\nReason: ${reason?.length ? reason : 'N/A'}`;
                 }
 
@@ -163,9 +167,7 @@ export default class Moderator extends Module {
                 let text: string;
 
                 if (ctx.guildConfig.isPremium) {
-                        // TODO: Type this
-                        // @ts-ignore
-                        text = ctx.moduleConfig?.responses?.[type];
+                        text = (<ModuleConfig>ctx.moduleConfig)?.responses?.[type];
                 }
 
                 text = text || defaultResponses[type];

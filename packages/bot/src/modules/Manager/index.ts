@@ -74,10 +74,8 @@ export default class Manager extends Module {
                 };
 
                 if (guildConfig.commands?.[command.rootName]) {
-                        // @ts-ignore
                         // We are dealing with rootName, here. Command config can not be a boolean.
-                        // TODO?: Possibly something to work on.
-                        checkPerms(guildConfig.commands[command.rootName]);
+                        checkPerms(<types.CommandConfig>guildConfig.commands[command.rootName]);
                 } else if (guildConfig.modules?.[command.module.dbName]) {
                         checkPerms(guildConfig.modules[command.module.dbName]);
                 } else {
@@ -96,9 +94,7 @@ export default class Manager extends Module {
                         const commands = guildConfig.commands;
 
                         if (command.parent) {
-                                // @ts-ignore
-                                // TODO?: Same thing as mentioned above
-                                if (commands[command.rootName]?.disabled) {
+                                if ((<types.CommandConfig>commands[command.rootName])?.disabled) {
                                         msgArray.push("This command's parent is disabled in this server");
                                 }
 
@@ -106,9 +102,7 @@ export default class Manager extends Module {
                                         msgArray.push('This command is disabled in this server');
                                 }
                         } else {
-                                // @ts-ignore
-                                // TODO?: And so the trend from above continues...
-                                if (commands[command.name]?.disabled) {
+                                if ((<types.CommandConfig>commands[command.name])?.disabled) {
                                         msgArray.push('This command is disabled in this server');
                                 }
                         }
