@@ -21,16 +21,17 @@
     "homepage": "https://github.com/engel-labs/engel-core#readme",
     "dependencies": {
         "bluebird": "^3.7.2",
+        "bufferutil": "^4.0.5",
         "dotenv": "^16.0.0",
         "eris": "^0.16.1",
         "eventemitter3": "^4.0.7",
         "getenv": "^1.0.0",
         "ioredis": "^4.28.5",
         "mongoose": "^6.2.2",
-        "typescript": "4.5",
-        "winston": "^3.6.0"
-    },
-    "devDependencies": {
+        "winston": "^3.6.0",
+        "zlib-sync": "^0.1.7"
+},
+"devDependencies": {
         "@engel/types": "0.1.0",
         "@types/getenv": "^1.0.0",
         "@types/ioredis": "^4.28.8",
@@ -40,6 +41,7 @@
         "eslint-config-standard": "^16.0.3",
         "eslint-plugin-import": "^2.25.4",
         "eslint-plugin-node": "^11.1.0",
-        "eslint-plugin-promise": "^5.2.0"
+        "eslint-plugin-promise": "^5.2.0",
+        "typescript": "4.5"
     }
 }
