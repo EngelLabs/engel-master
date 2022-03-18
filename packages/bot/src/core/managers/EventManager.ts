@@ -13,24 +13,14 @@ interface AnyFunc {
  * Event dispatch manager
  */
 export default class EventManager extends Base {
-        public addListener = EventEmitter.prototype.addListener;
-        public emit = EventEmitter.prototype.emit;
-        public eventNames = EventEmitter.prototype.eventNames;
-        public listenerCount = EventEmitter.prototype.listenerCount;
-        public listeners = EventEmitter.prototype.listeners;
-        public off = EventEmitter.prototype.off;
-        public on = EventEmitter.prototype.on;
-        public once = EventEmitter.prototype.once;
-        public removeAllListeners = EventEmitter.prototype.removeAllListeners;
-        public removeListener = EventEmitter.prototype.removeListener;
+        private _events: EventEmitter;
         private _permissions: Permission;
         private _registeredEvents: Record<string, { handler: AnyFunc, listeners: Array<AnyFunc> }> = {};
 
         public constructor(core: Core) {
                 super(core);
 
-                EventEmitter.call(this);
-
+                this._events = new EventEmitter();
                 this._permissions = new Permission(core);
         }
 
@@ -50,7 +40,7 @@ export default class EventManager extends Base {
                                                 return;
                                         }
 
-                                        this.emit(event, payload);
+                                        this._events.emit(event, payload);
                                 } catch (err) {
                                         this.log(err, 'error');
                                 }
@@ -62,7 +52,7 @@ export default class EventManager extends Base {
                         this._registeredEvents[event].listeners.push(execute);
                 }
 
-                this.addListener(event, execute);
+                this._events.addListener(event, execute);
 
                 this.log(`Added listener for event "${event}".`);
 
@@ -87,7 +77,7 @@ export default class EventManager extends Base {
                         }
                 }
 
-                this.removeListener(event, execute);
+                this._events.removeListener(event, execute);
 
                 this.log(`Removed listener for event "${event}".`);
 
