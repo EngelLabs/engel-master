@@ -115,4 +115,9 @@ export default class Core extends EventEmitter {
                         process.exit(1);
                 }
         }
+
+        public on<T = 'config'>(event: T, fn: (config: types.Config) => any): this;
+        public on<T extends string | symbol>(event: T, fn: (...args: any[]) => void, context?: any): this {
+                return super.on(event, fn, context);
+        }
 }

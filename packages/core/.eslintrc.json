@@ -23,7 +23,8 @@
             2,
             "always"
         ],
-        "space-before-function-paren": 0
+        "space-before-function-paren": 0,
+        "no-dupe-class-members": 0
     },
     "globals": {
         "NodeJS": true
