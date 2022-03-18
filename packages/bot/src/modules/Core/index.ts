@@ -137,7 +137,14 @@ export default class Core extends Module {
                 const { command, module } = ctx;
 
                 if (!command.disableModuleCheck && module.commandCheck) {
-                        if (!await module.commandCheck(ctx)) return;
+                        let canRun = module.commandCheck(ctx);
+
+                        if (typeof canRun !== 'boolean') {
+                                // It's a Promise
+                                canRun = await canRun;
+                        }
+
+                        if (!canRun) return;
                 }
 
                 if (!isDM && !(
@@ -146,7 +153,16 @@ export default class Core extends Module {
                         this.permissions.canInvoke(ctx)
                 )) return;
 
-                if (command.check && !await command.check(ctx)) return;
+                if (command.check) {
+                        let canRun = command.check(ctx);
+
+                        if (typeof canRun !== 'boolean') {
+                                // It's a Promise
+                                canRun = await canRun;
+                        }
+
+                        if (!canRun) return;
+                }
 
                 const key = message.author.id + command.qualName;
 
@@ -428,14 +444,22 @@ export default class Core extends Module {
                         }
 
                         if (command.before) {
-                                await command.before(ctx);
+                                const _p = command.before(ctx);
+
+                                if (_p instanceof Promise) {
+                                        await _p;
+                                }
                         }
 
                         if (!ctx.done) {
                                 await execute();
 
                                 if (!ctx.done && command.after) {
-                                        await command.after(ctx);
+                                        const _p = command.after(ctx);
+
+                                        if (_p instanceof Promise) {
+                                                await _p;
+                                        }
                                 }
                         }
                 } catch (err) {
