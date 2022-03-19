@@ -125,7 +125,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 
         public get moduleConfig(): types.ModuleConfig | undefined {
-                return this.guildConfig.modules[this.module.dbName];
+                return this.guildConfig.modules?.[this.module.dbName];
         }
 
         public set moduleConfig(config: types.ModuleConfig) {
