@@ -1,5 +1,6 @@
 import Base from '../structures/Base';
 import type * as eris from 'eris';
+import type * as types from '@engel/types';
 import type Context from '../structures/Context';
 
 /**
@@ -33,8 +34,8 @@ export default class Permission extends Base {
                 let canInvoke = false,
                         overrideExists = false;
 
-                const checkPerms = (c: any): boolean => {
-                        if (!c) return false;
+                const checkPerms = (c: types.BaseConfig): boolean => {
+                        if (!c || typeof c === 'boolean') return false;
 
                         if (c.allowedRoles?.length) {
                                 if (!overrideExists) overrideExists = true;
@@ -65,7 +66,7 @@ export default class Permission extends Base {
                         return false;
                 };
 
-                canInvoke = checkPerms(ctx.commandConfig);
+                canInvoke = checkPerms(<types.CommandConfig>ctx.commandConfig);
 
                 if (!canInvoke && !overrideExists) {
                         canInvoke = checkPerms(ctx.moduleConfig);
