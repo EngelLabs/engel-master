@@ -31,8 +31,8 @@
         "source-map-support": "^0.5.21",
         "winston": "^3.6.0",
         "zlib-sync": "^0.1.7"
-},
-"devDependencies": {
+    },
+    "devDependencies": {
         "@engel/types": "0.1.0",
         "@types/getenv": "^1.0.0",
         "@types/ioredis": "^4.28.8",
