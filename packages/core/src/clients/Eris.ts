@@ -7,10 +7,7 @@ export default function Eris(core: Core): eris.Client {
                 core.log(message, level, prefix);
         };
 
-        // I have to type it as such because intents,
-        // which is seen as a string[] is incompatible
-        // with ClientOptions.intents (keyof Constants['Intents'])
-        const options: typeof eris.Client.prototype.options = {
+        const options: eris.ClientOptions = {
                 intents: [
                         'directMessages',
                         'guilds',
