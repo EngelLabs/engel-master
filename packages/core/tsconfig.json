@@ -5,7 +5,8 @@
         "module": "CommonJS",
         "target": "ES6",
         "noImplicitAny": true,
-        "preserveWatchOutput": true
+        "preserveWatchOutput": true,
+        "sourceMap": true
     },
     "include": [
         "src/**/*"

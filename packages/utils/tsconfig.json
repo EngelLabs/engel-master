@@ -4,7 +4,8 @@
         "module": "CommonJS",
         "target": "ESNext",
         "declaration": true,
-        "preserveWatchOutput": true
+        "preserveWatchOutput": true,
+        "sourceMap": true
     },
     "include": [
         "./src/**/*",

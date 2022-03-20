@@ -79,7 +79,7 @@ export default class Module extends Base {
                 const dir = path.resolve(__dirname, '../../modules/' + this.name + '/commands');
 
                 try {
-                        var files = fs.readdirSync(dir);
+                        var files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
                 } catch (err) {
                         return;
                 }
@@ -109,7 +109,7 @@ export default class Module extends Base {
                 const dir = path.resolve(__dirname, '../../modules/' + this.name + '/listeners');
 
                 try {
-                        var files = fs.readdirSync(dir);
+                        var files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
                 } catch (err) {
                         return;
                 }

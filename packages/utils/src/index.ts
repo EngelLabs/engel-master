@@ -1,3 +1,4 @@
+import 'source-map-support/register';
 import type * as eris from 'eris';
 
 export function capitalize(str?: string): string {

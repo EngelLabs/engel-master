@@ -69,7 +69,7 @@ export default class ControllerCollection extends Map {
                         let dirs;
 
                         try {
-                                dirs = fs.readdirSync(controllerPath);
+                                dirs = fs.readdirSync(controllerPath).filter(f => f.endsWith('.js'));
                         } catch (err) {
                                 if (err && ['ENOENT', 'ENOTDIR'].includes(err.code)) {
                                         return;

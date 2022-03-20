@@ -7,7 +7,8 @@
         "skipLibCheck": true,
         "skipDefaultLibCheck": true,
         "noImplicitAny": true,
-        "preserveWatchOutput": true
+        "preserveWatchOutput": true,
+        "sourceMap": true
 },
     "include": [
         "./src/**/*",
