@@ -10,7 +10,7 @@ const configSchemaBase = <any>{ state: { type: String, default: baseConfig.clien
 // and I'm simply not a fan of the more verbose syntax.
 // I also need the runtime type checking that mongoose implements.
 for (const key in globalDefaults) {
-        const value = <any>globalDefaults[key];
+        const value = globalDefaults[<keyof types.Config>key];
 
         configSchemaBase[key] = { type: value.constructor, default: value };
 }

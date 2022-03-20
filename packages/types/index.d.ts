@@ -89,7 +89,6 @@ declare module '@engel/types' {
         }
 
         export interface Config {
-                [key: string]: unknown;
                 state: string;
                 author: { id: string; name: string };
                 prefixes: { private: string[]; default: string[]; dm: string[] };
