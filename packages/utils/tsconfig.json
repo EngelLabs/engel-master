@@ -5,6 +5,7 @@
         "target": "ESNext",
         "declaration": true,
         "preserveWatchOutput": true,
+        "removeComments": true,
         "sourceMap": true
     },
     "include": [

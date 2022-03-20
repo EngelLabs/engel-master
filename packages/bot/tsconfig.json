@@ -8,6 +8,7 @@
         "skipDefaultLibCheck": true,
         "noImplicitAny": true,
         "preserveWatchOutput": true,
+        "removeComments": true,
         "sourceMap": true
 },
     "include": [

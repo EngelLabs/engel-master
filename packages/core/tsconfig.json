@@ -6,6 +6,7 @@
         "target": "ES6",
         "noImplicitAny": true,
         "preserveWatchOutput": true,
+        "removeComments": true,
         "sourceMap": true
     },
     "include": [
