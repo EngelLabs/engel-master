@@ -148,9 +148,9 @@ export default class Core extends Module {
                 }
 
                 if (!isDM && !(
-                        this.permissions.isOwner(ctx) ||
-                        this.permissions.isServerAdmin(ctx) ||
-                        this.permissions.canInvoke(ctx)
+                        this.permissions.isOwner(ctx.guild, ctx.author) ||
+                        this.permissions.isServerAdmin(ctx.guild, ctx.author) ||
+                        this.canInvoke(ctx)
                 )) return;
 
                 if (command.check) {
@@ -371,6 +371,62 @@ export default class Core extends Module {
                 // }
 
                 return ctx;
+        }
+
+        private canInvoke(ctx: Context): boolean {
+                const roles = ctx.member?.roles,
+                        channel = ctx.channel;
+
+                let canInvoke = false,
+                        overrideExists = false;
+
+                const checkPerms = (c: types.BaseConfig): boolean => {
+                        if (!c || typeof c === 'boolean') return false;
+
+                        if (c.allowedRoles?.length) {
+                                if (!overrideExists) overrideExists = true;
+
+                                if (!c.allowedRoles.find((id: string) => roles.includes(id))) return false;
+                        }
+
+                        if (c.allowedChannels?.length) {
+                                if (!overrideExists) overrideExists = true;
+
+                                if (!c.allowedChannels.find((id: string) => id === channel.id)) return false;
+                        }
+
+                        if (c.ignoredRoles?.length) {
+                                if (!overrideExists) overrideExists = true;
+
+                                if (c.ignoredRoles.find((id: string) => roles.includes(id))) return false;
+                        }
+
+                        if (c.ignoredChannels?.length) {
+                                if (!overrideExists) overrideExists = true;
+
+                                if (c.ignoredChannels.find((id: string) => id === channel.id)) return false;
+                        }
+
+                        if (overrideExists) return true;
+
+                        return false;
+                };
+
+                canInvoke = checkPerms(<types.CommandConfig>ctx.commandConfig);
+
+                if (!canInvoke && !overrideExists) {
+                        canInvoke = checkPerms(ctx.moduleConfig);
+                }
+
+                if (!canInvoke && !overrideExists) {
+                        canInvoke = checkPerms(ctx.guildConfig);
+                }
+
+                if (!overrideExists && ctx.module.allowedByDefault) {
+                        return true;
+                }
+
+                return canInvoke;
         }
 
         private deleteCommand(ctx: Context): Promise<void> {

@@ -14,7 +14,7 @@ export default new Command<Info>({
                 msg += 'Premium enables an improved engel experience by giving you access to an improved and extended feature set.\n';
                 msg += 'It also helps the development and uptime of the bot. No, it\'s not available yet (still under development!).\n';
 
-                if (permissions.isOwner(ctx) && ctx.guildConfig.isPremium && !ctx.guildConfig.hasPremium) {
+                if (permissions.isOwner(ctx.guild, ctx.author) && ctx.guildConfig.isPremium && !ctx.guildConfig.hasPremium) {
                         msg += 'You somehow have a premium plan for this guild. You will be able to invite the premium bot when the beta launches.';
                 }
 
