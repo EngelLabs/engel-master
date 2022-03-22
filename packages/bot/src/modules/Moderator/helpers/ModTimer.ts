@@ -80,8 +80,8 @@ export default class ModTimer extends Base {
                         null,
                         null,
                         null,
-                        member,
                         this.eris.user,
+                        member,
                         null
                 );
 
@@ -110,8 +110,8 @@ export default class ModTimer extends Base {
                                         null,
                                         null,
                                         null,
-                                        user,
                                         this.eris.user,
+                                        user,
                                         null
                                 );
                         })
@@ -164,8 +164,8 @@ export default class ModTimer extends Base {
                                         null,
                                         null,
                                         null,
-                                        null,
                                         this.eris.user,
+                                        null,
                                         channel
                                 );
                         })
@@ -207,8 +207,8 @@ export default class ModTimer extends Base {
                                         null,
                                         null,
                                         null,
-                                        user,
                                         this.eris.user,
+                                        user,
                                         channel
                                 );
                         })

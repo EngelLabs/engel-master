@@ -321,8 +321,8 @@ export default class Moderation extends Base {
                                                                 null,
                                                                 limit,
                                                                 reason,
-                                                                null,
                                                                 mod,
+                                                                null,
                                                                 channel
                                                         );
 
