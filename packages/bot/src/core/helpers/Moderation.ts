@@ -327,6 +327,8 @@ export default class Moderation extends Base {
                                                         );
 
                                                         resolve();
+
+                                                        return null;
                                                 })
                                                 .catch(resolve);
                                 })
