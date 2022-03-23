@@ -146,11 +146,7 @@ export default class Module extends Base {
          */
         public inject(core: Core) {
                 if (this.injectHook) {
-                        try {
-                                this.injectHook();
-                        } catch (err) {
-                                this.log(err, 'error');
-                        }
+                        this.injectHook();
                 }
 
                 if (this.commands) {
@@ -189,11 +185,7 @@ export default class Module extends Base {
          */
         public eject(core: Core) {
                 if (this.ejectHook) {
-                        try {
-                                this.ejectHook();
-                        } catch (err) {
-                                this.log(err, 'error');
-                        }
+                        this.ejectHook();
                 }
 
                 if (this.commands) {
