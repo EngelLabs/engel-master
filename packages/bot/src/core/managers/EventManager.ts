@@ -479,10 +479,6 @@ export default class EventManager extends Base {
         private messageCreate(
                 message: eris.Message<eris.PossiblyUncachedTextableChannel>
         ): Promise<types.Events['messageCreate'] | null> {
-                if (message.author.bot) {
-                        return Promise.resolve(null);
-                }
-
                 // Types are ignored here because it's a royal pita.
 
                 if (!message.guildID) {

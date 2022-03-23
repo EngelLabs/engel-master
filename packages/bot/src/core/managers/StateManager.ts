@@ -50,6 +50,8 @@ export default class CacheManager extends Base {
         private messageCreate({ message }: types.GuildEvents['messageCreate']): void {
                 if (!this.config.messageCache) return;
 
+                if (message.author.bot) return;
+
                 const copied = {
                         id: message.id,
                         content: message.content,

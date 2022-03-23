@@ -106,6 +106,8 @@ export default class Core extends Module {
         private async handleCommand(p: types.Events['messageCreate']): Promise<void> {
                 const { isTester, isDM, message } = p;
 
+                if (message.author.bot) return;
+
                 const isTesting = <boolean>p.isTesting;
                 const guildConfig = <types.Guild>p.guildConfig;
 
