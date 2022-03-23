@@ -96,19 +96,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
                         module = new Module();
 
-                        if (module.disabled) {
-                                this._log(`Skipping disabled module "${module.name}".`);
-
-                                return false;
-                        }
-
-                        module.inject(this._core);
-
-                        this.add(module);
-
-                        this._log(`Loaded "${module.name}".`);
-
-                        return true;
+                        return this._loadModule(module);
                 } catch (err: any) {
                         if (module) {
                                 module.eject(this._core);
@@ -136,7 +124,36 @@ export default class ModuleCollection extends core.Collection<Module> {
                 if (!module) return false;
 
                 this.unloadSingle(module.name);
-                this.loadSingle(module.name);
+
+                try {
+                        this.loadSingle(module.name);
+                } catch (err) {
+                        // Loading the new version of the module failed,
+                        // fall back to previous working version.
+                        // reconstructing to clear any bad state that
+                        // the inject/eject hooks can cause
+                        const _ModuleConstructor = (<any>module).constructor;
+
+                        this._loadModule(new _ModuleConstructor());
+
+                        throw err;
+                }
+
+                return true;
+        }
+
+        private _loadModule(module: Module): boolean {
+                if (module.disabled) {
+                        this._log(`Skipping disabled module "${module.name}".`);
+
+                        return false;
+                }
+
+                module.inject(this._core);
+
+                this.add(module);
+
+                this._log(`Loaded "${module.name}".`);
 
                 return true;
         }
