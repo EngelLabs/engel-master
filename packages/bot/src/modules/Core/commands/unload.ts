@@ -12,6 +12,10 @@ export default new Command<Core>({
 
                 try {
                         var res = ctx.core.modules.unload(ctx.args.length ? ctx.args : null);
+
+                        if (!ctx.core.modules.get('core')) {
+                                ctx.core.modules.load(['Core']);
+                        }
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }
