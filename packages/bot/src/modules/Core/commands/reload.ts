@@ -10,13 +10,21 @@ const reload = new Command<Core>({
         execute: function (ctx) {
                 if (!ctx.baseConfig.dev) return Promise.resolve();
 
+                const start = Date.now();
+
                 try {
                         var res = ctx.core.modules.reload(ctx.args.length ? ctx.args : null);
                 } catch (err) {
-                        return ctx.error(`Something went wrong: ${err}`);
+                        return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');
                 }
 
-                return ctx.success(`Reloaded ${res} modules`);
+                if (!res) {
+                        return ctx.error('Could not find any modules to reload.');
+                }
+
+                const diff = Date.now() - start;
+
+                return ctx.success(`Reloaded ${res} modules. Time expended: ${diff}ms`);
         }
 });
 
