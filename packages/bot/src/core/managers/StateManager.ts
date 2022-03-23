@@ -55,7 +55,8 @@ export default class CacheManager extends Base {
                         content: message.content,
                         author: message.author,
                         channel: message.channel,
-                        createdAt: message.createdAt
+                        createdAt: message.createdAt,
+                        guildID: message.guildID
                 };
 
                 this._messages[copied.id] = copied;

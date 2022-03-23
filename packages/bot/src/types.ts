@@ -12,6 +12,7 @@ declare module '@engel/types' {
                 author: eris.User;
                 channel: eris.GuildTextableChannel;
                 createdAt: number;
+                guildID: string;
         }
 
         type GuildMessage = eris.Message<eris.GuildTextableChannel>;
