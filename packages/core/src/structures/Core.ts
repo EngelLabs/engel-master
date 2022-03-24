@@ -1,4 +1,5 @@
 import * as models from '../models';
+import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type * as mongoose from 'mongoose';
 import type * as ioredis from 'ioredis';
@@ -19,6 +20,7 @@ global.Promise = require('bluebird');
 export default class Core extends EventEmitter {
         public baseConfig = baseConfig;
         public models = models;
+        public utils = utils;
         public eris: eris.Client;
         public logger: winston.Logger;
         public mongoose: mongoose.Mongoose;
