@@ -16,5 +16,11 @@
     ],
     "globals": {
         "NodeJS": true
+    },
+    "rules": {
+        "semi": [
+            0,
+            "always"
+        ]
     }
 }

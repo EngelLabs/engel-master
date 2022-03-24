@@ -2,7 +2,6 @@
 import * as eris from 'eris';
 import * as prettyMS from 'pretty-ms';
 import * as moment from 'moment';
-import * as utils from '@engel/utils';
 import type * as types from '@engel/types';
 import Base from '../structures/Base';
 
@@ -58,7 +57,7 @@ export default class Moderation extends Base {
 
                         if (member.roles.length) {
                                 const roles = member.guild.roles;
-                                const topRole = utils.getTopRole(this.eris, guild);
+                                const topRole = this.utils.getTopRole(guild);
 
                                 if (topRole) {
                                         if (member.roles.find(id => {

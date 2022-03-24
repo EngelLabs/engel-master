@@ -1,5 +1,7 @@
 /* eslint-disable no-use-before-define */
 declare module '@engel/types' {
+        import type * as eris from 'eris';
+
         export type Primitives = 'bigint' | 'boolean' | 'function' | 'null' | 'number' | 'string' | 'symbol' | 'undefined';
 
         interface VoidFunc {
@@ -168,4 +170,16 @@ declare module '@engel/types' {
                 info: string;
                 date: number;
         }
+
+        export interface EmbedOptions extends eris.EmbedOptions {
+                colour?: number;
+        }
+
+        export interface AdvancedMessageContent extends eris.AdvancedMessageContent {
+                embed?: EmbedOptions;
+                embeds?: EmbedOptions[];
+                file?: eris.FileContent | eris.FileContent[];
+        }
+
+        export type ResponseType = keyof Config['colours'] & keyof Config['emojis'];
 }

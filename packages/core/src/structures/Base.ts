@@ -1,3 +1,4 @@
+import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
 import Core from './Core';
@@ -102,6 +103,10 @@ export default class Base {
 
         public get redis() {
                 return this.core.redis;
+        }
+
+        public get utils() {
+                return utils;
         }
 
         public log(message?: any, level?: types.LogLevels, prefix?: string): void {

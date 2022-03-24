@@ -1,4 +1,3 @@
-import * as utils from '@engel/utils';
 import * as eris from 'eris';
 import type * as types from '@engel/types';
 import Base from './Base';
@@ -16,12 +15,12 @@ interface ContextOptions<M extends Module, C extends Command> {
         guildConfig: types.Guild;
 }
 
-interface ContextResponseOptions extends Omit<eris.AdvancedMessageContent, 'content'> {
+interface ContextResponseOptions extends Omit<types.AdvancedMessageContent, 'content'> {
         force?: boolean;
 }
 
 interface ResponseFunction {
-        (content?: string, options?: ContextResponseOptions): Promise<eris.Message | undefined>;
+        (content?: string, options?: ContextResponseOptions): Promise<eris.Message | null>;
 }
 
 interface EmojiResponseFunction {
@@ -30,15 +29,6 @@ interface EmojiResponseFunction {
 
 interface ReactionFunction {
         (): Promise<void>;
-}
-
-interface Embed extends eris.EmbedOptions {
-        colour?: number;
-}
-
-interface ContextSendOptions extends eris.AdvancedMessageContent {
-        embed?: Embed;
-        embeds?: Embed[];
 }
 
 /**
@@ -118,7 +108,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 
         public get topRole(): eris.Role | undefined {
-                return utils.getTopRole(this.eris, this.guild);
+                return this.utils.getTopRole(this.guild);
         }
 
         public get moduleConfig(): types.ModuleConfig | undefined {
@@ -145,123 +135,43 @@ export default class Context<M extends Module = Module, C extends Command = Comm
                 super.log(message, level, `Commands.${prefix}`);
         }
 
-        public send(options?: ContextSendOptions | string, file?: eris.FileContent | eris.FileContent[]): Promise<eris.Message | undefined> {
-                if (!options) {
-                        return Promise.resolve(null);
-                }
-
-                if (typeof options !== 'string' && options.embed) {
-                        if (!options.embeds) {
-                                options.embeds = [];
-                        }
-
-                        if (options.embed.colour && !options.embed.color) {
-                                options.embed.color = options.embed.colour;
-                                delete options.embed.colour;
-                        }
-
-                        options.embeds.push(options.embed);
-
-                        delete options.embed;
-                }
-
-                if (this.guild) {
-                        const permissions = this.permissions;
-
-                        if (typeof options !== 'string' && options.embeds && !permissions.has('embedLinks')) {
-                                if (permissions.has('sendMessages')) {
-                                        this.send("I'm missing permissions to `Embed Links` and can't display this message.");
-                                }
-
-                                return Promise.resolve(null);
-                        }
-                }
-
-                return this.eris.createMessage(this.channel.id, options, file);
+        public send(options?: string | types.AdvancedMessageContent) {
+                return this.utils.sendMessage(this.channel, options);
         }
 
-        codeblock(content?: string, lang: string = '') {
+        public codeblock(content?: string, lang: string = '') {
                 return this.send('```' + lang + '\n' + content + '\n```');
         }
 }
 
-function createResponseFunction(name: string): ResponseFunction {
-        return function (content?: string, options?: ContextResponseOptions) {
-                const colour = this.config.colours[name];
-                const emoji = this.config.emojis[name];
-
+function createResponseFunction(name: types.ResponseType): ResponseFunction {
+        return function (this: Context, content?: string, options?: ContextResponseOptions) {
                 if (this.done && !options?.force) {
                         this.log('Skipping response as context has already been responded to.');
 
-                        return Promise.resolve();
+                        return Promise.resolve(null);
                 }
 
                 this.done = true;
 
-                if (!content) return Promise.resolve();
-
-                const toSend: any = options || {};
-
-                if (this.guild) {
-                        const perms = this.permissions;
-
-                        if (!perms.has('sendMessages')) {
-                                return Promise.resolve();
-                        }
-
-                        if (perms.has('useExternalEmojis') && !this.config.disableEmojis) {
-                                content = `<${emoji}> ` + content;
-                        }
-
-                        if (perms.has('embedLinks')) {
-                                toSend.embed = {
-                                        description: content,
-                                        color: colour
-                                };
-                        } else {
-                                toSend.content = content;
-                        }
-                } else {
-                        toSend.embed = {
-                                description: content,
-                                color: colour
-                        };
-                }
-
-                return this.send(toSend);
+                return this.utils.sendMessage(this.channel, content, name);
         };
 }
 
-function createEmojiResponseFunction(name: string): EmojiResponseFunction {
-        return function () {
+function createEmojiResponseFunction(name: types.ResponseType): EmojiResponseFunction {
+        return function (this: Context) {
                 return this.send('<' + this.config.emojis[name] + '>');
         };
 }
 
-function createAddReactionFunction(name: string): ReactionFunction {
-        return function () {
-                const perms = this.permissions;
-
-                if (perms && !perms.has('useExternalEmojis')) {
-                        return Promise.resolve();
-                }
-
-                return this.eris.addMessageReaction(
-                        this.channel.id, this.message.id, this.config.emojis[name]
-                );
+function createAddReactionFunction(name: types.ResponseType): ReactionFunction {
+        return function (this: Context) {
+                return this.utils.addReaction(this.channel, this.message, name);
         };
 }
 
-function createRemoveReactionFunction(name: string): ReactionFunction {
-        return function () {
-                const perms = this.permissions;
-
-                if (perms && !perms.has('useExternalEmojis')) {
-                        return Promise.resolve();
-                }
-
-                return this.eris.removeMessageReaction(
-                        this.channel.id, this.message.id, this.config.emojis[name]
-                );
+function createRemoveReactionFunction(name: types.ResponseType): ReactionFunction {
+        return function (this: Context) {
+                return this.utils.removeReaction(this.channel, this.message, name);
         };
 }
