@@ -101,9 +101,9 @@ export default class EventManager extends Base {
                                 fn = <EventHandler<K>>(() => true);
                         }
 
-                        const wrapped = (payload: any) => {
+                        const wrapped: any = (payload: any) => {
                                 if (fn(payload)) {
-                                        this._events.removeListener(eventName, wrapped);
+                                        this.unregisterListener(eventName, wrapped);
                                         clearTimeout(timeoutTask);
 
                                         resolve(payload);
@@ -114,13 +114,13 @@ export default class EventManager extends Base {
 
                         if (timeout) {
                                 timeoutTask = setTimeout(() => {
-                                        this._events.removeListener(eventName, wrapped);
+                                        this.unregisterListener(eventName, wrapped);
 
                                         reject();
                                 }, timeout);
                         }
 
-                        this.registerListener(eventName, <any>wrapped);
+                        this.registerListener(eventName, wrapped);
                 });
         }
 
