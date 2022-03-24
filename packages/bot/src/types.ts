@@ -38,10 +38,6 @@ declare module '@engel/types' {
                 isTesting: boolean;
         }
 
-        interface MessagePayload {
-                isDM: boolean;
-        }
-
         interface UserPayload {
                 isAdmin: boolean;
                 isTester: boolean;
@@ -71,7 +67,7 @@ declare module '@engel/types' {
                 interactionCreate: { interaction: GuildInteraction } & Partial<UserPayload>;
                 inviteCreate: { guild: eris.Guild; invite: eris.Invite };
                 inviteDelete: { guild: eris.Guild; invite: eris.Invite };
-                messageCreate: { message: GuildMessage } & MessagePayload & UserPayload;
+                messageCreate: { message: GuildMessage } & UserPayload;
                 messageDelete: { message: PartialMessage } & UserPayload;
                 messageDeleteBulk: { messages: PartialMessage[] };
                 messageReactionAdd: { message: eris.PossiblyUncachedMessage; emoji: eris.PartialEmoji; reactor: eris.Member | eris.Uncached } & UserPayload;
@@ -108,7 +104,7 @@ declare module '@engel/types' {
                 error: { err: Error; id?: number };
                 hello: { trace: string; id: number };
                 interactionCreate: { interaction: PrivateInteraction; } & Partial<UserPayload>; // User payload only exists if interaction is not eris.PingInteraction
-                messageCreate: { message: PrivateMessage } & MessagePayload & UserPayload;
+                messageCreate: { message: PrivateMessage } & UserPayload;
                 messageReactionAdd: { message: eris.PossiblyUncachedMessage; emoji: eris.PartialEmoji; reactor: eris.Uncached } & UserPayload;
                 messageReactionRemove: { message: eris.PossiblyUncachedMessage; emoji: eris.PartialEmoji; userID: string } & UserPayload;
                 messageReactionRemoveAll: { message: eris.PossiblyUncachedMessage; };

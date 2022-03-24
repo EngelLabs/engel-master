@@ -12,7 +12,6 @@ interface ContextOptions<M extends Module, C extends Command> {
         message: eris.Message;
         command: C;
         module: M;
-        isDM: boolean;
         isAdmin: boolean;
         guildConfig: types.Guild;
 }
@@ -55,7 +54,6 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         public message: eris.Message;
         public command: C;
         public module: M;
-        public isDM: boolean;
         public isAdmin: boolean;
         public guildConfig: types.Guild;
         public info = createResponseFunction('info');
@@ -87,7 +85,6 @@ export default class Context<M extends Module = Module, C extends Command = Comm
                 this.message = options.message;
                 this.command = options.command;
                 this.module = options.module;
-                this.isDM = options.isDM;
                 this.isAdmin = options.isAdmin;
                 this.guildConfig = options.guildConfig;
         }

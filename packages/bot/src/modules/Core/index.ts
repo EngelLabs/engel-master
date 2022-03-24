@@ -104,14 +104,14 @@ export default class Core extends Module {
         }
 
         private async handleCommand(p: types.Events['messageCreate']): Promise<void> {
-                const { isTester, isDM, message } = p;
+                const { isTester, message } = p;
 
                 if (message.author.bot) return;
 
                 const isTesting = <boolean>p.isTesting;
                 const guildConfig = <types.Guild>p.guildConfig;
 
-                if (baseConfig.dev && (!isTester || (!isDM && !isTesting))) return;
+                if (baseConfig.dev && message.guildID && (!isTester || !isTesting)) return;
 
                 if (guildConfig) {
                         if (guildConfig.isIgnored) return;
@@ -121,7 +121,7 @@ export default class Core extends Module {
                 const config = this.config;
 
                 if (config.adminOnly || config.paused) return;
-                if (isDM && !config.dmCommands) return;
+                if (!config.dmCommands && !message.guildID) return;
                 if (config.users.blacklisted.includes(message.author.id)) return;
 
                 const last = this.globalCooldowns.get(message.author.id);
@@ -149,7 +149,7 @@ export default class Core extends Module {
                         if (!canRun) return;
                 }
 
-                if (!isDM && !(
+                if (message.guildID && !(
                         this.permissions.isOwner(ctx.guild, ctx.author) ||
                         this.permissions.isServerAdmin(ctx.guild, ctx.author) ||
                         this.canInvoke(ctx)
@@ -196,7 +196,7 @@ export default class Core extends Module {
                 const moduleName = module.dbName;
                 const commandName = command.dbName;
 
-                if (!isDM && !command.alwaysEnabled) {
+                if (message.guildID && !command.alwaysEnabled) {
                         if (!module.isEnabled(guildConfig)) {
                                 if (!guildConfig.noDisableWarning) {
                                         ctx.error(`The \`${module.name}\` module is disabled in this server.`);
@@ -232,14 +232,14 @@ export default class Core extends Module {
         }
 
         private resolveContext(payload: types.Events['messageCreate']): Context {
-                const { message, isAdmin, isDM } = payload;
+                const { message, isAdmin } = payload;
 
                 const isTesting = <boolean>payload.isTesting;
                 const guildConfig = <types.Guild>payload.guildConfig;
 
                 let prefixes: string[];
 
-                if (isDM) {
+                if (!message.guildID) {
                         prefixes = this.config.prefixes.dm;
                 } else {
                         prefixes = guildConfig.prefixes;
@@ -260,7 +260,7 @@ export default class Core extends Module {
 
                 if (typeof prefix !== 'string') return;
 
-                if (!isDM && guildConfig.client !== baseConfig.client.name && prefix !== adminPrefix) {
+                if (message.guildID && guildConfig.client !== baseConfig.client.name && prefix !== adminPrefix) {
                         if (!isTesting && (<eris.TextChannel>message.channel).guild.ownerID !== this.eris.user.id) {
                                 this.eris.leaveGuild(guildConfig.id).catch(() => false);
                         }
@@ -287,7 +287,7 @@ export default class Core extends Module {
                         command = subcommand;
                 }
 
-                if (isDM && !command.dmEnabled) return;
+                if (!message.guildID && !command.dmEnabled) return;
 
                 // const parseArg = name => {
                 //         const str = args.find(str => str.startsWith(name));
@@ -311,7 +311,6 @@ export default class Core extends Module {
                         message,
                         command,
                         module,
-                        isDM,
                         isAdmin,
                         guildConfig
                 });
@@ -456,7 +455,7 @@ export default class Core extends Module {
         }
 
         private async executeCommand(ctx: Context): Promise<any> {
-                const { command, prefix, isDM, isAdmin, args } = ctx;
+                const { command, prefix, isAdmin, args, message } = ctx;
 
                 if (args.length < command?.requiredArgs) {
                         const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
@@ -470,7 +469,7 @@ export default class Core extends Module {
                         return;
                 }
 
-                if (!isDM && command.requiredPermissions) {
+                if (message.guildID && command.requiredPermissions) {
                         const permissions = ctx.permissions;
                         const missingPermissions = [];
 
@@ -489,7 +488,7 @@ export default class Core extends Module {
                 try {
                         let execute: () => Promise<any>;
 
-                        if (!isDM) this.deleteCommand(ctx);
+                        if (message.guildID) this.deleteCommand(ctx);
 
                         if (command.namespace) {
                                 execute = () => {

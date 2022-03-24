@@ -482,11 +482,11 @@ export default class EventManager extends Base {
                 // Types are ignored here because it's a royal pita.
 
                 if (!message.guildID) {
-                        return Promise.resolve(<any>{ isDM: true, message })
+                        return Promise.resolve(<any>{ message })
                                 .then(payload => this._userPayload(payload, message.author.id));
                 }
 
-                return this._guildPayload(<any>{ isDM: false, message }, message.guildID, true)
+                return this._guildPayload(<any>{ message }, message.guildID, true)
                         .then(payload => this._userPayload(payload, message.author.id));
         }
 
