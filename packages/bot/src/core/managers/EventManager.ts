@@ -120,7 +120,7 @@ export default class EventManager extends Base {
                                 }, timeout);
                         }
 
-                        this._events.addListener(eventName, wrapped);
+                        this.registerListener(eventName, <any>wrapped);
                 });
         }
 
