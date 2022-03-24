@@ -58,11 +58,23 @@ export default class Moderator extends Module {
         }
 
         private async guildMemberAdd(p: types.GuildEvents['guildMemberAdd']) {
-                const { guildConfig, guild, member } = p;
+                const { guildConfig, guild, member, isTester, isTesting, isAdmin } = p;
 
                 if (!guildConfig) return;
 
-                if (guildConfig.modules?.mod?.disabled) {
+                if (!this.isEnabled(guildConfig)) {
+                        return;
+                }
+
+                if (member.id === this.eris.user.id) {
+                        return;
+                }
+
+                if (isAdmin) {
+                        return;
+                }
+
+                if (this.baseConfig.dev && (!isTester || !isTesting)) {
                         return;
                 }
 
