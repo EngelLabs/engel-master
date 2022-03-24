@@ -5,9 +5,30 @@
 /* eslint-disable object-curly-newline */
 import * as superagent from 'superagent';
 import Command from '../../../core/structures/Command';
+import type Context from '../../../core/structures/Context';
 import type Core from '..';
 
-export default new Command<Core>({
+function _parseBody(ctx: Context): string {
+        const hasNewLine = ctx.args.find(s => s.includes('\n')) !== undefined;
+
+        let body = ctx.args.join(' ').replace('\n', '') || 'undefined';
+
+        if (body.startsWith('```') && body.endsWith('```')) {
+                body = body.slice(3, -3);
+
+                if (body.startsWith('js')) {
+                        body = body.slice(2).trimLeft();
+                }
+        }
+
+        if (!body.includes('return') && !hasNewLine) {
+                body = `return ${body}`;
+        }
+
+        return body;
+}
+
+const _eval = new Command<Core>({
         name: 'eval',
         info: 'Evaluate some js',
         usage: '<*code>',
@@ -17,7 +38,7 @@ export default new Command<Core>({
         execute: async function (ctx) {
                 let { message, guild, author, core, member, channel,
                         args, eris, guildConfig, baseConfig, config, logger,
-                        models, mongoose, redis, me, permissions } = ctx,
+                        models, mongoose, redis, me, permissions, utils } = ctx,
                         __ctx = ctx, __res: any;
 
                 let api = (method: string, uri: string, data = {}) => {
@@ -30,21 +51,7 @@ export default new Command<Core>({
                                 .catch((err: superagent.ResponseError) => { return { s: err?.response?.status, d: err?.response?.body }; });
                 };
 
-                const hasNewLine = ctx.args.find(s => s.includes('\n')) !== undefined;
-
-                let body = __ctx.args.join(' ').replace('\n', '') || 'undefined';
-
-                if (body.startsWith('```') && body.endsWith('```')) {
-                        body = body.slice(3, -3);
-
-                        if (body.startsWith('js')) {
-                                body = body.slice(2).trimLeft();
-                        }
-                }
-
-                if (!body.includes('return') && !hasNewLine) {
-                        body = `return ${body}`;
-                }
+                const body = _parseBody(ctx);
 
                 try {
                         /* eslint-disable-next-line no-eval */
@@ -71,3 +78,34 @@ export default new Command<Core>({
                         .catch(err => ctx.error(err?.toString?.()));
         }
 });
+
+_eval.command({
+        name: 'web',
+        info: 'Evaluate some js on the web server',
+        usage: '<*code>',
+        aliases: ['w'],
+        cooldown: 0,
+        dmEnabled: true,
+        execute: async function (ctx) {
+                let res;
+
+                const body = _parseBody(ctx);
+
+                try {
+                        /* eslint-disable-next-line no-eval */
+                        res = await superagent
+                                .get('http://localhost:8080/admin/eval')
+                                .set('User-Agent', ctx.baseConfig.name)
+                                .set('Authorization', ctx.config.apiToken)
+                                .send({ toEval: body })
+                                .then(resp => resp.text);
+                } catch (err) {
+                        res = `Rejected: ${err?.toString?.() || err}`;
+                }
+
+                return ctx.codeblock(res, 'js')
+                        .catch(err => ctx.error(err?.toString?.()));
+        }
+});
+
+export default _eval;
