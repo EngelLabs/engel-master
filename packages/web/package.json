@@ -1,5 +1,5 @@
 {
-    "name": "engel-web",
+    "name": "@engel/web",
     "version": "0.1.1",
     "private": true,
     "description": "Web server for engel",

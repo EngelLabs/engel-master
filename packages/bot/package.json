@@ -1,5 +1,5 @@
 {
-    "name": "engel-bot",
+    "name": "@engel/bot",
     "version": "0.1.0",
     "private": true,
     "description": "A Discord bot to provide some nice utilities.",
