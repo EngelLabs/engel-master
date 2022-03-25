@@ -70,10 +70,10 @@ declare module '@engel/types' {
                 messageCreate: { message: GuildMessage } & UserPayload;
                 messageDelete: { message: PartialMessage } & UserPayload;
                 messageDeleteBulk: { messages: PartialMessage[] };
-                messageReactionAdd: { message: eris.PossiblyUncachedMessage; emoji: eris.PartialEmoji; reactor: eris.Member | eris.Uncached } & UserPayload;
-                messageReactionRemove: { message: eris.PossiblyUncachedMessage; emoji: eris.PartialEmoji; userID: string } & UserPayload;
-                messageReactionRemoveAll: { message: eris.PossiblyUncachedMessage };
-                messageReactionRemoveEmoji: { message: eris.PossiblyUncachedMessage; emoji: eris.PartialEmoji };
+                messageReactionAdd: { message: eris.PossiblyUncachedMessage | PartialMessage; emoji: eris.PartialEmoji; reactor: eris.Member | eris.Uncached } & UserPayload;
+                messageReactionRemove: { message: eris.PossiblyUncachedMessage | PartialMessage; emoji: eris.PartialEmoji; userID: string } & UserPayload;
+                messageReactionRemoveAll: { message: eris.PossiblyUncachedMessage | PartialMessage };
+                messageReactionRemoveEmoji: { message: eris.PossiblyUncachedMessage | PartialMessage; emoji: eris.PartialEmoji };
                 messageUpdate: { message: GuildMessage; oldMessage: GuildMessage | PartialMessage } & UserPayload;
                 presenceUpdate: { other: eris.Member; oldPresences: eris.Presence | null } & UserPayload;
                 stageInstanceCreate: { stageInstance: eris.StageInstance };

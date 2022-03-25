@@ -544,7 +544,7 @@ export default class EventManager extends Base {
                         return this._userPayload({ message, emoji, reactor }, reactor.id);
                 }
 
-                return this._guildPayload({ message, emoji, reactor }, message.guildID)
+                return this._guildPayload({ message: this._tryMessageUpgrade(message), emoji, reactor }, message.guildID)
                         .then(payload => this._userPayload(payload, reactor.id));
         }
 
@@ -557,7 +557,7 @@ export default class EventManager extends Base {
                         return this._userPayload({ message, emoji, userID }, userID);
                 }
 
-                return this._guildPayload({ message, emoji, userID }, message.guildID)
+                return this._guildPayload({ message: this._tryMessageUpgrade(message), emoji, userID }, message.guildID)
                         .then(payload => this._userPayload(payload, userID));
         }
 
@@ -568,7 +568,7 @@ export default class EventManager extends Base {
                         return Promise.resolve({ message });
                 }
 
-                return this._guildPayload({ message }, message.guildID);
+                return this._guildPayload({ message: this._tryMessageUpgrade(message) }, message.guildID);
         }
 
         private messageReactionRemoveEmoji(
@@ -579,6 +579,16 @@ export default class EventManager extends Base {
                         return Promise.resolve({ message, emoji });
                 }
 
-                return this._guildPayload({ message, emoji }, message.guildID);
+                return this._guildPayload({ message: this._tryMessageUpgrade(message), emoji }, message.guildID);
+        }
+
+        private _tryMessageUpgrade(
+                message: eris.PossiblyUncachedMessage
+        ): eris.PossiblyUncachedMessage | types.PartialMessage {
+                if (!(message instanceof eris.Message)) {
+                        return this.core.state.getMessage(message.id) || message;
+                }
+
+                return message;
         }
 }
