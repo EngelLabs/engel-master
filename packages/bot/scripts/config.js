@@ -3,6 +3,8 @@
 const core = new (require('../build/src/core/Core')).default();
 const logger = core.logger = (require('@engel/core').Logger)(core);
 const mongoose = core.mongoose = (require('@engel/core').Mongoose)(core);
+mongoose.set('autoCreate', true);
+mongoose.set('autoIndex', true);
 const state = process.argv[3] || core.baseConfig.client.state;
 const opt = process.argv[2];
 logger.info(`State: "${state}".`);

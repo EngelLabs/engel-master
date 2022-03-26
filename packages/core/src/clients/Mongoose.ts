@@ -27,7 +27,9 @@ export default function Mongoose(core: Core): mongoose.Mongoose {
         mongoose.connect(uri, {
                 connectTimeoutMS: 4500,
                 serverSelectionTimeoutMS: 2000,
-                keepAlive: true
+                keepAlive: true,
+                autoIndex: false,
+                autoCreate: false
         });
 
         return mongoose;
