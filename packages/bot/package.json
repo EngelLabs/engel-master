@@ -5,7 +5,6 @@
     "description": "A Discord bot to provide some nice utilities.",
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "scripts": {
-        "prestart": "npm run config",
         "start": "node build/src/index.js",
         "dev": "tsc-watch --onFirstSuccess \"npm run watch\"",
         "watch": "nodemon",
