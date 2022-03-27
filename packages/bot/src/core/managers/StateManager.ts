@@ -6,8 +6,8 @@ import type Core from '../Core';
  * Manages application state
  */
 export default class StateManager extends Base {
-        private _eventCount: number = 0;
-        private _lastSynced?: number;
+        private _wsEvents: number = 0;
+        private _httpEvents: number = 0;
         private _messages: Record<string, types.PartialMessage> = {};
         private _uncacheInterval?: NodeJS.Timer;
 
@@ -15,13 +15,37 @@ export default class StateManager extends Base {
                 super(core);
 
                 core.events
+                        .registerListener('rawWS', this.rawWS.bind(this))
+                        .registerListener('rawREST', this.rawREST.bind(this))
                         .registerListener('messageCreate', this.messageCreate.bind(this))
                         .registerListener('messageUpdate', this.messageUpdate.bind(this))
                         .registerListener('messageDelete', this.messageDelete.bind(this))
                         .registerListener('guildDelete', this.guildDelete.bind(this))
                         .registerListener('channelDelete', this.channelDelete.bind(this));
 
-                core.on('config', this._configure.bind(this));
+                core
+                        .on('config', this._configure.bind(this));
+
+                setInterval(this._sync.bind(this), 30000);
+        }
+
+        private _sync() {
+                const { _wsEvents: wsEvents, _httpEvents: httpEvents } = this,
+                        clientID = this.eris.user.id;
+
+                this._wsEvents = 0;
+                this._httpEvents = 0;
+
+                const multi = this.redis.multi();
+
+                multi
+                        .hset('engel:events', 'ws', wsEvents)
+                        .hset('engel:events', 'http', httpEvents)
+                        .hset('engel:guilds', clientID, this.eris.guilds.size)
+                        .hset('engel:members', clientID, this.eris.guilds.reduce((mCount, g) => mCount + g.memberCount, 0))
+                        .hset('engel:users', clientID, this.eris.users.size);
+
+                multi.exec().catch(err => this.log(err, 'error'));
         }
 
         private _configure(config: types.Config): void {
@@ -47,6 +71,14 @@ export default class StateManager extends Base {
          */
         public getMessage(id: string): types.PartialMessage | undefined {
                 return this._messages[id];
+        }
+
+        private rawWS() {
+                this._wsEvents++;
+        }
+
+        private rawREST() {
+                this._httpEvents++;
         }
 
         private messageCreate({ message }: types.GuildEvents['messageCreate']): void {
