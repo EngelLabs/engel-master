@@ -18,7 +18,6 @@ export default class Core extends Module {
         private cooldowns: Map<string, Cooldown>;
         private globalCooldowns: Map<string, number>;
         private permissions: Permission;
-        private events?: number;
 
         public constructor() {
                 super();
@@ -40,7 +39,6 @@ export default class Core extends Module {
                 this.listeners.push(this.messageCreate.bind(this));
                 // this.listeners.push(this.guildCreate.bind(this));
                 // this.listeners.push(this.guildDelete.bind(this));
-                this.listeners.push(this.rawWS.bind(this));
 
                 const admin = new Command<Core>({
                         name: 'admin',
@@ -519,6 +517,8 @@ export default class Core extends Module {
                                         }
                                 }
                         }
+
+                        this.core.emit('command', command.dbName);
                 } catch (err) {
                         ctx.err = err;
                         this.commandError(ctx);
@@ -621,14 +621,6 @@ export default class Core extends Module {
                 }
 
                 this.postEmbed(embed);
-        }
-
-        private rawWS(): void {
-                if (!this.events) {
-                        this.events = 0;
-                }
-
-                this.events++;
         }
 
         private commandSuccess({ isAdmin, command, author, message, guild }: Context): void {
