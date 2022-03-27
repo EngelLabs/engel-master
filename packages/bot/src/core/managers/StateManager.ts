@@ -3,9 +3,11 @@ import Base from '../structures/Base';
 import type Core from '../Core';
 
 /**
- * Manages cache of Discord objects
+ * Manages application state
  */
-export default class CacheManager extends Base {
+export default class StateManager extends Base {
+        private _eventCount: number = 0;
+        private _lastSynced?: number;
         private _messages: Record<string, types.PartialMessage> = {};
         private _uncacheInterval?: NodeJS.Timer;
 
