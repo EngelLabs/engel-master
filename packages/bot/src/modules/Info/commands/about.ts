@@ -16,6 +16,7 @@ export default new Command<Info>({
         alwaysEnabled: true,
         dmEnabled: true,
         info: 'Get information about the bot',
+        aliases: ['stats', 'info'],
         cooldown: 20000,
         execute: async function (ctx) {
                 const owner = ctx.eris.users.get(ctx.config.author.id);
