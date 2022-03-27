@@ -1,3 +1,4 @@
+import { Redis } from '@engel/core';
 import type * as mongodb from 'mongodb';
 import type * as mongoose from 'mongoose';
 import type * as types from '@engel/types';
@@ -17,8 +18,11 @@ export default class GuildCollection extends Map<string, types.Guild> {
 
                 this._core = core;
 
-                core.redis.subscribe('guildUpdate');
-                core.redis.on('message', this.guildUpdate.bind(this));
+                const subredis = Redis(core, false);
+
+                subredis.subscribe('guildUpdate');
+                subredis.on('message', this.guildUpdate.bind(this));
+
                 core.eris.on('guildCreate', this.guildCreate.bind(this));
                 core.eris.on('guildDelete', this.guildDelete.bind(this));
 
