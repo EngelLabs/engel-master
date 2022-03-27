@@ -3,6 +3,12 @@ import * as prettyMS from 'pretty-ms';
 import Command from '../../../core/structures/Command';
 import type Info from '..';
 
+const roundIfWhole = (num: number) => {
+        num = Number(num);
+
+        return num >= 1 ? Math.round(num) : num;
+};
+
 const reduce = (err: Error | null, data: { [key: string]: string }) => {
         if (err) {
                 throw err;
@@ -39,8 +45,8 @@ export default new Command<Info>({
                                 { name: 'Guilds', value: reduce(...guildCounts).toString(), inline: true },
                                 { name: 'Members', value: reduce(...memberCounts).toString(), inline: true },
                                 { name: 'Users', value: reduce(...userCounts).toString(), inline: true },
-                                { name: 'WS Recv', value: `${events[1].ws / 20}/sec`, inline: true },
-                                { name: 'HTTP', value: `${events[1].http / 20}/sec`, inline: true },
+                                { name: 'WS Recv', value: `${roundIfWhole(events[1].ws / 20)}/sec`, inline: true },
+                                { name: 'HTTP', value: `${roundIfWhole(events[1].http / 20)}/sec`, inline: true },
                                 { name: 'Uptime', value: prettyMS(Math.floor(process.uptime()) * 1000), inline: true },
                                 { name: 'Load (1m, 5m, 15m)', value: loadAvg, inline: true }
                         ],
