@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import type * as types from '@engel/types';
 import type Core from '../Core';
@@ -15,17 +14,15 @@ export default class ControllerCollection extends Map {
                 super();
 
                 this._core = core;
-
-                this.load();
         }
 
-        public load() {
+        public async load() {
                 const app = this._core.app;
 
                 this._middlewares = [];
                 this._routes = [];
 
-                this._loadControllers(controllersPath);
+                await this._loadControllers(controllersPath);
 
                 this._middlewares.sort((a: { uri: string }, b: { uri: string }) => {
                         return a.uri.length - b.uri.length;
@@ -50,7 +47,7 @@ export default class ControllerCollection extends Map {
                 this._core.log(message, level, 'Controllers');
         }
 
-        private _loadControllers(controllerPath: string) {
+        private async _loadControllers(controllerPath: string) {
                 try {
                         var controller = require(controllerPath);
                 } catch (err) {
@@ -69,7 +66,8 @@ export default class ControllerCollection extends Map {
                         let dirs;
 
                         try {
-                                dirs = fs.readdirSync(controllerPath).filter(f => !f.endsWith('.js.map'));
+                                dirs = (await this._core.utils.readdir(controllerPath))
+                                        .filter(f => !f.endsWith('.js.map'));
                         } catch (err) {
                                 if (err && ['ENOENT', 'ENOTDIR'].includes(err.code)) {
                                         return;

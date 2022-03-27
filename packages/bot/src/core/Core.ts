@@ -28,7 +28,7 @@ export default class Core extends core.Core {
                 this.commands = new CommandCollection(this);
                 this.modules = new ModuleCollection(this);
 
-                this.modules.load();
+                await this.modules.load();
 
                 if (baseConfig.dev) {
                         this.modules.register();

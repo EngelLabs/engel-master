@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import * as core from '@engel/core';
 import type * as eris from 'eris';
@@ -86,7 +85,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 return embed;
         }
 
-        public loadSingle(moduleName: string): boolean {
+        public async loadSingle(moduleName: string): Promise<boolean> {
                 if (this.get(moduleName)) return false;
 
                 let module: Module | undefined;
@@ -142,14 +141,14 @@ export default class ModuleCollection extends core.Collection<Module> {
                 return true;
         }
 
-        private _loadModule(module: Module): boolean {
+        private async _loadModule(module: Module): Promise<boolean> {
                 if (module.disabled) {
                         this._log(`Skipping disabled module "${module.name}".`);
 
                         return false;
                 }
 
-                module.inject(this._core);
+                await module.inject(this._core);
 
                 this.add(module);
 
@@ -158,17 +157,17 @@ export default class ModuleCollection extends core.Collection<Module> {
                 return true;
         }
 
-        public load(moduleNames?: string[]): number {
+        public async load(moduleNames?: string[]): Promise<number> {
                 moduleNames = moduleNames?.length
                         ? moduleNames
-                        : fs.readdirSync(modulesPath)
+                        : (await this._core.utils.readdir(modulesPath))
                                 .map(m => m.endsWith('.js') ? m.slice(0, -3) : m);
 
                 let ret = 0;
                 const initial = this.size === 0;
 
                 for (const moduleName of moduleNames) {
-                        if (this.loadSingle(moduleName)) ret += 1;
+                        if (await this.loadSingle(moduleName)) ret += 1;
                 }
 
                 if (initial) {

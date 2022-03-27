@@ -7,7 +7,7 @@ export default new Command<Core>({
         usage: '[...modules]',
         aliases: ['u'],
         dmEnabled: true,
-        execute: function (ctx) {
+        execute: async function (ctx) {
                 if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 const start = Date.now();
@@ -16,7 +16,7 @@ export default new Command<Core>({
                         var res = ctx.core.modules.unload(ctx.args.length ? ctx.args : null);
 
                         if (!ctx.core.modules.get('core')) {
-                                ctx.core.modules.load(['Core']);
+                                await ctx.core.modules.load(['Core']);
                         }
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');

@@ -1,4 +1,3 @@
-import * as fs from 'fs';
 import * as path from 'path';
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
@@ -35,9 +34,6 @@ export default class Module extends Base {
                 this.name = this.constructor.name;
 
                 this.dbName = this.name.toLowerCase();
-
-                this.loadCommands();
-                this.loadListeners();
         }
 
         public get logPrefix(): string {
@@ -75,11 +71,12 @@ export default class Module extends Base {
         /**
          * Load any commands that belong to this module
          */
-        private loadCommands(): void {
+        private async loadCommands(): Promise<void> {
                 const dir = path.resolve(__dirname, '../../modules/' + this.name + '/commands');
 
                 try {
-                        var files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
+                        var files = (await this.utils.readdir(dir))
+                                .filter(f => f.endsWith('.js'));
                 } catch (err) {
                         return;
                 }
@@ -105,11 +102,12 @@ export default class Module extends Base {
         /**
          * Load any event listeners that belong to this module
          */
-        private loadListeners(): void {
+        private async loadListeners(): Promise<void> {
                 const dir = path.resolve(__dirname, '../../modules/' + this.name + '/listeners');
 
                 try {
-                        var files = fs.readdirSync(dir).filter(f => f.endsWith('.js'));
+                        var files = (await this.utils.readdir(dir))
+                                .filter(f => f.endsWith('.js'));
                 } catch (err) {
                         return;
                 }
@@ -144,7 +142,12 @@ export default class Module extends Base {
         /**
          * Inject the module
          */
-        public inject(core: Core) {
+        public async inject(core: Core) {
+                await Promise.all([
+                        this.loadCommands(),
+                        this.loadListeners()
+                ]);
+
                 if (this.injectHook) {
                         this.injectHook();
                 }

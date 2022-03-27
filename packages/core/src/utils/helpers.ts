@@ -1,6 +1,10 @@
-import Core from '../structures/Core';
+import * as fs from 'fs';
+import * as util from 'util';
 import * as eris from 'eris';
 import type * as types from '@engel/types';
+import Core from '../structures/Core';
+
+export const readdir = util.promisify(fs.readdir);
 
 export function capitalize(str?: string): string {
         if (!str || !str.length) return '';

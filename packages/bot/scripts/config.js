@@ -47,7 +47,7 @@ function createConfig() {
 async function registerConfig() {
         core.commands = new (require('../build/src/core/collections/CommandCollection').default)(core);
         core.modules = new (require('../build/src/core/collections/ModuleCollection').default)(core);
-        core.modules.load();
+        await core.modules.load();
         await mongoose.models.Config.findOne({ state }).then(config => { core.config = config; });
         if (!core.config) return logger.error('Config not found.');
         await Promise.all([core.modules.register(), core.commands.register()]);

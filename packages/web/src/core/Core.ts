@@ -26,7 +26,7 @@ export default class Core extends core.Core {
         public app: express.Express;
         private _server?: http.Server;
 
-        public setup(): Promise<void> {
+        public async setup(): Promise<void> {
                 const app = this.app = express();
 
                 app.set('view engine', 'hbs');
@@ -60,6 +60,8 @@ export default class Core extends core.Core {
                 this.modules = new ModuleCollection(this);
                 this.commands = new CommandCollection(this);
                 this.controllers = new ControllerCollection(this);
+
+                await this.controllers.load();
 
                 this._server = http
                         .createServer(app)
