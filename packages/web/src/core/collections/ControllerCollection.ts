@@ -77,7 +77,7 @@ export default class ControllerCollection extends Map {
                         }
 
                         for (const dir of dirs) {
-                                this._loadControllers(controllerPath + '/' + dir);
+                                await this._loadControllers(controllerPath + '/' + dir);
                         }
 
                         return;
