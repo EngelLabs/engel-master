@@ -26,26 +26,23 @@ export default class StateManager extends Base {
                 core
                         .on('config', this._configure.bind(this));
 
-                setInterval(this._sync.bind(this), 30000);
+                setInterval(this._sync.bind(this), 10000);
         }
 
         private _sync() {
-                const { _wsEvents: wsEvents, _httpEvents: httpEvents } = this,
-                        clientID = this.eris.user.id;
+                const clusterStats = JSON.stringify({
+                        ws: this._wsEvents,
+                        http: this._httpEvents,
+                        guilds: this.eris.guilds.size,
+                        members: this.eris.guilds.reduce((mCount, g) => mCount + g.memberCount, 0),
+                        users: this.eris.users.size
+                });
 
                 this._wsEvents = 0;
                 this._httpEvents = 0;
 
-                const multi = this.redis.multi();
-
-                multi
-                        .hset('engel:events', 'ws', wsEvents)
-                        .hset('engel:events', 'http', httpEvents)
-                        .hset('engel:guilds', clientID, this.eris.guilds.size)
-                        .hset('engel:members', clientID, this.eris.guilds.reduce((mCount, g) => mCount + g.memberCount, 0))
-                        .hset('engel:users', clientID, this.eris.users.size);
-
-                multi.exec().catch(err => this.log(err, 'error'));
+                this.redis.hset('engel:clusters', `${this.baseConfig.client.id}:${this.baseConfig.cluster.id}`, clusterStats)
+                        .catch(err => this.log(err, 'error'));
         }
 
         private _configure(config: types.Config): void {
