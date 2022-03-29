@@ -1,4 +1,5 @@
 import * as getenv from 'getenv';
+import * as path from 'path';
 import { baseConfig } from '@engel/core';
 import pkg = require('../../../package.json');
 
@@ -19,8 +20,7 @@ const _baseConfig = <_BaseConfig>baseConfig;
 
 _baseConfig.name = pkg.name;
 _baseConfig.version = pkg.version;
-baseConfig.name = pkg.name;
-baseConfig.version = pkg.version;
+_baseConfig.logger.dir = path.resolve('logs');
 _baseConfig.client.name = getenv.string('CLIENT_NAME');
 _baseConfig.client.shards = getenv.int('CLIENT_SHARDS');
 _baseConfig.client.clusters = getenv.int('CLIENT_CLUSTERS');

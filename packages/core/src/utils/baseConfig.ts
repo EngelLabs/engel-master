@@ -18,7 +18,8 @@ export default {
         env: getenv.string('NODE_ENV', 'development'),
         dev: getenv.string('NODE_ENV') === 'development',
         logger: {
-                level: getenv.string('LOGGER_LEVEL', 'debug')
+                level: getenv.string('LOGGER_LEVEL', 'debug'),
+                dir: ''
         },
         client: {
                 state: getenv.string('CLIENT_STATE', ''),

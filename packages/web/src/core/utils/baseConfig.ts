@@ -1,4 +1,5 @@
 import * as getenv from 'getenv';
+import * as path from 'path';
 import { baseConfig } from '@engel/core';
 import pkg = require('../../../package.json');
 
@@ -8,6 +9,7 @@ type _BaseConfig = typeof baseConfig & {
 
 baseConfig.name = pkg.name;
 baseConfig.version = pkg.version;
+baseConfig.logger.dir = path.resolve('logs');
 
 (<_BaseConfig>baseConfig).site = {
         host: getenv.string('SITE_HOST', 'localhost'),
