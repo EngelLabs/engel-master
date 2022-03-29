@@ -4,6 +4,7 @@ import type Core from '../structures/Core';
 export default function Logger(core: Core): winston.Logger {
         const options = {
                 format: winston.format.combine(
+                        winston.format.errors({ stack: true }),
                         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:SSS' }),
                         winston.format.colorize({ level: true }),
                         winston.format.printf((info: any) => `[${info.timestamp}] [${info.level}] ${info.message}`)

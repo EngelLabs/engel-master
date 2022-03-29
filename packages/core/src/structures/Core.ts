@@ -44,15 +44,9 @@ export default class Core extends EventEmitter {
                         return;
                 }
 
-                prefix = prefix || this.constructor.name;
+                message = `[${prefix}] ${message}`;
 
-                if (level === 'error') {
-                        this.logger.error(`[${prefix}] Something went wrong`);
-
-                        console.error(message);
-                } else {
-                        this.logger[level](`[${prefix}] ${message}`);
-                }
+                this.logger.log({ message, level });
         }
 
         public get config(): types.Config {

@@ -54,6 +54,5 @@ async function registerConfig() {
         logger.info('Registered commands & modules to config.');
 }
 function logError(err) {
-        logger.error('Something went wrong.');
-        console.error(err);
+        logger.error(err);
 }
