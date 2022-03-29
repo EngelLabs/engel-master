@@ -1,0 +1,4 @@
+!build/
+!scripts/
+!.gitignore
+!package.json

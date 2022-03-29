@@ -1,0 +1,63 @@
+{
+    "name": "@engel/web",
+    "version": "0.1.1",
+    "private": true,
+    "description": "Web server for engel",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "scripts": {
+        "start": "node build/src/index.js",
+        "dev": "tsc-watch --onFirstSuccess \"npm run watch\"",
+        "watch": "run-p -rl watch:*",
+        "watch:app": "nodemon",
+        "watch:sass": "sass styles:public/css -w",
+        "pm2": "pm2 start npm --name engel-web -- start",
+        "pm2:dev": "pm2 start npm --name engel-web-dev -- run dev",
+        "build": "run-p -l build:*",
+        "build:app": "tsc",
+        "build:sass": "sass styles:public/css",
+        "clean": "run-p -l clean:*",
+        "clean:app": "rm -rf build",
+        "clean:sass": "rm -rf public/css",
+        "lint": "eslint \"src/**/*\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/EngelLabs/engel-web.git"
+    },
+    "bugs": {
+        "url": "https://github.com/EngelLabs/engel-web/issues"
+    },
+    "homepage": "https://github.com/EngelLabs/engel-web#readme",
+    "dependencies": {
+        "@engel/core": "0.1.0",
+        "connect-redis": "^6.0.0",
+        "eris": "^0.16.1",
+        "express": "^4.17.1",
+        "express-handlebars": "^6.0.2",
+        "express-session": "^1.17.2",
+        "getenv": "^1.0.0",
+        "npm-run-all": "^4.1.5",
+        "superagent": "^7.1.1",
+        "uuid": "^7.0.3"
+    },
+    "devDependencies": {
+        "@engel/types": "0.1.0",
+        "@types/connect-redis": "^0.0.18",
+        "@types/express-session": "^1.17.4",
+        "@typescript-eslint/eslint-plugin": "^5.13.0",
+        "@typescript-eslint/parser": "^5.13.0",
+        "babel-loader": "^8.2.3",
+        "eslint": "^7.32.0",
+        "eslint-config-standard": "^16.0.3",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.2.0",
+        "nodemon": "^2.0.15",
+        "sass": "^1.49.9",
+        "tsc-watch": "^4.6.0",
+        "typescript": "4.5",
+        "webpack": "^5.64.4",
+        "webpack-cli": "^4.9.1",
+        "webpack-dev-server": "^4.6.0"
+    }
+}

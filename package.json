@@ -1,0 +1,44 @@
+{
+    "name": "engel-master",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Master repository for engel",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "scripts": {
+        "bot": "npm start -w @engel/bot",
+        "web": "npm start -w @engel/web",
+        "pm2": "run-p -l pm2:*",
+        "pm2-dev": "run-p -l pm2-dev:*",
+        "lint": "run-p -l lint:*",
+        "build": "npm run build:core",
+        "postbuild": "run-p -l build:bot build:web build:react",
+        "clean": "run-p -l clean:*",
+        "dev": "run-p -rl dev:*",
+        "pm2:bot": "npm run pm2 -w @engel/bot",
+        "pm2:web": "npm run pm2 -w @engel/web",
+        "pm2-dev:bot": "npm run pm2:dev -w @engel/bot",
+        "pm2-dev:web": "npm run pm2:dev -w @engel/web",
+        "lint:bot": "npm run lint -w @engel/bot",
+        "lint:web": "npm run lint -w @engel/web",
+        "lint:core": "npm run lint -w @engel/core",
+        "lint:react": "npm run lint -w @engel/react",
+        "build:bot": "npm run build -w @engel/bot",
+        "build:web": "npm run build -w @engel/web",
+        "build:core": "npm run build -w @engel/core",
+        "build:react": "npm run build -w @engel/react",
+        "clean:bot": "npm run clean -w @engel/bot",
+        "clean:web": "npm run clean -w @engel/web",
+        "clean:core": "npm run clean -w @engel/core",
+        "dev:bot": "npm run dev -w @engel/bot",
+        "dev:web": "npm run dev -w @engel/web",
+        "dev:core": "npm run dev -w @engel/core",
+        "dev:react": "npm run dev -w @engel/react",
+        "config": "npm run config -w @engel/bot"
+    },
+    "workspaces": [
+        "packages/*"
+    ],
+    "dependencies": {
+        "npm-run-all": "^4.1.5"
+    }
+}

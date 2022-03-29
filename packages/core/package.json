@@ -1,0 +1,49 @@
+{
+    "name": "@engel/core",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Core module for engel",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "main": "build/index.js",
+    "scripts": {
+        "dev": "tsc -w",
+        "build": "tsc",
+        "clean": "rm -rf build",
+        "lint": "eslint \"src/**/*\""
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/engel-labs/engel-core.git"
+    },
+    "bugs": {
+        "url": "https://github.com/engel-labs/engel-core/issues"
+    },
+    "homepage": "https://github.com/engel-labs/engel-core#readme",
+    "dependencies": {
+        "bluebird": "^3.7.2",
+        "bufferutil": "^4.0.5",
+        "dotenv": "^16.0.0",
+        "eris": "^0.16.1",
+        "eventemitter3": "^4.0.7",
+        "getenv": "^1.0.0",
+        "ioredis": "^4.28.5",
+        "mongoose": "^6.2.2",
+        "source-map-support": "^0.5.21",
+        "winston": "^3.6.0",
+        "zlib-sync": "^0.1.7"
+    },
+    "devDependencies": {
+        "@engel/types": "0.1.0",
+        "@types/getenv": "^1.0.0",
+        "@types/ioredis": "^4.28.8",
+        "@types/source-map-support": "^0.5.4",
+        "@typescript-eslint/eslint-plugin": "^5.13.0",
+        "@typescript-eslint/parser": "^5.13.0",
+        "eslint": "^7.32.0",
+        "eslint-config-standard": "^16.0.3",
+        "eslint-plugin-import": "^2.25.4",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^5.2.0",
+        "typescript": "4.5"
+    }
+}

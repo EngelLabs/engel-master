@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Varela%20Round">
+        <title>{{config.name}}</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+        {{#each stylesheets}}
+        <link rel="stylesheet" href={{this}}>
+        {{/each}}
+
+        <script type="text/javascript">
+        var user, guilds, allGuilds, isAdmin = false;
+
+        {{#if user}}
+        user = {{{user}}};
+        {{/if}}
+
+        {{#if guilds}}
+        guilds = {{{guilds}}};
+        {{/if}}
+
+        {{#if allGuilds}}
+        allGuilds = {{{allGuilds}}};
+        {{/if}}
+
+        {{#if isAdmin}}
+        isAdmin = true;
+        {{/if}}
+        </script>
+</head>
+
+<body>
+        <div id="navbar-mount"></div>
+
+        <!--
+    {{#if user}}
+    <div>Hi, {{user.username}}</div>
+    {{/if}}
+    -->
+
+        {{{body}}}
+
+        {{#each scripts}}
+        <script type="text/javascript" src={{this}}></script>
+        {{/each}}
+</body>
+
+</html>
