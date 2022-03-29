@@ -2,49 +2,27 @@ import * as eris from 'eris';
 import type * as types from '@engel/types';
 import type Core from '../structures/Core';
 
-export default function Eris(core: Core): eris.Client {
+export default function Eris(core: Core, options?: eris.ClientOptions): eris.Client {
         const log = (message?: any, level?: types.LogLevels, prefix: string = 'Eris') => {
                 core.log(message, level, prefix);
         };
 
-        const options: eris.ClientOptions = {
-                intents: [
-                        'directMessages',
-                        'guilds',
-                        'guildBans',
-                        'guildEmojisAndStickers',
-                        'guildInvites',
-                        'guildMembers',
-                        'guildMessages',
-                        'guildPresences',
-                        'guildVoiceStates'
-                ],
+        options = Object.assign(<eris.ClientOptions>{
+                intents: [],
                 allowedMentions: {
                         everyone: false,
                         roles: false,
                         users: true,
                         repliedUser: true
                 },
-                autoreconnect: true,
-                compress: true,
-                restMode: true,
-                messageLimit: 0
-        };
+                restMode: true
+        }, options);
 
         const client = new eris.Client(
                 'Bot ' + core.baseConfig.client.token, options
         );
 
         client
-                .on('connect', () => {
-                        log('Connected.', 'info');
-                })
-                .on('disconnect', () => {
-                        log('Disconnected.', 'info');
-                })
-                .on('ready', () => {
-                        log('Ready.', 'info');
-                })
                 .on('error', (err, shard) => {
                         if (!err) return;
 
@@ -54,8 +32,8 @@ export default function Eris(core: Core): eris.Client {
                                 log(err, 'error');
                         }
                 })
-                .on('warn', msg => {
-                        log(msg, 'warn');
+                .on('warn', (msg, shard) => {
+                        log(msg, 'warn', `Shard ${shard}`);
                 });
 
         return client;

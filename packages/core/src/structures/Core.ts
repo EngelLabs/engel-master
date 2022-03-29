@@ -93,7 +93,7 @@ export default class Core extends EventEmitter {
                 try {
                         this.logger = Logger(this);
 
-                        this.log(`Starting ${baseConfig.name}[${baseConfig.client.name}] (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`, 'info');
+                        this.log(`Starting ${baseConfig.name}(env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`, 'info');
 
                         this.eris = this.erisClient(this);
                         this.mongoose = this.mongooseClient(this);
