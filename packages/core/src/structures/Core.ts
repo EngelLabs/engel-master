@@ -47,7 +47,7 @@ export default class Core extends EventEmitter {
                         return;
                 }
 
-                message = `[${prefix}] ${message}`;
+                message = `[${prefix ?? this.constructor.name}] ${message}`;
 
                 this.logger.log({ message, level });
         }
