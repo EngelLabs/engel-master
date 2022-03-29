@@ -1,0 +1,24 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.globalDefaults = exports.baseConfig = exports.Core = exports.Collection = exports.Base = exports.Redis = exports.Mongoose = exports.Logger = exports.Eris = exports.utils = void 0;
+require("source-map-support/register");
+exports.utils = require("./utils/helpers");
+var Eris_1 = require("./clients/Eris");
+Object.defineProperty(exports, "Eris", { enumerable: true, get: function () { return Eris_1.default; } });
+var Logger_1 = require("./clients/Logger");
+Object.defineProperty(exports, "Logger", { enumerable: true, get: function () { return Logger_1.default; } });
+var Mongoose_1 = require("./clients/Mongoose");
+Object.defineProperty(exports, "Mongoose", { enumerable: true, get: function () { return Mongoose_1.default; } });
+var Redis_1 = require("./clients/Redis");
+Object.defineProperty(exports, "Redis", { enumerable: true, get: function () { return Redis_1.default; } });
+var Base_1 = require("./structures/Base");
+Object.defineProperty(exports, "Base", { enumerable: true, get: function () { return Base_1.default; } });
+var Collection_1 = require("./structures/Collection");
+Object.defineProperty(exports, "Collection", { enumerable: true, get: function () { return Collection_1.default; } });
+var Core_1 = require("./structures/Core");
+Object.defineProperty(exports, "Core", { enumerable: true, get: function () { return Core_1.default; } });
+var baseConfig_1 = require("./utils/baseConfig");
+Object.defineProperty(exports, "baseConfig", { enumerable: true, get: function () { return baseConfig_1.default; } });
+var globalDefaults_1 = require("./utils/globalDefaults");
+Object.defineProperty(exports, "globalDefaults", { enumerable: true, get: function () { return globalDefaults_1.default; } });
+//# sourceMappingURL=index.js.map

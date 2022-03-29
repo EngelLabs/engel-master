@@ -1,0 +1,1 @@
+{"version":3,"file":"get.js","sourceRoot":"","sources":["../../../../src/controllers/logout/get.ts"],"names":[],"mappings":";AAGA,iBAAS,UAAU,IAAU,EAAE,GAAoB,EAAE,GAAqB;IAClE,GAAG,CAAC,OAAO,CAAC,OAAO,CAAC,GAAG,CAAC,EAAE,CAAC,GAAG,IAAI,IAAI,CAAC,GAAG,CAAC,GAAG,EAAE,OAAO,EAAE,aAAa,CAAC,CAAC,CAAC;IAEzE,OAAO,GAAG,CAAC,QAAQ,CAAC,GAAG,CAAC,CAAC;AACjC,CAAC,CAAA"}

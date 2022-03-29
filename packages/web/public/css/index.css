@@ -1,0 +1,31 @@
+body {
+  font-family: "Varela Round";
+}
+
+body {
+  background-color: #1f1f1f;
+}
+
+.title {
+  color: white;
+  font-size: 40px;
+  text-align: center;
+  margin-bottom: 0px;
+}
+
+.homepage .title .icon {
+  width: 40px;
+  height: auto;
+}
+.homepage .desc {
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  margin-top: 0px;
+}
+.homepage .desc .button {
+  color: inherit;
+  text-decoration: inherit;
+}
+
+/*# sourceMappingURL=index.css.map */

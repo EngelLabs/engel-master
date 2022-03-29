@@ -1,0 +1,1 @@
+{"version":3,"file":"use.js","sourceRoot":"","sources":["../../../../../src/controllers/admin/index/use.ts"],"names":[],"mappings":";AAGA,iBAAS,UAAU,IAAU,EAAE,GAAoB,EAAE,GAAqB,EAAE,IAA0B;IAC9F,IAAI,CAAC,GAAG,CAAC,OAAO,CAAC,OAAO,EAAE;QAClB,OAAO,IAAI,CAAC,SAAS,CAAC,GAAG,CAAC,CAAC,GAAG,CAAC,CAAC;KACvC;IAED,OAAO,IAAI,EAAE,CAAC;AACtB,CAAC,CAAA"}

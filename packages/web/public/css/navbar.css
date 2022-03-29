@@ -1,0 +1,54 @@
+body {
+  font-family: "Varela Round";
+}
+
+.navbar {
+  overflow: hidden;
+}
+.navbar .button {
+  position: static;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  float: left;
+  color: white;
+  margin-top: 15px;
+}
+.navbar .button.is-important {
+  padding-top: 10px;
+  float: right;
+  height: 30px;
+  width: 85px;
+  border-radius: 10px;
+  margin-right: 15px;
+  background: #7e8fed;
+  transition: background 0.2s ease-in;
+}
+.navbar .button.is-important:hover {
+  background: #ed7e85;
+}
+.navbar .button.is-info {
+  margin-left: 20px;
+}
+.navbar .button.is-info::after {
+  content: "";
+  width: 0px;
+  height: 1px;
+  display: block;
+  background: white;
+  transition: 100ms;
+}
+.navbar .button.is-info:hover::after {
+  width: 100%;
+}
+.navbar .button.is-gold {
+  transition: 600ms;
+}
+.navbar .button.is-gold::after {
+  background: #ffdd29;
+}
+.navbar .button.is-gold:hover {
+  color: #ffdd29;
+}
+
+/*# sourceMappingURL=navbar.css.map */
