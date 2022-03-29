@@ -520,8 +520,7 @@ export default class Core extends Module {
 
                         this.core.emit('command', command.dbName);
                 } catch (err) {
-                        ctx.err = err;
-                        this.commandError(ctx);
+                        this.log(err, 'error');
 
                         return ctx.error('Sorry, something went wrong.');
                 }
@@ -641,33 +640,6 @@ export default class Core extends Module {
                                         author: author.id,
                                         guild: guild.id
                                 }
-                        };
-
-                        this.models.CommandLog.create(doc)
-                                .catch(err => this.log(err, 'error'));
-                }
-        }
-
-        private commandError({ isAdmin, command, author, guild, message, err }: Context): void {
-                let text = `Command "${command.qualName}" U${author.id}`;
-
-                if (guild) {
-                        text += ` G${guild.id}`;
-                }
-
-                this.logger.error(text);
-                console.error(err);
-
-                if (!isAdmin && !this.baseConfig.dev) {
-                        const doc = {
-                                name: command.dbName,
-                                message: {
-                                        id: message.id,
-                                        content: message.content,
-                                        author: author.id,
-                                        guild: guild.id
-                                },
-                                failed: true
                         };
 
                         this.models.CommandLog.create(doc)
