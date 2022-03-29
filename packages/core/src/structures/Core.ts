@@ -25,6 +25,9 @@ export default class Core extends EventEmitter {
         public logger: winston.Logger;
         public mongoose: mongoose.Mongoose;
         public redis: ioredis.Redis;
+        public erisClient = Eris;
+        public redisClient = Redis;
+        public mongooseClient = Mongoose;
         public setup?(): Promise<void>;
         private _config: types.Config;
         private _configInterval: NodeJS.Timer;
@@ -92,9 +95,9 @@ export default class Core extends EventEmitter {
 
                         this.log(`Starting ${baseConfig.name}[${baseConfig.client.name}] (env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`, 'info');
 
-                        this.eris = Eris(this);
-                        this.mongoose = Mongoose(this);
-                        this.redis = Redis(this);
+                        this.eris = this.erisClient(this);
+                        this.mongoose = this.mongooseClient(this);
+                        this.redis = this.redisClient(this);
 
                         await this.configure();
 
