@@ -2,7 +2,7 @@
     "name": "@engel/core",
     "version": "0.1.0",
     "private": true,
-    "description": "App module for engel",
+    "description": "Core module for engel",
     "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
     "main": "build/index.js",
     "scripts": {
