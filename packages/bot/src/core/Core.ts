@@ -4,6 +4,7 @@ import Eris from './clients/Eris';
 import baseConfig from './utils/baseConfig';
 import StateManager from './managers/StateManager';
 import EventManager from './managers/EventManager';
+import IPCManager from './managers/IPCManager';
 import CommandCollection from './collections/CommandCollection';
 import GuildCollection from './collections/GuildCollection';
 import ModuleCollection from './collections/ModuleCollection';
@@ -16,6 +17,7 @@ export default class Core extends core.Core {
         public baseConfig = baseConfig;
         public events: EventManager;
         public state: StateManager;
+        public ipc: IPCManager;
         public guilds: GuildCollection;
         public commands: CommandCollection;
         public modules: ModuleCollection;
@@ -38,6 +40,7 @@ export default class Core extends core.Core {
         public async setup(): Promise<void> {
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
+                this.ipc = new IPCManager(this);
 
                 this.guilds = new GuildCollection(this);
                 this.commands = new CommandCollection(this);
@@ -59,7 +62,7 @@ export default class Core extends core.Core {
 
                         if (connectedShards.size === (baseConfig.cluster.lastShard - baseConfig.cluster.firstShard + 1)) {
                                 this.eris.off('connect', connectListener);
-                                setTimeout(() => process.send('ready'), 5000);
+                                setTimeout(() => this.ipc.send('ready'), 5000);
                         }
                 };
 
