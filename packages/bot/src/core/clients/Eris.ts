@@ -11,6 +11,7 @@ export default function Eris(app: App) {
                         'guildEmojisAndStickers',
                         'guildInvites',
                         'guildMembers',
+                        'guildMessageReactions',
                         'guildMessages',
                         'guildPresences',
                         'guildVoiceStates'
