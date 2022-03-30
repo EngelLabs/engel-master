@@ -30,7 +30,7 @@ export default new Command<Info>({
 
                         guildCount += clusterStats.guilds;
                         memberCount += clusterStats.members;
-                        userCount += clusterStats.userCount;
+                        userCount += clusterStats.users;
                         wsEvents += clusterStats.ws;
                         httpEvents += clusterStats.http;
                 }
