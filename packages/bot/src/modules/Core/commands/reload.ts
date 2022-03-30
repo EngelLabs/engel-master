@@ -13,7 +13,7 @@ const reload = new Command<Core>({
                 const start = Date.now();
 
                 try {
-                        var res = ctx.core.modules.reload(ctx.args.length ? ctx.args : null);
+                        var res = ctx.app.modules.reload(ctx.args.length ? ctx.args : null);
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');
                 }
@@ -34,7 +34,7 @@ reload.command({
         dmEnabled: true,
         execute: async function (ctx) {
                 try {
-                        await ctx.core.configure();
+                        await ctx.app.configure();
                 } catch (err) {
                         return ctx.error(`Something went wrong: ${err}`);
                 }

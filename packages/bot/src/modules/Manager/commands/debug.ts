@@ -9,10 +9,10 @@ export default new Command<Manager>({
         requiredArgs: 1,
         alwaysEnabled: true,
         execute: async function (ctx) {
-                const module = ctx.core.modules.get(ctx.args.join(' '));
+                const module = ctx.app.modules.get(ctx.args.join(' '));
 
                 if (!module || ((module.private || module.internal || module.disabled) && !ctx.isAdmin)) {
-                        let command = ctx.core.commands.get(ctx.args[0]);
+                        let command = ctx.app.commands.get(ctx.args[0]);
 
                         if (!command) return ctx.error('No command or module exists by that name');
 

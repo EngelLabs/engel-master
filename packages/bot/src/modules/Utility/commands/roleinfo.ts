@@ -13,7 +13,7 @@ export default new Command<Utility>({
                 'roleinfo 859169678966784031'
         ],
         execute: async function (ctx) {
-                const converter = new Converter(ctx.core);
+                const converter = new Converter(ctx.app);
 
                 try {
                         var role = await converter.role(ctx.guild, ctx.args[0]);

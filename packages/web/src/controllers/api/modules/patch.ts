@@ -1,12 +1,12 @@
 import type * as express from 'express';
 import type * as mongoose from 'mongoose';
 import type * as types from '@engel/types';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
-        const module = core.modules.get(<string>req.body.name);
+export = async function (app: App, req: express.Request, res: express.Response) {
+        const module = app.modules.get(<string>req.body.name);
 
-        if (!module) return core.responses[403](res, 10002, 'Unknown module');
+        if (!module) return app.responses[403](res, 10002, 'Unknown module');
 
         let update: mongoose.UpdateQuery<types.ModuleConfig>;
 
@@ -48,7 +48,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
         // switch (module.dbName) {
         //         case 'mod':
         //                 if (typeof req.body.responses === 'object') {
-        //                         const guildConfig = await core.models.Guild
+        //                         const guildConfig = await app.models.Guild
         //                                 .findOne({ id: req.params.id })
         //                                 .lean()
         //                                 .exec();
@@ -84,7 +84,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
         // }
 
         if (!update) {
-                return core.responses[400](res, 30001, 'Invalid response body');
+                return app.responses[400](res, 30001, 'Invalid response body');
         }
 
         if (update.$set) {
@@ -104,21 +104,21 @@ export = async function (core: Core, req: express.Request, res: express.Response
         }
 
         try {
-                var result = await core.models.Guild
+                var result = await app.models.Guild
                         .findOneAndUpdate({ id: req.params.id }, update, { new: true })
                         .lean()
                         .exec();
 
-                core.redis.publish('guildUpdate', req.params.id);
+                app.redis.publish('guildUpdate', req.params.id);
         } catch (err) {
-                core.log(err, 'error', 'api/modules.patch');
+                app.log(err, 'error', 'api/modules.patch');
 
-                return core.responses[500](res);
+                return app.responses[500](res);
         }
 
         if (!result) {
-                return core.responses[403](res, 10001, 'Unknown guild');
+                return app.responses[403](res, 10001, 'Unknown guild');
         }
 
-        return core.responses[200](res, result.modules?.[module.dbName] || {});
+        return app.responses[200](res, result.modules?.[module.dbName] || {});
 }

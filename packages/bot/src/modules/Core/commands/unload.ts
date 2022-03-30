@@ -13,10 +13,10 @@ export default new Command<Core>({
                 const start = Date.now();
 
                 try {
-                        var res = ctx.core.modules.unload(ctx.args.length ? ctx.args : null);
+                        var res = ctx.app.modules.unload(ctx.args.length ? ctx.args : null);
 
-                        if (!ctx.core.modules.get('core')) {
-                                await ctx.core.modules.load(['Core']);
+                        if (!ctx.app.modules.get('core')) {
+                                await ctx.app.modules.load(['Core']);
                         }
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');

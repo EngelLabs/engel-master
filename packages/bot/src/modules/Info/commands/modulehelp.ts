@@ -18,7 +18,7 @@ export default new Command<Info>({
 
                 const text = ctx.args.join(' ');
 
-                const embed = ctx.core.modules.help(text, ctx.prefix, ctx.isAdmin, verbose);
+                const embed = ctx.app.modules.help(text, ctx.prefix, ctx.isAdmin, verbose);
 
                 if (!embed) {
                         return ctx.error(`Module \`${text}\` not found.`);

@@ -4,7 +4,7 @@ import type * as types from '@engel/types';
 import Base from './Base';
 import type Command from './Command';
 import type Context from './Context';
-import type Core from '../Core';
+import type App from '../structures/App';
 const reload = require('require-reload')(require);
 
 /**
@@ -142,7 +142,7 @@ export default class Module extends Base {
         /**
          * Inject the module
          */
-        public async inject(core: Core) {
+        public async inject(app: App) {
                 await Promise.all([
                         this.loadCommands(),
                         this.loadListeners()
@@ -156,11 +156,11 @@ export default class Module extends Base {
                         for (const command of this.commands) {
                                 command.module = this;
 
-                                core.commands.add(command);
+                                app.commands.add(command);
                         }
                 }
 
-                if (this.listeners && this.eris && this.core.events) {
+                if (this.listeners && this.eris && this.app.events) {
                         for (const listener of this.listeners) {
                                 this._boundListeners = this._boundListeners || [];
 
@@ -172,7 +172,7 @@ export default class Module extends Base {
                                 copied.execute = copied.execute.bind(this);
 
                                 this._boundListeners.push(copied);
-                                core.events.registerListener(<types.EventNames>copied.name, copied.execute);
+                                app.events.registerListener(<types.EventNames>copied.name, copied.execute);
                         }
                 }
 
@@ -186,20 +186,20 @@ export default class Module extends Base {
         /**
          * Eject the module
          */
-        public eject(core: Core) {
+        public eject(app: App) {
                 if (this.ejectHook) {
                         this.ejectHook();
                 }
 
                 if (this.commands) {
                         for (const command of this.commands) {
-                                core.commands.remove(command);
+                                app.commands.remove(command);
                         }
                 }
 
                 if (this._boundListeners) {
                         for (const listener of this._boundListeners) {
-                                core.events.unregisterListener(<types.EventNames>listener.name, listener.execute);
+                                app.events.unregisterListener(<types.EventNames>listener.name, listener.execute);
                         }
                 }
 

@@ -1,13 +1,13 @@
 import type * as express from 'express';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
-        const guild = await core.models.Guild
+export = async function (app: App, req: express.Request, res: express.Response) {
+        const guild = await app.models.Guild
                 .findOne({ id: req.params.id })
                 .lean()
                 .exec();
 
         return guild
-                ? core.responses[200](res, guild)
-                : core.responses[404](res, 10001);
+                ? app.responses[200](res, guild)
+                : app.responses[404](res, 10001);
 }

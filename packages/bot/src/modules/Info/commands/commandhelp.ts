@@ -18,7 +18,7 @@ export default new Command<Info>({
 
                 const text = ctx.args.join(' ');
 
-                const embed = ctx.core.commands.help(text, ctx.prefix, ctx.isAdmin, verbose);
+                const embed = ctx.app.commands.help(text, ctx.prefix, ctx.isAdmin, verbose);
 
                 if (!embed) {
                         return ctx.error(`Command \`${text}\` not found.`);

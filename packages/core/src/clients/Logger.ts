@@ -1,13 +1,13 @@
 import * as path from 'path';
 import * as moment from 'moment';
 import * as winston from 'winston';
-import type Core from '../structures/Core';
+import type App from '../structures/App';
 
-export default function Logger(core: Core): winston.Logger {
+export default function Logger(app: App): winston.Logger {
         const ts = moment().format('l').replaceAll('/', '.');
 
         const options = {
-                level: core.baseConfig.logger.level,
+                level: app.baseConfig.logger.level,
                 format: winston.format.combine(
                         winston.format.errors({ stack: true }),
                         winston.format.colorize({ level: true }),
@@ -18,11 +18,11 @@ export default function Logger(core: Core): winston.Logger {
                         new winston.transports.Console(),
                         new winston.transports.File({
                                 level: 'info',
-                                filename: path.join(core.baseConfig.logger.dir, `${ts}.log`)
+                                filename: path.join(app.baseConfig.logger.dir, `${ts}.log`)
                         }),
                         new winston.transports.File({
                                 level: 'error',
-                                filename: path.join(core.baseConfig.logger.dir, `${ts}.error.log`)
+                                filename: path.join(app.baseConfig.logger.dir, `${ts}.error.log`)
                         })
                 ]
         };
@@ -37,7 +37,7 @@ export default function Logger(core: Core): winston.Logger {
                 }
         });
 
-        logger.debug(`[Logger] Loaded (level=${core.baseConfig.logger.level}).`);
+        logger.debug(`[Logger] Loaded (level=${app.baseConfig.logger.level}).`);
 
         return logger;
 }

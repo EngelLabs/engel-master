@@ -1,8 +1,8 @@
 import type * as express from 'express';
-import type Core from '../../core/Core';
+import type App from '../../core/structures/App';
 
-export = function (core: Core, req: express.Request, res: express.Response) {
-        req.session.destroy(err => err && core.log(err, 'error', '/logout.get'));
+export = function (app: App, req: express.Request, res: express.Response) {
+        req.session.destroy(err => err && app.log(err, 'error', '/logout.get'));
 
         return res.redirect('/');
 }

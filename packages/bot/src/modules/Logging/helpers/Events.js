@@ -12,7 +12,7 @@ const colorMapping = {
  */
 class Events extends Base {
         constructor(module) {
-                super(module.core);
+                super(module.app);
 
                 for (const fn of Object.values(this)) {
                         if (typeof fn !== 'function') continue;

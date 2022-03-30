@@ -17,7 +17,7 @@ class AutoModerator extends Module {
         }
 
         // messageCreate({ guildConfig, message }) {
-        //         if (!this.core.isReady) return;
+        //         if (!this.app.isReady) return;
 
         //         const config = this.config;
 

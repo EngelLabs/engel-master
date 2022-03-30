@@ -1,6 +1,6 @@
 import type * as types from '@engel/types';
 import Base from '../structures/Base';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 /**
  * Manages application state
@@ -11,10 +11,10 @@ export default class StateManager extends Base {
         private _messages: Record<string, types.PartialMessage> = {};
         private _uncacheInterval?: NodeJS.Timer;
 
-        public constructor(core: Core) {
-                super(core);
+        public constructor(app: App) {
+                super(app);
 
-                core.events
+                app.events
                         .registerListener('rawWS', this.rawWS.bind(this))
                         .registerListener('rawREST', this.rawREST.bind(this))
                         .registerListener('messageCreate', this.messageCreate.bind(this))
@@ -23,7 +23,7 @@ export default class StateManager extends Base {
                         .registerListener('guildDelete', this.guildDelete.bind(this))
                         .registerListener('channelDelete', this.channelDelete.bind(this));
 
-                core
+                app
                         .on('config', this._configure.bind(this));
 
                 setInterval(this._sync.bind(this), 10000);

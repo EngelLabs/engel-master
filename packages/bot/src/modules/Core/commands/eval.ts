@@ -36,7 +36,7 @@ const _eval = new Command<Core>({
         cooldown: 0,
         dmEnabled: true,
         execute: async function (ctx) {
-                let { message, guild, author, core, member, channel,
+                let { message, guild, author, app, member, channel,
                         args, eris, guildConfig, baseConfig, config, logger,
                         models, mongoose, redis, me, permissions, utils } = ctx,
                         __ctx = ctx, __res: any;

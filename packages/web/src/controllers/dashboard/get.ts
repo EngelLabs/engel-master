@@ -1,10 +1,10 @@
 import type * as express from 'express';
-import type Core from '../../core/Core';
+import type App from '../../core/structures/App';
 
-export = function (core: Core, req: express.Request, res: express.Response) {
+export = function (app: App, req: express.Request, res: express.Response) {
         if (!req.session.user) {
                 return res.redirect('/login');
         }
 
-        return core.renderer.dashboard(req, res);
+        return app.renderer.dashboard(req, res);
 }

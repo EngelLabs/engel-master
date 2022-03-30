@@ -12,7 +12,7 @@ export default new Command<Moderator>({
         requiredArgs: 1,
         requiredPermissions: ['manageRoles', 'manageChannels'],
         execute: async function (ctx) {
-                const roles = new Roles(ctx.core);
+                const roles = new Roles(ctx.app);
 
                 try {
                         var role = await roles.resolveMuteRole(ctx.guild, ctx.guildConfig);
@@ -20,7 +20,7 @@ export default new Command<Moderator>({
                         return ctx.error(err);
                 }
 
-                const converter = new Converter(ctx.core);
+                const converter = new Converter(ctx.app);
 
                 try {
                         var user = await converter.member(ctx.guild, ctx.args[0], true) ||

@@ -13,7 +13,7 @@ export default new Command<Moderator>({
         cooldown: 3000,
         requiredArgs: 2,
         execute: async function (ctx) {
-                const converter = new Converter(ctx.core);
+                const converter = new Converter(ctx.app);
 
                 try {
                         var user = await converter.user(ctx.args[0], true);

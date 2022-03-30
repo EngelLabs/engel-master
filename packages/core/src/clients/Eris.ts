@@ -1,10 +1,10 @@
 import * as eris from 'eris';
 import type * as types from '@engel/types';
-import type Core from '../structures/Core';
+import type App from '../structures/App';
 
-export default function Eris(core: Core, options?: eris.ClientOptions): eris.Client {
+export default function Eris(app: App, options?: eris.ClientOptions): eris.Client {
         const log = (message?: any, level?: types.LogLevels, prefix: string = 'Eris') => {
-                core.log(message, level, prefix);
+                app.log(message, level, prefix);
         };
 
         options = Object.assign(<eris.ClientOptions>{
@@ -19,7 +19,7 @@ export default function Eris(core: Core, options?: eris.ClientOptions): eris.Cli
         }, options);
 
         const client = new eris.Client(
-                'Bot ' + core.baseConfig.client.token, options
+                'Bot ' + app.baseConfig.client.token, options
         );
 
         client

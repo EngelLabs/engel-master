@@ -1,13 +1,13 @@
 import type * as express from 'express';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
+export = async function (app: App, req: express.Request, res: express.Response) {
         const filter = { guild: req.params.id };
 
-        const tags = await core.models.Tag
+        const tags = await app.models.Tag
                 .find(filter)
                 .lean()
                 .exec();
 
-        return core.responses[200](res, tags);
+        return app.responses[200](res, tags);
 }

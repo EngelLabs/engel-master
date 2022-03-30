@@ -1,7 +1,7 @@
 import type * as express from 'express';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
+export = async function (app: App, req: express.Request, res: express.Response) {
         const filter: any = { guild: req.params.id, author: req.session.user.id };
 
         if (typeof req.body.author === 'string') {
@@ -12,13 +12,13 @@ export = async function (core: Core, req: express.Request, res: express.Response
                 const tags = (<string[]>req.body.tags).filter(o => typeof o === 'string' && o.length);
 
                 if (!tags.length) {
-                        return core.responses[400](res, 30001, 'Invalid tag names');
+                        return app.responses[400](res, 30001, 'Invalid tag names');
                 }
 
                 filter.name = { $in: tags };
         }
 
-        await core.models.Tag.deleteMany(filter);
+        await app.models.Tag.deleteMany(filter);
 
-        return core.responses[204](res);
+        return app.responses[204](res);
 }

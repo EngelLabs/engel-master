@@ -1,9 +1,9 @@
 import type * as express from 'express';
 import type * as mongoose from 'mongoose';
 import type * as types from '@engel/types';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
+export = async function (app: App, req: express.Request, res: express.Response) {
         let update: mongoose.UpdateQuery<types.Guild>;
 
         function set(key: keyof types.Guild, value: any, type?: types.Primitives) {
@@ -25,14 +25,14 @@ export = async function (core: Core, req: express.Request, res: express.Response
 
         if (req.body.prefixes !== undefined) {
                 if (req.body.prefixes == null) {
-                        set('prefixes', core.config.prefixes.default);
+                        set('prefixes', app.config.prefixes.default);
                 } else if (req.body.prefixes instanceof Array) {
                         req.body.prefixes = req.body.prefixes
                                 .filter(p => typeof p === 'string' && p.length && p.length <= 12);
 
                         set('prefixes', (<string[]>req.body.prefixes).length
                                 ? req.body.prefixes
-                                : core.config.prefixes.default
+                                : app.config.prefixes.default
                         );
                 }
         }
@@ -79,25 +79,25 @@ export = async function (core: Core, req: express.Request, res: express.Response
         }
 
         if (!update) {
-                return core.responses[400](res, 30001, 'Invalid request body');
+                return app.responses[400](res, 30001, 'Invalid request body');
         }
 
         try {
-                var result = await core.models.Guild
+                var result = await app.models.Guild
                         .findOneAndUpdate({ id: req.params.id }, update, { new: true })
                         .lean()
                         .exec();
 
-                core.redis.publish('guildUpdate', req.params.id);
+                app.redis.publish('guildUpdate', req.params.id);
         } catch (err) {
-                core.log(err, 'error', '/api/guilds.patch');
+                app.log(err, 'error', '/api/guilds.patch');
 
-                return core.responses[500](res);
+                return app.responses[500](res);
         }
 
         if (!result) {
-                return core.responses[403](res, 10001, 'Unknown guild');
+                return app.responses[403](res, 10001, 'Unknown guild');
         }
 
-        return core.responses[200](res, result);
+        return app.responses[200](res, result);
 }

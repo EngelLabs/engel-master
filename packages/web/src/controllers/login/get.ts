@@ -1,13 +1,13 @@
 import * as superagent from 'superagent';
 import type * as express from 'express';
-import type Core from '../../core/Core';
+import type App from '../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
+export = async function (app: App, req: express.Request, res: express.Response) {
         if (req.session.token) {
                 return res.redirect('/');
         }
 
-        const baseConfig = core.baseConfig;
+        const baseConfig = app.baseConfig;
 
         let redirectUri = baseConfig.dev
                 ? `http://localhost:${baseConfig.site.port}/login`
@@ -16,7 +16,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
                         : `https://${baseConfig.site.host}/login`;
 
         if (req.query && req.query.code) {
-                const client = core.baseConfig.client;
+                const client = app.baseConfig.client;
 
                 const data = {
                         client_id: client.id,
@@ -43,10 +43,10 @@ export = async function (core: Core, req: express.Request, res: express.Response
 
                 req.session.token = 'Bearer ' + resp.body.access_token;
 
-                await core.requests.fetchUserData(req);
-                core.requests.syncLocals(req, res);
+                await app.requests.fetchUserData(req);
+                app.requests.syncLocals(req, res);
 
-                core.log(`Authorized ${req.session.user.id}.`, 'debug', '/login.get');
+                app.log(`Authorized ${req.session.user.id}.`, 'debug', '/login.get');
 
                 return res.redirect('/');
         }
@@ -55,7 +55,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
 
         const baseUrl = 'https://discord.com/api/v9';
         const _url = baseUrl +
-                `/oauth2/authorize?response_type=code&client_id=${core.baseConfig.client.id}` +
+                `/oauth2/authorize?response_type=code&client_id=${app.baseConfig.client.id}` +
                 `&scope=guilds%20guilds.join%20identify&redirect_uri=${redirectUri}&prompt=consent`;
 
         return res.redirect(_url);

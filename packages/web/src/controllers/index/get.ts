@@ -1,6 +1,6 @@
 import type * as express from 'express';
-import type Core from '../../core/Core';
+import type App from '../../core/structures/App';
 
-export = function (core: Core, req: express.Request, res: express.Response) {
-        return core.renderer.index(req, res);
+export = function (app: App, req: express.Request, res: express.Response) {
+        return app.renderer.index(req, res);
 }

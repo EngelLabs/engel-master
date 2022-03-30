@@ -22,7 +22,7 @@ export default new Command<Moderator>({
                         return ctx.error(`\`${ctx.args[0]}\` is not a valid case number.`);
                 }
 
-                const converter = new Converter(ctx.core);
+                const converter = new Converter(ctx.app);
 
                 const duration = converter.duration(ctx.args[1]);
 

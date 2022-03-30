@@ -3,7 +3,7 @@ import type * as types from '@engel/types';
 import Base from './Base';
 import type Command from './Command';
 import type Module from './Module';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 interface ContextOptions<M extends Module, C extends Command> {
         args: string[];
@@ -67,8 +67,8 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         public removeLoadingReaction = createRemoveReactionFunction('loading');
         public removePremiumReaction = createRemoveReactionFunction('premium');
 
-        public constructor(core: Core, options: ContextOptions<M, C>) {
-                super(core);
+        public constructor(app: App, options: ContextOptions<M, C>) {
+                super(app);
 
                 this.args = options.args;
                 this.prefix = options.prefix;

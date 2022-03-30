@@ -1,12 +1,12 @@
 import type * as express from 'express';
 import type * as mongoose from 'mongoose';
 import type * as types from '@engel/types';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
-        const command = core.commands.get(<string>req.body.name);
+export = async function (app: App, req: express.Request, res: express.Response) {
+        const command = app.commands.get(<string>req.body.name);
 
-        if (!command) return core.responses[403](res, 10002, 'Unknown command');
+        if (!command) return app.responses[403](res, 10002, 'Unknown command');
 
         let update: mongoose.UpdateQuery<types.CommandConfig>;
 
@@ -52,7 +52,7 @@ export = async function (core: Core, req: express.Request, res: express.Response
         }
 
         if (!update) {
-                return core.responses[400](res, 30001, 'Invalid response body');
+                return app.responses[400](res, 30001, 'Invalid response body');
         }
 
         if (!command.isSubcommand) {
@@ -78,21 +78,21 @@ export = async function (core: Core, req: express.Request, res: express.Response
         }
 
         try {
-                var result = await core.models.Guild
+                var result = await app.models.Guild
                         .findOneAndUpdate({ id: req.params.id }, update, { new: true })
                         .lean()
                         .exec();
 
-                core.redis.publish('guildUpdate', req.params.id);
+                app.redis.publish('guildUpdate', req.params.id);
         } catch (err) {
-                core.log(err, 'error', 'api/commands.patch');
+                app.log(err, 'error', 'api/commands.patch');
 
-                return core.responses[500](res);
+                return app.responses[500](res);
         }
 
         if (!result) {
-                return core.responses[403](res, 10001, 'Unknown guild');
+                return app.responses[403](res, 10001, 'Unknown guild');
         }
 
-        return core.responses[200](res, result.commands?.[command.name] || {});
+        return app.responses[200](res, result.commands?.[command.name] || {});
 }

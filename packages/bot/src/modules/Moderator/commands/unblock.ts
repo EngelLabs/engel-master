@@ -18,7 +18,7 @@ export default new Command<Moderator>({
                 'manageChannels'
         ],
         execute: async function (ctx) {
-                const converter = new Converter(ctx.core);
+                const converter = new Converter(ctx.app);
 
                 try {
                         var user = await converter.member(ctx.guild, ctx.args[0], true);

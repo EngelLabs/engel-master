@@ -1,6 +1,6 @@
 import * as core from '@engel/core';
 import type * as types from '@engel/types';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 interface Command extends types.GlobalCommandConfig {
         rootName: string;
@@ -9,22 +9,22 @@ interface Command extends types.GlobalCommandConfig {
 }
 
 export default class CommandCollection extends core.Collection<Command> {
-        private _core: Core;
+        private _app: App;
 
-        public constructor(core: Core) {
+        public constructor(app: App) {
                 super();
 
-                this._core = core;
+                this._app = app;
 
                 this.load();
         }
 
         private _log(message: any, level?: types.LogLevels) {
-                this._core.log(message, level, 'Commands');
+                this._app.log(message, level, 'Commands');
         }
 
         public load() {
-                const commands = this._core.config.commands;
+                const commands = this._app.config.commands;
 
                 for (const key in commands) {
                         const command: any = Object.assign({}, commands[key]);

@@ -4,7 +4,7 @@ import * as eris from 'eris';
 import type * as types from '@engel/types';
 import Permission from '../helpers/Permission';
 import Base from '../structures/Base';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 interface AnyFunc {
         (...args: any): void;
@@ -23,11 +23,11 @@ export default class EventManager extends Base {
         private _permissions: Permission;
         private _registeredEvents: Record<string, { handler: AnyFunc, listeners: Array<AnyFunc> }> = {};
 
-        public constructor(core: Core) {
-                super(core);
+        public constructor(app: App) {
+                super(app);
 
                 this._events = new EventEmitter();
-                this._permissions = new Permission(core);
+                this._permissions = new Permission(app);
         }
 
         public registerListener<K extends types.EventNames>(event: K, execute: EventHandler<K>): this {
@@ -143,8 +143,8 @@ export default class EventManager extends Base {
         ): Promise<T & types.GuildPayload> {
                 const _p: Partial<types.GuildPayload> = payload;
 
-                _p.isTesting = this.core.config.guilds.testing.includes(guildID);
-                _p.guildConfig = await this.core.guilds.getOrFetch(guildID, { createIfNotFound });
+                _p.isTesting = this.app.config.guilds.testing.includes(guildID);
+                _p.guildConfig = await this.app.guilds.getOrFetch(guildID, { createIfNotFound });
 
                 return <any>_p;
         }
@@ -493,7 +493,7 @@ export default class EventManager extends Base {
         private messageDelete(
                 message: eris.PossiblyUncachedMessage
         ): Promise<types.GuildEvents['messageDelete'] | null> {
-                const deletedMessage = this.core.state.getMessage(message.id);
+                const deletedMessage = this.app.state.getMessage(message.id);
 
                 if (!deletedMessage) {
                         return Promise.resolve(null);
@@ -506,7 +506,7 @@ export default class EventManager extends Base {
         private messageDeleteBulk(
                 messages: eris.PossiblyUncachedMessage[]
         ): Promise<types.GuildEvents['messageDeleteBulk'] | null> {
-                const state = this.core.state;
+                const state = this.app.state;
 
                 const deletedMessages = messages.map(m => state.getMessage(m.id)).filter(m => m);
 
@@ -520,7 +520,7 @@ export default class EventManager extends Base {
         private messageUpdate(
                 message: eris.Message<eris.PossiblyUncachedTextableChannel>
         ): Promise<types.GuildEvents['messageUpdate']> {
-                const oldMessage = this.core.state.getMessage(message.id);
+                const oldMessage = this.app.state.getMessage(message.id);
 
                 if (!oldMessage) {
                         return Promise.resolve(null);
@@ -586,7 +586,7 @@ export default class EventManager extends Base {
                 message: eris.PossiblyUncachedMessage
         ): eris.PossiblyUncachedMessage | types.PartialMessage {
                 if (!(message instanceof eris.Message)) {
-                        return this.core.state.getMessage(message.id) || message;
+                        return this.app.state.getMessage(message.id) || message;
                 }
 
                 return message;

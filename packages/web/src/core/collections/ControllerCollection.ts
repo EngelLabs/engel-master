@@ -1,23 +1,23 @@
 import * as path from 'path';
 import type * as types from '@engel/types';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 const controllersPath = path.join(__dirname, '../../controllers');
 
 export default class ControllerCollection extends Map {
-        private _core: Core;
+        private _app: App;
         // TODO: Type this
         private _middlewares: any;
         private _routes: any;
 
-        public constructor(core: Core) {
+        public constructor(app: App) {
                 super();
 
-                this._core = core;
+                this._app = app;
         }
 
         public async load() {
-                const app = this._core.app;
+                const app = this._app.express;
 
                 this._middlewares = [];
                 this._routes = [];
@@ -44,7 +44,7 @@ export default class ControllerCollection extends Map {
         }
 
         private _log(message: any, level?: types.LogLevels) {
-                this._core.log(message, level, 'Controllers');
+                this._app.log(message, level, 'Controllers');
         }
 
         private async _loadControllers(controllerPath: string) {
@@ -66,7 +66,7 @@ export default class ControllerCollection extends Map {
                         let dirs;
 
                         try {
-                                dirs = (await this._core.utils.readdir(controllerPath))
+                                dirs = (await this._app.utils.readdir(controllerPath))
                                         .filter(f => !f.endsWith('.js.map'));
                         } catch (err) {
                                 if (err && ['ENOENT', 'ENOTDIR'].includes(err.code)) {
@@ -97,7 +97,7 @@ export default class ControllerCollection extends Map {
                         delete route.uri;
 
                         for (let [method, handler] of Object.entries(route)) {
-                                handler = (<Function>handler).bind(null, this._core);
+                                handler = (<Function>handler).bind(null, this._app);
 
                                 for (const uri of uriArray) {
                                         if (method === 'use') {

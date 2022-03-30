@@ -1,7 +1,7 @@
 import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
-import Core from './Core';
+import App from './App';
 
 const permissionsMapping: Record<keyof eris.Constants['Permissions'], string> = {
         createInstantInvite: 'Create Instant Invite',
@@ -57,11 +57,11 @@ const permissionsMapping: Record<keyof eris.Constants['Permissions'], string> = 
 };
 
 export default class Base {
-        public core: Core;
+        public app: App;
 
-        public constructor(core?: Core) {
-                if (!(this.core = core || Core.instance)) {
-                        throw new Error('Missing core instance.');
+        public constructor(app?: App) {
+                if (!(this.app = app || App.instance)) {
+                        throw new Error('Missing app instance.');
                 }
         }
 
@@ -74,7 +74,7 @@ export default class Base {
         }
 
         public get eris() {
-                return this.core.eris;
+                return this.app.eris;
         }
 
         public get state() {
@@ -82,27 +82,27 @@ export default class Base {
         }
 
         public get baseConfig() {
-                return this.core.baseConfig;
+                return this.app.baseConfig;
         }
 
         public get config() {
-                return this.core.config;
+                return this.app.config;
         }
 
         public get logger() {
-                return this.core.logger;
+                return this.app.logger;
         }
 
         public get mongoose() {
-                return this.core.mongoose;
+                return this.app.mongoose;
         }
 
         public get models() {
-                return this.core.models;
+                return this.app.models;
         }
 
         public get redis() {
-                return this.core.redis;
+                return this.app.redis;
         }
 
         public get utils() {
@@ -112,6 +112,6 @@ export default class Base {
         public log(message?: any, level?: types.LogLevels, prefix?: string): void {
                 prefix = prefix || this.logPrefix || this.constructor.name;
 
-                this.core.log(message, level, prefix);
+                this.app.log(message, level, prefix);
         }
 }

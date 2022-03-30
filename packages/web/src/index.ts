@@ -1,5 +1,5 @@
-import Core from './core/Core';
+import App from './core/structures/App';
 
-const core = new Core();
+const app = new App();
 
-core.start();
+app.start();

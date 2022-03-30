@@ -8,7 +8,7 @@ const cluster = _cluster as unknown as _cluster.Cluster;
 
 const _nullClient: () => any = () => null;
 
-export default class Manager extends core.Core {
+export default class Manager extends core.App {
         public erisClient = _nullClient;
         public redisClient = _nullClient;
         private clusters: { [key: string]: { [key: number]: Cluster } } = {}

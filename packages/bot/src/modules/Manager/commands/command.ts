@@ -14,7 +14,7 @@ export default new Command<Manager>({
         requiredArgs: 1,
         alwaysEnabled: true,
         execute: function (ctx) {
-                let command = ctx.core.commands.get(ctx.args[0]);
+                let command = ctx.app.commands.get(ctx.args[0]);
 
                 ctx.args.shift();
 
@@ -62,7 +62,7 @@ export default new Command<Manager>({
                         update = { ['commands.' + name + '.disabled']: commandConfig.disabled };
                 }
 
-                ctx.core.guilds.update(ctx.guildConfig, { $set: update });
+                ctx.app.guilds.update(ctx.guildConfig, { $set: update });
 
                 return ctx.success(enabled
                         ? `Command \`${command.qualName}\` enabled.`

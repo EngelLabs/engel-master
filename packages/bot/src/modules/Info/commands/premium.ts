@@ -7,7 +7,7 @@ export default new Command<Info>({
         info: 'Get information regarding Premium',
         cooldown: 30000,
         execute: function (ctx) {
-                const permissions = new Permission(ctx.core);
+                const permissions = new Permission(ctx.app);
 
                 let msg = '';
 

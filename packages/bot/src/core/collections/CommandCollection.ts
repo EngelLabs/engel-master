@@ -1,32 +1,32 @@
 import * as core from '@engel/core';
 import type * as eris from 'eris';
 import type Command from '../structures/Command';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 export default class CommandCollection extends core.Collection<Command> {
-        private _core?: Core;
+        private _app?: App;
 
-        public constructor(core?: Core) {
+        public constructor(app?: App) {
                 super();
 
-                if (core) {
-                        this._core = core;
+                if (app) {
+                        this._app = app;
                 }
         }
 
         public register(): Promise<void> {
-                this._core.config.commands = {};
+                this._app.config.commands = {};
 
                 this.all()
                         .map(command => command.globalConfig)
                         .forEach(c => {
                                 if (!c) return;
 
-                                this._core.config.commands[c.name] = c;
+                                this._app.config.commands[c.name] = c;
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._core.models.Config.updateOne({ state: this._core.baseConfig.client.state }, { $set: { commands: this._core.config.commands } })
+                        this._app.models.Config.updateOne({ state: this._app.baseConfig.client.state }, { $set: { commands: this._app.config.commands } })
                                 .exec()
                                 .then(() => resolve())
                                 .catch(reject);
@@ -50,7 +50,7 @@ export default class CommandCollection extends core.Collection<Command> {
                 const embed: eris.EmbedOptions = {
                         title: `Command "${qualName}" info`,
                         description: `**Module:** ${command.module.name}`,
-                        color: this._core.config.colours.info
+                        color: this._app.config.colours.info
                 };
 
                 if (command.usage?.length) {

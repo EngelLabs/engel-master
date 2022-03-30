@@ -1,19 +1,19 @@
 import type * as express from 'express';
 import type * as types from '@engel/types';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
 const tagDataFields = ['name', 'content'];
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
+export = async function (app: App, req: express.Request, res: express.Response) {
         const data = <types.Tag | any>{};
 
         for (const key of tagDataFields) {
                 if (!Object.prototype.hasOwnProperty.call(req.body, key)) {
-                        return core.responses[400](res, 30001, `Field "${key}" is missing`);
+                        return app.responses[400](res, 30001, `Field "${key}" is missing`);
                 }
 
                 if (typeof req.body[key] !== 'string' || !(<string>req.body[key]).trim().length) {
-                        return core.responses[400](res, 30001, `Field "${key}" is invalid`);
+                        return app.responses[400](res, 30001, `Field "${key}" is invalid`);
                 }
 
                 if (Object.prototype.hasOwnProperty.call(req.body, key)) {
@@ -26,10 +26,10 @@ export = async function (core: Core, req: express.Request, res: express.Response
         data.createdAt = Date.now();
 
         try {
-                await core.models.Tag.create(data);
+                await app.models.Tag.create(data);
         } catch (err) {
-                return core.responses[403](res, 11001, 'Tag already exists');
+                return app.responses[403](res, 11001, 'Tag already exists');
         }
 
-        return core.responses[201](res, data);
+        return app.responses[201](res, data);
 }

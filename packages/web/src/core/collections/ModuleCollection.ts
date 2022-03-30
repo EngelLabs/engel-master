@@ -1,20 +1,20 @@
 import * as core from '@engel/core';
 import type * as types from '@engel/types';
-import type Core from '../Core';
+import type App from '../structures/App';
 
 export default class ModuleCollection extends core.Collection<types.GlobalModuleConfig> {
-        private _core: Core;
+        private _app: App;
 
-        public constructor(core: Core) {
+        public constructor(app: App) {
                 super();
 
-                this._core = core;
+                this._app = app;
 
                 this.load();
         }
 
         public load() {
-                const modules = this._core.config.modules;
+                const modules = this._app.config.modules;
 
                 for (const key in modules) {
                         const module: any = Object.assign({}, modules[key]);
@@ -28,6 +28,6 @@ export default class ModuleCollection extends core.Collection<types.GlobalModule
         }
 
         private _log(message: any, level?: types.LogLevels) {
-                this._core.log(message, level, 'Modules');
+                this._app.log(message, level, 'Modules');
         }
 }

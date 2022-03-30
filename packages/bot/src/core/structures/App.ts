@@ -1,18 +1,18 @@
 import * as core from '@engel/core';
 import type * as types from '@engel/types';
-import Eris from './clients/Eris';
-import baseConfig from './utils/baseConfig';
-import StateManager from './managers/StateManager';
-import EventManager from './managers/EventManager';
-import IPCManager from './managers/IPCManager';
-import CommandCollection from './collections/CommandCollection';
-import GuildCollection from './collections/GuildCollection';
-import ModuleCollection from './collections/ModuleCollection';
+import Eris from '../clients/Eris';
+import baseConfig from '../utils/baseConfig';
+import StateManager from '../managers/StateManager';
+import EventManager from '../managers/EventManager';
+import IPCManager from '../managers/IPCManager';
+import CommandCollection from '../collections/CommandCollection';
+import GuildCollection from '../collections/GuildCollection';
+import ModuleCollection from '../collections/ModuleCollection';
 
 /**
  * Represents a Discord bot
  */
-export default class Core extends core.Core {
+export default class App extends core.App {
         public erisClient = Eris;
         public baseConfig = baseConfig;
         public events: EventManager;

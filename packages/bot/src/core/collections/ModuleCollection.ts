@@ -4,39 +4,39 @@ import type * as eris from 'eris';
 import type * as types from '@engel/types';
 import type CommandCollection from './CommandCollection';
 import type Module from '../structures/Module';
-import type Core from '../Core';
+import type App from '../structures/App';
 const reload = require('require-reload')(require);
 
 const modulesPath = path.join(__dirname, '../../modules');
 
 export default class ModuleCollection extends core.Collection<Module> {
-        private _core: Core;
+        private _app: App;
         private _commands: CommandCollection;
 
-        public constructor(core: Core) {
+        public constructor(app: App) {
                 super();
 
-                this._core = core;
-                this._commands = core.commands;
+                this._app = app;
+                this._commands = app.commands;
         }
 
         private _log(message?: string, level?: types.LogLevels, prefix: string = 'Modules'): void {
-                this._core.log(message, level, prefix);
+                this._app.log(message, level, prefix);
         }
 
         public register(): Promise<void> {
-                this._core.config.modules = {};
+                this._app.config.modules = {};
 
                 [...this.unique()]
                         .map(m => m.globalConfig)
                         .forEach(m => {
                                 if (!m) return;
 
-                                this._core.config.modules[m.dbName] = m;
+                                this._app.config.modules[m.dbName] = m;
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._core.models.Config.updateOne({ state: this._core.baseConfig.client.state }, { $set: { modules: this._core.config.modules } })
+                        this._app.models.Config.updateOne({ state: this._app.baseConfig.client.state }, { $set: { modules: this._app.config.modules } })
                                 .exec()
                                 .then(() => resolve())
                                 .catch(reject);
@@ -57,7 +57,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 const embed: eris.EmbedOptions = {
                         title: `Module "${module.name}" info`,
                         description: '',
-                        color: this._core.config.colours.info
+                        color: this._app.config.colours.info
                 };
 
                 if (module.info) {
@@ -98,7 +98,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                         return this._loadModule(module);
                 } catch (err: any) {
                         if (module) {
-                                module.eject(this._core);
+                                module.eject(this._app);
                         }
 
                         throw err;
@@ -110,7 +110,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
                 if (!module) return false;
 
-                module.eject(this._core);
+                module.eject(this._app);
 
                 this.remove(module);
 
@@ -148,7 +148,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                         return false;
                 }
 
-                await module.inject(this._core);
+                await module.inject(this._app);
 
                 this.add(module);
 
@@ -160,7 +160,7 @@ export default class ModuleCollection extends core.Collection<Module> {
         public async load(moduleNames?: string[]): Promise<number> {
                 moduleNames = moduleNames?.length
                         ? moduleNames
-                        : (await this._core.utils.readdir(modulesPath))
+                        : (await this._app.utils.readdir(modulesPath))
                                 .map(m => m.endsWith('.js') ? m.slice(0, -3) : m);
 
                 let ret = 0;

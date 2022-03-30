@@ -30,7 +30,7 @@ export default class Core extends Module {
         public injectHook(): void {
                 this.cooldowns = new Map();
                 this.globalCooldowns = new Map();
-                this.permissions = new Permission(this.core);
+                this.permissions = new Permission(this.app);
 
                 this.tasks = [];
                 this.listeners = [];
@@ -270,7 +270,7 @@ export default class Core extends Module {
 
                 if (!args.length) return;
 
-                let command = this.core.commands.get(args.shift());
+                let command = this.app.commands.get(args.shift());
 
                 if (!command) return;
 
@@ -303,7 +303,7 @@ export default class Core extends Module {
                 //         return [args.shift(), args.shift()];
                 // }
 
-                const ctx = new Context(this.core, {
+                const ctx = new Context(this.app, {
                         args,
                         prefix: prefix || '?',
                         message,
@@ -456,7 +456,7 @@ export default class Core extends Module {
                 const { command, prefix, isAdmin, args, message } = ctx;
 
                 if (args.length < command?.requiredArgs) {
-                        const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
+                        const embed = this.app.commands.help(command.qualName, prefix, isAdmin);
 
                         if (!embed) {
                                 this.log(new Error('Unreachable code'), 'error');
@@ -490,7 +490,7 @@ export default class Core extends Module {
 
                         if (command.namespace) {
                                 execute = () => {
-                                        const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
+                                        const embed = this.app.commands.help(command.qualName, prefix, isAdmin);
 
                                         return ctx.send({ embed });
                                 };
@@ -518,7 +518,7 @@ export default class Core extends Module {
                                 }
                         }
 
-                        this.core.emit('command', command.dbName);
+                        this.app.emit('command', command.dbName);
                 } catch (err) {
                         this.log(err, 'error');
 

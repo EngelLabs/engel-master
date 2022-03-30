@@ -1,19 +1,19 @@
 import type * as express from 'express';
 import type * as types from '@engel/types';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
 const fields = ['name', 'content'];
 
-export = async function (core: Core, req: express.Request, res: express.Response) {
+export = async function (app: App, req: express.Request, res: express.Response) {
         for (const key of fields) {
                 if (!Object.prototype.hasOwnProperty.call(req.body, key)) {
-                        return core.responses[400](res, 30001, `Field "${key}" is missing`);
+                        return app.responses[400](res, 30001, `Field "${key}" is missing`);
                 }
 
                 const val = req.body[key];
 
                 if (typeof val !== 'string' || !val.trim().length) {
-                        return core.responses[400](res, 30001, `Field "${key}" is invalid`);
+                        return app.responses[400](res, 30001, `Field "${key}" is invalid`);
                 }
         }
 
@@ -37,14 +37,14 @@ export = async function (core: Core, req: express.Request, res: express.Response
                 }
         }
 
-        const result = await core.models.Tag
+        const result = await app.models.Tag
                 .findOneAndUpdate(filter, { $set: update }, { new: true })
                 .lean()
                 .exec();
 
         if (!result) {
-                return core.responses[404](res, 0, 'Unknown tag');
+                return app.responses[404](res, 0, 'Unknown tag');
         }
 
-        return core.responses[200](res, result);
+        return app.responses[200](res, result);
 }

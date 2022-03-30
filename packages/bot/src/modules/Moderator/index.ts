@@ -45,12 +45,12 @@ export default class Moderator extends Module {
         }
 
         public injectHook() {
-                this._moderation = new Moderation(this.core);
+                this._moderation = new Moderation(this.app);
 
                 this.tasks = [];
                 this.listeners = [];
 
-                const timerHandler = (new ModTimer(this.core)).handler;
+                const timerHandler = (new ModTimer(this.app)).handler;
 
                 this.tasks.push([timerHandler, 15000]);
 

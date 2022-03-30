@@ -13,7 +13,7 @@ export default new Command<Core>({
                 const start = Date.now();
 
                 try {
-                        var res = await ctx.core.modules.load(ctx.args.length ? ctx.args : null);
+                        var res = await ctx.app.modules.load(ctx.args.length ? ctx.args : null);
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');
                 }

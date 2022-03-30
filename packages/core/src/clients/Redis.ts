@@ -1,18 +1,18 @@
 import * as ioredis from 'ioredis';
 import type * as types from '@engel/types';
-import type Core from '../structures/Core';
+import type App from '../structures/App';
 
 const IORedis = ioredis;
 
-export default function Redis(core: Core, shouldLog: boolean = true): ioredis.Redis {
+export default function Redis(app: App, shouldLog: boolean = true): ioredis.Redis {
         const client = new IORedis(
-                core.baseConfig.redis.port,
-                core.baseConfig.redis.host
+                app.baseConfig.redis.port,
+                app.baseConfig.redis.host
         );
 
         if (shouldLog) {
                 const log = (message?: any, level?: types.LogLevels, prefix: string = 'Redis') => {
-                        core.log(message, level, prefix);
+                        app.log(message, level, prefix);
                 };
 
                 client

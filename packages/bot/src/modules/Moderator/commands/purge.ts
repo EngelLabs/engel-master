@@ -80,7 +80,7 @@ purge.command({
                 'manageMessages'
         ],
         execute: async function (ctx) {
-                const converter = new Converter(ctx.core);
+                const converter = new Converter(ctx.app);
 
                 try {
                         var user = await converter.user(ctx.args[0], true);

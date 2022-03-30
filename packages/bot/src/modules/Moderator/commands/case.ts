@@ -32,7 +32,7 @@ export default new Command<Moderator>({
 
                 if (!modlog) return ctx.error(`Case \`${ctx.args[0]}\` not found.`);
 
-                const moderation = new Moderation(ctx.core);
+                const moderation = new Moderation(ctx.app);
 
                 const embed = {
                         description: moderation.formatModlog(modlog),

@@ -3,7 +3,7 @@ import type * as types from '@engel/types';
 import Base from '../../../core/structures/Base';
 import Permission from '../../../core/helpers/Permission';
 import Moderation from '../../../core/helpers/Moderation';
-import type Core from '../../../core/Core';
+import type App from '../../../core/structures/App';
 
 type TimerTypes = 'mute' | 'ban' | 'lock' | 'block';
 
@@ -14,11 +14,11 @@ export default class ModTimer extends Base {
         private _permissions: Permission;
         private _moderation: Moderation;
 
-        public constructor(core: Core) {
-                super(core);
+        public constructor(app: App) {
+                super(app);
 
-                this._permissions = new Permission(core);
-                this._moderation = new Moderation(core);
+                this._permissions = new Permission(app);
+                this._moderation = new Moderation(app);
         }
 
         public get handler(): () => Promise<void> {
@@ -66,7 +66,7 @@ export default class ModTimer extends Base {
 
                 if (!this._permissions.hasGuildPermissions(guild, 'manageRoles')) return;
 
-                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.app.guilds.getOrFetch(guild.id);
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
                 const muteRole = guildConfig.muteRole;
@@ -98,7 +98,7 @@ export default class ModTimer extends Base {
 
                 if (!this._permissions.hasGuildPermissions(guild, 'banMembers')) return;
 
-                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.app.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
@@ -129,7 +129,7 @@ export default class ModTimer extends Base {
 
                 if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
-                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.app.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 
@@ -183,7 +183,7 @@ export default class ModTimer extends Base {
 
                 if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles')) return;
 
-                const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+                const guildConfig = await this.app.guilds.getOrFetch(guild.id);
 
                 if (!guildConfig || !this._isEnabled(guildConfig)) return;
 

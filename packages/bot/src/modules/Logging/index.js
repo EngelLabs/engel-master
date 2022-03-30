@@ -87,7 +87,7 @@ class Logging extends Module {
                                                 [`logging.${eventConfig.name}.channel`]: null
                                         };
 
-                                        this.core.guilds.update(guildConfig, { $unset: update });
+                                        this.app.guilds.update(guildConfig, { $unset: update });
 
                                         if (guildConfig.logging?.[eventConfig.name]) {
                                                 const actual = guildConfig.logging[eventConfig.name];

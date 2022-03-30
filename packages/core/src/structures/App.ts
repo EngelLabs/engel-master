@@ -13,11 +13,11 @@ import Mongoose from '../clients/Mongoose';
 import Redis from '../clients/Redis';
 
 /* eslint-disable-next-line no-use-before-define */
-let coreInstance: Core;
+let appInstance: App;
 
 global.Promise = require('bluebird');
 
-export default class Core extends EventEmitter {
+export default class App extends EventEmitter {
         public baseConfig = baseConfig;
         public models = models;
         public utils = utils;
@@ -35,11 +35,11 @@ export default class Core extends EventEmitter {
         public constructor() {
                 super();
 
-                coreInstance = this;
+                appInstance = this;
         }
 
-        public static get instance(): Core {
-                return coreInstance;
+        public static get instance(): App {
+                return appInstance;
         }
 
         public log(message?: any, level: types.LogLevels = 'debug', prefix?: string): void {

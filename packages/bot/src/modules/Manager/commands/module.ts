@@ -13,7 +13,7 @@ export default new Command<Manager>({
         requiredArgs: 1,
         alwaysEnabled: true,
         execute: function (ctx) {
-                const module = ctx.core.modules.get(ctx.args[0].slice(0, 1).toUpperCase() + ctx.args[0].slice(1));
+                const module = ctx.app.modules.get(ctx.args[0].slice(0, 1).toUpperCase() + ctx.args[0].slice(1));
 
                 if (!module || module.private || module.internal || module.disabled) {
                         return ctx.error(`Module \`${ctx.args[0]}\` not found.`);
@@ -26,7 +26,7 @@ export default new Command<Manager>({
 
                 const queryString = moduleName + '.disabled';
 
-                ctx.core.guilds.update(ctx.guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
+                ctx.app.guilds.update(ctx.guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
 
                 return ctx.success(moduleConfig.disabled
                         ? `Module \`${module.name}\` disabled.`

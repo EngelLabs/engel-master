@@ -42,8 +42,8 @@ export default new Command<Info>({
                 const verbose = ctx.guildConfig.verboseHelp !== undefined ? ctx.guildConfig.verboseHelp : true;
 
                 const embed = (
-                        ctx.core.commands.help(str, ctx.prefix, ctx.isAdmin, verbose) ||
-                        ctx.core.modules.help(str, ctx.prefix, ctx.isAdmin, verbose)
+                        ctx.app.commands.help(str, ctx.prefix, ctx.isAdmin, verbose) ||
+                        ctx.app.modules.help(str, ctx.prefix, ctx.isAdmin, verbose)
                 );
 
                 if (!embed) {

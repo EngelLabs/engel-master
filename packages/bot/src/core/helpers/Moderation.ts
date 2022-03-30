@@ -118,7 +118,7 @@ export default class Moderation extends Base {
 
                         guildConfig.caseCount++;
 
-                        this.core.guilds.update(guildConfig, { $inc: { caseCount: 1 } });
+                        this.app.guilds.update(guildConfig, { $inc: { caseCount: 1 } });
 
                         mod = {
                                 id: mod.id,

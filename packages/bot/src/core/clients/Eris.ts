@@ -1,9 +1,9 @@
 import * as core from '@engel/core';
 import type * as types from '@engel/types';
-import type Core from '../Core';
+import type App from '../structures/App';
 
-export default function Eris(_core: Core) {
-        const client = core.Eris(_core, {
+export default function Eris(app: App) {
+        const client = core.Eris(app, {
                 intents: [
                         'directMessages',
                         'guilds',
@@ -18,13 +18,13 @@ export default function Eris(_core: Core) {
                 autoreconnect: true,
                 compress: true,
                 messageLimit: 0,
-                firstShardID: _core.baseConfig.cluster.firstShard,
-                lastShardID: _core.baseConfig.cluster.lastShard,
-                maxShards: _core.baseConfig.client.shards
+                firstShardID: app.baseConfig.cluster.firstShard,
+                lastShardID: app.baseConfig.cluster.lastShard,
+                maxShards: app.baseConfig.client.shards
         });
 
         const log = (message: any, level: types.LogLevels, shardID?: number) => {
-                _core.log(message, level, shardID !== undefined ? `Shard ${shardID}` : 'Eris');
+                app.log(message, level, shardID !== undefined ? `Shard ${shardID}` : 'Eris');
         };
 
         client
