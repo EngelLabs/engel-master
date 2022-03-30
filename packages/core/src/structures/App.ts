@@ -42,12 +42,20 @@ export default class App extends EventEmitter {
                 return appInstance;
         }
 
-        public log(message?: any, level: types.LogLevels = 'debug', prefix?: string): void {
+        public log(message?: any, level: types.LogLevels = 'debug', ...sources: string[]): void {
                 if (!message) {
                         return;
                 }
 
-                message = `[${prefix ?? this.constructor.name}] ${message}`;
+                if (!sources.length) {
+                        sources = [this.constructor.name];
+                }
+
+                if (level === 'error') {
+                        message = (<Error>message).stack ?? message;
+                }
+
+                message = `${sources.map(s => `[${s}]`).join(' ')} ${message}`;
 
                 this.logger.log({ message, level });
         }

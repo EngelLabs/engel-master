@@ -22,16 +22,8 @@ export default class App extends core.App {
         public commands: CommandCollection;
         public modules: ModuleCollection;
 
-        public log(message?: any, level: types.LogLevels = 'debug', prefix?: string): void {
-                if (!message) {
-                        return;
-                }
-
-                try {
-                        message = `[${baseConfig.client.name.toUpperCase()}-C${baseConfig.cluster.id}] [${prefix || this.constructor.name}] ${message}`;
-                } catch { }
-
-                this.logger.log({ message, level });
+        public log(message?: any, level: types.LogLevels = 'debug', ...sources: string[]): void {
+                super.log(message, level, `${baseConfig.client.name.toUpperCase()}-C${baseConfig.cluster.id}`, ...sources);
         }
 
         /**
