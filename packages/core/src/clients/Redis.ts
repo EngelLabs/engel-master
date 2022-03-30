@@ -14,12 +14,13 @@ export default function Redis(core: Core, shouldLog: boolean = true): ioredis.Re
                 const log = (message?: any, level?: types.LogLevels, prefix: string = 'Redis') => {
                         core.log(message, level, prefix);
                 };
+
                 client
                         .on('ready', () => {
-                                log('Connected.', 'info');
+                                log('Connected.');
                         })
                         .on('close', () => {
-                                log('Disconnected.', 'info');
+                                log('Disconnected.');
                         })
                         .on('error', (err: any) => {
                                 log(err, 'error');

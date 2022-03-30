@@ -71,7 +71,7 @@ export default class Core extends core.Core {
 
                 process
                         .on('SIGTERM', () => {
-                                this.log('Connection closed.', 'info');
+                                this.log('Connection closed.');
 
                                 if (this._server) {
                                         this._server.close();

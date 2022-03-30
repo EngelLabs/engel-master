@@ -40,7 +40,7 @@ export default class ControllerCollection extends Map {
                         this._log(`${method}(${uri})`);
                 }
 
-                this._log(`${this.size} registered.`, 'info');
+                this._log(`${this.size} registered.`);
         }
 
         private _log(message: any, level?: types.LogLevels) {

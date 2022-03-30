@@ -7,14 +7,14 @@ export default function Mongoose(core: Core): mongoose.Mongoose {
                 core.log(message, level, prefix);
         };
 
-        log(`${Object.values(mongoose.models).length} models registered.`, 'info');
+        log(`${Object.values(mongoose.models).length} models registered.`);
 
         mongoose.connection
                 .on('connected', () => {
-                        log('Connected.', 'info');
+                        log('Connected.');
                 })
                 .on('disconnected', () => {
-                        log('Disconnected.', 'info');
+                        log('Disconnected.');
                 })
                 .on('error', err => {
                         log(err, 'error');

@@ -37,6 +37,6 @@ export default class CommandCollection extends core.Collection<Command> {
                         this._log(`Loaded "${command.name}"`);
                 }
 
-                this._log(`${this.size} registered.`, 'info');
+                this._log(`${this.size} registered.`);
         }
 }

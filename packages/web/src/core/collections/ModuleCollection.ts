@@ -24,7 +24,7 @@ export default class ModuleCollection extends core.Collection<types.GlobalModule
                         this._log(`Loaded "${module.dbName}"`);
                 }
 
-                this._log(`${this.size} registered.`, 'info');
+                this._log(`${this.size} registered.`);
         }
 
         private _log(message: any, level?: types.LogLevels) {

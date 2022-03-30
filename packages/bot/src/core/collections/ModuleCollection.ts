@@ -171,9 +171,9 @@ export default class ModuleCollection extends core.Collection<Module> {
                 }
 
                 if (initial) {
-                        this._log(`${this.unique().size} registered.`, 'info');
-                        this._log(`${this._commands.unique().size} registered.`, 'info', 'Commands');
-                        this._log(`${this._commands.all().length} total registered.`, 'info', 'Commands');
+                        this._log(`${this.unique().size} registered.`);
+                        this._log(`${this._commands.unique().size} registered.`, 'debug', 'Commands');
+                        this._log(`${this._commands.all().length} total registered.`, 'debug', 'Commands');
                 }
 
                 return ret;

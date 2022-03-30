@@ -29,16 +29,16 @@ export default function Eris(_core: Core) {
 
         client
                 .on('connect', id => {
-                        log('Connected.', 'info', id);
+                        log('Connected.', 'debug', id);
                 })
                 .on('shardDisconnect', (_, id) => {
-                        log('Disconnected.', 'info', id);
+                        log('Disconnected.', 'debug', id);
                 })
                 .on('shardReady', id => {
-                        log('Ready.', 'info', id);
+                        log('Ready.', 'debug', id);
                 })
                 .on('shardResume', id => {
-                        log('Resumed.', 'info', id);
+                        log('Resumed.', 'debug', id);
                 });
 
         return client;
