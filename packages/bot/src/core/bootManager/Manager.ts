@@ -8,14 +8,14 @@ const cluster = _cluster as unknown as _cluster.Cluster;
 
 const _nullClient: () => any = () => null;
 
+core.baseConfig.logger.dir = path.resolve('logs');
+
 export default class Manager extends core.App {
         public erisClient = _nullClient;
         public redisClient = _nullClient;
         private clusters: { [key: string]: { [key: number]: Cluster } } = {}
 
         public async setup() {
-                this.baseConfig.logger.dir = path.resolve('logs');
-
                 const clientNames = getenv.array('CLIENT_NAMES');
                 const clusterCount = getenv.int('CLUSTER_COUNT', 1);
                 const shardCount = getenv.int('SHARD_COUNT', 1);
