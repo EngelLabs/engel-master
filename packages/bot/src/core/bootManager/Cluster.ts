@@ -1,6 +1,6 @@
 import * as _cluster from 'cluster';
 import * as core from '@engel/core';
-import Manager from './Manager';
+import type Manager from './Manager';
 
 const cluster = <_cluster.Cluster><unknown>_cluster;
 
