@@ -1,5 +1,5 @@
-import ApplicationManager from './core/managers/ApplicationManager';
+import Manager from './core/bootManager/Manager';
 
-const app = new ApplicationManager();
+const manager = new Manager();
 
-app.start();
+manager.start();

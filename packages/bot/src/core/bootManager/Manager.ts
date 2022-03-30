@@ -2,16 +2,19 @@ import * as _cluster from 'cluster';
 import * as getenv from 'getenv';
 import * as path from 'path';
 import * as core from '@engel/core';
+import Cluster from './Cluster';
 
 const cluster = _cluster as unknown as _cluster.Cluster;
 
-export default class ApplicationManager extends core.Core {
-        private clusters: { [key: string]: { [key: number]: _cluster.Worker } } = {}
+const _nullClient: () => any = () => null;
 
-        public async start() {
+export default class Manager extends core.Core {
+        public erisClient = _nullClient;
+        public redisClient = _nullClient;
+        private clusters: { [key: string]: { [key: number]: Cluster } } = {}
+
+        public async setup() {
                 this.baseConfig.logger.dir = path.resolve('logs');
-
-                this.logger = core.Logger(this);
 
                 const clientNames = getenv.array('CLIENT_NAMES');
                 const clusterCount = getenv.int('CLUSTER_COUNT', 1);
@@ -47,43 +50,34 @@ export default class ApplicationManager extends core.Core {
                         exec: 'build/src/index.js'
                 });
 
-                cluster
-                        .on('online', worker => {
-                                this.log('Online.', 'info', `PID-${worker.process.pid}`);
-                        })
-                        .on('disconnect', worker => {
-                                this.log('Offfline.', 'info', `PID-${worker.process.pid}`);
-                        });
-
                 for (const clientConfig of clients) {
                         (async () => {
                                 let firstShardID = 0;
                                 let lastShardID = clientConfig.shardCount - 1;
 
                                 for (let i = 0; i < clientConfig.clusterCount; i++) {
-                                        const env = Object.assign({
-                                                CLUSTER_FIRST_SHARD: firstShardID,
-                                                CLUSTER_LAST_SHARD: lastShardID,
-                                                CLUSTER_ID: i
-                                        }, clientConfig.env);
+                                        const clusterConfig = {
+                                                id: i,
+                                                client: clientConfig.name,
+                                                firstShardID,
+                                                lastShardID,
+                                                env: Object.assign({
+                                                        CLUSTER_FIRST_SHARD: firstShardID,
+                                                        CLUSTER_LAST_SHARD: lastShardID,
+                                                        CLUSTER_ID: i
+                                                }, clientConfig.env)
+                                        };
 
                                         firstShardID += clientConfig.shardCount;
                                         lastShardID += clientConfig.shardCount;
 
                                         this.clusters[clientConfig.name] = this.clusters[clientConfig.name] || {};
-                                        const worker = this.clusters[clientConfig.name][i] = cluster.fork(env);
 
-                                        await new Promise((resolve) => {
-                                                const listener = (message: any) => {
-                                                        if (message === 'ready') {
-                                                                worker.off('message', listener);
+                                        const cluster = new Cluster(this, clusterConfig);
 
-                                                                resolve(null);
-                                                        }
-                                                };
+                                        this.clusters[clientConfig.name][i] = cluster;
 
-                                                worker.on('message', listener);
-                                        });
+                                        await cluster.awaitReady();
                                 }
                         })();
                 }
