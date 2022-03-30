@@ -5,27 +5,27 @@ const core = require("@engel/core");
 const reload = require('require-reload')(require);
 const modulesPath = path.join(__dirname, '../../modules');
 class ModuleCollection extends core.Collection {
-    _core;
+    _app;
     _commands;
-    constructor(core) {
+    constructor(app) {
         super();
-        this._core = core;
-        this._commands = core.commands;
+        this._app = app;
+        this._commands = app.commands;
     }
     _log(message, level, prefix = 'Modules') {
-        this._core.log(message, level, prefix);
+        this._app.log(message, level, prefix);
     }
     register() {
-        this._core.config.modules = {};
+        this._app.config.modules = {};
         [...this.unique()]
             .map(m => m.globalConfig)
             .forEach(m => {
             if (!m)
                 return;
-            this._core.config.modules[m.dbName] = m;
+            this._app.config.modules[m.dbName] = m;
         });
         return new Promise((resolve, reject) => {
-            this._core.models.Config.updateOne({ state: this._core.baseConfig.client.state }, { $set: { modules: this._core.config.modules } })
+            this._app.models.Config.updateOne({ state: this._app.baseConfig.client.state }, { $set: { modules: this._app.config.modules } })
                 .exec()
                 .then(() => resolve())
                 .catch(reject);
@@ -38,7 +38,7 @@ class ModuleCollection extends core.Collection {
         const embed = {
             title: `Module "${module.name}" info`,
             description: '',
-            color: this._core.config.colours.info
+            color: this._app.config.colours.info
         };
         if (module.info) {
             embed.description += `**Info:** ${module.info}\n `;
@@ -70,7 +70,7 @@ class ModuleCollection extends core.Collection {
         }
         catch (err) {
             if (module) {
-                module.eject(this._core);
+                module.eject(this._app);
             }
             throw err;
         }
@@ -79,7 +79,7 @@ class ModuleCollection extends core.Collection {
         const module = this.get(moduleName);
         if (!module)
             return false;
-        module.eject(this._core);
+        module.eject(this._app);
         this.remove(module);
         return true;
     }
@@ -103,7 +103,7 @@ class ModuleCollection extends core.Collection {
             this._log(`Skipping disabled module "${module.name}".`);
             return false;
         }
-        await module.inject(this._core);
+        await module.inject(this._app);
         this.add(module);
         this._log(`Loaded "${module.name}".`);
         return true;
@@ -111,7 +111,7 @@ class ModuleCollection extends core.Collection {
     async load(moduleNames) {
         moduleNames = moduleNames?.length
             ? moduleNames
-            : (await this._core.utils.readdir(modulesPath))
+            : (await this._app.utils.readdir(modulesPath))
                 .map(m => m.endsWith('.js') ? m.slice(0, -3) : m);
         let ret = 0;
         const initial = this.size === 0;
@@ -120,9 +120,9 @@ class ModuleCollection extends core.Collection {
                 ret += 1;
         }
         if (initial) {
-            this._log(`${this.unique().size} registered.`, 'info');
-            this._log(`${this._commands.unique().size} registered.`, 'info', 'Commands');
-            this._log(`${this._commands.all().length} total registered.`, 'info', 'Commands');
+            this._log(`${this.unique().size} registered.`);
+            this._log(`${this._commands.unique().size} registered.`, 'debug', 'Commands');
+            this._log(`${this._commands.all().length} total registered.`, 'debug', 'Commands');
         }
         return ret;
     }

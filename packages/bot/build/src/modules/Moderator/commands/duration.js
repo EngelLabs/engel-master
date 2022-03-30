@@ -18,7 +18,7 @@ exports.default = new Command_1.default({
         if (isNaN(caseNum) || caseNum < 0) {
             return ctx.error(`\`${ctx.args[0]}\` is not a valid case number.`);
         }
-        const converter = new Converter_1.default(ctx.core);
+        const converter = new Converter_1.default(ctx.app);
         const duration = converter.duration(ctx.args[1]);
         if (duration && duration < 300)
             return ctx.error('Duration must be at least 5 minutes');

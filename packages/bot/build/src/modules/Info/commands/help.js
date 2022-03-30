@@ -35,8 +35,8 @@ exports.default = new Command_1.default({
             return ctx.send({ embed });
         }
         const verbose = ctx.guildConfig.verboseHelp !== undefined ? ctx.guildConfig.verboseHelp : true;
-        const embed = (ctx.core.commands.help(str, ctx.prefix, ctx.isAdmin, verbose) ||
-            ctx.core.modules.help(str, ctx.prefix, ctx.isAdmin, verbose));
+        const embed = (ctx.app.commands.help(str, ctx.prefix, ctx.isAdmin, verbose) ||
+            ctx.app.modules.help(str, ctx.prefix, ctx.isAdmin, verbose));
         if (!embed) {
             return ctx.error(`Command or module \`${str}\` not found.`);
         }

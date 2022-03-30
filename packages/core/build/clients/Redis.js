@@ -2,18 +2,18 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ioredis = require("ioredis");
 const IORedis = ioredis;
-function Redis(core, shouldLog = true) {
-    const client = new IORedis(core.baseConfig.redis.port, core.baseConfig.redis.host);
+function Redis(app, shouldLog = true) {
+    const client = new IORedis(app.baseConfig.redis.port, app.baseConfig.redis.host);
     if (shouldLog) {
         const log = (message, level, prefix = 'Redis') => {
-            core.log(message, level, prefix);
+            app.log(message, level, prefix);
         };
         client
             .on('ready', () => {
-            log('Connected.', 'info');
+            log('Connected.');
         })
             .on('close', () => {
-            log('Disconnected.', 'info');
+            log('Disconnected.');
         })
             .on('error', (err) => {
             log(err, 'error');

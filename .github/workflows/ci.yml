@@ -1,0 +1,33 @@
+name: ci
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        name:
+          - build
+          - lint
+
+    name: ${{ matrix.name }}
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set up NodeJS v17.6.0
+        uses: actions/setup-node@v3
+        with:
+          node-version: 17.6.0
+
+      - name: Install dependencies
+        run: yarn install
+      
+      - name: Run checks
+        run: yarn ${{ matrix.name }}
+        

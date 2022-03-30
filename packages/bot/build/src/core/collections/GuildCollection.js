@@ -2,21 +2,21 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core_1 = require("@engel/core");
 class GuildCollection extends Map {
-    _core;
+    _app;
     _uncacheInterval;
     _creating = {};
-    constructor(core) {
+    constructor(app) {
         super();
-        this._core = core;
-        const subredis = (0, core_1.Redis)(core, false);
+        this._app = app;
+        const subredis = (0, core_1.Redis)(app, false);
         subredis.subscribe('guildUpdate');
         subredis.on('message', this.guildUpdate.bind(this));
-        core.eris.on('guildCreate', this.guildCreate.bind(this));
-        core.eris.on('guildDelete', this.guildDelete.bind(this));
-        core.on('config', this._configure.bind(this));
+        app.eris.on('guildCreate', this.guildCreate.bind(this));
+        app.eris.on('guildDelete', this.guildDelete.bind(this));
+        app.on('config', this._configure.bind(this));
     }
     _configure(config) {
-        if (config.guildCache && config.guildUncacheInterval !== this._core.config.guildUncacheInterval) {
+        if (config.guildCache && config.guildUncacheInterval !== this._app.config.guildUncacheInterval) {
             clearInterval(this._uncacheInterval);
             this._uncacheInterval = setInterval(this.uncache.bind(this), config.guildUncacheInterval);
         }
@@ -24,7 +24,7 @@ class GuildCollection extends Map {
     uncache() {
         const now = Date.now();
         for (const guild of this.values()) {
-            if (now - guild._cachedAt > this._core.config.guildMaxAge) {
+            if (now - guild._cachedAt > this._app.config.guildMaxAge) {
                 this.delete(guild.id);
             }
         }
@@ -39,14 +39,14 @@ class GuildCollection extends Map {
     guildUpdate(chnl, id) {
         if (chnl !== 'guildUpdate')
             return;
-        if (this._core.eris.guilds.has(id)) {
+        if (this._app.eris.guilds.has(id)) {
             this.fetch(id);
         }
     }
     getOrFetch(id, options) {
         const guildID = typeof id === 'string' ? id : id.id;
         return new Promise((resolve, reject) => {
-            if (this._core.config.guildCache) {
+            if (this._app.config.guildCache) {
                 const ret = this.get(guildID);
                 if (ret) {
                     return resolve(ret);
@@ -60,11 +60,11 @@ class GuildCollection extends Map {
     fetch(id, options) {
         const guildID = typeof id === 'string' ? id : id.id;
         return new Promise((resolve, reject) => {
-            this._core.models.Guild.findOne({ id: guildID })
+            this._app.models.Guild.findOne({ id: guildID })
                 .lean()
                 .exec()
                 .then((guild) => {
-                if (guild && this._core.config.guildCache) {
+                if (guild && this._app.config.guildCache) {
                     this.set(guildID, guild);
                 }
                 if (!guild && options?.createIfNotFound) {
@@ -86,13 +86,13 @@ class GuildCollection extends Map {
         }
         const doc = {
             id: guildID,
-            prefixes: this._core.config.prefixes.default,
-            client: this._core.baseConfig.client.name
+            prefixes: this._app.config.prefixes.default,
+            client: this._app.baseConfig.client.name
         };
         const p = new Promise((resolve, reject) => {
-            this._core.models.Guild.create(doc)
+            this._app.models.Guild.create(doc)
                 .then((guild) => {
-                if (this._core.config.guildCache) {
+                if (this._app.config.guildCache) {
                     this.set(guildID, guild);
                 }
                 resolve(guild);
@@ -112,7 +112,7 @@ class GuildCollection extends Map {
     update(id, update) {
         const guildID = typeof id === 'string' ? id : id.id;
         return new Promise((resolve, reject) => {
-            this._core.models.Guild.updateOne({ id: guildID }, update)
+            this._app.models.Guild.updateOne({ id: guildID }, update)
                 .exec()
                 .then(resolve)
                 .catch(reject);

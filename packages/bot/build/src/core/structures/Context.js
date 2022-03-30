@@ -33,8 +33,8 @@ class Context extends Base_1.default {
     removeSuccessReaction = createRemoveReactionFunction('success');
     removeLoadingReaction = createRemoveReactionFunction('loading');
     removePremiumReaction = createRemoveReactionFunction('premium');
-    constructor(core, options) {
-        super(core);
+    constructor(app, options) {
+        super(app);
         this.args = options.args;
         this.prefix = options.prefix;
         this.message = options.message;

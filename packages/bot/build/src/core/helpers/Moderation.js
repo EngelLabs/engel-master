@@ -65,7 +65,7 @@ class Moderation extends Base_1.default {
             guildConfig.caseCount = guildConfig.caseCount || 0;
             const caseCount = guildConfig.caseCount;
             guildConfig.caseCount++;
-            this.core.guilds.update(guildConfig, { $inc: { caseCount: 1 } });
+            this.app.guilds.update(guildConfig, { $inc: { caseCount: 1 } });
             mod = {
                 id: mod.id,
                 name: (mod instanceof eris.User || mod instanceof eris.Member)

@@ -17,7 +17,7 @@ exports.default = new Command_1.default({
     info: 'Get some useful information about a server member',
     execute: async function (ctx) {
         if (ctx.args.length) {
-            const converter = new Converter_1.default(ctx.core);
+            const converter = new Converter_1.default(ctx.app);
             try {
                 var user = await converter.member(ctx.guild, ctx.args[0], true);
             }

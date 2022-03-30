@@ -17,7 +17,7 @@ exports.default = new Command_1.default({
         if (!ctx.guildConfig.muteRole || !ctx.guild.roles.get(ctx.guildConfig.muteRole)) {
             return ctx.error(`This server doesn't have a mute role. See \`${ctx.prefix}help muterole\` to set one up.`);
         }
-        const converter = new Converter_1.default(ctx.core);
+        const converter = new Converter_1.default(ctx.app);
         try {
             var user = await converter.member(ctx.guild, ctx.args[0], true) ||
                 await converter.user(ctx.args[0], true);

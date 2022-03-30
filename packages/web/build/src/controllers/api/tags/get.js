@@ -1,10 +1,10 @@
 "use strict";
-module.exports = async function (core, req, res) {
+module.exports = async function (app, req, res) {
     const filter = { guild: req.params.id };
-    const tags = await core.models.Tag
+    const tags = await app.models.Tag
         .find(filter)
         .lean()
         .exec();
-    return core.responses[200](res, tags);
+    return app.responses[200](res, tags);
 };
 //# sourceMappingURL=get.js.map

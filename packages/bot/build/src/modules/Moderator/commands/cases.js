@@ -18,7 +18,7 @@ exports.default = new Command_1.default({
     cooldown: 10000,
     requiredArgs: 1,
     execute: async function (ctx) {
-        const converter = new Converter_1.default(ctx.core);
+        const converter = new Converter_1.default(ctx.app);
         let id = converter.userID(ctx.args[0]);
         if (isNaN(parseInt(id))) {
             id = converter.channelID(ctx.args[0]);
@@ -37,7 +37,7 @@ exports.default = new Command_1.default({
         if (!modlogs.length) {
             return ctx.error('No cases found for that channel/user.');
         }
-        const moderation = new Moderation_1.default(ctx.core);
+        const moderation = new Moderation_1.default(ctx.app);
         const msg = modlogs
             .map(m => {
             if (m.user?.id === id) {

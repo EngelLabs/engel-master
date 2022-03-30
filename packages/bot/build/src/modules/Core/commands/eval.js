@@ -24,7 +24,7 @@ const _eval = new Command_1.default({
     cooldown: 0,
     dmEnabled: true,
     execute: async function (ctx) {
-        let { message, guild, author, core, member, channel, args, eris, guildConfig, baseConfig, config, logger, models, mongoose, redis, me, permissions, utils } = ctx, __ctx = ctx, __res;
+        let { message, guild, author, app, member, channel, args, eris, guildConfig, baseConfig, config, logger, models, mongoose, redis, me, permissions, utils } = ctx, __ctx = ctx, __res;
         let api = (method, uri, data = {}) => {
             return (superagent[method])('http://localhost:8080/api' + uri)
                 .set('Accept', 'application/json')

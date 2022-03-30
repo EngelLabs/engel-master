@@ -1,7 +1,7 @@
 "use strict";
-module.exports = async function (core, req, res, next) {
+module.exports = async function (app, req, res, next) {
     if (!req.session.token) {
-        return core.responses[401](res, 20001);
+        return app.responses[401](res, 20001);
     }
     if (req.session.isAdmin) {
         return next();
@@ -9,7 +9,7 @@ module.exports = async function (core, req, res, next) {
     const guildID = req.params.id;
     const guild = req.session.guilds.find(g => g.id === guildID);
     if (!guild) {
-        return core.responses[403](res, 10001, 'Unknown guild');
+        return app.responses[403](res, 10001, 'Unknown guild');
     }
     return next();
 };

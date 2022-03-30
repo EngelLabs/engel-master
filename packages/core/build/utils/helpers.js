@@ -4,7 +4,7 @@ exports.removeReaction = exports.addReaction = exports.sendMessage = exports.sle
 const fs = require("fs");
 const util = require("util");
 const eris = require("eris");
-const Core_1 = require("../structures/Core");
+const App_1 = require("../structures/App");
 exports.readdir = util.promisify(fs.readdir);
 function capitalize(str) {
     if (!str || !str.length)
@@ -16,7 +16,7 @@ function getTopRole(guild) {
     if (!guild) {
         return;
     }
-    const me = guild.members.get(Core_1.default.instance.eris.user.id);
+    const me = guild.members.get(App_1.default.instance.eris.user.id);
     if (!me || !me.roles.length) {
         return;
     }
@@ -33,7 +33,7 @@ function sendMessage(channel, content, type) {
     if (!content) {
         return Promise.resolve(null);
     }
-    const core = Core_1.default.instance;
+    const app = App_1.default.instance;
     if (!type) {
         if (typeof content !== 'string' && content.embed) {
             if (!content.embeds) {
@@ -47,7 +47,7 @@ function sendMessage(channel, content, type) {
             delete content.embed;
         }
         if (typeof channel !== 'string' && (!(channel instanceof eris.PrivateChannel))) {
-            const permissions = channel.permissionsOf(core.eris.user.id);
+            const permissions = channel.permissionsOf(app.eris.user.id);
             if (typeof content !== 'string' && content.embeds && !permissions.has('embedLinks')) {
                 if (permissions.has('sendMessages')) {
                     sendMessage(channel, "I'm missing permissions to `Embed Links` and can't display this message.");
@@ -59,14 +59,14 @@ function sendMessage(channel, content, type) {
             var file = content.file;
             delete content.file;
         }
-        return core.eris.createMessage(typeof channel === 'string' ? channel : channel.id, content, file);
+        return app.eris.createMessage(typeof channel === 'string' ? channel : channel.id, content, file);
     }
-    const { config } = core;
+    const { config } = app;
     const colour = config.colours[type];
     const emoji = config.emojis[type];
     const toSend = {};
     if (typeof channel !== 'string' && (!(channel instanceof eris.PrivateChannel))) {
-        const perms = channel.permissionsOf(core.eris.user.id);
+        const perms = channel.permissionsOf(app.eris.user.id);
         if (!perms.has('sendMessages')) {
             return Promise.resolve(null);
         }
@@ -101,13 +101,13 @@ function removeReaction(channel, message, type) {
 }
 exports.removeReaction = removeReaction;
 function _messageReaction(channel, message, type, method) {
-    const core = Core_1.default.instance;
+    const app = App_1.default.instance;
     if (typeof channel !== 'string' && (!(channel instanceof eris.PrivateChannel))) {
-        const perms = channel.permissionsOf(core.eris.user.id);
+        const perms = channel.permissionsOf(app.eris.user.id);
         if (perms && !perms.has('useExternalEmojis')) {
             return Promise.resolve(null);
         }
     }
-    return core.eris[method](typeof channel === 'string' ? channel : channel.id, typeof message === 'string' ? message : message.id, core.config.emojis[type]);
+    return app.eris[method](typeof channel === 'string' ? channel : channel.id, typeof message === 'string' ? message : message.id, app.config.emojis[type]);
 }
 //# sourceMappingURL=helpers.js.map

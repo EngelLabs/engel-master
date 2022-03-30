@@ -1,5 +1,5 @@
 "use strict";
-module.exports = function (core, req, res) {
-    return core.renderer.index(req, res);
+module.exports = function (app, req, res) {
+    return app.renderer.index(req, res);
 };
 //# sourceMappingURL=get.js.map

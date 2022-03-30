@@ -7,10 +7,10 @@ const Moderation_1 = require("../../../core/helpers/Moderation");
 class ModTimer extends Base_1.default {
     _permissions;
     _moderation;
-    constructor(core) {
-        super(core);
-        this._permissions = new Permission_1.default(core);
-        this._moderation = new Moderation_1.default(core);
+    constructor(app) {
+        super(app);
+        this._permissions = new Permission_1.default(app);
+        this._moderation = new Moderation_1.default(app);
     }
     get handler() {
         return this._handle.bind(this);
@@ -50,7 +50,7 @@ class ModTimer extends Base_1.default {
             return;
         if (!this._permissions.hasGuildPermissions(guild, 'manageRoles'))
             return;
-        const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+        const guildConfig = await this.app.guilds.getOrFetch(guild.id);
         if (!guildConfig || !this._isEnabled(guildConfig))
             return;
         const muteRole = guildConfig.muteRole;
@@ -69,7 +69,7 @@ class ModTimer extends Base_1.default {
             return;
         if (!this._permissions.hasGuildPermissions(guild, 'banMembers'))
             return;
-        const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+        const guildConfig = await this.app.guilds.getOrFetch(guild.id);
         if (!guildConfig || !this._isEnabled(guildConfig))
             return;
         this.eris.unbanGuildMember(guild.id, user.id, 'module: Moderator. Auto unban')
@@ -87,7 +87,7 @@ class ModTimer extends Base_1.default {
             return;
         if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles'))
             return;
-        const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+        const guildConfig = await this.app.guilds.getOrFetch(guild.id);
         if (!guildConfig || !this._isEnabled(guildConfig))
             return;
         const overwrite = actualChannel.permissionOverwrites.get(guild.id);
@@ -123,7 +123,7 @@ class ModTimer extends Base_1.default {
             return;
         if (!this._permissions.hasGuildPermissions(guild, 'manageChannels', 'manageRoles'))
             return;
-        const guildConfig = await this.core.guilds.getOrFetch(guild.id);
+        const guildConfig = await this.app.guilds.getOrFetch(guild.id);
         if (!guildConfig || !this._isEnabled(guildConfig))
             return;
         const overwrite = actualChannel.permissionOverwrites.get(user.id);

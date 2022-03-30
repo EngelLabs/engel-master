@@ -6,9 +6,9 @@ class StateManager extends Base_1.default {
     _httpEvents = 0;
     _messages = {};
     _uncacheInterval;
-    constructor(core) {
-        super(core);
-        core.events
+    constructor(app) {
+        super(app);
+        app.events
             .registerListener('rawWS', this.rawWS.bind(this))
             .registerListener('rawREST', this.rawREST.bind(this))
             .registerListener('messageCreate', this.messageCreate.bind(this))
@@ -16,7 +16,7 @@ class StateManager extends Base_1.default {
             .registerListener('messageDelete', this.messageDelete.bind(this))
             .registerListener('guildDelete', this.guildDelete.bind(this))
             .registerListener('channelDelete', this.channelDelete.bind(this));
-        core
+        app
             .on('config', this._configure.bind(this));
         setInterval(this._sync.bind(this), 10000);
     }

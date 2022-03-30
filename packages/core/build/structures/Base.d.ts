@@ -6,10 +6,10 @@
 import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
-import Core from './Core';
+import App from './App';
 export default class Base {
-    core: Core;
-    constructor(core?: Core);
+    app: App;
+    constructor(app?: App);
     get permissionsMapping(): Record<"stream" | "all" | "createInstantInvite" | "kickMembers" | "banMembers" | "administrator" | "manageChannels" | "manageGuild" | "addReactions" | "viewAuditLog" | "viewAuditLogs" | "voicePrioritySpeaker" | "voiceStream" | "viewChannel" | "readMessages" | "sendMessages" | "sendTTSMessages" | "manageMessages" | "embedLinks" | "attachFiles" | "readMessageHistory" | "mentionEveryone" | "useExternalEmojis" | "externalEmojis" | "viewGuildInsights" | "voiceConnect" | "voiceSpeak" | "voiceMuteMembers" | "voiceDeafenMembers" | "voiceMoveMembers" | "voiceUseVAD" | "changeNickname" | "manageNicknames" | "manageRoles" | "manageWebhooks" | "manageEmojisAndStickers" | "manageEmojis" | "useApplicationCommands" | "useSlashCommands" | "voiceRequestToSpeak" | "manageEvents" | "manageThreads" | "createPublicThreads" | "createPrivateThreads" | "useExternalStickers" | "sendMessagesInThreads" | "startEmbeddedActivities" | "allGuild" | "allText" | "allVoice", string>;
     get logPrefix(): string;
     get eris(): eris.Client;

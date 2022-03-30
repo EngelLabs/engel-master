@@ -7,7 +7,7 @@ exports.default = new Command_1.default({
     info: 'Get information regarding Premium',
     cooldown: 30000,
     execute: function (ctx) {
-        const permissions = new Permission_1.default(ctx.core);
+        const permissions = new Permission_1.default(ctx.app);
         let msg = '';
         msg += 'Premium enables an improved engel experience by giving you access to an improved and extended feature set.\n';
         msg += 'It also helps the development and uptime of the bot. No, it\'s not available yet (still under development!).\n';

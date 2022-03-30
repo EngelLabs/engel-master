@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils = require("../utils/helpers");
-const Core_1 = require("./Core");
+const App_1 = require("./App");
 const permissionsMapping = {
     createInstantInvite: 'Create Instant Invite',
     kickMembers: 'Kick Members',
@@ -55,9 +55,9 @@ const permissionsMapping = {
     all: 'All'
 };
 class Base {
-    constructor(core) {
-        if (!(this.core = core || Core_1.default.instance)) {
-            throw new Error('Missing core instance.');
+    constructor(app) {
+        if (!(this.app = app || App_1.default.instance)) {
+            throw new Error('Missing app instance.');
         }
     }
     get permissionsMapping() {
@@ -67,35 +67,35 @@ class Base {
         return this.constructor.name;
     }
     get eris() {
-        return this.core.eris;
+        return this.app.eris;
     }
     get state() {
         return this.baseConfig.client.state;
     }
     get baseConfig() {
-        return this.core.baseConfig;
+        return this.app.baseConfig;
     }
     get config() {
-        return this.core.config;
+        return this.app.config;
     }
     get logger() {
-        return this.core.logger;
+        return this.app.logger;
     }
     get mongoose() {
-        return this.core.mongoose;
+        return this.app.mongoose;
     }
     get models() {
-        return this.core.models;
+        return this.app.models;
     }
     get redis() {
-        return this.core.redis;
+        return this.app.redis;
     }
     get utils() {
         return utils;
     }
     log(message, level, prefix) {
         prefix = prefix || this.logPrefix || this.constructor.name;
-        this.core.log(message, level, prefix);
+        this.app.log(message, level, prefix);
     }
 }
 exports.default = Base;

@@ -1,3 +1,3 @@
 import * as winston from 'winston';
-import type Core from '../structures/Core';
-export default function Logger(core: Core): winston.Logger;
+import type App from '../structures/App';
+export default function Logger(app: App): winston.Logger;

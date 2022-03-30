@@ -1,7 +1,7 @@
 "use strict";
-module.exports = function (core, req, res, next) {
+module.exports = function (app, req, res, next) {
     if (!req.session.isAdmin) {
-        return core.responses[403](res);
+        return app.responses[403](res);
     }
     return next();
 };

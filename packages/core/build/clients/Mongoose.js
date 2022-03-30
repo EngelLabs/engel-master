@@ -1,22 +1,22 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose = require("mongoose");
-function Mongoose(core) {
+function Mongoose(app) {
     const log = (message, level, prefix = 'Mongoose') => {
-        core.log(message, level, prefix);
+        app.log(message, level, prefix);
     };
-    log(`${Object.values(mongoose.models).length} models registered.`, 'info');
+    log(`${Object.values(mongoose.models).length} models registered.`);
     mongoose.connection
         .on('connected', () => {
-        log('Connected.', 'info');
+        log('Connected.');
     })
         .on('disconnected', () => {
-        log('Disconnected.', 'info');
+        log('Disconnected.');
     })
         .on('error', err => {
         log(err, 'error');
     });
-    const { mongo } = core.baseConfig;
+    const { mongo } = app.baseConfig;
     const uri = `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
     mongoose.connect(uri, {
         connectTimeoutMS: 4500,

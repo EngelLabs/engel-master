@@ -20,7 +20,7 @@ class Core extends Module_1.default {
     injectHook() {
         this.cooldowns = new Map();
         this.globalCooldowns = new Map();
-        this.permissions = new Permission_1.default(this.core);
+        this.permissions = new Permission_1.default(this.app);
         this.tasks = [];
         this.listeners = [];
         this.tasks.push([this.clearCooldowns.bind(this), 5000]);
@@ -202,7 +202,7 @@ class Core extends Module_1.default {
         const args = message.content.slice(prefix.length).replace(/ {2,}/g, ' ').split(' ');
         if (!args.length)
             return;
-        let command = this.core.commands.get(args.shift());
+        let command = this.app.commands.get(args.shift());
         if (!command)
             return;
         const module = command.module;
@@ -215,7 +215,7 @@ class Core extends Module_1.default {
         }
         if (!message.guildID && !command.dmEnabled)
             return;
-        const ctx = new Context_1.default(this.core, {
+        const ctx = new Context_1.default(this.app, {
             args,
             prefix: prefix || '?',
             message,
@@ -297,7 +297,7 @@ class Core extends Module_1.default {
     async executeCommand(ctx) {
         const { command, prefix, isAdmin, args, message } = ctx;
         if (args.length < command?.requiredArgs) {
-            const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
+            const embed = this.app.commands.help(command.qualName, prefix, isAdmin);
             if (!embed) {
                 this.log(new Error('Unreachable code'), 'error');
             }
@@ -323,7 +323,7 @@ class Core extends Module_1.default {
                 this.deleteCommand(ctx);
             if (command.namespace) {
                 execute = () => {
-                    const embed = this.core.commands.help(command.qualName, prefix, isAdmin);
+                    const embed = this.app.commands.help(command.qualName, prefix, isAdmin);
                     return ctx.send({ embed });
                 };
             }
@@ -345,7 +345,7 @@ class Core extends Module_1.default {
                     }
                 }
             }
-            this.core.emit('command', command.dbName);
+            this.app.emit('command', command.dbName);
         }
         catch (err) {
             this.log(err, 'error');

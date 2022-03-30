@@ -3,15 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const controllersPath = path.join(__dirname, '../../controllers');
 class ControllerCollection extends Map {
-    _core;
+    _app;
     _middlewares;
     _routes;
-    constructor(core) {
+    constructor(app) {
         super();
-        this._core = core;
+        this._app = app;
     }
     async load() {
-        const app = this._core.app;
+        const app = this._app.express;
         this._middlewares = [];
         this._routes = [];
         await this._loadControllers(controllersPath);
@@ -26,10 +26,10 @@ class ControllerCollection extends Map {
             app[method](uri, handler);
             this._log(`${method}(${uri})`);
         }
-        this._log(`${this.size} registered.`, 'info');
+        this._log(`${this.size} registered.`);
     }
     _log(message, level) {
-        this._core.log(message, level, 'Controllers');
+        this._app.log(message, level, 'Controllers');
     }
     async _loadControllers(controllerPath) {
         try {
@@ -47,7 +47,7 @@ class ControllerCollection extends Map {
         if (!controller) {
             let dirs;
             try {
-                dirs = (await this._core.utils.readdir(controllerPath))
+                dirs = (await this._app.utils.readdir(controllerPath))
                     .filter(f => !f.endsWith('.js.map'));
             }
             catch (err) {
@@ -71,7 +71,7 @@ class ControllerCollection extends Map {
             }
             delete route.uri;
             for (let [method, handler] of Object.entries(route)) {
-                handler = handler.bind(null, this._core);
+                handler = handler.bind(null, this._app);
                 for (const uri of uriArray) {
                     if (method === 'use') {
                         this._middlewares.push({ uri, handler });

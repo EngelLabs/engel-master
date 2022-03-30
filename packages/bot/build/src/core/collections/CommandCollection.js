@@ -2,24 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@engel/core");
 class CommandCollection extends core.Collection {
-    _core;
-    constructor(core) {
+    _app;
+    constructor(app) {
         super();
-        if (core) {
-            this._core = core;
+        if (app) {
+            this._app = app;
         }
     }
     register() {
-        this._core.config.commands = {};
+        this._app.config.commands = {};
         this.all()
             .map(command => command.globalConfig)
             .forEach(c => {
             if (!c)
                 return;
-            this._core.config.commands[c.name] = c;
+            this._app.config.commands[c.name] = c;
         });
         return new Promise((resolve, reject) => {
-            this._core.models.Config.updateOne({ state: this._core.baseConfig.client.state }, { $set: { commands: this._core.config.commands } })
+            this._app.models.Config.updateOne({ state: this._app.baseConfig.client.state }, { $set: { commands: this._app.config.commands } })
                 .exec()
                 .then(() => resolve())
                 .catch(reject);
@@ -33,7 +33,7 @@ class CommandCollection extends core.Collection {
         const embed = {
             title: `Command "${qualName}" info`,
             description: `**Module:** ${command.module.name}`,
-            color: this._core.config.colours.info
+            color: this._app.config.colours.info
         };
         if (command.usage?.length) {
             embed.description += `\n**Usage:** ${prefix}${qualName} ${command.usage}`;

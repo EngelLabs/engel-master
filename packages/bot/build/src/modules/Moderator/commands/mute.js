@@ -12,14 +12,14 @@ exports.default = new Command_1.default({
     requiredArgs: 1,
     requiredPermissions: ['manageRoles', 'manageChannels'],
     execute: async function (ctx) {
-        const roles = new Roles_1.default(ctx.core);
+        const roles = new Roles_1.default(ctx.app);
         try {
             var role = await roles.resolveMuteRole(ctx.guild, ctx.guildConfig);
         }
         catch (err) {
             return ctx.error(err);
         }
-        const converter = new Converter_1.default(ctx.core);
+        const converter = new Converter_1.default(ctx.app);
         try {
             var user = await converter.member(ctx.guild, ctx.args[0], true) ||
                 await converter.user(ctx.args[0], true);

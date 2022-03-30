@@ -18,7 +18,7 @@ exports.default = new Command_1.default({
         'manageChannels'
     ],
     execute: async function (ctx) {
-        const converter = new Converter_1.default(ctx.core);
+        const converter = new Converter_1.default(ctx.app);
         try {
             var user = await converter.member(ctx.guild, ctx.args[0], true);
         }

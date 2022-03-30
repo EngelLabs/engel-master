@@ -26,10 +26,10 @@ class Moderator extends Module_1.default {
         this.info = 'Enable command-based moderation for your server';
     }
     injectHook() {
-        this._moderation = new Moderation_1.default(this.core);
+        this._moderation = new Moderation_1.default(this.app);
         this.tasks = [];
         this.listeners = [];
-        const timerHandler = (new ModTimer(this.core)).handler;
+        const timerHandler = (new ModTimer(this.app)).handler;
         this.tasks.push([timerHandler, 15000]);
         this.listeners.push(this.guildMemberAdd.bind(this));
     }

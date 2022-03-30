@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.globalDefaults = exports.baseConfig = exports.Core = exports.Collection = exports.Base = exports.Redis = exports.Mongoose = exports.Logger = exports.Eris = exports.utils = void 0;
+exports.globalDefaults = exports.baseConfig = exports.App = exports.Collection = exports.Base = exports.Redis = exports.Mongoose = exports.Logger = exports.Eris = exports.utils = void 0;
 require("source-map-support/register");
 exports.utils = require("./utils/helpers");
 var Eris_1 = require("./clients/Eris");
@@ -15,8 +15,8 @@ var Base_1 = require("./structures/Base");
 Object.defineProperty(exports, "Base", { enumerable: true, get: function () { return Base_1.default; } });
 var Collection_1 = require("./structures/Collection");
 Object.defineProperty(exports, "Collection", { enumerable: true, get: function () { return Collection_1.default; } });
-var Core_1 = require("./structures/Core");
-Object.defineProperty(exports, "Core", { enumerable: true, get: function () { return Core_1.default; } });
+var App_1 = require("./structures/App");
+Object.defineProperty(exports, "App", { enumerable: true, get: function () { return App_1.default; } });
 var baseConfig_1 = require("./utils/baseConfig");
 Object.defineProperty(exports, "baseConfig", { enumerable: true, get: function () { return baseConfig_1.default; } });
 var globalDefaults_1 = require("./utils/globalDefaults");

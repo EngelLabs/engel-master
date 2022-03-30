@@ -1,5 +1,5 @@
 "use strict";
-module.exports = async function (core, req, res) {
+module.exports = async function (app, req, res) {
     let update;
     function set(key, value, type) {
         if (value === null) {
@@ -18,14 +18,14 @@ module.exports = async function (core, req, res) {
     }
     if (req.body.prefixes !== undefined) {
         if (req.body.prefixes == null) {
-            set('prefixes', core.config.prefixes.default);
+            set('prefixes', app.config.prefixes.default);
         }
         else if (req.body.prefixes instanceof Array) {
             req.body.prefixes = req.body.prefixes
                 .filter(p => typeof p === 'string' && p.length && p.length <= 12);
             set('prefixes', req.body.prefixes.length
                 ? req.body.prefixes
-                : core.config.prefixes.default);
+                : app.config.prefixes.default);
         }
     }
     if (req.body.delCommands !== undefined) {
@@ -64,22 +64,22 @@ module.exports = async function (core, req, res) {
         }
     }
     if (!update) {
-        return core.responses[400](res, 30001, 'Invalid request body');
+        return app.responses[400](res, 30001, 'Invalid request body');
     }
     try {
-        var result = await core.models.Guild
+        var result = await app.models.Guild
             .findOneAndUpdate({ id: req.params.id }, update, { new: true })
             .lean()
             .exec();
-        core.redis.publish('guildUpdate', req.params.id);
+        app.redis.publish('guildUpdate', req.params.id);
     }
     catch (err) {
-        core.log(err, 'error', '/api/guilds.patch');
-        return core.responses[500](res);
+        app.log(err, 'error', '/api/guilds.patch');
+        return app.responses[500](res);
     }
     if (!result) {
-        return core.responses[403](res, 10001, 'Unknown guild');
+        return app.responses[403](res, 10001, 'Unknown guild');
     }
-    return core.responses[200](res, result);
+    return app.responses[200](res, result);
 };
 //# sourceMappingURL=patch.js.map

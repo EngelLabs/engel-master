@@ -16,7 +16,7 @@ exports.default = new Command_1.default({
     execute: function (ctx) {
         const verbose = ctx.guildConfig.verboseHelp !== undefined ? ctx.guildConfig.verboseHelp : true;
         const text = ctx.args.join(' ');
-        const embed = ctx.core.commands.help(text, ctx.prefix, ctx.isAdmin, verbose);
+        const embed = ctx.app.commands.help(text, ctx.prefix, ctx.isAdmin, verbose);
         if (!embed) {
             return ctx.error(`Command \`${text}\` not found.`);
         }

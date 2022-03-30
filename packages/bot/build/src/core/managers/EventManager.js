@@ -8,10 +8,10 @@ class EventManager extends Base_1.default {
     _events;
     _permissions;
     _registeredEvents = {};
-    constructor(core) {
-        super(core);
+    constructor(app) {
+        super(app);
         this._events = new EventEmitter();
-        this._permissions = new Permission_1.default(core);
+        this._permissions = new Permission_1.default(app);
     }
     registerListener(event, execute) {
         if (!this[event]) {
@@ -90,8 +90,8 @@ class EventManager extends Base_1.default {
     }
     async _guildPayload(payload, guildID, createIfNotFound = false) {
         const _p = payload;
-        _p.isTesting = this.core.config.guilds.testing.includes(guildID);
-        _p.guildConfig = await this.core.guilds.getOrFetch(guildID, { createIfNotFound });
+        _p.isTesting = this.app.config.guilds.testing.includes(guildID);
+        _p.guildConfig = await this.app.guilds.getOrFetch(guildID, { createIfNotFound });
         return _p;
     }
     userUpdate(user, oldUser) {
@@ -266,7 +266,7 @@ class EventManager extends Base_1.default {
             .then(payload => this._userPayload(payload, message.author.id));
     }
     messageDelete(message) {
-        const deletedMessage = this.core.state.getMessage(message.id);
+        const deletedMessage = this.app.state.getMessage(message.id);
         if (!deletedMessage) {
             return Promise.resolve(null);
         }
@@ -274,7 +274,7 @@ class EventManager extends Base_1.default {
             .then(payload => this._userPayload(payload, deletedMessage.author.id));
     }
     messageDeleteBulk(messages) {
-        const state = this.core.state;
+        const state = this.app.state;
         const deletedMessages = messages.map(m => state.getMessage(m.id)).filter(m => m);
         if (!deletedMessages.length) {
             return Promise.resolve(null);
@@ -282,7 +282,7 @@ class EventManager extends Base_1.default {
         return this._guildPayload({ messages: deletedMessages }, messages[0].guildID);
     }
     messageUpdate(message) {
-        const oldMessage = this.core.state.getMessage(message.id);
+        const oldMessage = this.app.state.getMessage(message.id);
         if (!oldMessage) {
             return Promise.resolve(null);
         }
@@ -321,7 +321,7 @@ class EventManager extends Base_1.default {
     }
     _tryMessageUpgrade(message) {
         if (!(message instanceof eris.Message)) {
-            return this.core.state.getMessage(message.id) || message;
+            return this.app.state.getMessage(message.id) || message;
         }
         return message;
     }

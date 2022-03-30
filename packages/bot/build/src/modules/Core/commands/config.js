@@ -95,11 +95,11 @@ const guild = config.command({
     before: beforeGuild,
     dmEnabled: true,
     execute: async function (ctx) {
-        const guildConfig = await ctx.core.guilds.fetch(ctx.locals.guildId);
+        const guildConfig = await ctx.app.guilds.fetch(ctx.locals.guildId);
         if (guildConfig) {
             return ctx.success(`Guild \`${ctx.locals.guildId}\`'s configuration refreshed.`);
         }
-        await ctx.core.guilds.create(ctx.locals.guildId);
+        await ctx.app.guilds.create(ctx.locals.guildId);
         return ctx.success(`Guild \`${ctx.locals.guildId}\`'s configuration created.`);
     }
 });
@@ -110,12 +110,12 @@ guild.command({
     before: beforeGuild,
     dmEnabled: true,
     execute: async function (ctx) {
-        let guildConfig = await ctx.core.guilds.fetch(ctx.locals.guildId);
-        const result = await ctx.core.guilds.update(guildConfig, { $set: { isPremium: !guildConfig.isPremium } });
+        let guildConfig = await ctx.app.guilds.fetch(ctx.locals.guildId);
+        const result = await ctx.app.guilds.update(guildConfig, { $set: { isPremium: !guildConfig.isPremium } });
         if (!result.modifiedCount) {
             return ctx.error('Could not update that guild.');
         }
-        guildConfig = await ctx.core.guilds.fetch(guildConfig.id);
+        guildConfig = await ctx.app.guilds.fetch(guildConfig.id);
         return ctx.success(`Guild \`${guildConfig.id}\`'s premium set to: ${guildConfig.isPremium}`);
     }
 });
@@ -127,11 +127,11 @@ guild.command({
     dmEnabled: true,
     requiredArgs: 2,
     execute: async function (ctx) {
-        const result = await ctx.core.guilds.update(ctx.locals.guildId, { $set: { client: ctx.args[1] } });
+        const result = await ctx.app.guilds.update(ctx.locals.guildId, { $set: { client: ctx.args[1] } });
         if (!result.modifiedCount) {
             return ctx.error('Could not update that guild.');
         }
-        const guildConfig = await ctx.core.guilds.fetch(ctx.locals.guildId);
+        const guildConfig = await ctx.app.guilds.fetch(ctx.locals.guildId);
         return ctx.success(`Guild \`${guildConfig.id}\`'s client set to: ${guildConfig.client}`);
     }
 });
@@ -143,7 +143,7 @@ guild.command({
     dmEnabled: true,
     execute: async function (ctx) {
         const result = await ctx.models.Guild.deleteOne({ id: ctx.locals.guildId });
-        ctx.core.guilds.delete(ctx.locals.guildId);
+        ctx.app.guilds.delete(ctx.locals.guildId);
         return result.deletedCount
             ? ctx.success(`Guild \`${ctx.locals.guildId}\`'s configuration deleted.`)
             : ctx.error(`Guild \`${ctx.locals.guildId}\` has not been configured.`);

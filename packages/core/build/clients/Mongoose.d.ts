@@ -1,3 +1,3 @@
 import * as mongoose from 'mongoose';
-import type Core from '../structures/Core';
-export default function Mongoose(core: Core): mongoose.Mongoose;
+import type App from '../structures/App';
+export default function Mongoose(app: App): mongoose.Mongoose;

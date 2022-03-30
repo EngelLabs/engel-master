@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@engel/core");
-function Eris(_core) {
-    const client = core.Eris(_core, {
+function Eris(app) {
+    const client = core.Eris(app, {
         intents: [
             'directMessages',
             'guilds',
@@ -17,25 +17,25 @@ function Eris(_core) {
         autoreconnect: true,
         compress: true,
         messageLimit: 0,
-        firstShardID: _core.baseConfig.cluster.firstShard,
-        lastShardID: _core.baseConfig.cluster.lastShard,
-        maxShards: _core.baseConfig.client.shards
+        firstShardID: app.baseConfig.cluster.firstShard,
+        lastShardID: app.baseConfig.cluster.lastShard,
+        maxShards: app.baseConfig.client.shards
     });
     const log = (message, level, shardID) => {
-        _core.log(message, level, shardID !== undefined ? `Shard ${shardID}` : 'Eris');
+        app.log(message, level, shardID !== undefined ? `Shard ${shardID}` : 'Eris');
     };
     client
         .on('connect', id => {
-        log('Connected.', 'info', id);
+        log('Connected.', 'debug', id);
     })
         .on('shardDisconnect', (_, id) => {
-        log('Disconnected.', 'info', id);
+        log('Disconnected.', 'debug', id);
     })
         .on('shardReady', id => {
-        log('Ready.', 'info', id);
+        log('Ready.', 'debug', id);
     })
         .on('shardResume', id => {
-        log('Resumed.', 'info', id);
+        log('Resumed.', 'debug', id);
     });
     return client;
 }

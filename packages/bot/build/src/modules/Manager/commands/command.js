@@ -13,7 +13,7 @@ exports.default = new Command_1.default({
     requiredArgs: 1,
     alwaysEnabled: true,
     execute: function (ctx) {
-        let command = ctx.core.commands.get(ctx.args[0]);
+        let command = ctx.app.commands.get(ctx.args[0]);
         ctx.args.shift();
         while (command?.commands && ctx.args.length) {
             const subcommand = command.commands.get(ctx.args[0]);
@@ -45,7 +45,7 @@ exports.default = new Command_1.default({
             enabled = !commandConfig.disabled;
             update = { ['commands.' + name + '.disabled']: commandConfig.disabled };
         }
-        ctx.core.guilds.update(ctx.guildConfig, { $set: update });
+        ctx.app.guilds.update(ctx.guildConfig, { $set: update });
         return ctx.success(enabled
             ? `Command \`${command.qualName}\` enabled.`
             : `Command \`${command.qualName}\` disabled.`);

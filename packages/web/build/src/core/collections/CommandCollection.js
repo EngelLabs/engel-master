@@ -2,17 +2,17 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const core = require("@engel/core");
 class CommandCollection extends core.Collection {
-    _core;
-    constructor(core) {
+    _app;
+    constructor(app) {
         super();
-        this._core = core;
+        this._app = app;
         this.load();
     }
     _log(message, level) {
-        this._core.log(message, level, 'Commands');
+        this._app.log(message, level, 'Commands');
     }
     load() {
-        const commands = this._core.config.commands;
+        const commands = this._app.config.commands;
         for (const key in commands) {
             const command = Object.assign({}, commands[key]);
             command.rootName = command.name.split('_')[0];
@@ -20,7 +20,7 @@ class CommandCollection extends core.Collection {
             this.set(command.name, command);
             this._log(`Loaded "${command.name}"`);
         }
-        this._log(`${this.size} registered.`, 'info');
+        this._log(`${this.size} registered.`);
     }
 }
 exports.default = CommandCollection;

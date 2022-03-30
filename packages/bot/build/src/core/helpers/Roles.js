@@ -26,7 +26,7 @@ class Roles extends Base_1.default {
                         .catch(() => false);
                 }
                 guildConfig.muteRole = role.id;
-                this.core.guilds.update(guild.id, { $set: { muteRole: role.id } });
+                this.app.guilds.update(guild.id, { $set: { muteRole: role.id } });
                 this.log(`Created mute role R${role.id} G${guild.id}.`);
                 resolve(role);
             })

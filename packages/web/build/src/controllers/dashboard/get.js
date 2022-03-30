@@ -1,8 +1,8 @@
 "use strict";
-module.exports = function (core, req, res) {
+module.exports = function (app, req, res) {
     if (!req.session.user) {
         return res.redirect('/login');
     }
-    return core.renderer.dashboard(req, res);
+    return app.renderer.dashboard(req, res);
 };
 //# sourceMappingURL=get.js.map

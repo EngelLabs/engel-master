@@ -18,7 +18,7 @@ const muterole = new Command_1.default({
             }
             return ctx.error('This server doesn\'t have a mute role configured.');
         }
-        const converter = new Converter_1.default(ctx.core);
+        const converter = new Converter_1.default(ctx.app);
         try {
             var role = await converter.role(ctx.guild, ctx.args[0]);
         }
@@ -31,7 +31,7 @@ const muterole = new Command_1.default({
             return ctx.error('That role\'s position is too high; It has to be below my highest role.');
         }
         ctx.guildConfig.muteRole = role.id;
-        ctx.core.guilds.update(ctx.guildConfig.id, { $set: { muteRole: role.id } });
+        ctx.app.guilds.update(ctx.guildConfig.id, { $set: { muteRole: role.id } });
         return ctx.success('Mute role updated.');
     }
 });
@@ -51,7 +51,7 @@ muterole.command({
     cooldown: 30000,
     requiredPermissions: ['manageRoles', 'manageChannels'],
     execute: async function (ctx) {
-        const roles = new Roles_1.default(ctx.core);
+        const roles = new Roles_1.default(ctx.app);
         try {
             var role = await roles.createMuteRole(ctx.guild, ctx.guildConfig);
         }
@@ -67,7 +67,7 @@ muterole.command({
     cooldown: 4000,
     execute: function (ctx) {
         delete ctx.guildConfig.muteRole;
-        ctx.core.guilds.update(ctx.guildConfig.id, { $unset: { muteRole: null } });
+        ctx.app.guilds.update(ctx.guildConfig.id, { $unset: { muteRole: null } });
         return ctx.success('Mute role cleared.');
     }
 });

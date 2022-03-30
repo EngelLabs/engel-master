@@ -1,1 +1,1 @@
-{"version":3,"file":"get.js","sourceRoot":"","sources":["../../../../src/controllers/invite/get.ts"],"names":[],"mappings":";AAGA,MAAM,SAAS,GAAG,+FAA+F,CAAC;AAElH,iBAAS,UAAU,IAAU,EAAE,GAAoB,EAAE,GAAqB;IAClE,OAAO,GAAG,CAAC,QAAQ,CAAC,SAAS,CAAC,CAAC;AACvC,CAAC,CAAA"}
+{"version":3,"file":"get.js","sourceRoot":"","sources":["../../../../src/controllers/invite/get.ts"],"names":[],"mappings":";AAGA,MAAM,SAAS,GAAG,+FAA+F,CAAC;AAElH,iBAAS,UAAU,GAAQ,EAAE,GAAoB,EAAE,GAAqB;IAChE,OAAO,GAAG,CAAC,QAAQ,CAAC,SAAS,CAAC,CAAC;AACvC,CAAC,CAAA"}

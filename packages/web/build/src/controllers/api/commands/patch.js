@@ -1,8 +1,8 @@
 "use strict";
-module.exports = async function (core, req, res) {
-    const command = core.commands.get(req.body.name);
+module.exports = async function (app, req, res) {
+    const command = app.commands.get(req.body.name);
     if (!command)
-        return core.responses[403](res, 10002, 'Unknown command');
+        return app.responses[403](res, 10002, 'Unknown command');
     let update;
     function set(key, value, type) {
         if (value === null) {
@@ -43,7 +43,7 @@ module.exports = async function (core, req, res) {
         }
     }
     if (!update) {
-        return core.responses[400](res, 30001, 'Invalid response body');
+        return app.responses[400](res, 30001, 'Invalid response body');
     }
     if (!command.isSubcommand) {
         if (update.$set) {
@@ -64,19 +64,19 @@ module.exports = async function (core, req, res) {
         delete update.$set.disabled;
     }
     try {
-        var result = await core.models.Guild
+        var result = await app.models.Guild
             .findOneAndUpdate({ id: req.params.id }, update, { new: true })
             .lean()
             .exec();
-        core.redis.publish('guildUpdate', req.params.id);
+        app.redis.publish('guildUpdate', req.params.id);
     }
     catch (err) {
-        core.log(err, 'error', 'api/commands.patch');
-        return core.responses[500](res);
+        app.log(err, 'error', 'api/commands.patch');
+        return app.responses[500](res);
     }
     if (!result) {
-        return core.responses[403](res, 10001, 'Unknown guild');
+        return app.responses[403](res, 10001, 'Unknown guild');
     }
-    return core.responses[200](res, result.commands?.[command.name] || {});
+    return app.responses[200](res, result.commands?.[command.name] || {});
 };
 //# sourceMappingURL=patch.js.map

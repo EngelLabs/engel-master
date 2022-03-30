@@ -100,7 +100,7 @@ class Module extends Base_1.default {
             this.listeners = listeners;
         }
     }
-    async inject(core) {
+    async inject(app) {
         await Promise.all([
             this.loadCommands(),
             this.loadListeners()
@@ -111,10 +111,10 @@ class Module extends Base_1.default {
         if (this.commands) {
             for (const command of this.commands) {
                 command.module = this;
-                core.commands.add(command);
+                app.commands.add(command);
             }
         }
-        if (this.listeners && this.eris && this.core.events) {
+        if (this.listeners && this.eris && this.app.events) {
             for (const listener of this.listeners) {
                 this._boundListeners = this._boundListeners || [];
                 const copied = {
@@ -123,7 +123,7 @@ class Module extends Base_1.default {
                 };
                 copied.execute = copied.execute.bind(this);
                 this._boundListeners.push(copied);
-                core.events.registerListener(copied.name, copied.execute);
+                app.events.registerListener(copied.name, copied.execute);
             }
         }
         if (this.tasks) {
@@ -132,18 +132,18 @@ class Module extends Base_1.default {
             }
         }
     }
-    eject(core) {
+    eject(app) {
         if (this.ejectHook) {
             this.ejectHook();
         }
         if (this.commands) {
             for (const command of this.commands) {
-                core.commands.remove(command);
+                app.commands.remove(command);
             }
         }
         if (this._boundListeners) {
             for (const listener of this._boundListeners) {
-                core.events.unregisterListener(listener.name, listener.execute);
+                app.events.unregisterListener(listener.name, listener.execute);
             }
         }
         if (this.tasks) {

@@ -12,9 +12,9 @@ exports.default = new Command_1.default({
             return Promise.resolve();
         const start = Date.now();
         try {
-            var res = ctx.core.modules.unload(ctx.args.length ? ctx.args : null);
-            if (!ctx.core.modules.get('core')) {
-                await ctx.core.modules.load(['Core']);
+            var res = ctx.app.modules.unload(ctx.args.length ? ctx.args : null);
+            if (!ctx.app.modules.get('core')) {
+                await ctx.app.modules.load(['Core']);
             }
         }
         catch (err) {
