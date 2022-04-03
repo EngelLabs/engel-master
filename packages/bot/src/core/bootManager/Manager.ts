@@ -1,5 +1,5 @@
 import * as _cluster from 'cluster';
-import * as getenv from 'getenv';
+import * as env from '@engel/env-util';
 import * as core from '@engel/core';
 import Cluster from './Cluster';
 
@@ -11,26 +11,26 @@ export default class Manager extends core.App {
         public async start() {
                 this.logger = core.Logger(this);
 
-                const clientNames = getenv.array('CLIENT_NAMES');
-                const clusterCount = getenv.int('CLUSTER_COUNT', 1);
-                const shardCount = getenv.int('SHARD_COUNT', 1);
+                const clientNames = env.arr('CLIENT_NAMES');
+                const clusterCount = env.int('CLUSTER_COUNT', 1);
+                const shardCount = env.int('SHARD_COUNT', 1);
 
                 const clients = [];
 
                 for (const clientName of clientNames) {
                         const NAME = clientName.toUpperCase();
 
-                        const clientClusterCount = getenv.int('CLIENT_' + NAME + '_CLUSTERS', clusterCount);
-                        const clientShardCount = getenv.int('CLIENT_' + NAME + '_SHARDS', shardCount);
+                        const clientClusterCount = env.int('CLIENT_' + NAME + '_CLUSTERS', clusterCount);
+                        const clientShardCount = env.int('CLIENT_' + NAME + '_SHARDS', shardCount);
 
                         clients.push({
                                 env: {
                                         CLIENT_NAME: clientName,
-                                        CLIENT_STATE: getenv.string('CLIENT_' + NAME + '_STATE', this.baseConfig.client.state),
-                                        CLIENT_PREMIUM: getenv.bool('CLIENT_' + NAME + '_PREMIUM', false),
-                                        CLIENT_ID: getenv.string('CLIENT_' + NAME + '_ID'),
-                                        CLIENT_TOKEN: getenv.string('CLIENT_' + NAME + '_TOKEN'),
-                                        CLIENT_SECRET: getenv.string('CLIENT_' + NAME + '_SECRET'),
+                                        CLIENT_STATE: env.str('CLIENT_' + NAME + '_STATE', this.baseConfig.client.state),
+                                        CLIENT_PREMIUM: env.bool('CLIENT_' + NAME + '_PREMIUM', false),
+                                        CLIENT_ID: env.str('CLIENT_' + NAME + '_ID'),
+                                        CLIENT_TOKEN: env.str('CLIENT_' + NAME + '_TOKEN'),
+                                        CLIENT_SECRET: env.str('CLIENT_' + NAME + '_SECRET'),
                                         CLIENT_SHARDS: clientClusterCount * clientShardCount,
                                         CLIENT_CLUSTERS: clientClusterCount
                                 },

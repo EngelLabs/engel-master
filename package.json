@@ -22,6 +22,7 @@
         "lint:web": "npm run lint -w @engel/web",
         "lint:core": "npm run lint -w @engel/core",
         "lint:react": "npm run lint -w @engel/react",
+        "lint:env-util": "npm run lint -w @engel/env-util",
         "build:bot": "npm run build -w @engel/bot",
         "build:web": "npm run build -w @engel/web",
         "build:core": "npm run build -w @engel/core",

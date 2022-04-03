@@ -1,12 +1,7 @@
-import * as dotenv from 'dotenv';
-import * as getenv from 'getenv';
 import * as path from 'path';
+import * as _env from '@engel/env-util';
 
-const { error } = dotenv.config({ path: path.join(process.cwd(), '../../.env') });
-
-if (error) {
-        throw error;
-}
+const env = new _env.Env({ ignoreMissing: true });
 
 /**
  * Static configuration
@@ -15,26 +10,26 @@ export default {
         name: '',
         version: '',
         lib: 'eris',
-        env: getenv.string('NODE_ENV', 'development'),
-        dev: getenv.string('NODE_ENV') === 'development',
+        env: env.str('NODE_ENV', 'development'),
+        dev: env.str('NODE_ENV') === 'development',
         logger: {
-                level: getenv.string('LOGGER_LEVEL', 'debug'),
+                level: env.str('LOGGER_LEVEL', 'debug'),
                 dir: path.join(process.cwd(), 'logs')
         },
         client: {
-                state: getenv.string('CLIENT_STATE', ''),
-                premium: getenv.boolish('CLIENT_PREMIUM', false),
-                id: getenv.string('CLIENT_ID', ''),
-                token: getenv.string('CLIENT_TOKEN', ''),
-                secret: getenv.string('CLIENT_SECRET', '')
+                state: env.str('CLIENT_STATE'),
+                premium: env.bool('CLIENT_PREMIUM', false),
+                id: env.str('CLIENT_ID'),
+                token: env.str('CLIENT_TOKEN'),
+                secret: env.str('CLIENT_SECRET')
         },
         mongo: {
-                host: getenv.string('MONGO_HOST', '127.0.0.1'),
-                port: getenv.string('MONGO_PORT', '27017'),
-                db: getenv.string('MONGO_DATABASE', 'discordbot')
+                host: env.str('MONGO_HOST', '127.0.0.1'),
+                port: env.str('MONGO_PORT', '27017'),
+                db: env.str('MONGO_DATABASE', 'discordbot')
         },
         redis: {
-                host: getenv.string('REDIS_HOST', '127.0.0.1'),
-                port: getenv.int('REDIS_PORT', 6379)
+                host: env.str('REDIS_HOST', '127.0.0.1'),
+                port: env.int('REDIS_PORT', 6379)
         }
 };

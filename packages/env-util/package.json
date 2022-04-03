@@ -1,0 +1,23 @@
+{
+    "name": "@engel/env-util",
+    "version": "0.1.0",
+    "private": true,
+    "description": "Utility for accessing environment variables",
+    "author": "Tinoy Thomas <tinoytpm1@gmail.com>",
+    "main": "src/index.js",
+    "typings": "src/index.d.ts",
+    "scripts": {
+        "lint": "eslint \"src/**/*\""
+    },
+    "dependencies": {
+        "dotenv": "^16.0.0"
+    },
+    "devDependencies": {
+        "@typescript-eslint/eslint-plugin": "^5.17.0",
+        "eslint": "^7.12.1",
+        "eslint-config-standard": "^16.0.3",
+        "eslint-plugin-import": "^2.22.1",
+        "eslint-plugin-node": "^11.1.0",
+        "eslint-plugin-promise": "^4.2.1"
+    }
+}

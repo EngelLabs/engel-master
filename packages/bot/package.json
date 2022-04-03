@@ -25,6 +25,7 @@
     "homepage": "https://github.com/EngelLabs/engel-bot#readme",
     "dependencies": {
         "@engel/core": "0.1.0",
+        "@engel/env-util": "0.1.0",
         "eris": "^0.16.1",
         "eventemitter3": "^4.0.7",
         "moment": "^2.29.1",

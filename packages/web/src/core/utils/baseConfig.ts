@@ -1,4 +1,4 @@
-import * as getenv from 'getenv';
+import * as env from '@engel/env-util';
 import { baseConfig } from '@engel/core';
 import pkg = require('../../../package.json');
 
@@ -10,9 +10,9 @@ baseConfig.name = pkg.name;
 baseConfig.version = pkg.version;
 
 (<_BaseConfig>baseConfig).site = {
-        host: getenv.string('SITE_HOST', 'localhost'),
-        port: getenv.string('SITE_PORT', '8080'),
-        secret: getenv.string('SITE_SECRET')
+        host: env.str('SITE_HOST', 'localhost'),
+        port: env.str('SITE_PORT', '8080'),
+        secret: env.str('SITE_SECRET')
 };
 
 export default (<_BaseConfig>baseConfig);

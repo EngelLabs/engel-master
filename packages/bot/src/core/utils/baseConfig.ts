@@ -1,4 +1,4 @@
-import * as getenv from 'getenv';
+import * as env from '@engel/env-util';
 import { baseConfig } from '@engel/core';
 import pkg = require('../../../package.json');
 
@@ -19,14 +19,14 @@ const _baseConfig = <_BaseConfig>baseConfig;
 
 _baseConfig.name = pkg.name;
 _baseConfig.version = pkg.version;
-_baseConfig.client.name = getenv.string('CLIENT_NAME');
-_baseConfig.client.shards = getenv.int('CLIENT_SHARDS');
-_baseConfig.client.clusters = getenv.int('CLIENT_CLUSTERS');
+_baseConfig.client.name = env.str('CLIENT_NAME');
+_baseConfig.client.shards = env.int('CLIENT_SHARDS');
+_baseConfig.client.clusters = env.int('CLIENT_CLUSTERS');
 
 _baseConfig.cluster = {
-        id: getenv.int('CLUSTER_ID'),
-        firstShard: getenv.int('CLUSTER_FIRST_SHARD'),
-        lastShard: getenv.int('CLUSTER_LAST_SHARD')
+        id: env.int('CLUSTER_ID'),
+        firstShard: env.int('CLUSTER_FIRST_SHARD'),
+        lastShard: env.int('CLUSTER_LAST_SHARD')
 };
 
 export default _baseConfig;
