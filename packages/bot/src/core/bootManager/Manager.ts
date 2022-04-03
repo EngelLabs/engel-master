@@ -1,6 +1,5 @@
 import * as _cluster from 'cluster';
 import * as getenv from 'getenv';
-import * as path from 'path';
 import * as core from '@engel/core';
 import Cluster from './Cluster';
 
@@ -10,8 +9,6 @@ export default class Manager extends core.App {
         private clusters: { [key: string]: { [key: number]: Cluster } } = {}
 
         public async start() {
-                this.baseConfig.logger.dir = path.resolve('logs');
-
                 this.logger = core.Logger(this);
 
                 const clientNames = getenv.array('CLIENT_NAMES');
