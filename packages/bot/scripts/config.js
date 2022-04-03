@@ -1,58 +1,116 @@
-/* eslint-disable new-cap */
-// GOOD LUCK with reading this code lol
-const app = new (require('../build/src/core/structures/App')).default();
-const logger = app.logger = (require('@engel/core').Logger)(app);
-const mongoose = app.mongoose = (require('@engel/core').Mongoose)(app);
-mongoose.set('autoCreate', true);
-mongoose.set('autoIndex', true);
-const state = process.argv[3] || app.baseConfig.client.state;
-const opt = process.argv[2];
-logger.info(`State: "${state}".`);
-if (['c', 'create'].includes(opt)) createConfig();
-else if (['d', 'delete'].includes(opt)) {
-        mongoose.models.Config.deleteOne({ state })
-                .then(({ deletedCount }) => {
-                        if (deletedCount) return logger.info('Deleted config.');
-                        logger.error('Config not found.');
-                })
-                .catch(err => logError(err))
-                .finally(() => process.exit());
-} else if (['r', 'register'].includes(opt)) {
-        registerConfig()
-                .catch(err => logError(err))
-                .finally(() => process.exit());
-} else {
-        mongoose.models.Config
-                .findOne({ state })
-                .then(c => {
-                        if (c) return logger.info('Config exists.');
-                        logger.info('Config not found.');
-                        return createConfig();
-                })
-                .catch(err => logError(err))
-                .finally(() => process.exit());
+require('@engel/env-util').config({ ignoreMissing: true });
+
+const { App, Logger, Mongoose } = require('@engel/core');
+
+const app = new App();
+
+app.logger = Logger(app);
+
+app.mongoose = Mongoose(app);
+app.mongoose.set('autoCreate', true);
+app.mongoose.set('autoIndex', true);
+
+const state = process.argv[3] ?? app.baseConfig.client.state;
+app.baseConfig.client.state = state;
+
+const option = process.argv[2];
+
+app.logger.info(`State: "${state}".`);
+
+switch (option) {
+        case 'c':
+        case 'create':
+                createConfig();
+
+                break;
+        case 'd':
+        case 'delete':
+                deleteConfig();
+
+                break;
+        case 'r':
+        case 'register':
+                registerConfig();
+
+                break;
+        default:
+                app.models.Config
+                        .findOne({ state })
+                        .then(config => {
+                                if (!config) {
+                                        app.logger.info('Config not found.');
+
+                                        return createConfig();
+                                }
+
+                                app.logger.info('Config exists.');
+                        })
+                        .catch(err => {
+                                app.logger.error(err);
+                        })
+                        .finally(() => {
+                                process.exit();
+                        });
 }
+
 function createConfig() {
-        return mongoose.models.Config.create({ state })
-                .then(() => logger.info('Created config.'))
-                .catch(err => {
-                        if (err?.code === 11000) return logger.error('Cannot create config (DuplicateKeyError).');
-                        logError(err);
+        return app.models.Config.create({ state })
+                .then(() => {
+                        app.logger.info('Created config.');
                 })
-                .finally(() => registerConfig()
-                        .catch(err => logError(err))
-                        .finally(() => process.exit())
-                );
+                .catch(err => {
+                        if (err?.code === 11000) {
+                                return app.logger.error('Cannot create config (DuplicateKeyError).');
+                        }
+
+                        app.logger.error(err);
+                })
+                .finally(() => {
+                        registerConfig();
+                });
 }
+
+function deleteConfig() {
+        return app.models.Config.deleteOne({ state })
+                .then(({ deletedCount }) => {
+                        if (deletedCount) {
+                                return app.logger.info('Deleted config.');
+                        }
+
+                        app.logger.error('Config not found.');
+                })
+                .catch(err => {
+                        app.logger.error(err);
+                })
+                .finally(() => {
+                        process.exit();
+                });
+}
+
 async function registerConfig() {
-        app.commands = new (require('../build/src/core/collections/CommandCollection').default)(app);
-        app.modules = new (require('../build/src/core/collections/ModuleCollection').default)(app);
-        await app.modules.load();
-        await mongoose.models.Config.findOne({ state }).then(config => { app.config = config; });
-        if (!app.config) return logger.error('Config not found.');
-        await Promise.all([app.modules.register(), app.commands.register()]);
-        logger.info('Registered commands & modules to config.');
-}
-function logError(err) {
-        logger.error(err);
+        try {
+                const CommandCollection = require('../build/src/core/collections/CommandCollection').default;
+                const ModuleCollection = require('../build/src/core/collections/ModuleCollection').default;
+
+                app.commands = new CommandCollection(app);
+                app.modules = new ModuleCollection(app);
+
+                const config = await app.getConfig();
+
+                if (!config) {
+                        throw new Error('Config not found.');
+                }
+
+                app.config = config;
+
+                await app.modules.load();
+
+                await Promise.all([app.modules.register(), app.commands.register()]);
+
+                app.logger.info('Registered commands & modules to config.');
+        } catch (err) {
+                app.logger.error(err);
+        }
+
+        process.exit();
 }
