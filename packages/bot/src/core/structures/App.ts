@@ -23,13 +23,15 @@ export default class App extends core.App {
         public modules: ModuleCollection;
 
         public log(message?: any, level: types.LogLevels = 'debug', ...sources: string[]): void {
-                super.log(message, level, `${baseConfig.client.name.toUpperCase()}-C${baseConfig.cluster.id}`, ...sources);
+                super.log(message, level, baseConfig.client.name.toUpperCase(), `C${baseConfig.cluster.id}`, ...sources);
         }
 
         /**
          * Set the bot instance up
          */
         public async setup(): Promise<void> {
+                await this.connect();
+
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
                 this.ipc = new IPCManager(this);
@@ -44,7 +46,9 @@ export default class App extends core.App {
                         this.modules.register();
                         this.commands.register();
                 }
+        }
 
+        private async connect() {
                 await this.eris.connect();
 
                 const connectedShards = new Set();
@@ -54,6 +58,7 @@ export default class App extends core.App {
 
                         if (connectedShards.size === (baseConfig.cluster.lastShard - baseConfig.cluster.firstShard + 1)) {
                                 this.eris.off('connect', connectListener);
+
                                 setTimeout(() => this.ipc.send('ready'), 5000);
                         }
                 };

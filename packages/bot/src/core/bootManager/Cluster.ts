@@ -1,29 +1,25 @@
 import * as _cluster from 'cluster';
 import * as core from '@engel/core';
-import type Manager from './Manager';
 
 const cluster = <_cluster.Cluster><unknown>_cluster;
 
 export default class Cluster extends core.Base {
-        private _manager: Manager;
         private _config: any;
         public worker: _cluster.Worker;
         public id: number;
         public client: string;
 
         public get logPrefix(): string {
-                return `${this.client.toUpperCase()}-C${this.id}`;
+                return `C${this.id}`;
         }
 
         /**
          * Spawn a new cluster
-         * @param manager Manager instance
          * @param clusterConfig Cluster configuration
          */
-        public constructor(manager: Manager, clusterConfig: any) {
-                super(manager);
+        public constructor(clusterConfig: any) {
+                super();
 
-                this._manager = manager;
                 this._config = clusterConfig;
                 this.id = clusterConfig.id;
                 this.client = clusterConfig.client;

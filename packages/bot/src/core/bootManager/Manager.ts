@@ -3,10 +3,10 @@ import * as env from '@engel/env-util';
 import * as core from '@engel/core';
 import Cluster from './Cluster';
 
-const cluster = _cluster as unknown as _cluster.Cluster;
+const cluster = <_cluster.Cluster><unknown>_cluster;
 
 export default class Manager extends core.App {
-        private clusters: { [key: string]: { [key: number]: Cluster } } = {}
+        private clusters: { [key: number]: Cluster } = {}
 
         public async start() {
                 this.logger = core.Logger(this);
@@ -16,6 +16,8 @@ export default class Manager extends core.App {
                 const shardCount = env.int('SHARD_COUNT', 1);
 
                 const clients = [];
+
+                let firstClusterID = 0;
 
                 for (const clientName of clientNames) {
                         const NAME = clientName.toUpperCase();
@@ -35,9 +37,12 @@ export default class Manager extends core.App {
                                         CLIENT_CLUSTERS: clientClusterCount
                                 },
                                 name: clientName,
+                                firstClusterID: firstClusterID,
                                 clusterCount: clientClusterCount,
                                 shardCount: clientShardCount
                         });
+
+                        firstClusterID += clientClusterCount;
                 }
 
                 cluster.setupPrimary({
@@ -46,37 +51,37 @@ export default class Manager extends core.App {
                 });
 
                 for (const clientConfig of clients) {
-                        (async () => {
-                                let firstShardID = 0;
-                                let lastShardID = clientConfig.shardCount - 1;
-
-                                for (let i = 0; i < clientConfig.clusterCount; i++) {
-                                        const clusterConfig = {
-                                                id: i,
-                                                client: clientConfig.name,
-                                                firstShardID,
-                                                lastShardID,
-                                                env: Object.assign({
-                                                        CLUSTER_FIRST_SHARD: firstShardID,
-                                                        CLUSTER_LAST_SHARD: lastShardID,
-                                                        CLUSTER_ID: i
-                                                }, clientConfig.env)
-                                        };
-
-                                        firstShardID += clientConfig.shardCount;
-                                        lastShardID += clientConfig.shardCount;
-
-                                        this.clusters[clientConfig.name] = this.clusters[clientConfig.name] || {};
-
-                                        const cluster = new Cluster(this, clusterConfig);
-
-                                        this.clusters[clientConfig.name][i] = cluster;
-
-                                        await cluster.awaitReady();
-                                }
-                        })();
+                        this.startClient(clientConfig);
                 }
 
                 return Promise.resolve();
+        }
+
+        async startClient(clientConfig: any) {
+                let firstShardID = 0;
+                let lastShardID = clientConfig.shardCount - 1;
+
+                for (let i = clientConfig.firstClusterID; i < clientConfig.clusterCount + clientConfig.firstClusterID; i++) {
+                        const clusterConfig = {
+                                id: i,
+                                client: clientConfig.name,
+                                firstShardID,
+                                lastShardID,
+                                env: Object.assign({
+                                        CLUSTER_FIRST_SHARD: firstShardID,
+                                        CLUSTER_LAST_SHARD: lastShardID,
+                                        CLUSTER_ID: i
+                                }, clientConfig.env)
+                        };
+
+                        firstShardID += clientConfig.shardCount;
+                        lastShardID += clientConfig.shardCount;
+
+                        const cluster = new Cluster(clusterConfig);
+
+                        this.clusters[i] = cluster;
+
+                        await cluster.awaitReady();
+                }
         }
 }

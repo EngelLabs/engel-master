@@ -30,18 +30,30 @@ export default class StateManager extends Base {
         }
 
         private _sync() {
+                const { baseConfig } = this;
+                const { guilds, shards, users } = this.eris;
+
                 const clusterStats = JSON.stringify({
+                        id: baseConfig.cluster.id,
+                        client: baseConfig.client.name,
                         ws: this._wsEvents,
                         http: this._httpEvents,
-                        guilds: this.eris.guilds.size,
-                        members: this.eris.guilds.reduce((mCount, g) => mCount + g.memberCount, 0),
-                        users: this.eris.users.size
+                        guilds: guilds.size,
+                        users: users.size,
+                        shards: shards.map(s => {
+                                return {
+                                        id: s.id,
+                                        status: s.status,
+                                        latency: s.latency,
+                                        guilds: guilds.filter(g => g.shard.id === s.id).length
+                                };
+                        })
                 });
 
                 this._wsEvents = 0;
                 this._httpEvents = 0;
 
-                this.redis.hset('engel:clusters', `${this.baseConfig.client.id}:${this.baseConfig.cluster.id}`, clusterStats)
+                this.redis.hset('engel:clusters', this.baseConfig.cluster.id.toString(), clusterStats)
                         .catch(err => this.log(err, 'error'));
         }
 

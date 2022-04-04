@@ -69,7 +69,7 @@ export default class Base {
                 return permissionsMapping;
         }
 
-        public get logPrefix(): string {
+        public get logPrefix(): string | string[] {
                 return this.constructor.name;
         }
 
@@ -109,9 +109,15 @@ export default class Base {
                 return utils;
         }
 
-        public log(message?: any, level?: types.LogLevels, prefix?: string): void {
-                prefix = prefix || this.logPrefix || this.constructor.name;
+        public log(message?: any, level?: types.LogLevels, ...sources: string[]): void {
+                const prefix = this.logPrefix;
 
-                this.app.log(message, level, prefix);
+                if (typeof prefix === 'string') {
+                        sources.push(prefix);
+                } else {
+                        sources.push(...prefix);
+                }
+
+                this.app.log(message, level, ...sources);
         }
 }
