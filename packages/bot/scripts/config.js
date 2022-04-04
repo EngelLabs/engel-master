@@ -66,7 +66,7 @@ function createConfig() {
                         app.logger.error(err);
                 })
                 .finally(() => {
-                        registerConfig();
+                        return registerConfig();
                 });
 }
 
