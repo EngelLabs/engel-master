@@ -37,6 +37,10 @@ export default new Command<Info>({
 
                 const loadAvg = os.loadavg().map(i => i.toFixed(2)).join(', ');
 
+                const freeMem = os.freemem();
+                const usedMem = ctx.utils.formatBytes(freeMem);
+                const totalMem = ctx.utils.formatBytes(os.totalmem());
+
                 const embed = {
                         description: `[Support server](${ctx.config.guilds.official.invite} "Very cool server, join it for 10/10 experience ~ timtoy")`,
                         fields: [
@@ -46,6 +50,7 @@ export default new Command<Info>({
                                 { name: 'Users', value: userCount.toString(), inline: true },
                                 { name: 'Uptime', value: prettyMS(Math.floor(process.uptime()) * 1000), inline: true },
                                 { name: 'Load (1m, 5m, 15m)', value: loadAvg, inline: true },
+                                { name: 'Memory', value: `${usedMem}/${totalMem}`, inline: true },
                                 { name: 'WS Recv', value: `${roundIfWhole(wsEvents / 10)}/sec`, inline: true },
                                 { name: 'HTTP', value: `${roundIfWhole(httpEvents / 10)}/sec`, inline: true }
                         ],
