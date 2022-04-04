@@ -9,9 +9,9 @@ A Discord bot. A very *very* incomplete one at that. I am not going to offer any
 - You should also have [MongoDB](https://www.mongodb.com/docs/manual/administration/install-community/) and [Redis](https://redis.io/download/) set up. Check these links for some assistance
 - Check the [.env file example](./env-example) and fill in values as you see fit. It should be pretty self-explanatory.  
 - Install `yarn` with `npm install -g yarn` or an alternative method.  
-- Install dependencies by running `yarn --dev`  
-- Build the project with `yarn run build`
-- Create a configuration for the current client state by running `yarn run config`
+- Install dependencies by running `yarn`  
+- Build the project with `yarn build`  
+- Create a configuration for the current client state by running `yarn run config`  
 - You can now run the project with `yarn bot` and `yarn web` to run the Discord bot and web server respectively.
 
 # Basic list of yarn commands
