@@ -4,12 +4,41 @@ import * as eris from 'eris';
 import type * as types from '@engel/types';
 import App from '../structures/App';
 
+const byteUnits = [
+        'Bytes',
+        'KB',
+        'MB',
+        'GB',
+        'TB',
+        'PB',
+        'EB',
+        'ZB',
+        'YB'
+];
+
 export const readdir = util.promisify(fs.readdir);
 
 export function capitalize(str?: string): string {
         if (!str || !str.length) return '';
 
         return str[0].toUpperCase() + str.slice(1);
+}
+
+export function formatBytes(
+        int: number,
+        opts?: { precision?: number, binary?: boolean }
+): string {
+        opts = {
+                precision: 2,
+                binary: true,
+                ...opts
+        };
+
+        const exp = Math.floor(Math.log(int) / Math.log(opts.binary ? 1024 : 1000));
+
+        const num = int / ((opts.binary ? 1024 : 1000) ** exp);
+
+        return `${opts.precision != null ? num.toFixed(opts.precision) : num} ${byteUnits[exp]}`;
 }
 
 export function getTopRole(guild: eris.Guild | undefined): eris.Role | undefined {
