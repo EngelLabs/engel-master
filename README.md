@@ -1,8 +1,8 @@
 # Intro bullshit
-Hi. This is an archived project that I've spent *a lot* of time on (without accomplishing much). I like finding random open source code online (I find them intriguing and even educational) and so I'm just making this repository public.
+Hi :D
 
 # Ok well what is it
-A Discord bot. A very *very* incomplete one at that. I am not going to offer any explanation. I know, I suck.
+A Discord bot. A very *very* incomplete and in-progress one at that. I am not going to offer any explanation. I know, I suck.
 
 # Setting it up
 - You should have [NodeJS](https://nodejs.org/en/download/) set up. I used v17.6.0 for this project and can't verify whether any other versions are compatible.
