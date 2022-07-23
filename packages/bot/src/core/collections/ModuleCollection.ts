@@ -1,7 +1,6 @@
 import * as path from 'path';
 import * as core from '@engel/core';
 import type * as eris from 'eris';
-import type * as types from '@engel/types';
 import type CommandCollection from './CommandCollection';
 import type Module from '../structures/Module';
 import type App from '../structures/App';
@@ -12,16 +11,14 @@ const modulesPath = path.join(__dirname, '../../modules');
 export default class ModuleCollection extends core.Collection<Module> {
         private _app: App;
         private _commands: CommandCollection;
+        private _logger: core.Logger;
 
         public constructor(app: App) {
                 super();
 
                 this._app = app;
                 this._commands = app.commands;
-        }
-
-        private _log(message?: string, level?: types.LogLevels, prefix: string = 'Modules'): void {
-                this._app.log(message, level, prefix);
+                this._logger = app.logger.get('Modules');
         }
 
         public register(): Promise<void> {
@@ -143,7 +140,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
         private async _loadModule(module: Module): Promise<boolean> {
                 if (module.disabled) {
-                        this._log(`Skipping disabled module "${module.name}".`);
+                        this._logger.debug(`Skipping disabled module "${module.name}".`);
 
                         return false;
                 }
@@ -152,7 +149,7 @@ export default class ModuleCollection extends core.Collection<Module> {
 
                 this.add(module);
 
-                this._log(`Loaded "${module.name}".`);
+                this._logger.debug(`Loaded "${module.name}".`);
 
                 return true;
         }
@@ -171,9 +168,10 @@ export default class ModuleCollection extends core.Collection<Module> {
                 }
 
                 if (initial) {
-                        this._log(`${this.unique().size} registered.`);
-                        this._log(`${this._commands.unique().size} registered.`, 'debug', 'Commands');
-                        this._log(`${this._commands.all().length} total registered.`, 'debug', 'Commands');
+                        this._logger.debug(`${this.unique().size} registered.`);
+                        const logger = this._app.logger.get('Commands');
+                        logger.debug(`${this._commands.unique().size} registered.`);
+                        logger.debug(`${this._commands.all().length} total registered.`);
                 }
 
                 return ret;

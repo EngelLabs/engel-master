@@ -9,7 +9,7 @@ export default class Manager extends core.App {
         private clusters: { [key: number]: Cluster } = {}
 
         public async start() {
-                this.logger = core.Logger(this);
+                this.logger = core.createLogger(this);
 
                 const clientNames = env.arr('CLIENT_NAMES');
                 const clusterCount = env.int('CLUSTER_COUNT', 1);

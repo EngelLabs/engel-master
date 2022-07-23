@@ -1,10 +1,10 @@
 require('@engel/env-util').config({ ignoreMissing: true });
 
-const { App, Logger, Mongoose } = require('@engel/core');
+const { App, createLogger, Mongoose } = require('@engel/core');
 
 const app = new App();
 
-app.logger = Logger(app);
+app.logger = createLogger(app);
 
 app.mongoose = Mongoose(app);
 app.mongoose.set('autoCreate', true);

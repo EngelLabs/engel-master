@@ -10,17 +10,15 @@ interface Command extends types.GlobalCommandConfig {
 
 export default class CommandCollection extends core.Collection<Command> {
         private _app: App;
+        private _logger: core.Logger;
 
         public constructor(app: App) {
                 super();
 
                 this._app = app;
+                this._logger = app.logger.get('Commands');
 
                 this.load();
-        }
-
-        private _log(message: any, level?: types.LogLevels) {
-                this._app.log(message, level, 'Commands');
         }
 
         public load() {
@@ -34,9 +32,9 @@ export default class CommandCollection extends core.Collection<Command> {
 
                         this.set(command.name, command);
 
-                        this._log(`Loaded "${command.name}"`);
+                        this._logger.debug(`Loaded "${command.name}"`);
                 }
 
-                this._log(`${this.size} registered.`);
+                this._logger.debug(`${this.size} registered.`);
         }
 }

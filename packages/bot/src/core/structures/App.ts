@@ -1,5 +1,4 @@
 import * as core from '@engel/core';
-import type * as types from '@engel/types';
 import Eris from '../clients/Eris';
 import baseConfig from '../utils/baseConfig';
 import StateManager from '../managers/StateManager';
@@ -21,10 +20,6 @@ export default class App extends core.App {
         public guilds: GuildCollection;
         public commands: CommandCollection;
         public modules: ModuleCollection;
-
-        public log(message?: any, level: types.LogLevels = 'debug', ...sources: string[]): void {
-                super.log(message, level, baseConfig.client.name.toUpperCase(), `C${baseConfig.cluster.id}`, ...sources);
-        }
 
         /**
          * Set the bot instance up

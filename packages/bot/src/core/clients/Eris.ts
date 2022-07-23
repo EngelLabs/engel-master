@@ -1,8 +1,9 @@
 import * as core from '@engel/core';
-import type * as types from '@engel/types';
 import type App from '../structures/App';
 
 export default function Eris(app: App) {
+        const logger = app.logger.get('Eris');
+
         const client = core.Eris(app, {
                 intents: [
                         'directMessages',
@@ -23,22 +24,18 @@ export default function Eris(app: App) {
                 maxShards: app.baseConfig.client.shards
         });
 
-        const log = (message: any, level: types.LogLevels, shardID?: number) => {
-                app.log(message, level, shardID !== undefined ? `Shard ${shardID}` : 'Eris');
-        };
-
         client
                 .on('connect', id => {
-                        log('Connected.', 'debug', id);
+                        logger.debug({ message: 'Connected.', sources: ['Eris', `Shard ${id}`] });
                 })
                 .on('shardDisconnect', (_, id) => {
-                        log('Disconnected.', 'debug', id);
+                        logger.debug({ message: 'Disconnected.', sources: ['Eris', `Shard ${id}`] });
                 })
                 .on('shardReady', id => {
-                        log('Ready.', 'debug', id);
+                        logger.debug({ message: 'Ready.', sources: ['Eris', `Shard ${id}`] });
                 })
                 .on('shardResume', id => {
-                        log('Resumed.', 'debug', id);
+                        logger.debug({ message: 'Resumed.', sources: ['Eris', `Shard ${id}`] });
                 });
 
         return client;

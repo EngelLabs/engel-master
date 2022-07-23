@@ -1,11 +1,8 @@
 import * as eris from 'eris';
-import type * as types from '@engel/types';
 import type App from '../structures/App';
 
 export default function Eris(app: App, options?: eris.ClientOptions): eris.Client {
-        const log = (message?: any, level?: types.LogLevels, prefix: string = 'Eris') => {
-                app.log(message, level, prefix);
-        };
+        const logger = app.logger.get('Eris');
 
         options = Object.assign(<eris.ClientOptions>{
                 intents: [],
@@ -27,13 +24,13 @@ export default function Eris(app: App, options?: eris.ClientOptions): eris.Clien
                         if (!err) return;
 
                         if (shard !== undefined) {
-                                log(err, 'error', `Shard ${shard}`);
+                                logger.error({ message: err, sources: ['Eris', `Shard ${shard}`] });
                         } else {
-                                log(err, 'error');
+                                logger.error(err);
                         }
                 })
                 .on('warn', (msg, shard) => {
-                        log(msg, 'warn', `Shard ${shard}`);
+                        logger.warn({ message: msg, sources: ['Eris', `Shard ${shard}`] });
                 });
 
         return client;

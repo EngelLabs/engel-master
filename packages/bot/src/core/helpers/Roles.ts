@@ -1,9 +1,19 @@
 
 import type * as eris from 'eris';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import Base from '../structures/Base';
+import App from '../structures/App';
 
 export default class Roles extends Base {
+        private logger: core.Logger;
+
+        public constructor(app: App) {
+                super(app);
+
+                this.logger = app.logger.get('Roles');
+        }
+
         public resolveMuteRole(guild: eris.Guild, guildConfig: types.Guild): Promise<eris.Role> {
                 return new Promise((resolve, reject) => {
                         let role: eris.Role | undefined;
@@ -36,7 +46,7 @@ export default class Roles extends Base {
 
                                         this.app.guilds.update(guild.id, { $set: { muteRole: role.id } });
 
-                                        this.log(`Created mute role R${role.id} G${guild.id}.`);
+                                        this.logger.debug(`Created mute role R${role.id} G${guild.id}.`);
 
                                         resolve(role);
                                 })

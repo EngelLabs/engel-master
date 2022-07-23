@@ -1,11 +1,12 @@
 import * as path from 'path';
-import type * as types from '@engel/types';
+import * as core from '@engel/core';
 import type App from '../structures/App';
 
 const controllersPath = path.join(__dirname, '../../controllers');
 
 export default class ControllerCollection extends Map {
         private _app: App;
+        private _logger: core.Logger;
         // TODO: Type this
         private _middlewares: any;
         private _routes: any;
@@ -14,6 +15,7 @@ export default class ControllerCollection extends Map {
                 super();
 
                 this._app = app;
+                this._logger = app.logger.get('Controllers');
         }
 
         public async load() {
@@ -31,20 +33,16 @@ export default class ControllerCollection extends Map {
                 for (const { uri, handler } of this._middlewares) {
                         app.use(uri, handler);
 
-                        this._log(`middleware(${uri || '*'})`);
+                        this._logger.debug(`middleware(${uri || '*'})`);
                 }
 
                 for (const { method, uri, handler } of this._routes) {
                         app[<keyof typeof app>method](uri, handler);
 
-                        this._log(`${method}(${uri})`);
+                        this._logger.debug(`${method}(${uri})`);
                 }
 
-                this._log(`${this.size} registered.`);
-        }
-
-        private _log(message: any, level?: types.LogLevels) {
-                this._app.log(message, level, 'Controllers');
+                this._logger.debug(`${this.size} registered.`);
         }
 
         private async _loadControllers(controllerPath: string) {

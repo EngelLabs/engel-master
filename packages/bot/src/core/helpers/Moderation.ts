@@ -2,13 +2,23 @@
 import * as eris from 'eris';
 import * as prettyMS from 'pretty-ms';
 import * as moment from 'moment';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
+import type App from '../structures/App';
 import Base from '../structures/Base';
 
 /**
  * Moderation helper
  */
 export default class Moderation extends Base {
+        private logger: core.Logger;
+
+        public constructor(app?: App) {
+                super(app);
+
+                this.logger = this.app.logger.get('Moderation');
+        }
+
         public canModerate<T>(
                 guild: eris.Guild,
                 member: eris.User | eris.Member,
@@ -91,7 +101,7 @@ export default class Moderation extends Base {
 
                                         channel.createMessage({ embeds: [embed] })
                                                 .then(() => {
-                                                        this.log(`User DM'ed U${user.id} G${guildConfig.id}.`);
+                                                        this.logger.debug(`User DM'ed U${user.id} G${guildConfig.id}.`);
 
                                                         resolve();
                                                 })
@@ -171,7 +181,7 @@ export default class Moderation extends Base {
                                 data.expiry = Date.now() + duration * 1000;
                         }
 
-                        this.log(`Created modlog C${caseCount} G${guildConfig.id}.`);
+                        this.logger.debug(`Created modlog C${caseCount} G${guildConfig.id}.`);
 
                         this.models.ModLog
                                 .create(data)
@@ -312,7 +322,7 @@ export default class Moderation extends Base {
 
                                         this.eris.deleteMessages(channel.id, toDelete, auditReason)
                                                 .then(() => {
-                                                        this.log(`Purged "${count}" messages C${channel.id} G${guildConfig.id}.`);
+                                                        this.logger.debug(`Purged "${count}" messages C${channel.id} G${guildConfig.id}.`);
 
                                                         this.createModlog(
                                                                 guildConfig,

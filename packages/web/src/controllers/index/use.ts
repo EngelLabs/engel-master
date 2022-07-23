@@ -29,14 +29,14 @@ export = async function (app: App, req: express.Request, res: express.Response, 
                 if (err && err.response) {
                         if (err.response.status === 401) {
                                 req.session.destroy(err => {
-                                        err && app.log('Error while destroying session: ' + err, 'error', '/index.use');
+                                        err && app.logger.get('/index.use').error('Error while destroying session: ' + err);
                                 });
 
                                 return res.redirect('/login');
                         }
                 }
 
-                app.log(err, 'error', '/index.use');
+                app.logger.get('/index.use').error(err);
 
                 return next();
         }

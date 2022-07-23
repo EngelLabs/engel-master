@@ -3,14 +3,14 @@ import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type * as mongoose from 'mongoose';
 import type * as ioredis from 'ioredis';
-import type * as winston from 'winston';
 import type * as types from '@engel/types';
 import { EventEmitter } from 'eventemitter3';
 import baseConfig from '../utils/baseConfig';
+import createLogger from '../utils/createLogger';
 import Eris from '../clients/Eris';
-import Logger from '../clients/Logger';
 import Mongoose from '../clients/Mongoose';
 import Redis from '../clients/Redis';
+import type { Logger } from '../types';
 
 /* eslint-disable-next-line no-use-before-define */
 let appInstance: App;
@@ -22,7 +22,7 @@ export default class App extends EventEmitter {
         public models = models;
         public utils = utils;
         public eris: eris.Client;
-        public logger: winston.Logger;
+        public logger: Logger;
         public mongoose: mongoose.Mongoose;
         public redis: ioredis.Redis;
         public erisClient = Eris;
@@ -40,24 +40,6 @@ export default class App extends EventEmitter {
 
         public static get instance(): App {
                 return appInstance;
-        }
-
-        public log(message?: any, level: types.LogLevels = 'debug', ...sources: string[]): void {
-                if (!message) {
-                        return;
-                }
-
-                if (!sources.length) {
-                        sources = [this.constructor.name];
-                }
-
-                if (level === 'error') {
-                        message = (<Error>message).stack ?? message;
-                }
-
-                message = `${sources.map(s => `[${s}]`).join(' ')} ${message}`;
-
-                this.logger.log({ message, level });
         }
 
         public get config(): types.Config {
@@ -93,15 +75,15 @@ export default class App extends EventEmitter {
                 try {
                         this.config = await this.getConfig();
                 } catch (err) {
-                        this.log(err, 'error');
+                        this.logger.error(err);
                 }
         }
 
         public async start(): Promise<void> {
                 try {
-                        this.logger = Logger(this);
+                        this.logger = createLogger(this);
 
-                        this.log(`Starting ${baseConfig.name}(env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
+                        this.logger.debug(`Starting ${baseConfig.name}(env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
 
                         this.eris = this.erisClient(this);
                         this.mongoose = this.mongooseClient(this);
@@ -114,7 +96,7 @@ export default class App extends EventEmitter {
                         }
                 } catch (err) {
                         try {
-                                this.log(err, 'error');
+                                this.logger.error(err);
                         } catch {
                                 console.log(err);
                         }

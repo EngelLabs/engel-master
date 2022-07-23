@@ -459,7 +459,7 @@ export default class Core extends Module {
                         const embed = this.app.commands.help(command.qualName, prefix, isAdmin);
 
                         if (!embed) {
-                                this.log(new Error('Unreachable code'), 'error');
+                                this.logger.error(new Error('Unreachable code'));
                         }
 
                         ctx.send({ embed });
@@ -520,7 +520,7 @@ export default class Core extends Module {
 
                         this.app.emit('command', command.dbName);
                 } catch (err) {
-                        this.log(err, 'error');
+                        this.logger.error(err);
 
                         return ctx.error('Sorry, something went wrong.');
                 }
@@ -629,7 +629,7 @@ export default class Core extends Module {
                         text += ` G${guild.id}`;
                 }
 
-                this.log(text);
+                this.logger.debug(text);
 
                 if (!isAdmin && !this.baseConfig.dev) {
                         const doc = {
@@ -643,7 +643,7 @@ export default class Core extends Module {
                         };
 
                         this.models.CommandLog.create(doc)
-                                .catch(err => this.log(err, 'error'));
+                                .catch(err => this.logger.error(err));
                 }
         }
 }

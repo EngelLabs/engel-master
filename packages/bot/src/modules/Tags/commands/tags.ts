@@ -102,7 +102,7 @@ tags.command({
                         throw err;
                 }
 
-                ctx.log(`Created "${name}" G${ctx.guild.id}.`);
+                ctx.logger.debug(`Created "${name}" G${ctx.guild.id}.`);
 
                 return ctx.success(`Tag \`${name}\` created.`);
         }
@@ -153,7 +153,7 @@ tags.command({
                 const result = await ctx.models.Tag.deleteOne({ guild: ctx.guild.id, name });
 
                 if (result.deletedCount) {
-                        ctx.log(`Deleted "${name}" G${ctx.guild.id}.`);
+                        ctx.logger.debug(`Deleted "${name}" G${ctx.guild.id}.`);
                 }
 
                 return result.deletedCount

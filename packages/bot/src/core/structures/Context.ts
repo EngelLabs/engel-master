@@ -1,4 +1,5 @@
 import * as eris from 'eris';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import Base from './Base';
 import type Command from './Command';
@@ -66,6 +67,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         public removeSuccessReaction = createRemoveReactionFunction('success');
         public removeLoadingReaction = createRemoveReactionFunction('loading');
         public removePremiumReaction = createRemoveReactionFunction('premium');
+        private _logger: core.Logger;
 
         public constructor(app: App, options: ContextOptions<M, C>) {
                 super(app);
@@ -129,10 +131,12 @@ export default class Context<M extends Module = Module, C extends Command = Comm
                 this.guildConfig.commands[this.command.rootName] = config;
         }
 
-        public log(message?: string, level?: types.LogLevels, prefix?: string): void {
-                prefix = prefix || this.command.dbName;
+        public get logger() {
+                if (!this._logger) {
+                        this._logger = this.app.logger.get('Commands').get(this.command.dbName);
+                }
 
-                super.log(message, level, `Commands.${prefix}`);
+                return this._logger;
         }
 
         public send(options?: string | types.AdvancedMessageContent) {
@@ -147,7 +151,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
 function createResponseFunction(name: types.ResponseType): ResponseFunction {
         return function (this: Context, content?: string, options?: ContextResponseOptions) {
                 if (this.done && !options?.force) {
-                        this.log('Skipping response as context has already been responded to.');
+                        this.logger.debug('Skipping response as context has already been responded to.');
 
                         return Promise.resolve(null);
                 }

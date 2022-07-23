@@ -4,11 +4,13 @@ import type App from '../structures/App';
 
 export default class ModuleCollection extends core.Collection<types.GlobalModuleConfig> {
         private _app: App;
+        private _logger: core.Logger;
 
         public constructor(app: App) {
                 super();
 
                 this._app = app;
+                this._logger = app.logger.get('Modules');
 
                 this.load();
         }
@@ -21,13 +23,9 @@ export default class ModuleCollection extends core.Collection<types.GlobalModule
 
                         this.set(module.dbName, module);
 
-                        this._log(`Loaded "${module.dbName}"`);
+                        this._logger.debug(`Loaded "${module.dbName}"`);
                 }
 
-                this._log(`${this.size} registered.`);
-        }
-
-        private _log(message: any, level?: types.LogLevels) {
-                this._app.log(message, level, 'Modules');
+                this._logger.debug(`${this.size} registered.`);
         }
 }

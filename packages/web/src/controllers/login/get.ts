@@ -46,7 +46,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 await app.requests.fetchUserData(req);
                 app.requests.syncLocals(req, res);
 
-                app.log(`Authorized ${req.session.user.id}.`, 'debug', '/login.get');
+                app.logger.get('/login.get').debug(`Authorized ${req.session.user.id}.`);
 
                 return res.redirect('/');
         }

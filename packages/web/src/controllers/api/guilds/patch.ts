@@ -90,7 +90,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
 
                 app.redis.publish('guildUpdate', req.params.id);
         } catch (err) {
-                app.log(err, 'error', '/api/guilds.patch');
+                app.logger.get('/api/guilds.patch').error(err);
 
                 return app.responses[500](res);
         }

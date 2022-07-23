@@ -1,5 +1,4 @@
 import * as ioredis from 'ioredis';
-import type * as types from '@engel/types';
 import type App from '../structures/App';
 
 const IORedis = ioredis;
@@ -11,19 +10,17 @@ export default function Redis(app: App, shouldLog: boolean = true): ioredis.Redi
         );
 
         if (shouldLog) {
-                const log = (message?: any, level?: types.LogLevels, prefix: string = 'Redis') => {
-                        app.log(message, level, prefix);
-                };
+                const logger = app.logger.get('Redis');
 
                 client
                         .on('ready', () => {
-                                log('Connected.');
+                                logger.debug('Connected.');
                         })
                         .on('close', () => {
-                                log('Disconnected.');
+                                logger.debug('Disconnected.');
                         })
                         .on('error', (err: any) => {
-                                log(err, 'error');
+                                logger.debug(err, 'error');
                         });
         }
 

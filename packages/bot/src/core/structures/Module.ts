@@ -1,5 +1,6 @@
 import * as path from 'path';
 import type * as eris from 'eris';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import Base from './Base';
 import type Command from './Command';
@@ -23,6 +24,7 @@ export default class Module extends Base {
         public commands?: Array<Command>;
         public listeners?: Array<types.Listener>;
         private _boundListeners?: Array<types.ListenerObject>;
+        private _logger: core.Logger;
         public debug?(channel: eris.TextChannel, guildConfig: types.Guild, msgArray: string[], infoArray: string[]): void;
         public injectHook?(): void;
         public ejectHook?(): void;
@@ -32,12 +34,15 @@ export default class Module extends Base {
                 super();
 
                 this.name = this.constructor.name;
-
                 this.dbName = this.name.toLowerCase();
         }
 
-        public get logPrefix(): string {
-                return `Modules.${this.name}`;
+        public get logger() {
+                if (!this._logger) {
+                        this._logger = this.app.logger.get('Modules').get(this.name);
+                }
+
+                return this._logger;
         }
 
         public get globalConfig(): types.GlobalModuleConfig | undefined {
@@ -87,7 +92,7 @@ export default class Module extends Base {
                         const command = reload(dir + '/' + file).default;
 
                         if (!command || !Object.keys(command).length) {
-                                this.log(`No command found for "${dir}"`, 'error');
+                                this.logger.error(`No command found for "${dir}"`);
                                 continue;
                         }
 
@@ -118,7 +123,7 @@ export default class Module extends Base {
                         let listener = reload(dir + '/' + file).default;
 
                         if (!listener || !Object.keys(listener).length) {
-                                this.log(`No listener found for "${dir}"`, 'error');
+                                this.logger.error(`No listener found for "${dir}"`);
                                 continue;
                         }
 
@@ -128,7 +133,7 @@ export default class Module extends Base {
                                 listener.event = (listener.event || listener.name).replace('bound', '').trim();
                                 listener = listener.bind(null, this);
                         } else {
-                                this.log(`Unknown listener ${listener} for path "${dir}"`, 'error');
+                                this.logger.error(`Unknown listener ${listener} for path "${dir}"`);
                         }
 
                         listeners.push(listener);

@@ -1,6 +1,7 @@
 // TODO: Type this module
 import * as EventEmitter from 'eventemitter3';
 import * as eris from 'eris';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import Permission from '../helpers/Permission';
 import Base from '../structures/Base';
@@ -19,6 +20,7 @@ type EventHandler<K extends keyof types.GuildEvents | keyof types.NonGuildEvents
  * Event dispatch manager
  */
 export default class EventManager extends Base {
+        private _logger: core.Logger;
         private _events: EventEmitter;
         private _permissions: Permission;
         private _registeredEvents: Record<string, { handler: AnyFunc, listeners: Array<AnyFunc> }> = {};
@@ -26,6 +28,7 @@ export default class EventManager extends Base {
         public constructor(app: App) {
                 super(app);
 
+                this._logger = app.logger.get('EventManager');
                 this._events = new EventEmitter();
                 this._permissions = new Permission(app);
         }
@@ -49,7 +52,7 @@ export default class EventManager extends Base {
 
                                         this._events.emit(event, payload);
                                 } catch (err) {
-                                        this.log(err, 'error');
+                                        this._logger.error(err);
                                 }
                         };
 
@@ -61,7 +64,7 @@ export default class EventManager extends Base {
 
                 this._events.addListener(event, execute);
 
-                this.log(`Added listener for event "${event}".`);
+                this._logger.debug(`Added listener for event "${event}".`);
 
                 return this;
         }
@@ -86,7 +89,7 @@ export default class EventManager extends Base {
 
                 this._events.removeListener(event, execute);
 
-                this.log(`Removed listener for event "${event}".`);
+                this._logger.debug(`Removed listener for event "${event}".`);
 
                 return this;
         }

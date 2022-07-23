@@ -8,10 +8,7 @@ export default class Cluster extends core.Base {
         public worker: _cluster.Worker;
         public id: number;
         public client: string;
-
-        public get logPrefix(): string {
-                return `C${this.id}`;
-        }
+        private logger: core.Logger;
 
         /**
          * Spawn a new cluster
@@ -23,6 +20,7 @@ export default class Cluster extends core.Base {
                 this._config = clusterConfig;
                 this.id = clusterConfig.id;
                 this.client = clusterConfig.client;
+                this.logger = this.app.logger.get(`C${this.id}`);
 
                 this.spawn();
         }
@@ -32,10 +30,10 @@ export default class Cluster extends core.Base {
 
                 worker
                         .on('online', () => {
-                                this.log('Online.', 'info');
+                                this.logger.info('Online.');
                         })
                         .on('disconnect', () => {
-                                this.log('Offline.', 'info');
+                                this.logger.info('Offline.');
                         })
                         .on('message', message => {
                                 if (typeof message === 'object') {
@@ -48,17 +46,17 @@ export default class Cluster extends core.Base {
                                         text = message;
                                 }
 
-                                this.log(`Message received: ${text}`);
+                                this.logger.debug(`Message received: ${text}`);
 
                                 if (message?.op === 'ready') {
-                                        this.log('Ready.', 'info');
+                                        this.logger.info('Ready.');
                                 }
                         })
                         .on('error', err => {
-                                this.log(err, 'error');
+                                this.logger.error(err);
                         })
                         .on('exit', () => {
-                                this.log(`Exited (code=${worker.process.exitCode}). Restarting...`, 'info');
+                                this.logger.info(`Exited (code=${worker.process.exitCode}). Restarting...`);
 
                                 setTimeout(() => this.spawn(), 5000);
                         });

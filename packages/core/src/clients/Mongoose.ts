@@ -1,23 +1,20 @@
 import * as mongoose from 'mongoose';
-import type * as types from '@engel/types';
 import type App from '../structures/App';
 
 export default function Mongoose(app: App): mongoose.Mongoose {
-        const log = (message?: any, level?: types.LogLevels, prefix: string = 'Mongoose') => {
-                app.log(message, level, prefix);
-        };
+        const logger = app.logger.get('Mongoose');
 
-        log(`${Object.values(mongoose.models).length} models registered.`);
+        logger.debug(`${Object.values(mongoose.models).length} models registered.`);
 
         mongoose.connection
                 .on('connected', () => {
-                        log('Connected.');
+                        logger.debug('Connected.');
                 })
                 .on('disconnected', () => {
-                        log('Disconnected.');
+                        logger.debug('Disconnected.');
                 })
                 .on('error', err => {
-                        log(err, 'error');
+                        logger.debug(err, 'error');
                 });
 
         const { mongo } = app.baseConfig;

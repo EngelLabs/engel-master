@@ -1,3 +1,4 @@
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import Base from '../structures/Base';
 import type App from '../structures/App';
@@ -6,6 +7,7 @@ import type App from '../structures/App';
  * Manages application state
  */
 export default class StateManager extends Base {
+        private _logger: core.Logger;
         private _wsEvents: number = 0;
         private _httpEvents: number = 0;
         private _messages: Record<string, types.PartialMessage> = {};
@@ -13,6 +15,8 @@ export default class StateManager extends Base {
 
         public constructor(app: App) {
                 super(app);
+
+                this._logger = app.logger.get('StateManager');
 
                 app.events
                         .registerListener('rawWS', this.rawWS.bind(this))
@@ -54,7 +58,7 @@ export default class StateManager extends Base {
                 this._httpEvents = 0;
 
                 this.redis.hset('engel:clusters', this.baseConfig.cluster.id.toString(), clusterStats)
-                        .catch(err => this.log(err, 'error'));
+                        .catch(err => this._logger.error(err));
         }
 
         private _configure(config: types.Config): void {

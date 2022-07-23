@@ -1,9 +1,10 @@
 import * as eris from 'eris';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import Base from '../../../core/structures/Base';
 import Permission from '../../../core/helpers/Permission';
 import Moderation from '../../../core/helpers/Moderation';
-import type App from '../../../core/structures/App';
+import type Moderator from '..';
 
 type TimerTypes = 'mute' | 'ban' | 'lock' | 'block';
 
@@ -13,12 +14,14 @@ type TimerTypes = 'mute' | 'ban' | 'lock' | 'block';
 export default class ModTimer extends Base {
         private _permissions: Permission;
         private _moderation: Moderation;
+        private _logger: core.Logger;
 
-        public constructor(app: App) {
-                super(app);
+        public constructor(module: Moderator) {
+                super(module.app);
 
-                this._permissions = new Permission(app);
-                this._moderation = new Moderation(app);
+                this._logger = module.logger.get('ModTimer');
+                this._permissions = new Permission(this.app);
+                this._moderation = new Moderation(this.app);
         }
 
         public get handler(): () => Promise<void> {
@@ -32,7 +35,7 @@ export default class ModTimer extends Base {
                 try {
                         var modlogs = await this.models.ModLog.find({ expiry: { $lte: Date.now() } });
                 } catch (err) {
-                        this.log(err, 'error');
+                        this._logger.error(err);
 
                         return;
                 }
@@ -46,15 +49,15 @@ export default class ModTimer extends Base {
                                 if (typeof this[key] === 'function') {
                                         this[key](modlog);
 
-                                        this.log(`${key} timer handled G${modlog.guild}.`);
+                                        this._logger.debug(`${key} timer handled G${modlog.guild}.`);
                                         this.models.ModLog
                                                 .updateOne({ _id: modlog._id }, { $unset: { expiry: null } })
                                                 .exec();
                                 } else {
-                                        this.log(`Skipping unknown timer ${key}`);
+                                        this._logger.debug(`Skipping unknown timer ${key}`);
                                 }
                         } catch (err) {
-                                this.log(err, 'error');
+                                this._logger.error(err);
                         }
                 }
         }

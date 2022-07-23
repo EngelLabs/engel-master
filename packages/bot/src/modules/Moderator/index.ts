@@ -50,7 +50,7 @@ export default class Moderator extends Module {
                 this.tasks = [];
                 this.listeners = [];
 
-                const timerHandler = (new ModTimer(this.app)).handler;
+                const timerHandler = (new ModTimer(this)).handler;
 
                 this.tasks.push([timerHandler, 15000]);
 

@@ -1,6 +1,5 @@
 import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
-import type * as types from '@engel/types';
 import App from './App';
 
 const permissionsMapping: Record<keyof eris.Constants['Permissions'], string> = {
@@ -69,10 +68,6 @@ export default class Base {
                 return permissionsMapping;
         }
 
-        public get logPrefix(): string | string[] {
-                return this.constructor.name;
-        }
-
         public get eris() {
                 return this.app.eris;
         }
@@ -89,10 +84,6 @@ export default class Base {
                 return this.app.config;
         }
 
-        public get logger() {
-                return this.app.logger;
-        }
-
         public get mongoose() {
                 return this.app.mongoose;
         }
@@ -107,17 +98,5 @@ export default class Base {
 
         public get utils() {
                 return utils;
-        }
-
-        public log(message?: any, level?: types.LogLevels, ...sources: string[]): void {
-                const prefix = this.logPrefix;
-
-                if (typeof prefix === 'string') {
-                        sources.push(prefix);
-                } else {
-                        sources.push(...prefix);
-                }
-
-                this.app.log(message, level, ...sources);
         }
 }
