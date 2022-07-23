@@ -93,12 +93,17 @@ const globalDefaults: types.Config = {
         dmCommands: true
 };
 
-const configSchemaTypes: mongoose.SchemaDefinition = {};
+const configSchemaTypes: mongoose.SchemaDefinition = {
+        state: { type: String, default: baseConfig.client.state }
+};
 
 // Don't want too much repeating code, so we're defining the schema dynamically.
 Object
         .entries(globalDefaults)
         .forEach(([key, value]) => {
+                if (Object.hasOwnProperty.call(configSchemaTypes, key)) {
+                        return;
+                }
                 configSchemaTypes[key] = { type: value.constructor, default: value };
         });
 
