@@ -9,4 +9,3 @@ export { default as Base } from './structures/Base';
 export { default as Collection } from './structures/Collection';
 export { default as App } from './structures/App';
 export { default as baseConfig } from './utils/baseConfig';
-export { default as globalDefaults } from './utils/globalDefaults';
