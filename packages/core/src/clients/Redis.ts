@@ -20,7 +20,7 @@ export default function Redis(app: App, shouldLog: boolean = true): ioredis.Redi
                                 logger.debug('Disconnected.');
                         })
                         .on('error', (err: any) => {
-                                logger.debug(err, 'error');
+                                logger.debug(err);
                         });
         }
 
