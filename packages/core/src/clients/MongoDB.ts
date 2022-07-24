@@ -47,7 +47,7 @@ export default class MongoDB {
         }
 
         get configurations(): mongodb.Collection<types.Config> {
-                return this.collection('config');
+                return this.collection('configurations');
         }
 
         get giveaways(): mongodb.Collection<types.Giveaway> {
