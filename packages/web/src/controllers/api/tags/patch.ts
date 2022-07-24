@@ -7,13 +7,13 @@ export = async function (app: App, req: express.Request, res: express.Response) 
 
         for (const key of ['name', 'content']) {
                 if (!Object.prototype.hasOwnProperty.call(body, key)) {
-                        return app.responses[400](res, 30001, `Field "${key}" is missing`);
+                        return res[400](30001, `Field "${key}" is missing`);
                 }
 
                 const val = body[key];
 
                 if (typeof val !== 'string' || !val.trim().length) {
-                        return app.responses[400](res, 30001, `Field "${key}" is invalid`);
+                        return res[400](30001, `Field "${key}" is invalid`);
                 }
         }
 
@@ -42,8 +42,8 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 .findOneAndUpdate(filter, { $set: update }, { returnDocument: 'after' });
 
         if (!result.value) {
-                return app.responses[404](res, 0, 'Unknown tag');
+                return res[404](0, 'Unknown tag');
         }
 
-        return app.responses[200](res, result.value);
+        return res[200](result.value);
 }

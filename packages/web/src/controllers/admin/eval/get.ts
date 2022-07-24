@@ -29,5 +29,5 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 __res = `Rejected: ${err?.toString?.() || err}`;
         }
 
-        return app.responses[200](res, __res);
+        return res[200](__res);
 }

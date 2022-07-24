@@ -44,6 +44,7 @@ export default class Requests extends Base {
                 const isAdmin = config.users.developers.includes(user.id);
 
                 Object.assign(req.session, { user, guilds, allGuilds, isAdmin });
+                req.session.lastSync = Date.now();
         }
 
         public syncLocals(req: express.Request, res: express.Response) {

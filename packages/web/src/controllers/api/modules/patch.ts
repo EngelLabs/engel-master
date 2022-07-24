@@ -5,7 +5,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
         const body = req.body;
         const module = app.modules.get(<string>body.name);
 
-        if (!module) return app.responses[403](res, 10002, 'Unknown module');
+        if (!module) return res[403](10002, 'Unknown module');
 
         // TODO: Type this?
         const toUnset: any[] = [];
@@ -36,7 +36,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
         }
 
         if (!toUnset.length && !Object.keys(toSet).length) {
-                return app.responses[400](res, 30001, 'Invalid response body');
+                return res[400](30001, 'Invalid response body');
         }
 
         const update: any = { $set: {}, $unset: {} };
@@ -55,12 +55,12 @@ export = async function (app: App, req: express.Request, res: express.Response) 
         } catch (err) {
                 app.logger.get('api/modules.patch').error(err);
 
-                return app.responses[500](res);
+                return res[500]();
         }
 
         if (!result.value) {
-                return app.responses[403](res, 10001, 'Unknown guild');
+                return res[403](10001, 'Unknown guild');
         }
 
-        return app.responses[200](res, result.value.modules?.[module.dbName]);
+        return res[200](result.value.modules?.[module.dbName]);
 }

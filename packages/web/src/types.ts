@@ -1,12 +1,37 @@
 /* eslint-disable camelcase */
+/* eslint-disable no-unused-vars */
 
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
 
+interface ResponseHandler {
+        (data?: any): any;
+}
+
+interface ErrorResponseHandler {
+        (code?: number, message?: any): any;
+}
+
 declare module 'express' {
-        /* eslint-disable-next-line no-unused-vars */
         interface Request {
                 body: { [key: string]: unknown };
+        }
+
+}
+
+declare global {
+        namespace Express {
+                interface Response {
+                        200: ResponseHandler;
+                        201: ResponseHandler;
+                        204: ResponseHandler;
+                        400: ErrorResponseHandler;
+                        401: ErrorResponseHandler;
+                        403: ErrorResponseHandler;
+                        404: ErrorResponseHandler;
+                        405: ErrorResponseHandler;
+                        500: ErrorResponseHandler;
+                }
         }
 }
 

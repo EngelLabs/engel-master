@@ -13,7 +13,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 const tags = (<string[]>body.tags).filter(o => typeof o === 'string' && o.length);
 
                 if (!tags.length) {
-                        return app.responses[400](res, 30001, 'Invalid tag names');
+                        return res[400](30001, 'Invalid tag names');
                 }
 
                 filter.name = { $in: tags };
@@ -21,5 +21,5 @@ export = async function (app: App, req: express.Request, res: express.Response) 
 
         await app.mongo.tags.deleteMany(filter);
 
-        return app.responses[204](res);
+        return res[204]();
 }

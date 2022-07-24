@@ -3,7 +3,6 @@ import type * as express from 'express';
 import baseConfig from '../utils/baseConfig';
 import Server from './Server';
 import Renderer from '../helpers/Renderer';
-import Responses from '../helpers/Responses';
 import Requests from '../helpers/Requests';
 import ModuleCollection from '../collections/ModuleCollection';
 import CommandCollection from '../collections/CommandCollection';
@@ -12,7 +11,6 @@ import ControllerCollection from '../collections/ControllerCollection';
 export default class App extends core.App {
         public baseConfig = baseConfig;
         public renderer: Renderer;
-        public responses: Responses;
         public requests: Requests;
         public modules: ModuleCollection;
         public commands: CommandCollection;
@@ -27,7 +25,6 @@ export default class App extends core.App {
                 this.server = new Server(this);
 
                 this.renderer = new Renderer(this);
-                this.responses = new Responses(this);
                 this.requests = new Requests(this);
 
                 this.modules = new ModuleCollection(this);

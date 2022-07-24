@@ -10,6 +10,50 @@ import App from './App';
 
 const Store = store(session);
 
+function createResponseHandler(status: number, defaultData?: any) {
+        return function (this: express.Response, data?: any) {
+                data = data === undefined ? defaultData : data;
+
+                if (typeof data === 'string') {
+                        this.set('Content-Type', 'text/plain');
+                } else if (data !== undefined) {
+                        if (data instanceof Array) {
+                                data = data.map(o => {
+                                        delete o.__v;
+                                        delete o._id;
+
+                                        return o;
+                                });
+                        } else {
+                                delete data.__v;
+                                delete data._id;
+                        }
+
+                        data = { data };
+
+                        this.set('Content-Type', 'application/json');
+                }
+
+                this.status(status);
+
+                return data === undefined
+                        ? this.end()
+                        : this.send(data);
+        };
+}
+
+function createErrorResponseHandler(status: number, defaultMessage: string) {
+        return function (this: express.Response, code?: number, message?: any) {
+                message = message === undefined ? `${status}: ${defaultMessage}` : message;
+
+                const data: any = { message };
+
+                data._debug = `https://http.cat/${status}`;
+                data._code = code !== undefined ? code : null;
+
+                return this.status(status).send(data);
+        };
+}
 export default class Server {
         public express: express.Express;
         private _logger: core.Logger;
@@ -45,6 +89,16 @@ export default class Server {
                                 maxAge: 7 * 24 * 60 * 60 * 1000 // 7d, the time it takes for Discord access token to expire
                         }
                 }));
+
+                this.express.response[200] = createResponseHandler(200, 'OK');
+                this.express.response[201] = createResponseHandler(201, 'OK');
+                this.express.response[204] = createResponseHandler(204);
+                this.express.response[400] = createErrorResponseHandler(400, 'Bad Request');
+                this.express.response[401] = createErrorResponseHandler(401, 'Unauthorized');
+                this.express.response[403] = createErrorResponseHandler(403, 'Forbidden');
+                this.express.response[404] = createErrorResponseHandler(404, 'Not Found');
+                this.express.response[405] = createErrorResponseHandler(405, 'Method Not Allowed');
+                this.express.response[500] = createErrorResponseHandler(500, 'Internal Server Error');
         }
 
         public start() {

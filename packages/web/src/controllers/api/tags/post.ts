@@ -10,11 +10,11 @@ export = async function (app: App, req: express.Request, res: express.Response) 
 
         for (const key of tagDataFields) {
                 if (!Object.prototype.hasOwnProperty.call(body, key)) {
-                        return app.responses[400](res, 30001, `Field "${key}" is missing`);
+                        return res[400](30001, `Field "${key}" is missing`);
                 }
 
                 if (typeof body[key] !== 'string' || !(<string>body[key]).trim().length) {
-                        return app.responses[400](res, 30001, `Field "${key}" is invalid`);
+                        return res[400](30001, `Field "${key}" is invalid`);
                 }
         }
 
@@ -28,12 +28,12 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 await app.mongo.tags.insertOne(data);
         } catch (err) {
                 if (err?.code === 11000) {
-                        return app.responses[403](res, 11001, 'Tag already exists');
+                        return res[403](11001, 'Tag already exists');
                 }
 
                 app.logger.get('api/tags.post').error(err);
-                return app.responses[500](res);
+                return res[500]();
         }
 
-        return app.responses[201](res, data);
+        return res[201](data);
 }

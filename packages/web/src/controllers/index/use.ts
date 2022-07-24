@@ -41,7 +41,6 @@ export = async function (app: App, req: express.Request, res: express.Response, 
                 return next();
         }
 
-        req.session.lastSync = Date.now();
         app.requests.syncLocals(req, res);
 
         return next();
