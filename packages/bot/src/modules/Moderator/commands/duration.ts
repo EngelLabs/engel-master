@@ -1,5 +1,5 @@
 import * as prettyMS from 'pretty-ms';
-import type * as mongoose from 'mongoose';
+import type * as mongodb from 'mongodb';
 import type * as types from '@engel/types';
 import Command from '../../../core/structures/Command';
 import Converter from '../../../core/helpers/Converter';
@@ -34,13 +34,11 @@ export default new Command<Moderator>({
                         case: caseNum
                 };
 
-                const update: mongoose.UpdateQuery<types.ModLog> = duration
+                const update: mongodb.UpdateFilter<types.ModLog> = duration
                         ? { $set: { duration: duration * 1000, expiry: Date.now() + duration * 1000 } }
                         : { $unset: { duration: null, expiry: null } };
 
-                const result = await ctx.models.ModLog
-                        .updateOne(filter, update)
-                        .exec();
+                const result = await ctx.mongo.modlogs.updateOne(filter, update);
 
                 if (!result.matchedCount) return ctx.error(`Case \`${ctx.args[0]}\` doesn't exist or doesn't have an active timer.`);
 

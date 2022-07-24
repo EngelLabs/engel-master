@@ -27,7 +27,7 @@
         "eris": "^0.16.1",
         "eventemitter3": "^4.0.7",
         "ioredis": "^4.28.5",
-        "mongoose": "^6.2.2",
+        "mongodb": "^4.8.0",
         "source-map-support": "^0.5.21",
         "winston": "^3.6.0",
         "zlib-sync": "^0.1.7"

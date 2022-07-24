@@ -84,12 +84,8 @@ export default class Base {
                 return this.app.config;
         }
 
-        public get mongoose() {
-                return this.app.mongoose;
-        }
-
-        public get models() {
-                return this.app.models;
+        public get mongo() {
+                return this.app.mongo;
         }
 
         public get redis() {

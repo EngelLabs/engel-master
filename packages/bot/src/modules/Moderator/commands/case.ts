@@ -23,9 +23,8 @@ export default new Command<Moderator>({
                 }
 
                 try {
-                        var modlog = await ctx.models.ModLog
-                                .findOne({ guild: ctx.guild.id, case: caseNum })
-                                .lean();
+                        var modlog = await ctx.mongo.modlogs
+                                .findOne({ guild: ctx.guild.id, case: caseNum });
                 } catch (err) {
                         return ctx.error(err);
                 }

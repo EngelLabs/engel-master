@@ -33,7 +33,7 @@ export default class ModTimer extends Base {
          */
         private async _handle(): Promise<void> {
                 try {
-                        var modlogs = await this.models.ModLog.find({ expiry: { $lte: Date.now() } });
+                        var modlogs = await this.mongo.modlogs.find({ expiry: { $lte: Date.now() } }).toArray();
                 } catch (err) {
                         this._logger.error(err);
 
@@ -50,9 +50,7 @@ export default class ModTimer extends Base {
                                         this[key](modlog);
 
                                         this._logger.debug(`${key} timer handled G${modlog.guild}.`);
-                                        this.models.ModLog
-                                                .updateOne({ _id: modlog._id }, { $unset: { expiry: null } })
-                                                .exec();
+                                        this.mongo.modlogs.updateOne({ _id: modlog._id }, { $unset: { expiry: null } });
                                 } else {
                                         this._logger.debug(`Skipping unknown timer ${key}`);
                                 }

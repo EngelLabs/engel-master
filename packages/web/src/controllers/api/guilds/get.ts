@@ -2,10 +2,7 @@ import type * as express from 'express';
 import type App from '../../../core/structures/App';
 
 export = async function (app: App, req: express.Request, res: express.Response) {
-        const guild = await app.models.Guild
-                .findOne({ id: req.params.id })
-                .lean()
-                .exec();
+        const guild = await app.mongo.guilds.findOne({ id: req.params.id });
 
         return guild
                 ? app.responses[200](res, guild)

@@ -1,87 +1,61 @@
 import type * as express from 'express';
-import type * as mongoose from 'mongoose';
-import type * as types from '@engel/types';
 import type App from '../../../core/structures/App';
 
 export = async function (app: App, req: express.Request, res: express.Response) {
-        const command = app.commands.get(<string>req.body.name);
+        const body = req.body;
+        const command = app.commands.get(<string>body.name);
 
         if (!command) return app.responses[403](res, 10002, 'Unknown command');
 
-        let update: mongoose.UpdateQuery<types.CommandConfig>;
+        // TODO: Type this?
+        const toUnset: any[] = [];
+        const toSet: any = {};
 
-        function set(key: keyof types.CommandConfig, value: any, type?: types.Primitives) {
-                if (value === null) {
-                        update = update || {};
-                        update.$unset = update.$unset || {};
-                        update.$unset[key] = null;
-                } else {
-                        /* eslint-disable-next-line valid-typeof */
-                        if (type !== undefined && typeof value !== type) {
-                                return;
-                        }
-
-                        update = update || {};
-                        update.$set = update.$set || {};
-                        update.$set[key] = value;
-                }
-        }
-
-        if (req.body.disabled !== undefined) {
-                if (!command.isSubcommand) {
-                        set('disabled', req.body.disabled, 'boolean');
-                } else if (req.body.disabled !== null) {
-                        set('disabled', req.body.disabled, 'boolean');
-                }
+        /* commandConfig.disabled */
+        if (typeof body.disabled === 'boolean') {
+                toSet.disabled = body.disabled;
         }
 
         if (!command.isSubcommand) {
-                if (req.body.del !== undefined) {
-                        set('del', req.body.del, 'boolean');
+                /* commandConfig.del */
+                if (typeof body.del === 'boolean') {
+                        toSet.del = body.del;
                 }
 
+                /* snowflake arrays */
                 for (const key of ['allowedRoles', 'ignoredRoles', 'allowedChannels', 'ignoredChannels']) {
-                        if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-                                if (req.body[key] instanceof Array) {
-                                        set(<keyof types.CommandConfig>key, (<any[]>req.body[key]).filter(o => typeof o === 'string' && o.length));
-                                } else if (req.body[key] === null) {
-                                        set(<keyof types.CommandConfig>key, null);
+                        const val = body[key];
+                        if (val === null) {
+                                toUnset.push(key);
+                        } else if (val instanceof Array) {
+                                const ids = val.filter(id => typeof id === 'string');
+
+                                if (ids.length) {
+                                        toSet[key] = ids;
                                 }
                         }
                 }
         }
 
-        if (!update) {
+        if (!toUnset.length && !Object.keys(toSet).length) {
                 return app.responses[400](res, 30001, 'Invalid response body');
         }
 
-        if (!command.isSubcommand) {
-                if (update.$set) {
-                        for (const key in update.$set) {
-                                update.$set[`commands.${command.name}.${key}`] = update.$set[key];
-
-                                delete update.$set[key];
-                        }
-                }
-
-                if (update.$unset) {
-                        for (const key in update.$unset) {
-                                update.$unset[`commands.${command.name}.${key}`] = update.$unset[key];
-
-                                delete update.$unset[key];
-                        }
-                }
+        const update: any = { $set: {}, $unset: {} };
+        if (command.isSubcommand) {
+                update.$set[`commands.${command.name}`] = toSet.disabled;
         } else {
-                update.$set[`commands.${command.name}`] = update.$set.disabled;
-
-                delete update.$set.disabled;
+                for (const key of toUnset) {
+                        update.$unset[`commands.${command.name}.${key}`] = null;
+                }
+                for (const key of toSet) {
+                        update.$set[`commands.${command.name}.${key}`] = toSet[key];
+                }
         }
 
         try {
-                var result = await app.models.Guild
-                        .findOneAndUpdate({ id: req.params.id }, update, { new: true })
-                        .lean()
-                        .exec();
+                var result = await app.mongo.guilds
+                        .findOneAndUpdate({ id: req.params.id }, update, { returnDocument: 'after' });
 
                 app.redis.publish('guildUpdate', req.params.id);
         } catch (err) {
@@ -90,9 +64,9 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 return app.responses[500](res);
         }
 
-        if (!result) {
+        if (!result.value) {
                 return app.responses[403](res, 10001, 'Unknown guild');
         }
 
-        return app.responses[200](res, result.commands?.[command.name] || {});
+        return app.responses[200](res, result.value.commands?.[command.name]);
 }

@@ -27,11 +27,15 @@ tags.command({
         execute: async function (ctx) {
                 const name = ctx.args.join(' ');
 
-                const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
+                const tag = await ctx.mongo.tags.findOne({ guild: ctx.guild.id, name });
 
                 if (!tag) {
                         return ctx.error(`Tag \`${name}\` not found.`);
                 }
+
+                ctx.mongo.tags
+                        .updateOne({ guild: ctx.guild.id, name }, { $inc: { uses: 1 } })
+                        .catch(err => ctx.logger.error(err));
 
                 const author = ctx.eris.users.get(tag.author);
 
@@ -92,8 +96,14 @@ tags.command({
                 if (!content || !content.length) return ctx.error('Missing tag content.');
 
                 try {
-                        await ctx.models.Tag
-                                .create({ guild: ctx.guild.id, author: ctx.author.id, name, content });
+                        await ctx.mongo.tags
+                                .insertOne({
+                                        guild: ctx.guild.id,
+                                        author: ctx.author.id,
+                                        name,
+                                        content,
+                                        createdAt: Date.now()
+                                });
                 } catch (err) {
                         if (err?.code === 11000) {
                                 return ctx.error(`Tag \`${name}\` already exists.`);
@@ -134,7 +144,7 @@ tags.command({
                 if (!name || !name.length) return ctx.error('Missing tag name.');
                 if (!content || !content.length) return ctx.error('Missing new tag content.');
 
-                const result = await ctx.models.Tag.updateOne({ guild: ctx.guild.id, name }, { $set: { content } }).exec();
+                const result = await ctx.mongo.tags.updateOne({ guild: ctx.guild.id, name }, { $set: { content } });
 
                 return result.modifiedCount
                         ? ctx.success(`Tag \`${name}\` edited. New content: \`${content}\`.`)
@@ -150,7 +160,7 @@ tags.command({
         execute: async function (ctx) {
                 const name = ctx.args.join(' ');
 
-                const result = await ctx.models.Tag.deleteOne({ guild: ctx.guild.id, name });
+                const result = await ctx.mongo.tags.deleteOne({ guild: ctx.guild.id, name });
 
                 if (result.deletedCount) {
                         ctx.logger.debug(`Deleted "${name}" G${ctx.guild.id}.`);

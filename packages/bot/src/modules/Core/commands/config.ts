@@ -81,14 +81,12 @@ config.command({
                                 return ctx.error(`Unknown type \`${type}\`.`);
                 }
 
-                let config = await ctx.models.Config
-                        .findOne({ state })
-                        .lean();
+                let config = await ctx.mongo.configurations.findOne({ state });
 
-                config = await ctx.models.Config
-                        .findOneAndUpdate({ state }, { $set: { [key]: value } }, { new: true })
-                        .lean();
+                const result = await ctx.mongo.configurations
+                        .findOneAndUpdate({ state }, { $set: { [key]: value } }, { returnDocument: 'after' });
 
+                config = result.value;
                 ctx.locals = { key, value, config, state };
         }
 });
@@ -104,7 +102,7 @@ config.command({
                 const key = ctx.args.shift();
                 const state = ctx.args.join(' ') || ctx.state;
 
-                const config = await ctx.models.Config.findOne({ state });
+                const config = await ctx.mongo.configurations.findOne({ state });
 
                 ctx.locals = { key, state, config };
         }
@@ -178,7 +176,7 @@ guild.command({
         before: beforeGuild,
         dmEnabled: true,
         execute: async function (ctx) {
-                const result = await ctx.models.Guild.deleteOne({ id: ctx.locals.guildId });
+                const result = await ctx.mongo.guilds.deleteOne({ id: ctx.locals.guildId });
 
                 ctx.app.guilds.delete(ctx.locals.guildId);
 

@@ -10,7 +10,12 @@ export default new Command<Tags>({
         execute: async function (ctx) {
                 const name = ctx.args.join(' ');
 
-                const tag = await ctx.models.Tag.findOneAndIncrement({ guild: ctx.guild.id, name });
+                const tag = await ctx.mongo.tags.findOne({ guild: ctx.guild.id, name });
+                if (tag) {
+                        ctx.mongo.tags
+                                .updateOne({ guild: ctx.guild.id, name }, { $inc: { uses: 1 } })
+                                .catch(err => ctx.logger.error(err));
+                }
 
                 return tag
                         ? ctx.send(tag.content).catch(() => false)

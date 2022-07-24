@@ -1,92 +1,92 @@
 import type * as express from 'express';
-import type * as mongoose from 'mongoose';
-import type * as types from '@engel/types';
 import type App from '../../../core/structures/App';
 
 export = async function (app: App, req: express.Request, res: express.Response) {
-        let update: mongoose.UpdateQuery<types.Guild>;
+        // TODO: Type this?
+        const toSet: any = {};
+        const toUnset: any[] = [];
+        const body = req.body;
 
-        function set(key: keyof types.Guild, value: any, type?: types.Primitives) {
-                if (value === null) {
-                        update = update || {};
-                        update.$unset = update.$unset || {};
-                        update.$unset[key] = null;
-                } else {
-                        /* eslint-disable-next-line valid-typeof */
-                        if (type !== undefined && typeof value !== type) {
-                                return;
-                        }
+        /* guildConfig.prefixes */
+        if (body.prefixes === null) {
+                toUnset.push('prefixes');
+        } else if (body.prefixes instanceof Array) {
+                const prefixes = body.prefixes
+                        .filter(p => typeof p === 'string' && p.length && p.length <= 12)
+                        .slice(0, 15);
 
-                        update = update || {};
-                        update.$set = update.$set || {};
-                        update.$set[key] = value;
+                if (prefixes.length) {
+                        toSet.prefixes = prefixes;
                 }
         }
 
-        if (req.body.prefixes !== undefined) {
-                if (req.body.prefixes == null) {
-                        set('prefixes', app.config.prefixes.default);
-                } else if (req.body.prefixes instanceof Array) {
-                        req.body.prefixes = req.body.prefixes
-                                .filter(p => typeof p === 'string' && p.length && p.length <= 12);
-
-                        set('prefixes', (<string[]>req.body.prefixes).length
-                                ? req.body.prefixes
-                                : app.config.prefixes.default
-                        );
-                }
+        /* guildConfig.muteRole */
+        if (body.muteRole === null) {
+                toUnset.push('muteRole');
+        } else if (typeof body.muteRole === 'string') {
+                toSet.muteRole = body.muteRole;
         }
 
-        if (req.body.delCommands !== undefined) {
-                set('delCommands', req.body.delCommands, 'boolean');
-        }
-
-        if (req.body.muteRole !== undefined) {
-                set('muteRole', req.body.muteRole, 'string');
-        }
-
+        /* snowflake arrays */
         for (const key of ['allowedRoles', 'ignoredRoles', 'allowedChannels', 'ignoredChannels']) {
-                if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-                        if (req.body[key] instanceof Array) {
-                                set(<keyof types.Guild>key, (<any[]>req.body[key]).filter(o => typeof o === 'string' && o.length));
-                        } else if (req.body[key] === null) {
-                                set(<keyof types.Guild>key, null);
+                const val = body[key];
+                if (val === null) {
+                        toUnset.push(key);
+                } else if (val instanceof Array) {
+                        const ids = val.filter(id => typeof id === 'string');
+
+                        if (ids.length) {
+                                toSet[key] = ids;
                         }
                 }
         }
 
-        if (req.body.noDisableWarning !== undefined) {
-                set('noDisableWarning', req.body.noDisableWarning, 'boolean');
+        /* booleans */
+        for (const key of ['delCommands', 'noDisableWarning', 'verboseHelp']) {
+                if (typeof body[key] === 'boolean') {
+                        toSet[key] = body[key];
+                }
         }
 
-        if (req.body.verboseHelp !== undefined) {
-                set('verboseHelp', req.body.verboseHelp, 'boolean');
-        }
-
+        /* admin-only */
         if (req.session.isAdmin) {
-                for (const key of ['isIgnored', 'isPremium', 'hasPremium']) {
-                        if (Object.prototype.hasOwnProperty.call(req.body, key)) {
-                                set(<keyof types.Guild>key, req.body[key], 'boolean');
-                        }
-                }
-                if (req.body.client !== undefined) {
-                        set('client', req.body.client, 'string');
+                /* guildConfig.client */
+                if (body.client === null) {
+                        toUnset.push('client');
+                } else if (typeof body.client === 'string') {
+                        toSet.client = body.client;
                 }
 
-                if (req.body.caseCount !== undefined) {
-                        set('caseCount', req.body.caseCount, 'number');
+                /* guildConfig.caseCount */
+                if (body.caseCount === null) {
+                        toUnset.push('caseCount');
+                } else if (typeof body.caseCount === 'number') {
+                        toSet.caseCount = body.caseCount;
+                }
+
+                /* booleans */
+                for (const key of ['isIgnored', 'isPremium', 'hasPremium']) {
+                        if (typeof body[key] === 'boolean') {
+                                toSet[key] = body[key];
+                        }
                 }
         }
 
-        if (!update) {
+        if (!toUnset.length && !Object.keys(toSet).length) {
                 return app.responses[400](res, 30001, 'Invalid request body');
         }
 
+        const update: any = { $set: {}, $unset: {} };
+        for (const key of toUnset) {
+                update.$unset[key] = null;
+        }
+        for (const key in toSet) {
+                update.$set[key] = toSet[key];
+        }
+
         try {
-                var result = await app.models.Guild
-                        .findOneAndUpdate({ id: req.params.id }, update, { new: true })
-                        .lean()
-                        .exec();
+                var result = await app.mongo.guilds
+                        .findOneAndUpdate({ id: req.params.id }, update, { returnDocument: 'after' });
 
                 app.redis.publish('guildUpdate', req.params.id);
         } catch (err) {
@@ -95,9 +95,9 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 return app.responses[500](res);
         }
 
-        if (!result) {
+        if (!result.value) {
                 return app.responses[403](res, 10001, 'Unknown guild');
         }
 
-        return app.responses[200](res, result);
+        return app.responses[200](res, result.value);
 }

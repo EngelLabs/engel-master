@@ -26,7 +26,7 @@ export default new Command<Manager>({
 
                 const queryString = moduleName + '.disabled';
 
-                ctx.app.guilds.update(ctx.guildConfig.id, { $set: { [queryString]: moduleConfig.disabled } });
+                ctx.app.guilds.update(ctx.guildConfig.id, { [queryString]: moduleConfig.disabled });
 
                 return ctx.success(moduleConfig.disabled
                         ? `Module \`${module.name}\` disabled.`

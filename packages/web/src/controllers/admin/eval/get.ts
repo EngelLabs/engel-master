@@ -4,7 +4,7 @@ import type * as express from 'express';
 import type App from '../../../core/structures/App';
 
 export = async function (app: App, req: express.Request, res: express.Response) {
-        let { eris, baseConfig, config, logger, models, mongoose, redis } = app;
+        let { eris, baseConfig, config, logger, mongo, redis } = app;
 
         let __res: any;
 

@@ -639,10 +639,11 @@ export default class Core extends Module {
                                         content: message.content,
                                         author: author.id,
                                         guild: guild.id
-                                }
+                                },
+                                created: Date.now()
                         };
 
-                        this.models.CommandLog.create(doc)
+                        this.mongo.commandlogs.insertOne(doc)
                                 .catch(err => this.logger.error(err));
                 }
         }

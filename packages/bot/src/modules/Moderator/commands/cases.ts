@@ -31,9 +31,9 @@ export default new Command<Moderator>({
                 }
 
                 try {
-                        var modlogs = await ctx.models.ModLog
+                        var modlogs = await ctx.mongo.modlogs
                                 .find({ guild: ctx.guild.id, $or: [{ 'user.id': id }, { 'channel.id': id }] })
-                                .lean();
+                                .toArray();
                 } catch (err) {
                         return ctx.error(err);
                 }

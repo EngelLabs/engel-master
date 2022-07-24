@@ -1,14 +1,12 @@
 require('@engel/env-util').config({ ignoreMissing: true });
 
-const { App, createLogger, Mongoose } = require('@engel/core');
+const { App, createLogger, MongoDB } = require('@engel/core');
 
 const app = new App();
 
 app.logger = createLogger(app);
 
-app.mongoose = Mongoose(app);
-app.mongoose.set('autoCreate', true);
-app.mongoose.set('autoIndex', true);
+app.mongo = new MongoDB(app);
 
 const state = process.argv[3] ?? app.baseConfig.client.state;
 app.baseConfig.client.state = state;
@@ -17,44 +15,80 @@ const option = process.argv[2];
 
 app.logger.info(`State: "${state}".`);
 
-switch (option) {
-        case 'c':
-        case 'create':
-                createConfig();
+createIndexes().then(() => {
+        switch (option) {
+                case 'c':
+                case 'create':
+                        createConfig();
 
-                break;
-        case 'd':
-        case 'delete':
-                deleteConfig();
+                        break;
+                case 'd':
+                case 'delete':
+                        deleteConfig();
 
-                break;
-        case 'r':
-        case 'register':
-                registerConfig();
+                        break;
+                case 'r':
+                case 'register':
+                        registerConfig();
 
-                break;
-        default:
-                app.models.Config
-                        .findOne({ state })
-                        .then(config => {
-                                if (!config) {
-                                        app.logger.info('Config not found.');
+                        break;
+                default:
+                        app.mongo.configurations
+                                .findOne({ state })
+                                .then(config => {
+                                        if (!config) {
+                                                app.logger.info('Config not found.');
 
-                                        return createConfig();
-                                }
+                                                return createConfig();
+                                        }
 
-                                app.logger.info('Config exists.');
-                        })
-                        .catch(err => {
-                                app.logger.error(err);
-                        })
-                        .finally(() => {
-                                process.exit();
-                        });
+                                        app.logger.info('Config exists.');
+                                })
+                                .catch(err => {
+                                        app.logger.error(err);
+                                })
+                                .finally(() => {
+                                        process.exit();
+                                });
+        }
+});
+
+function createIndexes() {
+        const promises = [];
+
+        promises.push(app.mongo.commandlogs.createIndexes([
+                { key: { name: 1 } },
+                { key: { failed: 1 } },
+                { key: { 'message.id': 1 } },
+                { key: { 'message.guild': 1 } }
+        ]));
+        promises.push(app.mongo.configurations.createIndexes([
+                { key: { state: 1 }, unique: true }
+        ]));
+        promises.push(app.mongo.guilds.createIndexes([
+                { key: { id: 1 }, unique: true }
+        ]));
+        promises.push(app.mongo.modlogs.createIndexes([
+                { key: { guild: 1 } },
+                { key: { guild: 1, case: 1 }, unique: true },
+                { key: { guild: 1, case: 1, expiry: 1 } },
+                { key: { guild: 1, 'user.id': 1 } },
+                { key: { guild: 1, 'channel.id': 1 } },
+                { key: { guild: 1, 'mod.id': 1 } },
+                { key: { expiry: 1 } }
+        ]));
+        promises.push(app.mongo.tags.createIndexes([
+                { key: { guild: 1 } },
+                { key: { guild: 1, name: 1 }, unique: true },
+                { key: { guild: 1, author: 1 } }
+        ]));
+        return Promise.all(promises)
+                .then(() => app.logger.info('Created indexes'))
+                .catch(err => app.logger.error(err));
 }
 
 function createConfig() {
-        return app.models.Config.create({ state })
+        return app.mongo.configurations.insertOne({ state })
                 .then(() => {
                         app.logger.info('Created config.');
                 })
@@ -71,7 +105,7 @@ function createConfig() {
 }
 
 function deleteConfig() {
-        return app.models.Config.deleteOne({ state })
+        return app.mongo.configurations.deleteOne({ state })
                 .then(({ deletedCount }) => {
                         if (deletedCount) {
                                 return app.logger.info('Deleted config.');

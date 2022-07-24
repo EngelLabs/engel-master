@@ -15,19 +15,18 @@ export default class CommandCollection extends core.Collection<Command> {
         }
 
         public register(): Promise<void> {
-                this._app.config.commands = {};
+                const update: any = {};
 
                 this.all()
                         .map(command => command.globalConfig)
                         .forEach(c => {
                                 if (!c) return;
 
-                                this._app.config.commands[c.name] = c;
+                                update[`commands.${c.name}`] = c;
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._app.models.Config.updateOne({ state: this._app.baseConfig.client.state }, { $set: { commands: this._app.config.commands } })
-                                .exec()
+                        this._app.mongo.configurations.updateOne({ state: this._app.baseConfig.client.state }, { $set: update })
                                 .then(() => resolve())
                                 .catch(reject);
                 });

@@ -153,11 +153,12 @@ export default class Moderation extends Base {
                                 };
                         }
 
-                        const data: Omit<types.ModLog, 'created'> = {
+                        const data: types.ModLog = {
                                 case: caseCount,
                                 type: type,
                                 guild: guildConfig.id,
-                                mod: mod
+                                mod: mod,
+                                created: Date.now()
                         };
 
                         if (user) {
@@ -183,8 +184,8 @@ export default class Moderation extends Base {
 
                         this.logger.debug(`Created modlog C${caseCount} G${guildConfig.id}.`);
 
-                        this.models.ModLog
-                                .create(data)
+                        this.mongo.modlogs
+                                .insertOne(data)
                                 .then(() => resolve())
                                 .catch(reject);
                 });
@@ -210,9 +211,8 @@ export default class Moderation extends Base {
                                 filter['channel.id'] = channel.id;
                         }
 
-                        this.models.ModLog
+                        this.mongo.modlogs
                                 .updateMany(filter, { $unset: { expiry: null } })
-                                .exec()
                                 .then(() => resolve())
                                 .catch(reject);
                 });
@@ -265,9 +265,8 @@ export default class Moderation extends Base {
                         return true;
                 }
 
-                const currentMute = await this.models.ModLog
-                        .findOne({ guild: guildConfig.id, 'user.id': user.id, type: 'mute', expiry: { $gt: Date.now() } })
-                        .lean();
+                const currentMute = await this.mongo.modlogs
+                        .findOne({ guild: guildConfig.id, 'user.id': user.id, type: 'mute', expiry: { $gt: Date.now() } });
 
                 if (currentMute) {
                         return true;

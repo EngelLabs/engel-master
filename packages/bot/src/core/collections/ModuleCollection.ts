@@ -22,19 +22,18 @@ export default class ModuleCollection extends core.Collection<Module> {
         }
 
         public register(): Promise<void> {
-                this._app.config.modules = {};
+                const update: any = {};
 
                 [...this.unique()]
                         .map(m => m.globalConfig)
                         .forEach(m => {
                                 if (!m) return;
 
-                                this._app.config.modules[m.dbName] = m;
+                                update[`module.${m.dbName}`] = m;
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._app.models.Config.updateOne({ state: this._app.baseConfig.client.state }, { $set: { modules: this._app.config.modules } })
-                                .exec()
+                        this._app.mongo.configurations.updateOne({ state: this._app.baseConfig.client.state }, { $set: update })
                                 .then(() => resolve())
                                 .catch(reject);
                 });

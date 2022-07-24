@@ -38,7 +38,7 @@ const _eval = new Command<Core>({
         execute: async function (ctx) {
                 let { message, guild, author, app, member, channel,
                         args, eris, guildConfig, baseConfig, config, logger,
-                        models, mongoose, redis, me, permissions, utils } = ctx,
+                        mongo, redis, me, permissions, utils } = ctx,
                         __ctx = ctx, __res: any;
 
                 let api = (method: string, uri: string, data = {}) => {

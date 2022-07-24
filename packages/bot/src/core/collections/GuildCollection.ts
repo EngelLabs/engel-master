@@ -1,6 +1,5 @@
 import { Redis } from '@engel/core';
 import type * as mongodb from 'mongodb';
-import type * as mongoose from 'mongoose';
 import type * as types from '@engel/types';
 import type App from '../structures/App';
 
@@ -86,9 +85,7 @@ export default class GuildCollection extends Map<string, types.Guild> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
-                        this._app.models.Guild.findOne({ id: guildID })
-                                .lean()
-                                .exec()
+                        this._app.mongo.guilds.findOne({ id: guildID })
                                 .then((guild: types.Guild | undefined) => {
                                         if (guild && this._app.config.guildCache) {
                                                 this.set(guildID, guild);
@@ -115,15 +112,15 @@ export default class GuildCollection extends Map<string, types.Guild> {
                         return this._creating[guildID];
                 }
 
-                const doc: types.Guild = {
+                const guild: types.Guild = {
                         id: guildID,
                         prefixes: this._app.config.prefixes.default,
                         client: this._app.baseConfig.client.name
                 };
 
                 const p: Promise<types.Guild> = new Promise((resolve, reject) => {
-                        this._app.models.Guild.create(doc)
-                                .then((guild: types.Guild) => {
+                        this._app.mongo.guilds.insertOne(guild)
+                                .then(() => {
                                         if (this._app.config.guildCache) {
                                                 this.set(guildID, guild);
                                         }
@@ -145,12 +142,11 @@ export default class GuildCollection extends Map<string, types.Guild> {
                 return p;
         }
 
-        public update(id: string | { id: string }, update: mongoose.UpdateQuery<types.Guild>): Promise<mongodb.UpdateResult> {
+        public update(id: string | { id: string }, update: mongodb.UpdateFilter<types.Guild>): Promise<mongodb.UpdateResult> {
                 const guildID: string = typeof id === 'string' ? id : id.id;
 
                 return new Promise((resolve, reject) => {
-                        this._app.models.Guild.updateOne({ id: guildID }, update)
-                                .exec()
+                        this._app.mongo.guilds.updateOne({ id: guildID }, update)
                                 .then(resolve)
                                 .catch(reject);
                 });

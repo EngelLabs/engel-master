@@ -1,4 +1,4 @@
-import type * as mongoose from 'mongoose';
+import type * as mongodb from 'mongodb';
 import type * as types from '@engel/types';
 import Command from '../../../core/structures/Command';
 import type Moderator from '..';
@@ -28,13 +28,11 @@ export default new Command<Moderator>({
                         case: caseNum
                 };
 
-                const update: mongoose.UpdateQuery<types.ModLog> = reason?.length
+                const update: mongodb.UpdateFilter<types.ModLog> = reason?.length
                         ? { $set: { reason: reason } }
                         : { $unset: { reason: null } };
 
-                const result = await ctx.models.ModLog
-                        .updateOne(filter, update)
-                        .exec();
+                const result = await ctx.mongo.modlogs.updateOne(filter, update);
 
                 if (!result.matchedCount) return ctx.error(`Case \`${ctx.args[0]}\` not found.`);
 

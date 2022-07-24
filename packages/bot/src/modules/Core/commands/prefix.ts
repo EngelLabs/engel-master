@@ -38,7 +38,7 @@ prefix.command({
                 }
 
                 ctx.config.prefixes.private.push(prefix);
-                ctx.models.Config.updateOne({ state: ctx.config.state }, { $addToSet: { 'prefixes.private': prefix } }).exec();
+                ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $addToSet: { 'prefixes.private': prefix } });
 
                 return ctx.success(`Added prefix \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }
@@ -61,7 +61,7 @@ prefix.command({
                 }
 
                 ctx.config.prefixes.private = ctx.config.prefixes.private.filter(p => p !== prefix);
-                ctx.models.Config.updateOne({ state: ctx.config.state }, { $pull: { 'prefixes.private': prefix } }).exec();
+                ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $pull: { 'prefixes.private': prefix } });
 
                 return ctx.success(`Removed prefix \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }
@@ -80,7 +80,7 @@ prefix.command({
                 }
 
                 ctx.config.prefixes.private = [prefix];
-                ctx.models.Config.updateOne({ state: ctx.config.state }, { $set: { 'prefixes.private': [prefix] } }).exec();
+                ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $set: { 'prefixes.private': [prefix] } });
 
                 return ctx.success(`Replaced prefixes with \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }
