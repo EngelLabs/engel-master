@@ -71,7 +71,7 @@ export default class CommandCollection extends core.Collection<Command> {
                 }
 
                 if (command.commands) {
-                        const commands = [...command.commands.unique()]
+                        const commands = command.commands.unique()
                                 .filter(cmd => !(cmd.hidden && !includeHidden));
                         const msg = commands
                                 .map(cmd => cmd.name)
@@ -102,9 +102,10 @@ export default class CommandCollection extends core.Collection<Command> {
         }
 
         public all(): Command[] {
-                const ret = [...this.unique()];
+                const ret: Command[] = [];
 
                 for (const command of this.unique()) {
+                        ret.push(command);
                         if (command.commands) {
                                 ret.push(...command.commands.all());
                         }

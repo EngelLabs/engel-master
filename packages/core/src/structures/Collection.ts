@@ -3,10 +3,10 @@
  */
 export default class Collection<T extends { name: string, aliases?: string[] }> extends Map {
         /**
-         * Get a unique set of values
+         * Get a unique array of values
          */
-        unique(): Set<T> {
-                return new Set(this.values());
+        unique(): T[] {
+                return [...new Set(this.values())];
         }
 
         /**

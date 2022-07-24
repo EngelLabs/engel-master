@@ -24,7 +24,7 @@ export default class ModuleCollection extends core.Collection<Module> {
         public register(): Promise<void> {
                 const update: any = {};
 
-                [...this.unique()]
+                this.unique()
                         .map(m => m.globalConfig)
                         .forEach(m => {
                                 if (!m) return;
@@ -167,9 +167,9 @@ export default class ModuleCollection extends core.Collection<Module> {
                 }
 
                 if (initial) {
-                        this._logger.debug(`${this.unique().size} registered.`);
+                        this._logger.debug(`${this.unique().length} registered.`);
                         const logger = this._app.logger.get('Commands');
-                        logger.debug(`${this._commands.unique().size} registered.`);
+                        logger.debug(`${this._commands.unique().length} registered.`);
                         logger.debug(`${this._commands.all().length} total registered.`);
                 }
 
@@ -179,7 +179,7 @@ export default class ModuleCollection extends core.Collection<Module> {
         public unload(moduleNames: string[] = []): number {
                 moduleNames = moduleNames?.length
                         ? moduleNames.map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
-                        : [...this.unique()].map(m => m.name);
+                        : this.unique().map(m => m.name);
 
                 let ret = 0;
 
@@ -193,7 +193,7 @@ export default class ModuleCollection extends core.Collection<Module> {
         public reload(moduleNames: string[] = []): number {
                 moduleNames = moduleNames?.length
                         ? moduleNames.map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
-                        : [...this.unique()].map(m => m.name);
+                        : this.unique().map(m => m.name);
 
                 let ret = 0;
 
