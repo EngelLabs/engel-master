@@ -161,7 +161,6 @@ const defaultConfig = {
                         '?'
                 ],
                 dm: [
-                        't.',
                         '?',
                         '!',
                         ''
