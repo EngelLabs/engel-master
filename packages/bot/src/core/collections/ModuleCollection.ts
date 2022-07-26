@@ -113,7 +113,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 return true;
         }
 
-        public reloadSingle(moduleName: string): boolean {
+        public async reloadSingle(moduleName: string): Promise<boolean> {
                 const module = this.get(moduleName);
 
                 if (!module) return false;
@@ -121,7 +121,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 this.unloadSingle(module.name);
 
                 try {
-                        this.loadSingle(module.name);
+                        await this.loadSingle(module.name);
                 } catch (err) {
                         // Loading the new version of the module failed,
                         // fall back to previous working version.
@@ -129,7 +129,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                         // the inject/eject hooks can cause
                         const ModuleConstructor: typeof Module = (<any>module).constructor;
 
-                        this._loadModule(new ModuleConstructor(this._app));
+                        await this._loadModule(new ModuleConstructor(this._app));
 
                         throw err;
                 }
@@ -190,7 +190,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 return ret;
         }
 
-        public reload(moduleNames: string[] = []): number {
+        public async reload(moduleNames: string[] = []): Promise<number> {
                 moduleNames = moduleNames?.length
                         ? moduleNames.map(m => m.endsWith('.js') ? m.slice(0, -3) : m)
                         : this.unique().map(m => m.name);
@@ -198,7 +198,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                 let ret = 0;
 
                 for (const moduleName of moduleNames) {
-                        if (this.reloadSingle(moduleName)) ret += 1;
+                        if (await this.reloadSingle(moduleName)) ret += 1;
                 }
 
                 return ret;

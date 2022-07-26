@@ -7,13 +7,13 @@ const reload = new Command<Core>({
         usage: '[...modules]',
         aliases: ['r'],
         dmEnabled: true,
-        execute: function (ctx) {
+        execute: async function (ctx) {
                 if (!ctx.baseConfig.dev) return Promise.resolve();
 
                 const start = Date.now();
 
                 try {
-                        var res = ctx.app.modules.reload(ctx.args.length ? ctx.args : null);
+                        var res = await ctx.app.modules.reload(ctx.args.length ? ctx.args : null);
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');
                 }
