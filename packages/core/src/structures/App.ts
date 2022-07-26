@@ -19,8 +19,9 @@ export default class App extends EventEmitter {
         public logger: Logger;
         public mongo: MongoDB;
         public redis: ioredis.Redis;
-        public erisClient = Eris;
-        public redisClient = Redis;
+        public Eris = Eris;
+        public Redis = Redis;
+        public MongoDB = MongoDB;
         public setup?(): Promise<void>;
         private _config: types.Config;
         private _configInterval: NodeJS.Timer;
@@ -65,9 +66,9 @@ export default class App extends EventEmitter {
 
                         this.logger.debug(`Starting ${baseConfig.name}(env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
 
-                        this.eris = this.erisClient(this);
-                        this.mongo = new MongoDB(this);
-                        this.redis = this.redisClient(this);
+                        this.eris = new this.Eris(this);
+                        this.mongo = new this.MongoDB(this);
+                        this.redis = new this.Redis(this);
 
                         await this.configure();
 

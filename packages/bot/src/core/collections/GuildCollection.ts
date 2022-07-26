@@ -17,7 +17,7 @@ export default class GuildCollection extends Map<string, types.Guild> {
 
                 this._app = app;
 
-                const subredis = Redis(app, false);
+                const subredis = new Redis(app, false);
 
                 subredis.subscribe('guildUpdate');
                 subredis.on('message', this.guildUpdate.bind(this));
