@@ -34,15 +34,10 @@ export interface CommandConfig extends types.CommandConfig {
 }
 
 export default class Moderator extends Module {
+        public dbName = 'mod';
+        public aliases = ['mod', 'moderation'];
+        public info = 'Enable command-based moderation for your server';
         private _moderation: Moderation;
-
-        public constructor() {
-                super();
-
-                this.dbName = 'mod';
-                this.aliases = ['mod', 'moderation'];
-                this.info = 'Enable command-based moderation for your server';
-        }
 
         public injectHook() {
                 this._moderation = new Moderation(this.app);

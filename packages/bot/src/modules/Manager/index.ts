@@ -4,12 +4,8 @@ import Module from '../../core/structures/Module';
 import type Command from '../../core/structures/Command';
 
 export default class Manager extends Module {
-        public constructor() {
-                super();
-
-                this.aliases = ['management'];
-                this.info = 'Commands to manage and configure your server';
-        }
+        public aliases = ['management'];
+        public info = 'Commands to manage and configure your server';
 
         private _debug(channel: eris.TextChannel, guildConfig: types.Guild): [string[], string[]] {
                 const msgArray = <string[]>[];

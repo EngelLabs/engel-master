@@ -12,8 +12,8 @@ const reload = require('require-reload')(require);
  * Base class for classes that represent a module
  */
 export default class Module extends Base {
-        public name: string;
-        public dbName: string;
+        public name: string = this.constructor.name;
+        public dbName: string = this.name.toLowerCase();
         public info?: string;
         public private?: boolean;
         public aliases?: string[];
@@ -29,13 +29,6 @@ export default class Module extends Base {
         public injectHook?(): void;
         public ejectHook?(): void;
         public commandCheck?(ctx: Context): boolean | Promise<boolean>;
-
-        public constructor() {
-                super();
-
-                this.name = this.constructor.name;
-                this.dbName = this.name.toLowerCase();
-        }
 
         public get logger() {
                 if (!this._logger) {

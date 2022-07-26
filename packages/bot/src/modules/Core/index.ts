@@ -15,17 +15,12 @@ interface Cooldown {
 }
 
 export default class Core extends Module {
+        public private = true;
+        public internal = true;
+        public info = 'Core module';
         private cooldowns: Map<string, Cooldown>;
         private globalCooldowns: Map<string, number>;
         private permissions: Permission;
-
-        public constructor() {
-                super();
-
-                this.private = true;
-                this.internal = true;
-                this.info = 'Core module';
-        }
 
         public injectHook(): void {
                 this.cooldowns = new Map();
