@@ -37,8 +37,6 @@ export default class Core extends Module {
 
                 this.tasks.push([this.clearCooldowns.bind(this), 5000]);
                 this.listeners.push(this.messageCreate.bind(this));
-                // this.listeners.push(this.guildCreate.bind(this));
-                // this.listeners.push(this.guildDelete.bind(this));
 
                 const admin = new Command<Core>({
                         name: 'admin',
@@ -77,10 +75,6 @@ export default class Core extends Module {
                                 }
                         }
                 }
-        }
-
-        private async postEmbed(embed: eris.EmbedOptions): Promise<void> {
-                // TODO
         }
 
         private messageCreate(payload: types.Events['messageCreate']): Promise<void> {
@@ -287,22 +281,6 @@ export default class Core extends Module {
 
                 if (!message.guildID && !command.dmEnabled) return;
 
-                // const parseArg = name => {
-                //         const str = args.find(str => str.startsWith(name));
-
-                //         if (!str) return false;
-
-                //         if (str.indexOf('=') !== -1) {
-                //                 const idx = str.indexOf('=');
-
-                //                 args.shift();
-
-                //                 return [str.slice(0, idx), str.slice(idx + 1)];
-                //         }
-
-                //         return [args.shift(), args.shift()];
-                // }
-
                 const ctx = new Context(this.app, {
                         args,
                         prefix: prefix || '?',
@@ -313,119 +291,67 @@ export default class Core extends Module {
                         guildConfig
                 });
 
-                // if (command.options) {
-                //         const parsedArgs = {};
-
-                //         for (const opt of command.options) {
-                //                 const names = [opt.name];
-                //                 if (opt.alias) {
-                //                         if (opt.alias instanceof Array) {
-                //                                 names.push(...opt.alias);
-                //                         } else {
-                //                                 names.push(opt.alias);
-                //                         }
-                //                 }
-
-                //                 let key;
-                //                 let value = false;
-
-                //                 while (value === false && names.length) {
-                //                         const ret = parseArg(names.shift());
-
-                //                         if (ret === false) {
-                //                                 continue;
-                //                         }
-
-                //                         [key, value] = ret;
-                //                 }
-
-                //                 if (value === false && opt.default) {
-                //                         if (typeof opt.default === 'function') {
-                //                                 value = opt.default(ctx);
-                //                         } else {
-                //                                 value = opt.default;
-                //                         }
-                //                 }
-
-                //                 if (value === false && opt.required) {
-                //                         ctx.error(`Missing required argument \`${opt.name}\``);
-
-                //                         return;
-                //                 }
-
-                //                 if (opt.type) {
-                //                         value = opt.type(value);
-
-                //                         if (value?.constructor !== opt.type) {
-                //                                 ctx.error(`Type for \`${key}\`is invalid, a \`${opt.type.constructor.name.toLowerCase()}\` is expected.`);
-
-                //                                 return;
-                //                         }
-                //                 }
-
-                //                 parsedArgs[opt.name.replace('--', '')] = value;
-                //         }
-
-                //         ctx.args = parsedArgs;
-                // }
-
                 return ctx;
         }
 
         private canInvoke(ctx: Context): boolean {
-                const roles = ctx.member?.roles,
-                        channel = ctx.channel;
+                let settingsExist = false;
 
-                let canInvoke = false,
-                        overrideExists = false;
+                if (ctx.guild) {
+                        const { channel } = ctx;
+                        const { roles } = ctx.member;
 
-                const checkPerms = (c: types.BaseConfig): boolean => {
-                        if (!c || typeof c === 'boolean') return false;
+                        const checkPerms = (c: types.BaseConfig): boolean => {
+                                if (!c || typeof c === 'boolean') return false;
 
-                        if (c.allowedRoles?.length) {
-                                if (!overrideExists) overrideExists = true;
+                                if (c.allowedRoles?.length) {
+                                        settingsExist = true;
 
-                                if (!c.allowedRoles.find((id: string) => roles.includes(id))) return false;
+                                        if (!c.allowedRoles.find((id: string) => roles.includes(id))) return false;
+                                }
+
+                                if (c.allowedChannels?.length) {
+                                        settingsExist = true;
+
+                                        if (!c.allowedChannels.find((id: string) => id === channel.id)) return false;
+                                }
+
+                                if (c.ignoredRoles?.length) {
+                                        settingsExist = true;
+
+                                        if (c.ignoredRoles.find((id: string) => roles.includes(id))) return false;
+                                }
+
+                                if (c.ignoredChannels?.length) {
+                                        settingsExist = true;
+
+                                        if (c.ignoredChannels.find((id: string) => id === channel.id)) return false;
+                                }
+
+                                // this can only be true if a restriction exists and the user passed
+                                return settingsExist;
+                        };
+
+                        let canInvoke = checkPerms(<types.CommandConfig>ctx.commandConfig);
+
+                        if (!canInvoke && !settingsExist) {
+                                canInvoke = checkPerms(ctx.moduleConfig);
                         }
 
-                        if (c.allowedChannels?.length) {
-                                if (!overrideExists) overrideExists = true;
-
-                                if (!c.allowedChannels.find((id: string) => id === channel.id)) return false;
+                        if (!canInvoke && !settingsExist) {
+                                canInvoke = checkPerms(ctx.guildConfig);
                         }
 
-                        if (c.ignoredRoles?.length) {
-                                if (!overrideExists) overrideExists = true;
-
-                                if (c.ignoredRoles.find((id: string) => roles.includes(id))) return false;
+                        if (canInvoke) {
+                                return true;
                         }
-
-                        if (c.ignoredChannels?.length) {
-                                if (!overrideExists) overrideExists = true;
-
-                                if (c.ignoredChannels.find((id: string) => id === channel.id)) return false;
-                        }
-
-                        if (overrideExists) return true;
-
-                        return false;
-                };
-
-                canInvoke = checkPerms(<types.CommandConfig>ctx.commandConfig);
-
-                if (!canInvoke && !overrideExists) {
-                        canInvoke = checkPerms(ctx.moduleConfig);
                 }
 
-                if (!canInvoke && !overrideExists) {
-                        canInvoke = checkPerms(ctx.guildConfig);
-                }
-
-                if (!overrideExists && ctx.module.allowedByDefault) {
+                if (!settingsExist && ctx.module.allowedByDefault) {
                         return true;
                 }
 
-                return canInvoke;
+                return false;
         }
 
         private deleteCommand(ctx: Context): Promise<void> {
@@ -499,10 +425,10 @@ export default class Core extends Module {
                         }
 
                         if (command.before) {
-                                const _p = command.before(ctx);
+                                const p = command.before(ctx);
 
-                                if (_p instanceof Promise) {
-                                        await _p;
+                                if (p instanceof Promise) {
+                                        await p;
                                 }
                         }
 
@@ -510,10 +436,10 @@ export default class Core extends Module {
                                 await execute();
 
                                 if (!ctx.done && command.after) {
-                                        const _p = command.after(ctx);
+                                        const p = command.after(ctx);
 
-                                        if (_p instanceof Promise) {
-                                                await _p;
+                                        if (p instanceof Promise) {
+                                                await p;
                                         }
                                 }
                         }
@@ -526,100 +452,6 @@ export default class Core extends Module {
                 }
 
                 this.commandSuccess(ctx);
-        }
-
-        private guildCreate({ guild }: types.GuildEvents['guildCreate']): void {
-                const eris = this.eris;
-
-                let allMembers = 0;
-
-                for (const guild of eris.guilds.values()) {
-                        allMembers += guild.members.size || 0;
-                }
-
-                const guildOwner = guild.members?.get?.(guild.ownerID);
-
-                const msg = {
-                        description: [
-                                `Added to guild ${guild.name || 'UNKNOWN'} (${guild.id})`,
-                                `Owner: ${guild.ownerID || 'UNKNOWN'}`,
-                                `Members: ${guild.memberCount || 'UNKNOWN'}`
-                        ],
-                        footer: [
-                                `Total guild count: ${eris.guilds.size}`,
-                                `Total member count: ${allMembers}`,
-                                `Total user count: ${eris.users.size}`
-                        ]
-                };
-
-                const embed: eris.EmbedOptions = {
-                        description: msg.description.join('\n'),
-                        timestamp: new Date().toISOString(),
-                        color: this.config.colours.success,
-                        footer: { text: msg.footer.join('\n') }
-                };
-
-                if (guildOwner) {
-                        embed.author = {
-                                name: guildOwner.username + '#' + guildOwner.discriminator,
-                                url: guildOwner.avatarURL,
-                                icon_url: guildOwner.avatarURL
-                        };
-
-                        embed.thumbnail = { url: guildOwner.avatarURL };
-                }
-
-                this.postEmbed(embed);
-        }
-
-        private guildDelete({ guild }: types.GuildEvents['guildDelete']): void {
-                if (!(guild instanceof eris.Guild)) {
-                        return;
-                }
-
-                // Eris client has to be referred to like this because of "eris" in global scope
-                // being used in local scope (right above)
-                const erisClient = this.eris;
-
-                let allMembers = 0;
-
-                for (const guild of erisClient.guilds.values()) {
-                        allMembers += guild.members.size || 0;
-                }
-
-                const guildOwner = guild.members?.get?.(guild.ownerID);
-
-                const msgs = {
-                        description: [
-                                `Removed from guild ${guild.name || 'UNKNOWN'} (${guild.id})`,
-                                `Owner: ${guild.ownerID || 'UNKNOWN'}`,
-                                `Members: ${guild.memberCount || 'UNKNOWN'}`
-                        ],
-                        footer: [
-                                `Total guild count: ${erisClient.guilds.size}`,
-                                `Total member count: ${allMembers}`,
-                                `Total user count: ${erisClient.users.size}`
-                        ]
-                };
-
-                const embed: eris.EmbedOptions = {
-                        description: msgs.description.join('\n'),
-                        timestamp: new Date().toISOString(),
-                        color: this.config.colours.error,
-                        footer: { text: msgs.footer.join('\n') }
-                };
-
-                if (guildOwner) {
-                        embed.author = {
-                                name: guildOwner.username + '#' + guildOwner.discriminator,
-                                url: guildOwner.avatarURL,
-                                icon_url: guildOwner.avatarURL
-                        };
-
-                        embed.thumbnail = { url: guildOwner.avatarURL };
-                }
-
-                this.postEmbed(embed);
         }
 
         private commandSuccess({ isAdmin, command, author, message, guild }: Context): void {
