@@ -77,7 +77,7 @@ export default class Manager extends core.App {
                         firstShardID += clientConfig.shardCount;
                         lastShardID += clientConfig.shardCount;
 
-                        const cluster = new Cluster(clusterConfig);
+                        const cluster = new Cluster(this, clusterConfig);
 
                         this.clusters[i] = cluster;
 

@@ -10,9 +10,6 @@ import MongoDB from '../clients/MongoDB';
 import Redis from '../clients/Redis';
 import type { Logger } from '../types';
 
-/* eslint-disable-next-line no-use-before-define */
-let appInstance: App;
-
 global.Promise = require('bluebird');
 
 export default class App extends EventEmitter {
@@ -27,16 +24,6 @@ export default class App extends EventEmitter {
         public setup?(): Promise<void>;
         private _config: types.Config;
         private _configInterval: NodeJS.Timer;
-
-        public constructor() {
-                super();
-
-                appInstance = this;
-        }
-
-        public static get instance(): App {
-                return appInstance;
-        }
 
         public get config(): types.Config {
                 return this._config;

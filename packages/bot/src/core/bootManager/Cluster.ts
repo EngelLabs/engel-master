@@ -1,5 +1,6 @@
 import * as _cluster from 'cluster';
 import * as core from '@engel/core';
+import type Manager from './Manager';
 
 const cluster = <_cluster.Cluster><unknown>_cluster;
 
@@ -14,8 +15,8 @@ export default class Cluster extends core.Base {
          * Spawn a new cluster
          * @param clusterConfig Cluster configuration
          */
-        public constructor(clusterConfig: any) {
-                super();
+        public constructor(manager: Manager, clusterConfig: any) {
+                super(manager);
 
                 this._config = clusterConfig;
                 this.id = clusterConfig.id;

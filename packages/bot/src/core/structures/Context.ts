@@ -110,7 +110,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 
         public get topRole(): eris.Role | undefined {
-                return this.utils.getTopRole(this.guild);
+                return this.utils.getTopRole(this.app, this.guild);
         }
 
         public get moduleConfig(): types.ModuleConfig | undefined {
@@ -140,7 +140,7 @@ export default class Context<M extends Module = Module, C extends Command = Comm
         }
 
         public send(options?: string | types.AdvancedMessageContent) {
-                return this.utils.sendMessage(this.channel, options);
+                return this.utils.sendMessage(this.app, this.channel, options);
         }
 
         public codeblock(content?: string, lang: string = '') {
@@ -158,7 +158,7 @@ function createResponseFunction(name: types.ResponseType): ResponseFunction {
 
                 this.done = true;
 
-                return this.utils.sendMessage(this.channel, content, name);
+                return this.utils.sendMessage(this.app, this.channel, content, name);
         };
 }
 
@@ -170,12 +170,12 @@ function createEmojiResponseFunction(name: types.ResponseType): EmojiResponseFun
 
 function createAddReactionFunction(name: types.ResponseType): ReactionFunction {
         return function (this: Context) {
-                return this.utils.addReaction(this.channel, this.message, name);
+                return this.utils.addReaction(this.app, this.channel, this.message, name);
         };
 }
 
 function createRemoveReactionFunction(name: types.ResponseType): ReactionFunction {
         return function (this: Context) {
-                return this.utils.removeReaction(this.channel, this.message, name);
+                return this.utils.removeReaction(this.app, this.channel, this.message, name);
         };
 }

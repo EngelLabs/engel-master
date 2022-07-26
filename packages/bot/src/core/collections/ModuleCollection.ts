@@ -87,9 +87,9 @@ export default class ModuleCollection extends core.Collection<Module> {
                 let module: Module | undefined;
 
                 try {
-                        const Module = (reload(modulesPath + '/' + moduleName)).default;
+                        const ModuleConstructor: typeof Module = (reload(modulesPath + '/' + moduleName)).default;
 
-                        module = new Module();
+                        module = new ModuleConstructor(this._app);
 
                         return this._loadModule(module);
                 } catch (err: any) {
@@ -127,9 +127,9 @@ export default class ModuleCollection extends core.Collection<Module> {
                         // fall back to previous working version.
                         // reconstructing to clear any bad state that
                         // the inject/eject hooks can cause
-                        const _ModuleConstructor = (<any>module).constructor;
+                        const ModuleConstructor: typeof Module = (<any>module).constructor;
 
-                        this._loadModule(new _ModuleConstructor());
+                        this._loadModule(new ModuleConstructor(this._app));
 
                         throw err;
                 }

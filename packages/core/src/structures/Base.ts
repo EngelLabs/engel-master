@@ -1,6 +1,6 @@
 import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
-import App from './App';
+import type App from './App';
 
 const permissionsMapping: Record<keyof eris.Constants['Permissions'], string> = {
         createInstantInvite: 'Create Instant Invite',
@@ -58,10 +58,8 @@ const permissionsMapping: Record<keyof eris.Constants['Permissions'], string> = 
 export default class Base {
         public app: App;
 
-        public constructor(app?: App) {
-                if (!(this.app = app || App.instance)) {
-                        throw new Error('Missing app instance.');
-                }
+        public constructor(app: App) {
+                this.app = app;
         }
 
         public get permissionsMapping() {

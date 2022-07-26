@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as util from 'util';
 import * as eris from 'eris';
 import type * as types from '@engel/types';
-import App from '../structures/App';
+import type App from '../structures/App';
 
 const byteUnits = [
         'Bytes',
@@ -41,12 +41,12 @@ export function formatBytes(
         return `${opts.precision != null ? num.toFixed(opts.precision) : num} ${byteUnits[exp]}`;
 }
 
-export function getTopRole(guild: eris.Guild | undefined): eris.Role | undefined {
+export function getTopRole(app: App, guild: eris.Guild | undefined): eris.Role | undefined {
         if (!guild) {
                 return;
         }
 
-        const me = guild.members.get(App.instance.eris.user.id);
+        const me = guild.members.get(app.eris.user.id);
 
         if (!me || !me.roles.length) {
                 return;
@@ -62,6 +62,7 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export function sendMessage(
+        app: App,
         channel: string | eris.TextableChannel,
         content: string | types.AdvancedMessageContent,
         type?: types.ResponseType
@@ -69,8 +70,6 @@ export function sendMessage(
         if (!content) {
                 return Promise.resolve(null);
         }
-
-        const app = App.instance;
 
         if (!type) {
                 if (typeof content !== 'string' && content.embed) {
@@ -94,6 +93,7 @@ export function sendMessage(
                         if (typeof content !== 'string' && content.embeds && !permissions.has('embedLinks')) {
                                 if (permissions.has('sendMessages')) {
                                         sendMessage(
+                                                app,
                                                 channel,
                                                 "I'm missing permissions to `Embed Links` and can't display this message."
                                         );
@@ -145,33 +145,34 @@ export function sendMessage(
                 };
         }
 
-        return sendMessage(channel, toSend);
+        return sendMessage(app, channel, toSend);
 }
 
 export function addReaction(
+        app: App,
         channel: string | eris.TextableChannel,
         message: string | eris.Message,
         type: types.ResponseType
 ): Promise<void> {
-        return _messageReaction(channel, message, type, 'addMessageReaction');
+        return _messageReaction(app, channel, message, type, 'addMessageReaction');
 }
 
 export function removeReaction(
+        app: App,
         channel: string | eris.TextableChannel,
         message: string | eris.Message,
         type: types.ResponseType
 ): Promise<void> {
-        return _messageReaction(channel, message, type, 'removeMessageReaction');
+        return _messageReaction(app, channel, message, type, 'removeMessageReaction');
 }
 
 function _messageReaction(
+        app: App,
         channel: string | eris.TextableChannel,
         message: string | eris.Message,
         type: types.ResponseType,
         method: 'addMessageReaction' | 'removeMessageReaction'
 ): Promise<void> {
-        const app = App.instance;
-
         if (typeof channel !== 'string' && (!(channel instanceof eris.PrivateChannel))) {
                 const perms = channel.permissionsOf(app.eris.user.id);
 
