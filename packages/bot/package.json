@@ -31,7 +31,7 @@
         "eris": "^0.16.1",
         "eventemitter3": "^4.0.7",
         "jayson": "^3.6.6",
-        "moment": "^2.29.1",
+        "moment": "^2.29.4",
         "pretty-ms": "^7.0.1",
         "queue": "^6.0.2",
         "require-reload": "^0.2.2",
