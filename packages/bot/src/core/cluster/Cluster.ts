@@ -20,7 +20,7 @@ export default class Cluster {
                 this.config = clusterConfig;
                 this.id = clusterConfig.id;
                 this.client = clusterConfig.client;
-                this.logger = manager.rootLogger.get(`Cluster ${this.id}`);
+                this.logger = manager.logger.get(`Cluster ${this.id}`);
         }
 
         public spawn(): void {

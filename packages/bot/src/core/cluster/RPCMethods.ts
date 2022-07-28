@@ -1,5 +1,4 @@
 /* eslint-disable node/no-callback-literal */
-import * as jayson from 'jayson/promise';
 import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import type Cluster from './Cluster';
@@ -11,7 +10,7 @@ export default class RPCMethods {
 
         public constructor(manager: ClusterManager) {
                 this.manager = manager;
-                this.logger = manager.logger.get('RPC Methods');
+                this.logger = manager.logger.get('ClusterManager').get('RPC Methods');
         }
 
         public get map(): Record<string, types.JaysonMethod> {
@@ -20,7 +19,7 @@ export default class RPCMethods {
                 };
         }
 
-        private restart: types.ClusterManagerRPCMethods['restart'] = ({ target, id, statusPort }, cb) => {
+        private restart: types.ClusterManagerRPCMethods['restart'] = ({ target, id }, cb) => {
                 let clusters: Cluster[];
 
                 switch (target) {
@@ -55,32 +54,19 @@ export default class RPCMethods {
                         return cb({ code: 400, message: "Couldn't resolve clusters" });
                 }
 
-                let client: jayson.HttpClient;
-                let count = 0;
-
-                const sendUpdatedCount = () => {
-                        client.request('update', { count, total: clusters.length })
-                                .catch(() => null);
+                const status = { count: 0, total: clusters.length };
+                const publishStatus = () => {
+                        this.manager.redis.publish('engel:clusters:restart', JSON.stringify(status))
+                                .catch(err => this.logger.error(err));
                 };
 
-                if (statusPort) {
-                        statusPort = Number(statusPort);
-                        if (isNaN(statusPort)) {
-                                return cb({ code: 400, message: 'Invalid status port' });
-                        }
-                        client = jayson.client.http({ port: statusPort });
-                        sendUpdatedCount();
-                }
+                publishStatus();
 
                 clusters.forEach(cluster => {
-                        const p = cluster.restart();
-
-                        if (client) {
-                                p.then(() => {
-                                        count++;
-                                        sendUpdatedCount();
-                                });
-                        }
+                        cluster.restart().then(() => {
+                                status.count++;
+                                publishStatus();
+                        });
                 });
 
                 return cb(null);

@@ -24,7 +24,7 @@ _baseConfig.name = pkg.name;
 _baseConfig.version = pkg.version;
 _baseConfig.client.name = env.str('CLIENT_NAME');
 _baseConfig.client.shards = env.int('CLIENT_SHARDS');
-_baseConfig.client.processes = env.int('CLIENT_CLUSTERS');
+_baseConfig.client.clusters = env.int('CLIENT_CLUSTERS');
 
 _baseConfig.cluster = {
         id: env.int('CLUSTER_ID'),

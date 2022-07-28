@@ -9,14 +9,12 @@ import type Queue from 'queue';
 
 const cluster = <_cluster.Cluster><unknown>_cluster;
 
-export default class ClusterManager {
-        public logger: core.Logger;
-        public rootLogger: core.Logger;
+export default class ClusterManager extends core.App {
         public processes: Map<number, Cluster>;
         public queues: Map<string, Queue>;
         private server: jayson.Server;
 
-        public start(): void {
+        public start(): Promise<void> {
                 const port = env.int('CLUSTER_MANAGER_PORT', 8050);
 
                 cluster.setupPrimary({
@@ -27,16 +25,20 @@ export default class ClusterManager {
                 this.processes = new Map();
                 this.queues = new Map();
 
-                this.rootLogger = core.createLogger(core.baseConfig);
-                this.logger = this.rootLogger.get('ClusterManager');
+                this.logger = core.createLogger(this);
+                this.redis = new core.Redis(this);
+
+                const logger = this.logger.get('ClusterManager');
 
                 const methods = (new RPCMethods(this)).map;
                 this.server = new jayson.Server(methods);
                 this.server
                         .http()
-                        .on('error', err => this.logger.error(err))
+                        .on('error', err => logger.error(err))
                         .on('listening', () => this.startAllClients())
                         .listen(port);
+
+                return Promise.resolve();
         }
 
         private startAllClients(): void {

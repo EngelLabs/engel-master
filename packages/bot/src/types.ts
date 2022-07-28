@@ -135,8 +135,7 @@ declare module '@engel/types' {
         export interface ClusterManagerRPCMethods {
                 restart: JaysonMethod<{
                         target: 'all' | 'client' | 'cluster',
-                        id: string | string[] | number | number[],
-                        statusPort?: number;
+                        id: string | string[] | number | number[]
                 }>;
         }
 
