@@ -25,8 +25,6 @@ export default class App extends core.App {
          * Set the bot instance up
          */
         public async setup(): Promise<void> {
-                await this.connect();
-
                 this.rpc = jayson.client.http({ port: baseConfig.cluster.manager.port });
 
                 this.events = new EventManager(this);
@@ -42,6 +40,15 @@ export default class App extends core.App {
                         this.modules.register();
                         this.commands.register();
                 }
+
+                // Signal to cluster manager that we are
+                // waiting to connect our shards
+                process.send('hello');
+                process.on('message', message => {
+                        if (message === 'connect') {
+                                this.connect().catch(err => this.logger.error(err));
+                        }
+                });
         }
 
         private async connect() {

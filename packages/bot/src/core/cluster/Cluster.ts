@@ -24,7 +24,9 @@ export default class Cluster {
         }
 
         public spawn(): void {
-                this.queue.push(this.createWorker.bind(this));
+                this.initialize().then(() => {
+                        this.queue.push(this.connect.bind(this));
+                });
         }
 
         public restart(): Promise<void> {
@@ -41,38 +43,58 @@ export default class Cluster {
                                 delete this.worker;
 
                                 worker.kill('SIGTERM');
-                                worker.on('exit', () => this.createWorker(cb));
+                                worker.on('exit', () => {
+                                        this.initialize().then(() => this.connect(cb));
+                                });
                         });
                 });
         }
 
-        private createWorker(next: queue.QueueWorkerCallback) {
-                const worker = this.worker = cluster.fork(this.config.env);
+        private initialize(): Promise<void> {
+                return new Promise(resolve => {
+                        const worker = this.worker = cluster.fork(this.config.env);
 
-                worker
-                        .on('online', () => {
-                                this.logger.info('Online.');
-                        })
-                        .on('disconnect', () => {
-                                this.logger.info('Offline.');
-                        })
-                        .on('message', message => {
-                                if (message === 'ready') {
-                                        this.logger.info('Ready.');
-                                        next();
-                                }
-                        })
-                        .on('error', err => {
-                                this.logger.error(err);
-                        })
-                        .on('exit', () => {
-                                this.logger.info(`Exited (code=${worker.process.exitCode}).`);
+                        worker
+                                .on('online', () => {
+                                        this.logger.info('Online.');
+                                })
+                                .on('disconnect', () => {
+                                        this.logger.info('Offline.');
+                                })
+                                .on('error', err => {
+                                        this.logger.error(err);
+                                })
+                                .on('exit', () => {
+                                        this.logger.info(`Exited (code=${worker.process.exitCode}).`);
 
-                                if (this.worker === worker) {
-                                        this.logger.info('Attempting restart...');
-                                        setTimeout(() => this.createWorker(next), 5000);
+                                        if (this.worker === worker) {
+                                                this.logger.info('Attempting restart...');
+                                                this.initialize().then(() => resolve());
+                                        }
+                                });
+
+                        const messageListener = (message: any) => {
+                                if (message === 'hello') {
+                                        worker.off('message', messageListener);
+                                        resolve();
                                 }
-                        });
+                        };
+
+                        worker.on('message', messageListener);
+                });
+        }
+
+        private connect(next: queue.QueueWorkerCallback) {
+                const messageListener = (message: any) => {
+                        if (message === 'ready') {
+                                this.logger.info('Ready.');
+                                this.worker.off('message', messageListener);
+                                next();
+                        }
+                };
+
+                this.worker.on('message', messageListener);
+                this.worker.send('connect', err => err && this.logger.error(err));
         }
 
         private get queue(): Queue {
@@ -84,19 +106,5 @@ export default class Cluster {
                 }
 
                 return queues.get(this.client);
-        }
-
-        public awaitReady(): Promise<void> {
-                return new Promise((resolve) => {
-                        const listener = (message: any) => {
-                                if (message === 'ready') {
-                                        this.worker.off('message', listener);
-
-                                        resolve();
-                                }
-                        };
-
-                        this.worker.on('message', listener);
-                });
         }
 }
