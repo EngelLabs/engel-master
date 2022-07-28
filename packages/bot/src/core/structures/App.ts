@@ -1,9 +1,9 @@
+import * as jayson from 'jayson/promise';
 import * as core from '@engel/core';
 import Eris from '../clients/Eris';
 import baseConfig from '../utils/baseConfig';
 import StateManager from '../managers/StateManager';
 import EventManager from '../managers/EventManager';
-import IPCManager from '../managers/IPCManager';
 import CommandCollection from '../collections/CommandCollection';
 import GuildCollection from '../collections/GuildCollection';
 import ModuleCollection from '../collections/ModuleCollection';
@@ -12,14 +12,14 @@ import ModuleCollection from '../collections/ModuleCollection';
  * Represents a Discord bot
  */
 export default class App extends core.App {
-        public erisClient = Eris;
+        public Eris = Eris;
         public baseConfig = baseConfig;
         public events: EventManager;
         public state: StateManager;
-        public ipc: IPCManager;
         public guilds: GuildCollection;
         public commands: CommandCollection;
         public modules: ModuleCollection;
+        public rpc: jayson.HttpClient;
 
         /**
          * Set the bot instance up
@@ -27,9 +27,10 @@ export default class App extends core.App {
         public async setup(): Promise<void> {
                 await this.connect();
 
+                this.rpc = jayson.client.http({ port: baseConfig.cluster.manager.port });
+
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
-                this.ipc = new IPCManager(this);
 
                 this.guilds = new GuildCollection(this);
                 this.commands = new CommandCollection(this);
@@ -54,7 +55,7 @@ export default class App extends core.App {
                         if (connectedShards.size === (baseConfig.cluster.lastShard - baseConfig.cluster.firstShard + 1)) {
                                 this.eris.off('connect', connectListener);
 
-                                setTimeout(() => this.ipc.send('ready'), 5000);
+                                setTimeout(() => process.send('ready'), 5000);
                         }
                 };
 

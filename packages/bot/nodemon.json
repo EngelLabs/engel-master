@@ -1,5 +1,8 @@
 {
     "delay": 3,
+    "watch": [
+        "build/src/*"
+    ],
     "ignore": [
         "build/src/modules/*"
     ]

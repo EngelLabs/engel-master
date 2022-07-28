@@ -1,4 +1,5 @@
 import type * as eris from 'eris';
+import type * as jayson from 'jayson';
 import type * as types from '@engel/types';
 
 declare module '@engel/types' {
@@ -127,4 +128,48 @@ declare module '@engel/types' {
         export type Events = GuildEvents | NonGuildEvents;
 
         export type EventNames = keyof GuildEvents | keyof NonGuildEvents;
+        export interface JaysonMethod<ParameterT extends any = any, ReturnT extends any = any> {
+                (params: ParameterT, cb: (err: jayson.JSONRPCError, value?: ReturnT) => void): void;
+        }
+
+        export interface ClusterManagerRPCMethods {
+                restart: JaysonMethod<{
+                        target: 'all' | 'client' | 'cluster',
+                        id: string | string[] | number | number[],
+                        statusPort?: number;
+                }>;
+        }
+
+        export interface ClientConfig {
+                env: ClientEnv;
+                name: string;
+                firstClusterID: number;
+                clusterCount: number;
+                shardCount: number;
+        }
+
+        export interface ClientEnv {
+                CLIENT_NAME: string;
+                CLIENT_STATE: string;
+                CLIENT_PREMIUM: boolean;
+                CLIENT_ID: string;
+                CLIENT_TOKEN: string;
+                CLIENT_SECRET: string;
+                CLIENT_SHARDS: number;
+                CLIENT_CLUSTERS: number;
+        }
+
+        export interface ClusterConfig {
+                id: number;
+                client: string;
+                firstShardID: number;
+                lastShardID: number;
+                env: ClusterEnv;
+        }
+
+        export interface ClusterEnv extends ClientEnv {
+                CLUSTER_FIRST_SHARD: number;
+                CLUSTER_LAST_SHARD: number;
+                CLUSTER_ID: number;
+        }
 }

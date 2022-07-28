@@ -34,7 +34,8 @@
         "dev:web": "npm run dev -w @engel/web",
         "dev:core": "npm run dev -w @engel/core",
         "dev:react": "npm run dev -w @engel/react",
-        "config": "npm run config -w @engel/bot"
+        "config": "npm run config -w @engel/bot",
+        "restart": "npm run restart -w @engel/bot"
     },
     "workspaces": [
         "packages/*"

@@ -1,5 +1,5 @@
-import Manager from './core/bootManager/Manager';
+import ClusterManager from './core/cluster/ClusterManager';
 
-const manager = new Manager();
+const manager = new ClusterManager();
 
 manager.start();

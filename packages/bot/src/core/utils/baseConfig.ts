@@ -12,6 +12,9 @@ type _BaseConfig = typeof baseConfig & {
                 id: number;
                 firstShard: number;
                 lastShard: number;
+                manager: {
+                        port: number;
+                }
         };
 };
 
@@ -21,12 +24,15 @@ _baseConfig.name = pkg.name;
 _baseConfig.version = pkg.version;
 _baseConfig.client.name = env.str('CLIENT_NAME');
 _baseConfig.client.shards = env.int('CLIENT_SHARDS');
-_baseConfig.client.clusters = env.int('CLIENT_CLUSTERS');
+_baseConfig.client.processes = env.int('CLIENT_CLUSTERS');
 
 _baseConfig.cluster = {
         id: env.int('CLUSTER_ID'),
         firstShard: env.int('CLUSTER_FIRST_SHARD'),
-        lastShard: env.int('CLUSTER_LAST_SHARD')
+        lastShard: env.int('CLUSTER_LAST_SHARD'),
+        manager: {
+                port: env.int('CLUSTER_MANAGER_PORT', 8050)
+        }
 };
 
 export default _baseConfig;

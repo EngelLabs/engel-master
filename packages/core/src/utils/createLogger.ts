@@ -1,7 +1,8 @@
 import * as path from 'path';
 import * as moment from 'moment';
 import * as winston from 'winston';
-import type App from '../structures/App';
+import App from '../structures/App';
+import type baseConfig from '../utils/baseConfig';
 import type { Logger } from '../types';
 
 const loggerMap: Record<string, Logger> = {};
@@ -40,8 +41,9 @@ function createLoggerProxy(logger: winston.Logger): Logger {
         return proxy;
 }
 
-export default function createLogger(app: App): Logger {
+export default function createLogger(obj: App | typeof baseConfig): Logger {
         const ts = moment().format('l').replaceAll('/', '.');
+        const config = obj instanceof App ? obj.baseConfig : obj;
 
         const formatSources = (info: { [key: string]: any }) => {
                 const sources: string[] = info.source
@@ -52,7 +54,7 @@ export default function createLogger(app: App): Logger {
         };
 
         const options = {
-                level: app.baseConfig.logger.level,
+                level: config.logger.level,
                 format: winston.format.combine(
                         winston.format.errors({ stack: true }),
                         winston.format.colorize({ level: true }),
@@ -63,11 +65,11 @@ export default function createLogger(app: App): Logger {
                         new winston.transports.Console(),
                         new winston.transports.File({
                                 level: 'info',
-                                filename: path.join(app.baseConfig.logger.dir, `${ts}.log`)
+                                filename: path.join(config.logger.dir, `${ts}.log`)
                         }),
                         new winston.transports.File({
                                 level: 'error',
-                                filename: path.join(app.baseConfig.logger.dir, `${ts}.error.log`)
+                                filename: path.join(config.logger.dir, `${ts}.error.log`)
                         })
                 ]
         };
@@ -92,7 +94,7 @@ export default function createLogger(app: App): Logger {
                 }
         });
 
-        logger.debug(`Logger loaded (level=${app.baseConfig.logger.level}).`);
+        logger.debug(`Logger loaded (level=${config.logger.level}).`);
 
         return logger;
 }
