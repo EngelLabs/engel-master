@@ -1,6 +1,5 @@
 import * as _cluster from 'cluster';
 import * as jayson from 'jayson/promise';
-import * as EventEmitter from 'eventemitter3';
 import * as env from '@engel/env-util';
 import * as core from '@engel/core';
 import type * as types from '@engel/types';
@@ -10,7 +9,7 @@ import type Queue from 'queue';
 
 const cluster = <_cluster.Cluster><unknown>_cluster;
 
-export default class ClusterManager extends EventEmitter {
+export default class ClusterManager {
         public logger: core.Logger;
         public rootLogger: core.Logger;
         public processes: Map<number, Cluster>;
