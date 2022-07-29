@@ -35,7 +35,7 @@ class Logging extends Module {
 
                         if (isDM || !guildConfig) return;
 
-                        if (this.baseConfig.dev && !isTesting) return;
+                        if (this.staticConfig.dev && !isTesting) return;
 
                         const config = this.config;
 

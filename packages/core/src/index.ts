@@ -7,6 +7,6 @@ export { default as Redis } from './clients/Redis';
 export { default as Base } from './structures/Base';
 export { default as Collection } from './structures/Collection';
 export { default as App } from './structures/App';
-export { default as baseConfig } from './utils/baseConfig';
 export { default as createLogger } from './utils/createLogger';
+export { default as createStaticConfig } from './utils/createStaticConfig';
 export type { Logger } from './types';

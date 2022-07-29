@@ -34,12 +34,12 @@ export default class StateManager extends Base {
         }
 
         private _sync() {
-                const { baseConfig } = this;
+                const { staticConfig } = this;
                 const { guilds, shards, users } = this.eris;
 
                 const clusterStats: types.ClusterStats = {
-                        id: baseConfig.cluster.id,
-                        client: baseConfig.client.name,
+                        id: staticConfig.cluster.id,
+                        client: staticConfig.client.name,
                         ws: this._wsEvents,
                         http: this._httpEvents,
                         guilds: guilds.size,
@@ -58,7 +58,7 @@ export default class StateManager extends Base {
                 this._httpEvents = 0;
 
                 this.redis.hset(
-                        `engel:${baseConfig.client.state}:clusters`,
+                        `engel:${staticConfig.client.state}:clusters`,
                         clusterStats.id.toString(),
                         JSON.stringify(clusterStats)
                 ).catch(err => this._logger.error(err));

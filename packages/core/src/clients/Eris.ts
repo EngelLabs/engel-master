@@ -16,7 +16,7 @@ export default class Eris extends eris.Client {
                         restMode: true
                 }, options);
 
-                super('Bot ' + app.baseConfig.client.token, options);
+                super('Bot ' + app.staticConfig.client.token, options);
 
                 this
                         .on('error', (err, shard) => {

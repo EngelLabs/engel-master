@@ -5,7 +5,6 @@ import * as hbs from 'express-handlebars';
 import * as session from 'express-session';
 import * as store from 'connect-redis';
 import type * as core from '@engel/core';
-import baseConfig from '../utils/baseConfig';
 import App from './App';
 
 const Store = store(session);
@@ -56,10 +55,12 @@ function createErrorResponseHandler(status: number, defaultMessage: string) {
 }
 export default class Server {
         public express: express.Express;
+        private _app: App;
         private _logger: core.Logger;
         private _server: http.Server;
 
         public constructor(app: App) {
+                this._app = app;
                 this._logger = app.logger.get('Server');
 
                 this.express = express();
@@ -78,7 +79,7 @@ export default class Server {
                 this.express.use(express.json());
                 this.express.use(session({
                         name: 'engel.sid',
-                        secret: baseConfig.site.secret,
+                        secret: app.staticConfig.site.secret,
                         resave: false,
                         saveUninitialized: true,
                         store: new Store({
@@ -102,9 +103,10 @@ export default class Server {
         }
 
         public start() {
+                const { staticConfig } = this._app;
                 this._server = http.createServer(this.express)
-                        .listen(baseConfig.site.port, () => {
-                                this._logger.info(`Listening for connections on port ${baseConfig.site.port}.`);
+                        .listen(staticConfig.site.port, () => {
+                                this._logger.info(`Listening for connections on port ${staticConfig.site.port}.`);
                         });
 
                 process

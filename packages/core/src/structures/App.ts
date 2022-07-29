@@ -3,17 +3,17 @@ import type * as eris from 'eris';
 import type * as ioredis from 'ioredis';
 import type * as types from '@engel/types';
 import { EventEmitter } from 'eventemitter3';
-import baseConfig from '../utils/baseConfig';
 import createLogger from '../utils/createLogger';
 import Eris from '../clients/Eris';
 import MongoDB from '../clients/MongoDB';
 import Redis from '../clients/Redis';
 import type { Logger } from '../types';
+import createStaticConfig from '../utils/createStaticConfig';
 
 global.Promise = require('bluebird');
 
 export default class App extends EventEmitter {
-        public baseConfig = baseConfig;
+        public staticConfig: types.StaticConfig;
         public utils = utils;
         public eris: eris.Client;
         public logger: Logger;
@@ -32,7 +32,7 @@ export default class App extends EventEmitter {
 
         public set config(config) {
                 if (!config) {
-                        this.logger.error(`Configuration not found for state ${baseConfig.client.state}`);
+                        this.logger.error(`Configuration not found for state ${this.staticConfig.client.state}`);
 
                         process.exit(1);
                 }
@@ -49,7 +49,7 @@ export default class App extends EventEmitter {
         }
 
         public getConfig(): Promise<types.Config> {
-                return this.mongo.configurations.findOne({ state: baseConfig.client.state });
+                return this.mongo.configurations.findOne({ state: this.staticConfig.client.state });
         }
 
         public async configure(): Promise<void> {
@@ -62,9 +62,14 @@ export default class App extends EventEmitter {
 
         public async start(): Promise<void> {
                 try {
+                        /* Subclasses can implement their own staticConfig */
+                        if (!this.staticConfig) {
+                                this.staticConfig = createStaticConfig();
+                        }
+                        const { staticConfig } = this;
                         this.logger = createLogger(this);
 
-                        this.logger.debug(`Starting ${baseConfig.name}(env=${baseConfig.env} s=${baseConfig.client.state}, v=${baseConfig.version}).`);
+                        this.logger.debug(`Starting ${staticConfig.name}(env=${staticConfig.env} s=${staticConfig.client.state}, v=${staticConfig.version}).`);
 
                         this.eris = new this.Eris(this);
                         this.mongo = new this.MongoDB(this);

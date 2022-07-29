@@ -26,7 +26,7 @@ export default class CommandCollection extends core.Collection<Command> {
                         });
 
                 return new Promise((resolve, reject) => {
-                        this._app.mongo.configurations.updateOne({ state: this._app.baseConfig.client.state }, { $set: update })
+                        this._app.mongo.configurations.updateOne({ state: this._app.staticConfig.client.state }, { $set: update })
                                 .then(() => resolve())
                                 .catch(reject);
                 });

@@ -115,7 +115,7 @@ export default class GuildCollection extends Map<string, types.Guild> {
                 const guild: types.Guild = {
                         id: guildID,
                         prefixes: this._app.config.prefixes.default,
-                        client: this._app.baseConfig.client.name
+                        client: this._app.staticConfig.client.name
                 };
 
                 const p: Promise<types.Guild> = new Promise((resolve, reject) => {

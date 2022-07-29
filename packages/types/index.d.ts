@@ -182,4 +182,36 @@ declare module '@engel/types' {
         }
 
         export type ResponseType = keyof Config['colours'] & keyof Config['emojis'];
+
+        export interface PackageJSON {
+                name: string;
+                version: string;
+        }
+
+        export interface StaticConfig {
+                name: string;
+                version: string;
+                env: string;
+                dev: boolean;
+                logger: {
+                        level: string;
+                        dir: string;
+                },
+                client: {
+                        state: string;
+                        premium: boolean;
+                        id: string;
+                        token: string;
+                        secret: string;
+                },
+                mongo: {
+                        host: string;
+                        port: string;
+                        db: string;
+                },
+                redis: {
+                        host: string;
+                        port: number;
+                }
+        }
 }

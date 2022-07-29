@@ -17,18 +17,19 @@ export default class ClusterManager extends core.App {
         public start(): Promise<void> {
                 const port = env.int('CLUSTER_MANAGER_PORT', 8050);
 
-                cluster.setupPrimary({
-                        silent: !core.baseConfig.dev,
-                        exec: 'build/src/index.js'
-                });
-
                 this.processes = new Map();
                 this.queues = new Map();
 
+                this.staticConfig = core.createStaticConfig();
                 this.logger = core.createLogger(this);
                 this.redis = new core.Redis(this);
 
                 const logger = this.logger.get('ClusterManager');
+
+                cluster.setupPrimary({
+                        silent: !this.staticConfig.dev,
+                        exec: 'build/src/index.js'
+                });
 
                 const methods = (new RPCMethods(this)).map;
                 this.server = new jayson.Server(methods);
@@ -59,7 +60,7 @@ export default class ClusterManager extends core.App {
                         clientConfigs.push({
                                 env: {
                                         CLIENT_NAME: clientName,
-                                        CLIENT_STATE: env.str('CLIENT_' + NAME + '_STATE', core.baseConfig.client.state),
+                                        CLIENT_STATE: env.str('CLIENT_' + NAME + '_STATE', this.staticConfig.client.state),
                                         CLIENT_PREMIUM: env.bool('CLIENT_' + NAME + '_PREMIUM', false),
                                         CLIENT_ID: env.str('CLIENT_' + NAME + '_ID'),
                                         CLIENT_TOKEN: env.str('CLIENT_' + NAME + '_TOKEN'),

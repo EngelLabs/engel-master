@@ -4,7 +4,7 @@ import type * as express from 'express';
 import type App from '../../../core/structures/App';
 
 export = async function (app: App, req: express.Request, res: express.Response) {
-        let { eris, baseConfig, config, logger, mongo, redis } = app;
+        let { eris, staticConfig, config, logger, mongo, redis } = app;
 
         let __res: any;
 
@@ -21,7 +21,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 if (__res?.toString) {
                         __res = __res
                                 .toString()
-                                .replace(app.baseConfig.client.token, '[[redacted]]');
+                                .replace(app.staticConfig.client.token, '[[redacted]]');
                 }
 
                 __res = `Resolved: ${__res}`;

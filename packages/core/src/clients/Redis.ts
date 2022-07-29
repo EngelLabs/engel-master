@@ -4,8 +4,8 @@ import type App from '../structures/App';
 export default class Redis extends IORedis {
         public constructor(app: App, shouldLog: boolean = true) {
                 super(
-                        app.baseConfig.redis.port,
-                        app.baseConfig.redis.host
+                        app.staticConfig.redis.port,
+                        app.staticConfig.redis.host
                 );
 
                 if (shouldLog) {

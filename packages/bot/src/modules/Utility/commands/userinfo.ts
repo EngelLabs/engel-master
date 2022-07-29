@@ -62,7 +62,7 @@ export default new Command<Utility>({
                 if (ctx.isAdmin /* || ctx.isStaff */) {
                         const role = ctx.isAdmin ? 'developer' : 'staff';
 
-                        embed.description = `<${ctx.config.emojis.staff}> ${ctx.baseConfig.name} ${role}`;
+                        embed.description = `<${ctx.config.emojis.staff}> ${ctx.staticConfig.name} ${role}`;
                 }
 
                 return ctx.send({ embed });

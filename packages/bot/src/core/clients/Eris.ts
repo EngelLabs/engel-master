@@ -18,9 +18,9 @@ export default class Eris extends core.Eris {
                         autoreconnect: true,
                         compress: true,
                         messageLimit: 0,
-                        firstShardID: app.baseConfig.cluster.firstShard,
-                        lastShardID: app.baseConfig.cluster.lastShard,
-                        maxShards: app.baseConfig.client.shards
+                        firstShardID: app.staticConfig.cluster.firstShard,
+                        lastShardID: app.staticConfig.cluster.lastShard,
+                        maxShards: app.staticConfig.client.shards
                 });
 
                 const logger = app.logger.get('Eris');

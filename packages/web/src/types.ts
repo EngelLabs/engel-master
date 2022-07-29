@@ -143,4 +143,12 @@ declare module '@engel/types' {
                 stickers?: DiscordSticker[];
                 premium_progress_bar_enabled: boolean;
         }
+
+        export type CustomStaticConfig = types.StaticConfig & {
+                site: {
+                        host: string;
+                        port: string;
+                        secret: string;
+                };
+        }
 }

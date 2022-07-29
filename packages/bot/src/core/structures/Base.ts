@@ -8,7 +8,7 @@ export default class Base extends core.Base {
                 return this.app.rpc;
         }
 
-        public get baseConfig() {
-                return this.app.baseConfig;
+        public get staticConfig() {
+                return this.app.staticConfig;
         }
 }

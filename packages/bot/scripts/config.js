@@ -8,8 +8,8 @@ app.logger = createLogger(app);
 
 app.mongo = new MongoDB(app);
 
-const state = process.argv[3] ?? app.baseConfig.client.state;
-app.baseConfig.client.state = state;
+const state = process.argv[3] ?? app.staticConfig.client.state;
+app.staticConfig.client.state = state;
 
 const option = process.argv[2];
 

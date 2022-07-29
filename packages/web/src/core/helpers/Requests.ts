@@ -10,7 +10,7 @@ export default class Requests extends Base {
                         .get('https://discord.com/api/v9' + path)
                         .set('Accept', 'application/json')
                         .set('Authorization', token)
-                        .set('User-Agent', this.baseConfig.name);
+                        .set('User-Agent', this.staticConfig.name);
 
                 return resp.body;
         }

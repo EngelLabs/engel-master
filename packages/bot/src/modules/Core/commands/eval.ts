@@ -37,14 +37,14 @@ const _eval = new Command<Core>({
         dmEnabled: true,
         execute: async function (ctx) {
                 let { message, guild, author, app, member, channel,
-                        args, eris, guildConfig, baseConfig, config, logger,
+                        args, eris, guildConfig, staticConfig, config, logger,
                         mongo, redis, me, permissions, utils, rpc } = ctx,
                         __ctx = ctx, __res: any;
 
                 let api = (method: string, uri: string, data = {}) => {
                         return (superagent[<'get'>method])('http://localhost:8080/api' + uri)
                                 .set('Accept', 'application/json')
-                                .set('User-Agent', __ctx.baseConfig.name)
+                                .set('User-Agent', __ctx.staticConfig.name)
                                 .set('Authorization', __ctx.config.apiToken)
                                 .send(data)
                                 .then((resp: superagent.Response) => { return { s: resp?.status, d: resp?.body?.data }; })
@@ -66,7 +66,7 @@ const _eval = new Command<Core>({
                         if (__res?.toString) {
                                 __res = __res
                                         .toString()
-                                        .replace(__ctx.baseConfig.client.token, '[[redacted]]');
+                                        .replace(__ctx.staticConfig.client.token, '[[redacted]]');
                         }
 
                         __res = `Resolved: ${__res}`;
@@ -95,7 +95,7 @@ _eval.command({
                         /* eslint-disable-next-line no-eval */
                         res = await superagent
                                 .get('http://localhost:8080/admin/eval')
-                                .set('User-Agent', ctx.baseConfig.name)
+                                .set('User-Agent', ctx.staticConfig.name)
                                 .set('Authorization', ctx.config.apiToken)
                                 .send({ toEval: body })
                                 .then(resp => resp.text);

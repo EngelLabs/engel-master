@@ -1,8 +1,8 @@
 import * as path from 'path';
 import * as moment from 'moment';
 import * as winston from 'winston';
+import type * as types from '@engel/types';
 import App from '../structures/App';
-import type baseConfig from '../utils/baseConfig';
 import type { Logger } from '../types';
 
 const loggerMap: Record<string, Logger> = {};
@@ -41,9 +41,9 @@ function createLoggerProxy(logger: winston.Logger): Logger {
         return proxy;
 }
 
-export default function createLogger(obj: App | typeof baseConfig): Logger {
+export default function createLogger(obj: App | types.StaticConfig): Logger {
         const ts = moment().format('l').replaceAll('/', '.');
-        const config = obj instanceof App ? obj.baseConfig : obj;
+        const config = obj instanceof App ? obj.staticConfig : obj;
 
         const formatSources = (info: { [key: string]: any }) => {
                 const sources: string[] = info.source

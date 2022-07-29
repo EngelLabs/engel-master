@@ -71,11 +71,11 @@ export default class Base {
         }
 
         public get state() {
-                return this.baseConfig.client.state;
+                return this.staticConfig.client.state;
         }
 
-        public get baseConfig() {
-                return this.app.baseConfig;
+        public get staticConfig() {
+                return this.app.staticConfig;
         }
 
         public get config() {

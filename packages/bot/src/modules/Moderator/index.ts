@@ -69,7 +69,7 @@ export default class Moderator extends Module {
                         return;
                 }
 
-                if (this.baseConfig.dev && (!isTester || !isTesting)) {
+                if (this.staticConfig.dev && (!isTester || !isTesting)) {
                         return;
                 }
 

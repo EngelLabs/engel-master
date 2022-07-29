@@ -9,7 +9,7 @@ export = async function (app: App, req: express.Request, res: express.Response, 
         };
 
         if (app.config.apiToken && req.headers.authorization === app.config.apiToken) {
-                req.session.token = 'Bot ' + app.baseConfig.client.token;
+                req.session.token = 'Bot ' + app.staticConfig.client.token;
                 req.session.isAdmin = true;
         }
 

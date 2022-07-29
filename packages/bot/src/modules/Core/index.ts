@@ -4,10 +4,6 @@ import Module from '../../core/structures/Module';
 import Command from '../../core/structures/Command';
 import Context from '../../core/structures/Context';
 import Permission from '../../core/helpers/Permission';
-import baseConfig from '../../core/utils/baseConfig';
-
-const basePrefixes = [`<@${baseConfig.client.id}> `, `<@!${baseConfig.client.id}> `];
-
 interface Cooldown {
         time: number;
         cooldown: number;
@@ -97,12 +93,13 @@ export default class Core extends Module {
 
                 const isTesting = <boolean>p.isTesting;
                 const guildConfig = <types.Guild>p.guildConfig;
+                const { staticConfig } = this;
 
-                if (baseConfig.dev && message.guildID && (!isTester || !isTesting)) return;
+                if (staticConfig.dev && message.guildID && (!isTester || !isTesting)) return;
 
                 if (guildConfig) {
                         if (guildConfig.isIgnored) return;
-                        if (guildConfig.isPremium && (!baseConfig.client.premium || guildConfig.hasPremium)) return;
+                        if (guildConfig.isPremium && (!staticConfig.client.premium || guildConfig.hasPremium)) return;
                 }
 
                 const config = this.config;
@@ -223,6 +220,7 @@ export default class Core extends Module {
 
                 const isTesting = <boolean>payload.isTesting;
                 const guildConfig = <types.Guild>payload.guildConfig;
+                const { staticConfig } = this;
 
                 let prefixes: string[];
 
@@ -232,9 +230,10 @@ export default class Core extends Module {
                         prefixes = guildConfig.prefixes;
                 }
 
+                const basePrefixes = [`<@${staticConfig.client.id}> `, `<@!${staticConfig.client.id}> `];
                 prefixes = basePrefixes.concat(prefixes);
 
-                const adminPrefix = baseConfig.client.name + '?';
+                const adminPrefix = staticConfig.client.name + '?';
 
                 if (isAdmin) {
                         prefixes = prefixes.concat(this.config.prefixes.private);
@@ -247,7 +246,7 @@ export default class Core extends Module {
 
                 if (typeof prefix !== 'string') return;
 
-                if (message.guildID && guildConfig.client !== baseConfig.client.name && prefix !== adminPrefix) {
+                if (message.guildID && guildConfig.client !== staticConfig.client.name && prefix !== adminPrefix) {
                         if (!isTesting && (<eris.TextChannel>message.channel).guild.ownerID !== this.eris.user.id) {
                                 this.eris.leaveGuild(guildConfig.id).catch(() => false);
                         }
@@ -458,7 +457,7 @@ export default class Core extends Module {
 
                 this.logger.debug(text);
 
-                if (!isAdmin && !this.baseConfig.dev) {
+                if (!isAdmin && !this.staticConfig.dev) {
                         const doc = {
                                 name: command.dbName,
                                 message: {

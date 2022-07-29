@@ -8,7 +8,7 @@ export default new Command<Core>({
         aliases: ['l'],
         dmEnabled: true,
         execute: async function (ctx) {
-                if (!ctx.baseConfig.dev) return Promise.resolve();
+                if (!ctx.staticConfig.dev) return Promise.resolve();
 
                 const start = Date.now();
 

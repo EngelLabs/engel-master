@@ -1,15 +1,15 @@
 import * as core from '@engel/core';
 import type * as express from 'express';
-import baseConfig from '../utils/baseConfig';
 import Server from './Server';
 import Renderer from '../helpers/Renderer';
 import Requests from '../helpers/Requests';
 import ModuleCollection from '../collections/ModuleCollection';
 import CommandCollection from '../collections/CommandCollection';
 import ControllerCollection from '../collections/ControllerCollection';
+import createStaticConfig from '../utils/createStaticConfig';
 
 export default class App extends core.App {
-        public baseConfig = baseConfig;
+        public staticConfig = createStaticConfig();
         public renderer: Renderer;
         public requests: Requests;
         public modules: ModuleCollection;

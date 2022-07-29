@@ -1,19 +1,19 @@
 import * as jayson from 'jayson/promise';
 import * as core from '@engel/core';
 import Eris from '../clients/Eris';
-import baseConfig from '../utils/baseConfig';
 import StateManager from '../managers/StateManager';
 import EventManager from '../managers/EventManager';
 import CommandCollection from '../collections/CommandCollection';
 import GuildCollection from '../collections/GuildCollection';
 import ModuleCollection from '../collections/ModuleCollection';
+import createStaticConfig from '../utils/createStaticConfig';
 
 /**
  * Represents a Discord bot
  */
 export default class App extends core.App {
+        public staticConfig = createStaticConfig();
         public Eris = Eris;
-        public baseConfig = baseConfig;
         public events: EventManager;
         public state: StateManager;
         public guilds: GuildCollection;
@@ -25,7 +25,7 @@ export default class App extends core.App {
          * Set the bot instance up
          */
         public async setup(): Promise<void> {
-                this.rpc = jayson.client.http({ port: baseConfig.cluster.manager.port });
+                this.rpc = jayson.client.http({ port: this.staticConfig.cluster.manager.port });
 
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
@@ -36,7 +36,7 @@ export default class App extends core.App {
 
                 await this.modules.load();
 
-                if (baseConfig.dev) {
+                if (this.staticConfig.dev) {
                         this.modules.register();
                         this.commands.register();
                 }
@@ -55,11 +55,12 @@ export default class App extends core.App {
                 await this.eris.connect();
 
                 const connectedShards = new Set();
+                const { cluster } = this.staticConfig;
 
                 const connectListener = (id: number) => {
                         connectedShards.add(id);
 
-                        if (connectedShards.size === (baseConfig.cluster.lastShard - baseConfig.cluster.firstShard + 1)) {
+                        if (connectedShards.size === (cluster.lastShard - cluster.firstShard + 1)) {
                                 this.eris.off('connect', connectListener);
 
                                 setTimeout(() => process.send('ready'), 5000);

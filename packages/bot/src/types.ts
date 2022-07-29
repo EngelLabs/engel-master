@@ -186,4 +186,20 @@ declare module '@engel/types' {
                         guilds: number;
                 }>;
         }
+
+        export type CustomStaticConfig = types.StaticConfig & {
+                client: {
+                        name: string;
+                        shards: number;
+                        clusters: number;
+                };
+                cluster: {
+                        id: number;
+                        firstShard: number;
+                        lastShard: number;
+                        manager: {
+                                port: number;
+                        };
+                };
+        }
 }

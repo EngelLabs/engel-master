@@ -7,16 +7,16 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 return res.redirect('/');
         }
 
-        const baseConfig = app.baseConfig;
+        const staticConfig = app.staticConfig;
 
-        let redirectUri = baseConfig.dev
-                ? `http://localhost:${baseConfig.site.port}/login`
-                : baseConfig.site.port
-                        ? `https://${baseConfig.site.host}:${baseConfig.site.port}/login`
-                        : `https://${baseConfig.site.host}/login`;
+        let redirectUri = staticConfig.dev
+                ? `http://localhost:${staticConfig.site.port}/login`
+                : staticConfig.site.port
+                        ? `https://${staticConfig.site.host}:${staticConfig.site.port}/login`
+                        : `https://${staticConfig.site.host}/login`;
 
         if (req.query && req.query.code) {
-                const client = app.baseConfig.client;
+                const client = app.staticConfig.client;
 
                 const data = {
                         client_id: client.id,
@@ -35,7 +35,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                                 .post('https://discord.com/api/v9/oauth2/token')
                                 .set('Accept', 'application/json')
                                 .set('Content-Type', 'application/x-www-form-urlencoded')
-                                .set('User-Agent', baseConfig.name)
+                                .set('User-Agent', staticConfig.name)
                                 .send(data);
                 } catch {
                         return res.redirect('/login');
@@ -55,7 +55,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
 
         const baseUrl = 'https://discord.com/api/v9';
         const _url = baseUrl +
-                `/oauth2/authorize?response_type=code&client_id=${app.baseConfig.client.id}` +
+                `/oauth2/authorize?response_type=code&client_id=${app.staticConfig.client.id}` +
                 `&scope=guilds%20guilds.join%20identify&redirect_uri=${redirectUri}&prompt=consent`;
 
         return res.redirect(_url);

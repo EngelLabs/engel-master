@@ -9,7 +9,7 @@ export default class MongoDB {
         public constructor(app: App) {
                 const logger = app.logger.get('MongoDB');
 
-                const { mongo } = app.baseConfig;
+                const { mongo } = app.staticConfig;
                 const uri = `mongodb://${mongo.host}:${mongo.port}/${mongo.db}`;
 
                 const client = new mongodb.MongoClient(uri, {

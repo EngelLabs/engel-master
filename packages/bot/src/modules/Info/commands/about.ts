@@ -17,9 +17,9 @@ export default new Command<Info>({
         aliases: ['stats', 'info'],
         cooldown: 20000,
         execute: async function (ctx) {
-                const { redis, eris, utils, baseConfig, config, guild } = ctx;
+                const { redis, eris, utils, staticConfig, config, guild } = ctx;
 
-                const allRawClusterStats = await redis.hgetall(`engel:${baseConfig.client.state}:clusters`);
+                const allRawClusterStats = await redis.hgetall(`engel:${staticConfig.client.state}:clusters`);
                 let guildCount = 0, userCount = 0, wsEvents = 0, httpEvents = 0;
 
                 for (const rawClusterStats of Object.values(allRawClusterStats)) {
@@ -36,7 +36,7 @@ export default new Command<Info>({
                 const usedMem = utils.formatBytes(freeMem);
                 const totalMem = utils.formatBytes(os.totalmem());
 
-                const clientConfig = baseConfig.client;
+                const clientConfig = staticConfig.client;
 
                 const embed = {
                         description: [`[Support server](${config.guilds.official.invite} `,
@@ -55,9 +55,9 @@ export default new Command<Info>({
                         footer: {
                                 text: [
                                         clientConfig.name[0].toUpperCase() + clientConfig.name.slice(1),
-                                        baseConfig.client.state,
-                                        `v${baseConfig.version}`,
-                                        `Cluster ${baseConfig.cluster.id}/${clientConfig.shards}`,
+                                        staticConfig.client.state,
+                                        `v${staticConfig.version}`,
+                                        `Cluster ${staticConfig.cluster.id}/${clientConfig.shards}`,
                                         `Shard ${guild ? guild.shard.id : 0}/${clientConfig.shards}`
                                 ].join(' | '),
                                 url: 'https://bit.ly/36QzBAF',
