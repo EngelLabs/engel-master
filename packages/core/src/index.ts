@@ -1,6 +1,6 @@
 import 'source-map-support/register';
 
-export * as utils from './utils/helpers';
+export { default as Utils } from './utils/Utils';
 export { default as Eris } from './clients/Eris';
 export { default as MongoDB } from './clients/MongoDB';
 export { default as Redis } from './clients/Redis';

@@ -67,7 +67,7 @@ export default class Moderation extends Base {
 
                         if (member.roles.length) {
                                 const roles = member.guild.roles;
-                                const topRole = this.utils.getTopRole(this.app, guild);
+                                const topRole = this.utils.getTopRole(guild);
 
                                 if (topRole) {
                                         if (member.roles.find(id => {

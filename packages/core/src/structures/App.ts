@@ -1,4 +1,3 @@
-import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type * as types from '@engel/types';
 import { EventEmitter } from 'eventemitter3';
@@ -7,13 +6,14 @@ import Eris from '../clients/Eris';
 import MongoDB from '../clients/MongoDB';
 import Redis from '../clients/Redis';
 import type { Logger } from '../types';
+import Utils from '../utils/Utils';
 import createStaticConfig from '../utils/createStaticConfig';
 
 global.Promise = require('bluebird');
 
 export default class App extends EventEmitter {
         public staticConfig: types.StaticConfig;
-        public utils = utils;
+        public utils = new Utils(this);
         public eris: eris.Client;
         public logger: Logger;
         public mongo: MongoDB;

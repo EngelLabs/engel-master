@@ -1,4 +1,3 @@
-import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
 import type App from './App';
 
@@ -91,6 +90,6 @@ export default class Base {
         }
 
         public get utils() {
-                return utils;
+                return this.app.utils;
         }
 }
