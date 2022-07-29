@@ -171,4 +171,19 @@ declare module '@engel/types' {
                 CLUSTER_LAST_SHARD: number;
                 CLUSTER_ID: number;
         }
+
+        export interface ClusterStats {
+                id: number;
+                client: string;
+                ws: number;
+                http: number;
+                guilds: number;
+                users: number;
+                shards: Array<{
+                        id: number;
+                        status: eris.Shard['status'];
+                        latency: number;
+                        guilds: number;
+                }>;
+        }
 }

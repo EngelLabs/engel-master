@@ -37,7 +37,7 @@ export default class StateManager extends Base {
                 const { baseConfig } = this;
                 const { guilds, shards, users } = this.eris;
 
-                const clusterStats = JSON.stringify({
+                const clusterStats: types.ClusterStats = {
                         id: baseConfig.cluster.id,
                         client: baseConfig.client.name,
                         ws: this._wsEvents,
@@ -52,13 +52,16 @@ export default class StateManager extends Base {
                                         guilds: guilds.filter(g => g.shard.id === s.id).length
                                 };
                         })
-                });
+                };
 
                 this._wsEvents = 0;
                 this._httpEvents = 0;
 
-                this.redis.hset('engel:clusters', this.baseConfig.cluster.id.toString(), clusterStats)
-                        .catch(err => this._logger.error(err));
+                this.redis.hset(
+                        `engel:${baseConfig.client.state}:clusters`,
+                        clusterStats.id.toString(),
+                        JSON.stringify(clusterStats)
+                ).catch(err => this._logger.error(err));
         }
 
         private _configure(config: types.Config): void {

@@ -1,11 +1,11 @@
 import * as os from 'os';
 import * as prettyMS from 'pretty-ms';
+import type * as types from '@engel/types';
 import Command from '../../../core/structures/Command';
 import type Info from '..';
 
-const roundIfWhole = (num: number) => {
+const roundIfAboveOne = (num: number) => {
         num = Number(num);
-
         return num >= 1 ? Math.round(num) : num;
 };
 
@@ -17,51 +17,51 @@ export default new Command<Info>({
         aliases: ['stats', 'info'],
         cooldown: 20000,
         execute: async function (ctx) {
-                const owner = ctx.eris.users.get(ctx.config.author.id);
+                const { redis, eris, utils, baseConfig, config, guild } = ctx;
 
-                if (!owner) return ctx.addErrorReaction();
+                const allRawClusterStats = await redis.hgetall(`engel:${baseConfig.client.state}:clusters`);
+                let guildCount = 0, userCount = 0, wsEvents = 0, httpEvents = 0;
 
-                const allClusterStats = await ctx.redis.hgetall('engel:clusters');
-
-                let guildCount = 0, memberCount = 0, userCount = 0, wsEvents = 0, httpEvents = 0;
-
-                for (const rawClusterStats of Object.values(allClusterStats)) {
-                        const clusterStats = JSON.parse(rawClusterStats);
+                for (const rawClusterStats of Object.values(allRawClusterStats)) {
+                        const clusterStats: types.ClusterStats = JSON.parse(rawClusterStats);
 
                         guildCount += clusterStats.guilds;
-                        memberCount += clusterStats.members;
                         userCount += clusterStats.users;
                         wsEvents += clusterStats.ws;
                         httpEvents += clusterStats.http;
                 }
 
-                const loadAvg = os.loadavg().map(i => i.toFixed(2)).join(', ');
-
+                const loadAvg = os.loadavg().map(i => `${i.toFixed(2)}%`).join(', ');
                 const freeMem = os.freemem();
-                const usedMem = ctx.utils.formatBytes(freeMem);
-                const totalMem = ctx.utils.formatBytes(os.totalmem());
+                const usedMem = utils.formatBytes(freeMem);
+                const totalMem = utils.formatBytes(os.totalmem());
+
+                const clientConfig = baseConfig.client;
 
                 const embed = {
-                        description: `[Support server](${ctx.config.guilds.official.invite} "Very cool server, join it for 10/10 experience ~ timtoy")`,
+                        description: [`[Support server](${config.guilds.official.invite} `,
+                                '"Very cool server, join it for 10/10 experience ~ timtoy")'].join(''),
                         fields: [
-                                { name: 'Owner', value: owner.mention, inline: true },
+                                { name: 'Developers', value: config.users.developers.map(id => `<@${id}>`).join('\n'), inline: true },
                                 { name: 'Guilds', value: guildCount.toString(), inline: true },
-                                { name: 'Members', value: memberCount.toString(), inline: true },
                                 { name: 'Users', value: userCount.toString(), inline: true },
                                 { name: 'Uptime', value: prettyMS(Math.floor(process.uptime()) * 1000), inline: true },
                                 { name: 'Load (1m, 5m, 15m)', value: loadAvg, inline: true },
                                 { name: 'Memory', value: `${usedMem}/${totalMem}`, inline: true },
-                                { name: 'WS Recv', value: `${roundIfWhole(wsEvents / 10)}/sec`, inline: true },
-                                { name: 'HTTP', value: `${roundIfWhole(httpEvents / 10)}/sec`, inline: true }
+                                { name: 'WS Recv', value: `${roundIfAboveOne(wsEvents / 10)}/sec`, inline: true },
+                                { name: 'HTTP Req', value: `${roundIfAboveOne(httpEvents / 10)}/sec`, inline: true }
                         ],
-                        author: {
-                                name: `${ctx.baseConfig.client.name}[${ctx.baseConfig.client.state}, v${ctx.baseConfig.version}]`,
-                                url: 'https://bit.ly/36QzBAF',
-                                icon_url: ctx.eris.user.avatarURL
-                        },
                         timestamp: new Date().toISOString(),
                         footer: {
-                                text: `Cluster ${ctx.baseConfig.cluster.id} | Shard ${ctx.guild?.shard?.id ?? 0}`
+                                text: [
+                                        clientConfig.name[0].toUpperCase() + clientConfig.name.slice(1),
+                                        baseConfig.client.state,
+                                        `v${baseConfig.version}`,
+                                        `Cluster ${baseConfig.cluster.id}/${clientConfig.shards}`,
+                                        `Shard ${guild ? guild.shard.id : 0}/${clientConfig.shards}`
+                                ].join(' | '),
+                                url: 'https://bit.ly/36QzBAF',
+                                icon_url: eris.user.avatarURL
                         }
                 };
 
