@@ -177,6 +177,7 @@ declare module '@engel/types' {
                 client: string;
                 ws: number;
                 http: number;
+                commands: Record<string, number>;
                 guilds: number;
                 users: number;
                 shards: Array<{

@@ -10,6 +10,7 @@ export default class StateManager extends Base {
         private _logger: core.Logger;
         private _wsEvents: number = 0;
         private _httpEvents: number = 0;
+        private _commandEvents: Record<string, number> = Object.create(null);
         private _messages: Record<string, types.PartialMessage> = {};
         private _uncacheInterval?: NodeJS.Timer;
 
@@ -28,7 +29,8 @@ export default class StateManager extends Base {
                         .registerListener('channelDelete', this.channelDelete.bind(this));
 
                 app
-                        .on('config', this._configure.bind(this));
+                        .on('config', this._configure.bind(this))
+                        .on('command', this._onCommand.bind(this));
 
                 setInterval(this._sync.bind(this), 10000);
         }
@@ -42,6 +44,7 @@ export default class StateManager extends Base {
                         client: staticConfig.client.name,
                         ws: this._wsEvents,
                         http: this._httpEvents,
+                        commands: this._commandEvents,
                         guilds: guilds.size,
                         users: users.size,
                         shards: shards.map(s => {
@@ -56,6 +59,7 @@ export default class StateManager extends Base {
 
                 this._wsEvents = 0;
                 this._httpEvents = 0;
+                this._commandEvents = Object.create(null);
 
                 this.redis.hset(
                         `engel:${staticConfig.client.state}:clusters`,
@@ -69,6 +73,14 @@ export default class StateManager extends Base {
                         clearInterval(this._uncacheInterval);
 
                         this._uncacheInterval = setInterval(this._uncacheMessages.bind(this), config.messageUncacheInterval);
+                }
+        }
+
+        private _onCommand(commandName: string) {
+                if (!this._commandEvents[commandName]) {
+                        this._commandEvents[commandName] = 1;
+                } else {
+                        this._commandEvents[commandName]++;
                 }
         }
 

@@ -20,7 +20,7 @@ export default new Command<Info>({
                 const { redis, eris, utils, staticConfig, config, guild } = ctx;
 
                 const allRawClusterStats = await redis.hgetall(`engel:${staticConfig.client.state}:clusters`);
-                let guildCount = 0, userCount = 0, wsEvents = 0, httpEvents = 0;
+                let guildCount = 0, userCount = 0, wsEvents = 0, httpEvents = 0, commandEvents = 0;
 
                 for (const rawClusterStats of Object.values(allRawClusterStats)) {
                         const clusterStats: types.ClusterStats = JSON.parse(rawClusterStats);
@@ -29,6 +29,7 @@ export default new Command<Info>({
                         userCount += clusterStats.users;
                         wsEvents += clusterStats.ws;
                         httpEvents += clusterStats.http;
+                        commandEvents += Object.values(clusterStats.commands).reduce((a, b) => a + b, 0);
                 }
 
                 const loadAvg = os.loadavg().map(i => `${i.toFixed(2)}%`).join(', ');
@@ -49,7 +50,8 @@ export default new Command<Info>({
                                 { name: 'Load (1m, 5m, 15m)', value: loadAvg, inline: true },
                                 { name: 'Memory', value: `${usedMem}/${totalMem}`, inline: true },
                                 { name: 'WS Recv', value: `${roundIfAboveOne(wsEvents / 10)}/sec`, inline: true },
-                                { name: 'HTTP Req', value: `${roundIfAboveOne(httpEvents / 10)}/sec`, inline: true }
+                                { name: 'HTTP Req', value: `${roundIfAboveOne(httpEvents / 10)}/sec`, inline: true },
+                                { name: 'Commands', value: `${roundIfAboveOne(commandEvents / 10)}/sec`, inline: true }
                         ],
                         timestamp: new Date().toISOString(),
                         footer: {
