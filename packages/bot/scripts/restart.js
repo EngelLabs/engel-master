@@ -1,9 +1,10 @@
 const jayson = require('jayson/promise');
 const cliProgress = require('cli-progress');
 const env = require('@engel/env-util').config({ ignoreMissing: true });
-const { createLogger, Redis, App } = require('@engel/core');
+const { createLogger, createStaticConfig, Redis, App } = require('@engel/core');
 
 const app = new App();
+app.staticConfig = createStaticConfig();
 const logger = app.logger = createLogger(app);
 const redis = new Redis(app);
 
