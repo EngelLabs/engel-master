@@ -36,14 +36,18 @@ export default class Collection<T extends { name: string, aliases?: string[] }> 
         }
 
         set(key: string, value: T): this {
-                return super.set(key?.toLowerCase?.() || key, value);
+                return super.set(typeof key === 'string' ? key.toLowerCase() : key, value);
         }
 
         get(key: string): T | undefined {
-                return super.get(key?.toLowerCase?.() || key);
+                return super.get(typeof key === 'string' ? key.toLowerCase() : key);
+        }
+
+        has(key: string): boolean {
+                return super.has(typeof key === 'string' ? key.toLowerCase() : key);
         }
 
         delete(key: string): boolean {
-                return super.delete(key?.toLowerCase?.() || key);
+                return super.delete(typeof key === 'string' ? key.toLowerCase() : key);
         }
 }
