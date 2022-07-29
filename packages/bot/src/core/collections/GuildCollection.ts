@@ -1,4 +1,3 @@
-import { Redis } from '@engel/core';
 import type * as mongodb from 'mongodb';
 import type * as types from '@engel/types';
 import type App from '../structures/App';
@@ -17,7 +16,7 @@ export default class GuildCollection extends Map<string, types.Guild> {
 
                 this._app = app;
 
-                const subredis = new Redis(app, false);
+                const subredis = app.redis.sub;
 
                 subredis.subscribe('guildUpdate');
                 subredis.on('message', this.guildUpdate.bind(this));

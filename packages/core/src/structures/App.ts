@@ -1,6 +1,5 @@
 import * as utils from '../utils/helpers';
 import type * as eris from 'eris';
-import type * as ioredis from 'ioredis';
 import type * as types from '@engel/types';
 import { EventEmitter } from 'eventemitter3';
 import createLogger from '../utils/createLogger';
@@ -18,7 +17,7 @@ export default class App extends EventEmitter {
         public eris: eris.Client;
         public logger: Logger;
         public mongo: MongoDB;
-        public redis: ioredis.Redis;
+        public redis: Redis;
         public Eris = Eris;
         public Redis = Redis;
         public MongoDB = MongoDB;
