@@ -37,8 +37,8 @@ prefix.command({
                         return ctx.error('That prefix already exists.');
                 }
 
-                ctx.config.prefixes.private.push(prefix);
-                ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $addToSet: { 'prefixes.private': prefix } });
+                await ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $addToSet: { 'prefixes.private': prefix } });
+                await ctx.app.configure();
 
                 return ctx.success(`Added prefix \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }
@@ -60,8 +60,8 @@ prefix.command({
                         return ctx.error('That prefix already exists.');
                 }
 
-                ctx.config.prefixes.private = ctx.config.prefixes.private.filter(p => p !== prefix);
-                ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $pull: { 'prefixes.private': prefix } });
+                await ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $pull: { 'prefixes.private': prefix } });
+                await ctx.app.configure();
 
                 return ctx.success(`Removed prefix \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }
@@ -79,8 +79,8 @@ prefix.command({
                         prefix = prefix.slice(1, -1).trimLeft();
                 }
 
-                ctx.config.prefixes.private = [prefix];
-                ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $set: { 'prefixes.private': [prefix] } });
+                await ctx.mongo.configurations.updateOne({ state: ctx.config.state }, { $set: { 'prefixes.private': [prefix] } });
+                await ctx.app.configure();
 
                 return ctx.success(`Replaced prefixes with \`${prefix.length ? prefix : '<no prefix>'}\`.`);
         }

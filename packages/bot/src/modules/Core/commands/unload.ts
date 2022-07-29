@@ -11,9 +11,10 @@ export default new Command<Core>({
                 if (!ctx.staticConfig.dev) return Promise.resolve();
 
                 const start = Date.now();
+                const modules = ctx.args.length ? ctx.args : null;
 
                 try {
-                        var res = ctx.app.modules.unload(ctx.args.length ? ctx.args : null);
+                        var res = ctx.app.modules.unload(modules);
 
                         if (!ctx.app.modules.get('core')) {
                                 await ctx.app.modules.load(['Core']);
@@ -25,6 +26,8 @@ export default new Command<Core>({
                 if (!res) {
                         return ctx.error('Could not find any modules to unload.');
                 }
+
+                ctx.redis.publish(`engel:${ctx.state}:modules:unload`, JSON.stringify(modules));
 
                 const diff = Date.now() - start;
 

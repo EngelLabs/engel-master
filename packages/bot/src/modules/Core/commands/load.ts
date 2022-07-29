@@ -11,9 +11,10 @@ export default new Command<Core>({
                 if (!ctx.staticConfig.dev) return Promise.resolve();
 
                 const start = Date.now();
+                const modules = ctx.args.length ? ctx.args : null;
 
                 try {
-                        var res = await ctx.app.modules.load(ctx.args.length ? ctx.args : null);
+                        var res = await ctx.app.modules.load(modules);
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');
                 }
@@ -21,6 +22,8 @@ export default new Command<Core>({
                 if (!res) {
                         return ctx.error('Could not find any modules to load.');
                 }
+
+                ctx.redis.publish(`engel:${ctx.state}:modules:load`, JSON.stringify(modules));
 
                 const diff = Date.now() - start;
 

@@ -11,9 +11,10 @@ const reload = new Command<Core>({
                 if (!ctx.staticConfig.dev) return Promise.resolve();
 
                 const start = Date.now();
+                const modules = ctx.args.length ? ctx.args : null;
 
                 try {
-                        var res = await ctx.app.modules.reload(ctx.args.length ? ctx.args : null);
+                        var res = await ctx.app.modules.reload(modules);
                 } catch (err) {
                         return ctx.error('Something went wrong\n' + '```\n' + (err?.toString?.() || err) + '\n```');
                 }
@@ -21,6 +22,8 @@ const reload = new Command<Core>({
                 if (!res) {
                         return ctx.error('Could not find any modules to reload.');
                 }
+
+                ctx.redis.publish(`engel:${ctx.state}:modules:reload`, JSON.stringify(modules));
 
                 const diff = Date.now() - start;
 
@@ -30,7 +33,7 @@ const reload = new Command<Core>({
 
 reload.command({
         name: 'config',
-        info: 'Sync global configuration for current process',
+        info: 'Sync global configuration across all clusters',
         dmEnabled: true,
         execute: async function (ctx) {
                 try {

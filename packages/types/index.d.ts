@@ -108,7 +108,6 @@ declare module '@engel/types' {
                 cooldownWarnDelete: boolean;
                 cooldownWarnDeleteAfter: number;
                 adminOnly: boolean;
-                configRefreshInterval: number;
                 messageCache: boolean;
                 messageUncacheInterval: number;
                 messageMaxAge: number;

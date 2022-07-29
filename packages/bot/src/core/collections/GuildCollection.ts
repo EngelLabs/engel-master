@@ -1,4 +1,5 @@
 import type * as mongodb from 'mongodb';
+import type * as core from '@engel/core';
 import type * as types from '@engel/types';
 import type App from '../structures/App';
 
@@ -8,6 +9,7 @@ interface FetchOptions {
 
 export default class GuildCollection extends Map<string, types.Guild> {
         private _app: App;
+        private _logger: core.Logger;
         private _uncacheInterval?: NodeJS.Timer;
         private _creating: Record<string, Promise<types.Guild>> = {};
 
@@ -15,11 +17,17 @@ export default class GuildCollection extends Map<string, types.Guild> {
                 super();
 
                 this._app = app;
+                this._logger = app.logger.get('Guilds');
 
                 const subredis = app.redis.sub;
 
-                subredis.subscribe('guildUpdate');
-                subredis.on('message', this.guildUpdate.bind(this));
+                const key = `engel:${app.staticConfig.client.state}:guilds:update`;
+                subredis.subscribe(key);
+                subredis.on('message', (chnl, id) => {
+                        if (chnl === key && this._app.config.guildCache && this._app.eris.guilds.has(id)) {
+                                this.fetch(id).catch(err => this._logger.error(err));
+                        }
+                });
 
                 app.eris.on('guildCreate', this.guildCreate.bind(this));
                 app.eris.on('guildDelete', this.guildDelete.bind(this));
@@ -28,10 +36,15 @@ export default class GuildCollection extends Map<string, types.Guild> {
         }
 
         private _configure(config: types.Config): void {
-                if (config.guildCache && config.guildUncacheInterval !== this._app.config.guildUncacheInterval) {
+                if (config.guildUncacheInterval !== this._app.config.guildUncacheInterval) {
                         clearInterval(this._uncacheInterval);
 
-                        this._uncacheInterval = setInterval(this.uncache.bind(this), config.guildUncacheInterval);
+                        if (config.guildCache) {
+                                this._uncacheInterval = setInterval(
+                                        this.uncache.bind(this),
+                                        config.guildUncacheInterval
+                                );
+                        }
                 }
         }
 
@@ -47,19 +60,12 @@ export default class GuildCollection extends Map<string, types.Guild> {
 
         private guildCreate({ id }: { id: string }): void {
                 this.fetch(id)
-                        .then(guild => !guild && this.create(id));
+                        .then(guild => !guild && this.create(id))
+                        .catch(err => this._logger.error(err));
         }
 
         private guildDelete({ id }: { id: string }): void {
                 this.delete(id);
-        }
-
-        private guildUpdate(chnl: string, id: string): void {
-                if (chnl !== 'guildUpdate') return;
-
-                if (this._app.eris.guilds.has(id)) {
-                        this.fetch(id);
-                }
         }
 
         public getOrFetch(id: string | { id: string }, options?: FetchOptions): Promise<types.Guild | undefined> {

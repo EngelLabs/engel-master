@@ -57,7 +57,7 @@ export = async function (app: App, req: express.Request, res: express.Response) 
                 var result = await app.mongo.guilds
                         .findOneAndUpdate({ id: req.params.id }, update, { returnDocument: 'after' });
 
-                app.redis.publish('guildUpdate', req.params.id);
+                app.redis.publish(`engel:${app.staticConfig.client.state}:guilds:update`, req.params.id);
         } catch (err) {
                 app.logger.get('api/commands.patch').error(err);
 

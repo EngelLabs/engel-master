@@ -227,7 +227,6 @@ const defaultConfig = {
         cooldownWarnDelete: true,
         cooldownWarnDeleteAfter: 8000,
         adminOnly: false,
-        configRefreshInterval: 25000,
         messageCache: true,
         messageUncacheInterval: 60000,
         messageMaxAge: 2 * 24 * 60 * 60 * 1000,

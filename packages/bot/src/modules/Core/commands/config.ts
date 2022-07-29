@@ -86,6 +86,8 @@ config.command({
                 const result = await ctx.mongo.configurations
                         .findOneAndUpdate({ state }, { $set: { [key]: value } }, { returnDocument: 'after' });
 
+                await ctx.app.configure();
+
                 config = result.value;
                 ctx.locals = { key, value, config, state };
         }

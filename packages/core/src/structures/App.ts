@@ -37,13 +37,6 @@ export default class App extends EventEmitter {
                 }
 
                 this.emit('config', config);
-
-                if (config.configRefreshInterval !== this._config?.configRefreshInterval) {
-                        clearInterval(this._configInterval);
-
-                        this._configInterval = setInterval(this.configure.bind(this), config.configRefreshInterval);
-                }
-
                 this._config = config;
         }
 
@@ -52,11 +45,11 @@ export default class App extends EventEmitter {
         }
 
         public async configure(): Promise<void> {
-                try {
-                        this.config = await this.getConfig();
-                } catch (err) {
-                        this.logger.error(err);
-                }
+                this.config = await this.getConfig();
+                await this.redis.publish(
+                        `engel:${this.staticConfig.client.state}:config:update`,
+                        JSON.stringify(this.config)
+                ).catch(err => this.logger.error(err));
         }
 
         public async start(): Promise<void> {
@@ -74,7 +67,9 @@ export default class App extends EventEmitter {
                         this.mongo = new this.MongoDB(this);
                         this.redis = new this.Redis(this);
 
-                        await this.configure();
+                        this.watchConfig();
+
+                        this.config = await this.getConfig();
 
                         if (typeof this.setup === 'function') {
                                 await this.setup();
@@ -88,6 +83,16 @@ export default class App extends EventEmitter {
 
                         process.exit(1);
                 }
+        }
+
+        private watchConfig() {
+                const key = `engel:${this.staticConfig.client.state}:config:update`;
+                this.redis.sub.subscribe(key);
+                this.redis.sub.on('message', (chnl, d) => {
+                        if (chnl === key) {
+                                this.config = JSON.parse(d);
+                        }
+                });
         }
 
         public on<T = 'config'>(event: T, fn: (config: types.Config) => any): this;
