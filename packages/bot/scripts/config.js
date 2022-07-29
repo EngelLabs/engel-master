@@ -1,9 +1,10 @@
 require('@engel/env-util').config({ ignoreMissing: true });
 
-const { App, createLogger, MongoDB } = require('@engel/core');
+const { App, createLogger, createStaticConfig, MongoDB } = require('@engel/core');
 
 const app = new App();
 
+app.staticConfig = createStaticConfig();
 app.logger = createLogger(app);
 
 app.mongo = new MongoDB(app);

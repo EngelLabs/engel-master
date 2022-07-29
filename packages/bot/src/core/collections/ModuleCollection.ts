@@ -20,30 +20,32 @@ export default class ModuleCollection extends core.Collection<Module> {
                 this._commands = app.commands;
                 this._logger = app.logger.get('Modules');
 
-                const subredis = app.redis.sub;
+                const subredis = app.redis?.sub;
 
-                const { state } = app.staticConfig.client;
-                const redisEvents = ['load', 'unload', 'reload']
-                        .map(s => `engel:${state}:modules:${s}`);
+                if (subredis) {
+                        const { state } = app.staticConfig.client;
+                        const redisEvents = ['load', 'unload', 'reload']
+                                .map(s => `engel:${state}:modules:${s}`);
 
-                subredis.subscribe(...redisEvents);
-                subredis.on('message', async (chnl: string, d) => {
-                        if (!redisEvents.includes(chnl)) {
-                                return;
-                        }
-
-                        const methodName = <'load' | 'unload' | 'reload'>chnl.split(':').pop();
-                        d = JSON.parse(d);
-
-                        try {
-                                const p = this[methodName](d);
-                                if (p instanceof Promise) {
-                                        await p;
+                        subredis.subscribe(...redisEvents);
+                        subredis.on('message', async (chnl: string, d) => {
+                                if (!redisEvents.includes(chnl)) {
+                                        return;
                                 }
-                        } catch (err) {
-                                this._logger.error(err);
-                        }
-                });
+
+                                const methodName = <'load' | 'unload' | 'reload'>chnl.split(':').pop();
+                                d = JSON.parse(d);
+
+                                try {
+                                        const p = this[methodName](d);
+                                        if (p instanceof Promise) {
+                                                await p;
+                                        }
+                                } catch (err) {
+                                        this._logger.error(err);
+                                }
+                        });
+                }
         }
 
         public register(): Promise<void> {
