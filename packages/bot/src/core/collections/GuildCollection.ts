@@ -19,20 +19,22 @@ export default class GuildCollection extends Map<string, types.Guild> {
                 this._app = app;
                 this._logger = app.logger.get('Guilds');
 
-                const subredis = app.redis.sub;
+                const subredis = app.redis?.sub;
 
-                const key = `engel:${app.staticConfig.client.state}:guilds:update`;
-                subredis.subscribe(key);
-                subredis.on('message', (chnl, id) => {
-                        if (chnl === key && this._app.config.guildCache && this._app.eris.guilds.has(id)) {
-                                this.fetch(id).catch(err => this._logger.error(err));
-                        }
-                });
+                if (subredis) {
+                        const key = `engel:${app.staticConfig.client.state}:guilds:update`;
+                        subredis.subscribe(key);
+                        subredis.on('message', (chnl, id) => {
+                                if (chnl === key && this._app.config.guildCache && this._app.eris.guilds.has(id)) {
+                                        this.fetch(id).catch(err => this._logger.error(err));
+                                }
+                        });
 
-                app.eris.on('guildCreate', this.guildCreate.bind(this));
-                app.eris.on('guildDelete', this.guildDelete.bind(this));
+                        app.eris.on('guildCreate', this.guildCreate.bind(this));
+                        app.eris.on('guildDelete', this.guildDelete.bind(this));
 
-                app.on('config', this._configure.bind(this));
+                        app.on('config', this._configure.bind(this));
+                }
         }
 
         private _configure(config: types.Config): void {
