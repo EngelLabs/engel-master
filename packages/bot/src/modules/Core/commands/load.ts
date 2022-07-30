@@ -23,7 +23,7 @@ export default new Command<Core>({
                         return ctx.error('Could not find any modules to load.');
                 }
 
-                ctx.redis.publish(`engel:${ctx.state}:modules:load`, JSON.stringify(modules));
+                ctx.app.ipc.publish('modules:load', modules);
 
                 const diff = Date.now() - start;
 

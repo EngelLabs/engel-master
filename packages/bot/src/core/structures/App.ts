@@ -1,6 +1,7 @@
 import * as jayson from 'jayson/promise';
 import * as core from '@engel/core';
 import Eris from '../clients/Eris';
+import IPCManager from '../managers/IPCManager';
 import StateManager from '../managers/StateManager';
 import EventManager from '../managers/EventManager';
 import CommandCollection from '../collections/CommandCollection';
@@ -14,6 +15,7 @@ import createStaticConfig from '../utils/createStaticConfig';
 export default class App extends core.App {
         public staticConfig = createStaticConfig();
         public Eris = Eris;
+        public ipc: IPCManager;
         public events: EventManager;
         public state: StateManager;
         public guilds: GuildCollection;
@@ -27,6 +29,7 @@ export default class App extends core.App {
         public async setup(): Promise<void> {
                 this.rpc = jayson.client.http({ port: this.staticConfig.cluster.manager.port });
 
+                this.ipc = new IPCManager(this);
                 this.events = new EventManager(this);
                 this.state = new StateManager(this);
 

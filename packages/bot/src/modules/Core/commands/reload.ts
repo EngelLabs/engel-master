@@ -23,7 +23,7 @@ const reload = new Command<Core>({
                         return ctx.error('Could not find any modules to reload.');
                 }
 
-                ctx.redis.publish(`engel:${ctx.state}:modules:reload`, JSON.stringify(modules));
+                ctx.app.ipc.publish('modules:reload', modules);
 
                 const diff = Date.now() - start;
 

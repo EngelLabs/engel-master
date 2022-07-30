@@ -56,7 +56,8 @@ export default class RPCMethods {
 
                 const status = { count: 0, total: clusters.length };
                 const publishStatus = () => {
-                        this.manager.redis.publish('engel:clusters:restart', JSON.stringify(status))
+                        const channel = `engel:${this.manager.staticConfig.client.state}:clusters:restart`;
+                        this.manager.redis.publish(channel, JSON.stringify(status))
                                 .catch(err => this.logger.error(err));
                 };
 

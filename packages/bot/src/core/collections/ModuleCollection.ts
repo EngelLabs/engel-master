@@ -20,24 +20,15 @@ export default class ModuleCollection extends core.Collection<Module> {
                 this._commands = app.commands;
                 this._logger = app.logger.get('Modules');
 
-                const subredis = app.redis?.sub;
+                const redisEvents = ['modules:load', 'modules:unload', 'modules:reload'];
 
-                if (subredis) {
-                        const { state } = app.staticConfig.client;
-                        const redisEvents = ['load', 'unload', 'reload']
-                                .map(s => `engel:${state}:modules:${s}`);
+                app.ipc.subscribe(...redisEvents);
 
-                        subredis.subscribe(...redisEvents);
-                        subredis.on('message', async (chnl: string, d) => {
-                                if (!redisEvents.includes(chnl)) {
-                                        return;
-                                }
-
-                                const methodName = <'load' | 'unload' | 'reload'>chnl.split(':').pop();
-                                d = JSON.parse(d);
-
+                redisEvents.forEach(ev => {
+                        const methodName = <'load' | 'unload' | 'reload'>ev.slice(ev.indexOf(':') + 1);
+                        app.ipc.on(ev, async (moduleNames: string[]) => {
                                 try {
-                                        const p = this[methodName](d);
+                                        const p = this[methodName](moduleNames);
                                         if (p instanceof Promise) {
                                                 await p;
                                         }
@@ -45,7 +36,7 @@ export default class ModuleCollection extends core.Collection<Module> {
                                         this._logger.error(err);
                                 }
                         });
-                }
+                });
         }
 
         public register(): Promise<void> {

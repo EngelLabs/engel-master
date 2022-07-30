@@ -30,7 +30,7 @@ if (target) {
         logger.info('No target specified, attempting to load progress bar for a already running restart...');
 }
 
-redis.subscribe('engel:clusters:restart');
+redis.subscribe(`engel:${app.staticConfig.client.state}:clusters:restart`);
 redis.on('message', (_, status) => {
         const { count, total } = JSON.parse(status);
 

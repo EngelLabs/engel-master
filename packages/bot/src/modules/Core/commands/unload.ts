@@ -27,7 +27,7 @@ export default new Command<Core>({
                         return ctx.error('Could not find any modules to unload.');
                 }
 
-                ctx.redis.publish(`engel:${ctx.state}:modules:unload`, JSON.stringify(modules));
+                ctx.app.ipc.publish('modules:unload', modules);
 
                 const diff = Date.now() - start;
 
