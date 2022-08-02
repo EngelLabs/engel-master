@@ -38,6 +38,10 @@ export default class IPCManager extends EventEmitter<string> {
                 return super.on(this._prefixChannel(event), fn);
         }
 
+        public once(event: string, fn: (...args: any[]) => void): this {
+                return super.once(this._prefixChannel(event), fn);
+        }
+
         public addListener = this.on;
 
         public subscribe(...channels: string[]): Promise<number> {
