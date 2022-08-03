@@ -3,9 +3,12 @@ import Controller from '../../../core/structures/Controller';
 export default new Controller('/api/guilds/:id/commands')
         .patch(async (app, req, res) => {
                 const body = req.body;
-                const command = app.commands.get(<string>body.name);
+                const commandName = <string>req.body.name;
+                const command = app.config.commands[commandName];
 
                 if (!command) return res[403](10002, 'Unknown command');
+
+                const isSubcommand = typeof command === 'boolean';
 
                 // TODO: Type this?
                 const toUnset: any[] = [];
@@ -16,7 +19,7 @@ export default new Controller('/api/guilds/:id/commands')
                         toSet.disabled = body.disabled;
                 }
 
-                if (!command.isSubcommand) {
+                if (!isSubcommand) {
                         /* commandConfig.del */
                         if (typeof body.del === 'boolean') {
                                 toSet.del = body.del;
@@ -42,14 +45,14 @@ export default new Controller('/api/guilds/:id/commands')
                 }
 
                 const update: any = { $set: {}, $unset: {} };
-                if (command.isSubcommand) {
-                        update.$set[`commands.${command.name}`] = toSet.disabled;
+                if (isSubcommand) {
+                        update.$set[`commands.${commandName}`] = toSet.disabled;
                 } else {
                         for (const key of toUnset) {
-                                update.$unset[`commands.${command.name}.${key}`] = null;
+                                update.$unset[`commands.${commandName}.${key}`] = null;
                         }
                         for (const key of toSet) {
-                                update.$set[`commands.${command.name}.${key}`] = toSet[key];
+                                update.$set[`commands.${commandName}.${key}`] = toSet[key];
                         }
                 }
 
@@ -68,5 +71,5 @@ export default new Controller('/api/guilds/:id/commands')
                         return res[403](10001, 'Unknown guild');
                 }
 
-                return res[200](result.value.commands?.[command.name]);
+                return res[200](result.value.commands?.[commandName]);
         });

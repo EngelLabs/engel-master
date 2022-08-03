@@ -99,8 +99,8 @@ declare module '@engel/types' {
                 webhooks: { errorLog: { id: string; token: string }; guildLog: { id: string; token: string } };
                 colours: { info: number; error: number; success: number; loading: number; premium: number };
                 emojis: { info: string; error: string; success: string; loading: string; premium: string; staff: string };
-                commands: Record<string, CommandConfig>;
-                modules: Record<string, ModuleConfig>;
+                commands: Record<string, GlobalCommandConfig>;
+                modules: Record<string, GlobalModuleConfig>;
                 disableEmojis: boolean;
                 globalCooldown: number;
                 commandCooldown: number;

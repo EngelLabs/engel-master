@@ -3,7 +3,7 @@ import Controller from '../../../core/structures/Controller';
 export default new Controller('/api/guilds/:id/modules')
         .patch(async (app, req, res) => {
                 const body = req.body;
-                const module = app.modules.get(<string>body.name);
+                const module = app.config.modules[<string>body.name];
 
                 if (!module) return res[403](10002, 'Unknown module');
 
